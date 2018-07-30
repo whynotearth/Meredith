@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith.App", "WhyNotEarth.Meredith.App\WhyNotEarth.Meredith.App.csproj", "{4FBC580B-44E2-4812-A148-E6B7CCA6867F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith", "WhyNotEarth.Meredith\WhyNotEarth.Meredith.csproj", "{5027F222-49F5-43FE-8A80-31EAF14FC395}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith.Tests", "WhyNotEarth.Meredith.Tests\WhyNotEarth.Meredith.Tests.csproj", "{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FBC580B-44E2-4812-A148-E6B7CCA6867F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FBC580B-44E2-4812-A148-E6B7CCA6867F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FBC580B-44E2-4812-A148-E6B7CCA6867F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FBC580B-44E2-4812-A148-E6B7CCA6867F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5027F222-49F5-43FE-8A80-31EAF14FC395}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5027F222-49F5-43FE-8A80-31EAF14FC395}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5027F222-49F5-43FE-8A80-31EAF14FC395}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5027F222-49F5-43FE-8A80-31EAF14FC395}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
