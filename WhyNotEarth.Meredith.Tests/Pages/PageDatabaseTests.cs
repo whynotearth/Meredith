@@ -25,7 +25,7 @@
         {
             await PageDatabase.Load();
             Assert.NotNull(PageDatabase.Businesses);
-            Assert.Equal(1, PageDatabase.Businesses.Count);
+            Assert.Single(PageDatabase.Businesses);
             var business = PageDatabase.Businesses.First();
             Assert.Equal("TestBusiness", business.Name);
             Assert.Equal("testbusiness", business.Key);
@@ -35,7 +35,7 @@
             Assert.Equal("TestPage", page.Name);
             Assert.Null(page.Key);
             Assert.NotNull(page.Cards);
-            Assert.Equal(1, page.Cards.Count);
+            Assert.Single(page.Cards);
             var card = page.Cards.First();
             Assert.Equal("backgroundUrl", card.BackgroundUrl);
             Assert.Equal("callToAction", card.CallToAction);
