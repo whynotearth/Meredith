@@ -1,4 +1,4 @@
-# MEREDITH ⚡
+# MEREDITH 
 
 MEREDITH is a way to build web pages that render with reliable and fast performance in a single experience. Built for the Cambodian and other developing countries in mind, it streamlines the of creating a basic yet performant website.
 
