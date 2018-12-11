@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Data.Entity.csproj" />
     <ProjectReference Include="..\WhyNotEarth.Meredith\WhyNotEarth.Meredith.csproj" />
   </ItemGroup>
 </Project>

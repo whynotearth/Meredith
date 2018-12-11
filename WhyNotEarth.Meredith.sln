@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith", "Why
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith.Tests", "WhyNotEarth.Meredith.Tests\WhyNotEarth.Meredith.Tests.csproj", "{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhyNotEarth.Meredith.Data.Entity", "WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Data.Entity.csproj", "{D214F836-7109-4A94-8EF1-B172CBF81AB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D214F836-7109-4A94-8EF1-B172CBF81AB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D214F836-7109-4A94-8EF1-B172CBF81AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D214F836-7109-4A94-8EF1-B172CBF81AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D214F836-7109-4A94-8EF1-B172CBF81AB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
