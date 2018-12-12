@@ -8,6 +8,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Pages;
+    using Stripe;
+    using Stripe.Data;
 
     public class Startup
     {
@@ -22,8 +24,11 @@
         {
             services
                 .AddOptions()
+                .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
-                .AddDbContext<MeredithContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default")))
+                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default")))
+                .AddScoped<StripeServices>()
+                .AddScoped<StripeOAuthServices>()
                 .AddSingleton<PageDatabase>()
                 .AddScoped<CompanyService>()
                 .AddMvc();
@@ -37,7 +42,7 @@
             }
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            using (var context = serviceScope.ServiceProvider.GetService<MeredithContext>())
+            using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
                 context.Database.EnsureCreated();
             }

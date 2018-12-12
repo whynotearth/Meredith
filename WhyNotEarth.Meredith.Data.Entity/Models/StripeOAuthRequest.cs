@@ -4,7 +4,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    public class Page : IEntityTypeConfiguration<Page>
+    public class StripeOAuthRequest : IEntityTypeConfiguration<StripeOAuthRequest>
     {
         public Company Company { get; set; }
         
@@ -12,13 +12,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         
         public Guid Id { get; set; }
         
-        public string Name { get; set; }
-        
-        public string Slug { get; set; }
-        
-        public void Configure(EntityTypeBuilder<Page> builder)
+        public void Configure(EntityTypeBuilder<StripeOAuthRequest> builder)
         {
-            
         }
     }
 }

@@ -7,9 +7,15 @@ namespace WhyNotEarth.Meredith.Data.Entity
     using Microsoft.EntityFrameworkCore;
     using Models;
 
-    public class MeredithContext : IdentityDbContext<User, Role, Guid>
+    public class MeredithDbContext : IdentityDbContext<User, Role, Guid>
     {
-        public MeredithContext(DbContextOptions<MeredithContext> options)
+        public DbSet<Company> Companies { get; set; }
+        
+        public DbSet<StripeAccount> StripeAccounts { get; set; }
+        
+        public DbSet<StripeOAuthRequest> StripeOAuthRequests { get; set; }
+        
+        public MeredithDbContext(DbContextOptions<MeredithDbContext> options)
             : base(options)
         {
         }
@@ -17,7 +23,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            var configurations = typeof(MeredithContext).GetTypeInfo()
+            modelBuilder.ForNpgsqlUseIdentityColumns();
+            var configurations = typeof(MeredithDbContext).GetTypeInfo()
                 .Assembly
                 .GetTypes()
                 .Where(t => t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract
