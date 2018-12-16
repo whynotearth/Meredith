@@ -1,7 +1,8 @@
-namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Controllers
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Models.Api.v0.Stripe;
     using Stripe;
 
     [Route("/api/v1/stripe")]
@@ -15,9 +16,9 @@ namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Controllers
         }
         
         [Route("charge/create")]
-        public async Task Create()
+        public async Task Create(CreateModel model)
         {
-            await StripeServices.CreateCharge(10000);
+            await StripeServices.CreateCharge(model.CompanyId, model.Token, model.Amount);
         }
     }
 }

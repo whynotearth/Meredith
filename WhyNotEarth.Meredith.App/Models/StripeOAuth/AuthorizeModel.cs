@@ -1,4 +1,4 @@
-namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Models.StripeOAuth
+namespace WhyNotEarth.Meredith.App.Areas.Stripe.StripeOAuth
 {
     using Newtonsoft.Json;
 
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Models.StripeOAuth
 
         [JsonProperty("error_description")]
         public string ErrorDescription { get; set; }
-        
+
         [JsonProperty("state")]
         public string State { get; set; }
     }

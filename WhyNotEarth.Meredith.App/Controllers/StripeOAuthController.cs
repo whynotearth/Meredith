@@ -1,14 +1,14 @@
 // ReSharper disable InconsistentNaming
 
-namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Controllers
+namespace WhyNotEarth.Meredith.App.Controllers
 {
     using System;
     using System.Threading.Tasks;
+    using Areas.Stripe.StripeOAuth;
     using Microsoft.AspNetCore.Mvc;
-    using Models.StripeOAuth;
     using Stripe;
 
-    [Route("/api/v1/stripe/oauth")]
+    [Route("/stripe/oauth")]
     public class StripeOAuthController : Controller
     {
         protected StripeOAuthServices StripeOAuthServices { get; }
@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Controllers
         {
             StripeOAuthServices = stripeOAuthServices;
         }
-
+        
         [Route("register/{requestId}")]
         public IActionResult Register(Guid requestId)
         {
@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Areas.Api.v1.Controllers
             }
 
             await StripeOAuthServices.Register(Guid.Parse(model.State), model.Code);
-            return Ok();
+            return View();
         }
     }
 }
