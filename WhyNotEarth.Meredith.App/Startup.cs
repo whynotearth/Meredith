@@ -44,7 +44,7 @@
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
             }
             
             app
