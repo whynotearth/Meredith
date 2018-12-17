@@ -23,7 +23,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ForNpgsqlUseIdentityColumns();
             var configurations = typeof(MeredithDbContext).GetTypeInfo()
                 .Assembly
                 .GetTypes()

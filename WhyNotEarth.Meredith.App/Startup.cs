@@ -1,5 +1,6 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
+    using System;
     using Company;
     using Data.Entity;
     using Microsoft.AspNetCore.Builder;
@@ -26,7 +27,8 @@
                 .AddOptions()
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
-                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default")))
+                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
+                    options => options.SetPostgresVersion(new Version(9, 6))))
                 .AddScoped<StripeServices>()
                 .AddScoped<StripeOAuthServices>()
                 .AddSingleton<PageDatabase>()
@@ -46,7 +48,7 @@
             {
                 context.Database.Migrate();
             }
-            
+
             app
                 .UseStaticFiles()
                 .UseMvc();
