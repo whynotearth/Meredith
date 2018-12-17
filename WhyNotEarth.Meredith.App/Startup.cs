@@ -1,11 +1,15 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
     using Company;
+    using Data.Entity;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Pages;
+    using Stripe;
+    using Stripe.Data;
 
     public class Startup
     {
@@ -20,8 +24,11 @@
         {
             services
                 .AddOptions()
-                .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o));
-            services
+                .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
+                .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
+                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default")))
+                .AddScoped<StripeServices>()
+                .AddScoped<StripeOAuthServices>()
                 .AddSingleton<PageDatabase>()
                 .AddScoped<CompanyService>()
                 .AddMvc();
@@ -34,6 +41,12 @@
                 app.UseDeveloperExceptionPage();
             }
 
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
+            {
+                context.Database.EnsureCreated();
+            }
+            
             app
                 .UseStaticFiles()
                 .UseMvc();

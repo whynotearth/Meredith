@@ -16,7 +16,8 @@
             PageDatabase = pageDatabase;
         }
 
-        public async Task<Page> GetCompanyPage(string companyKey, string pageKey)
+        public async Task<Page> 
+            GetCompanyPage(string companyKey, string pageKey)
         {
             await PageDatabase.CacheBust();
             var business = PageDatabase.Businesses
