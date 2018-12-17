@@ -25,6 +25,11 @@ namespace WhyNotEarth.Meredith.Stripe
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
+            if (accountId == null)
+            {
+                throw new Exception($"Company {companyId} not found");
+            }
+            
             var chargeService = new ChargeService();
             await chargeService.CreateAsync(new ChargeCreateOptions
             {
