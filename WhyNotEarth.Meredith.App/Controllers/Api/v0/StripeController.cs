@@ -15,8 +15,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             StripeServices = stripeServices;
         }
         
+        [HttpPost]
         [Route("charge/create")]
-        public async Task Create(CreateModel model)
+        public async Task Create([FromBody] CreateModel model)
         {
             await StripeServices.CreateCharge(model.CompanyId, model.Token, model.Amount);
         }
