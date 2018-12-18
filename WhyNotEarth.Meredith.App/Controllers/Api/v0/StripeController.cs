@@ -5,6 +5,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Models.Api.v0.Stripe;
     using Stripe;
 
+    [ApiVersion("0")]
     [Route("/api/v0/stripe")]
     public class StripeController : Controller
     {

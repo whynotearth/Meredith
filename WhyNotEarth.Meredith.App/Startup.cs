@@ -1,16 +1,20 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
     using System;
+    using System.Linq;
     using Company;
     using Data.Entity;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Pages;
     using Stripe;
     using Stripe.Data;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     public class Startup
     {
@@ -33,6 +37,18 @@
                 .AddScoped<StripeOAuthServices>()
                 .AddSingleton<PageDatabase>()
                 .AddScoped<CompanyService>()
+                .AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v0", new Info { Title = "Prototype API", Version = "v0"});
+                    c.DocInclusionPredicate((docName, apiDesc) =>
+                    {
+                        apiDesc.TryGetMethodInfo(out var methodInfo);
+                        var versions = methodInfo.DeclaringType.GetCustomAttributes(true)
+                            .OfType<ApiVersionAttribute>()
+                            .SelectMany(attr => attr.Versions);
+                        return versions.Any(v => $"v{v.ToString()}" == docName);
+                    });
+                })
                 .AddMvc();
         }
 
@@ -51,6 +67,11 @@
 
             app
                 .UseStaticFiles()
+                .UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Prototype API v0");
+                })
                 .UseMvc();
         }
     }
