@@ -39,7 +39,12 @@
                 .AddScoped<CompanyService>()
                 .AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v0", new Info { Title = "Prototype API", Version = "v0"});
+                    c.SwaggerDoc("v0", new Info
+                    {
+                        Title = "Interface API",
+                        Version = "v0",
+                        Description = "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"
+                    });
                     c.DocInclusionPredicate((docName, apiDesc) =>
                     {
                         apiDesc.TryGetMethodInfo(out var methodInfo);
@@ -70,7 +75,7 @@
                 .UseSwagger()
                 .UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Prototype API v0");
+                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
                 })
                 .UseMvc();
         }
