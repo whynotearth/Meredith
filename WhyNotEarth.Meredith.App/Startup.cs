@@ -83,7 +83,6 @@
             }
             
             app
-                .UseRollbarExceptionHandler()
                 .UseCors(builder =>
                     builder
                         .AllowAnyHeader()
