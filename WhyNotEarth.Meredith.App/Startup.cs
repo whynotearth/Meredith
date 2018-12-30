@@ -73,15 +73,15 @@
                 app.UseDeveloperExceptionPage();
             }
 
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
+            
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
                 context.Database.Migrate();
             }
             
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
-            loggerFactory.AddDebug();
             app
                 .UseRollbarExceptionHandler()
                 .UseCors(builder =>
