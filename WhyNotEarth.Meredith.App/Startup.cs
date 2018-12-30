@@ -12,6 +12,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Pages;
+    using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
     using RollbarDotNet.Logger;
     using Stripe;
@@ -34,6 +35,7 @@
                 .AddCors()
                 .AddRollbarWeb()
                 .AddOptions()
+                .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
