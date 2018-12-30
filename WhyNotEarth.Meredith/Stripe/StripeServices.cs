@@ -29,7 +29,14 @@ namespace WhyNotEarth.Meredith.Stripe
                 .FirstOrDefaultAsync();
             if (accountId == null)
             {
-                throw new Exception($"Company {companyId} not found");
+                if (await MeredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
+                {
+                    throw new Exception($"Company {companyId} does not have Stripe configured");
+                }
+                else
+                {
+                    throw new Exception($"Company {companyId} not found");
+                }
             }
 
             var chargeService = new ChargeService();
