@@ -10,7 +10,10 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Pages;
+    using RollbarDotNet.Core;
+    using RollbarDotNet.Logger;
     using Stripe;
     using Stripe.Data;
     using Swashbuckle.AspNetCore.Swagger;
@@ -29,6 +32,7 @@
         {
             services
                 .AddCors()
+                .AddRollbarWeb()
                 .AddOptions()
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
@@ -58,7 +62,7 @@
                 .AddMvc();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -70,8 +74,12 @@
             {
                 context.Database.Migrate();
             }
-
+            
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
+            loggerFactory.AddDebug();
             app
+                .UseRollbarExceptionHandler()
                 .UseCors(builder =>
                     builder
                         .AllowAnyHeader()
