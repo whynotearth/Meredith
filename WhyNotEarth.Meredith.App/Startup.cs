@@ -28,6 +28,7 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddCors()
                 .AddOptions()
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
@@ -71,6 +72,10 @@
             }
 
             app
+                .UseCors(builder =>
+                    builder
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin())
                 .UseStaticFiles()
                 .UseSwagger()
                 .UseSwaggerUI(c =>
