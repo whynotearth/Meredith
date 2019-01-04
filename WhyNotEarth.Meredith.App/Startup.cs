@@ -32,7 +32,11 @@
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services
-                .AddCors()
+                .AddCors(o => o
+                    .AddDefaultPolicy(builder => builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()))
                 .AddRollbarWeb()
                 .AddOptions()
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
@@ -50,7 +54,8 @@
                     {
                         Title = "Interface API",
                         Version = "v0",
-                        Description = "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"
+                        Description =
+                            "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"
                     });
                     c.DocInclusionPredicate((docName, apiDesc) =>
                     {
@@ -81,18 +86,11 @@
             {
                 context.Database.Migrate();
             }
-            
+
             app
-                .UseCors(builder =>
-                    builder
-                        .AllowAnyHeader()
-                        .AllowAnyOrigin())
                 .UseStaticFiles()
                 .UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
-                })
+                .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0"); })
                 .UseMvc();
         }
     }
