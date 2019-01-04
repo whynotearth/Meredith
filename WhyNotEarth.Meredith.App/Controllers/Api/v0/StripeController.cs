@@ -39,11 +39,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 Logger.LogError(exception, "Caught exception");
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
+                    status = "error",
                     error = exception.Message
                 });
             }
 
-            return Ok();
+            return Ok(new {status = "success"});
         }
     }
 }
