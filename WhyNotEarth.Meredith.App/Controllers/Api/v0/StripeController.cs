@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/stripe")]
-    [EnableCors()]
+    [EnableCors]
     public class StripeController : Controller
     {
         protected StripeServices StripeServices { get; }
