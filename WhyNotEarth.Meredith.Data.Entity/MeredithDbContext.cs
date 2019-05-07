@@ -9,12 +9,16 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
     public class MeredithDbContext : IdentityDbContext<User, Role, Guid>
     {
+        public DbSet<Card> Cards { get; set; }
+
         public DbSet<Company> Companies { get; set; }
-        
+
+        public DbSet<Page> Pages { get; set; }
+
         public DbSet<StripeAccount> StripeAccounts { get; set; }
-        
+
         public DbSet<StripeOAuthRequest> StripeOAuthRequests { get; set; }
-        
+
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options)
             : base(options)
         {
