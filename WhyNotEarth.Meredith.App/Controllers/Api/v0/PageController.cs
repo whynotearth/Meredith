@@ -70,17 +70,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 {
                     Hotel = new
                     {
-                        page.Hotel.Capacity,
-                        page.Hotel.GettingAround,
-                        page.Hotel.Location,
-                        Amenities = page.Hotel.Amenities.Select(a => a.Text).ToList(),
-                        Beds = page.Hotel.Beds.Select(b => new
+                        page.Hotel?.Capacity,
+                        page.Hotel?.GettingAround,
+                        page.Hotel?.Location,
+                        Amenities = page.Hotel?.Amenities.Select(a => a.Text).ToList(),
+                        Beds = page.Hotel?.Beds.Select(b => new
                         {
                             b.Count,
                             Type = b.BedType.ToString()
                         }).ToList(),
-                        Rules = page.Hotel.Rules.Select(r => r.Text).ToList(),
-                        Spaces = page.Hotel.Spaces.Select(s => s.Name).ToList()
+                        Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
+                        Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
                     }
                 }
 
