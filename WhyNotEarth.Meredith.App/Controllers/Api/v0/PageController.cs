@@ -28,6 +28,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var page = await MeredithDbContext.Pages
                 .Include(p => p.Company)
                 .Include(p => p.Cards)
+                .Include(p => p.Hotel)
+                .ThenInclude(p => p.Amenities)
+                .Include(p => p.Hotel)
+                .ThenInclude(p => p.Beds)
+                .Include(p => p.Hotel)
+                .ThenInclude(p => p.Rules)
+                .Include(p => p.Hotel)
+                .ThenInclude(p => p.Spaces)
                 .FirstOrDefaultAsync(p =>
                     p.Company.Slug == companySlug
                     && p.Slug == pageSlug);
@@ -57,7 +65,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         image = c.BackgroundUrl,
                         blur = "2px",
                         type = GetCardType(c.CardType)
-                    })
+                    }),
+                modules = new
+                {
+                    Hotel = new
+                    {
+                        page.Hotel.Capacity,
+                        page.Hotel.GettingAround,
+                        page.Hotel.Location,
+                        Amenities = page.Hotel.Amenities.Select(a => a.Text).ToList(),
+                        Beds = page.Hotel.Beds.Select(b => new
+                        {
+                            b.Count,
+                            Type = b.BedType.ToString()
+                        }).ToList(),
+                        Rules = page.Hotel.Rules.Select(r => r.Text).ToList(),
+                        Spaces = page.Hotel.Spaces.Select(s => s.Name).ToList()
+                    }
+                }
+
             });
         }
 

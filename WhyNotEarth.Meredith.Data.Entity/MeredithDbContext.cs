@@ -6,14 +6,25 @@ namespace WhyNotEarth.Meredith.Data.Entity
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using Models;
+    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
     public class MeredithDbContext : IdentityDbContext<User, Role, Guid>
     {
+        public DbSet<Amenity> Amenities { get; set; }
+
+        public DbSet<Bed> Beds { get; set; }
+
         public DbSet<Card> Cards { get; set; }
 
         public DbSet<Company> Companies { get; set; }
 
+        public DbSet<Hotel> Hotels { get; set; }
+
         public DbSet<Page> Pages { get; set; }
+
+        public DbSet<Rule> Rules { get; set; }
+
+        public DbSet<Space> Spaces { get; set; }
 
         public DbSet<StripeAccount> StripeAccounts { get; set; }
 
@@ -27,6 +38,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasPostgresExtension("uuid-ossp");
             var configurations = typeof(MeredithDbContext).GetTypeInfo()
                 .Assembly
                 .GetTypes()

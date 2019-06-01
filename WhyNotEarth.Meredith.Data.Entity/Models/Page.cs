@@ -4,6 +4,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
+    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
     public class Page : IEntityTypeConfiguration<Page>
     {
@@ -20,6 +21,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public Guid CompanyId { get; set; }
 
         public string Header { get; set; }
+
+        public Hotel Hotel { get; set; }
 
         public Guid Id { get; set; }
 
