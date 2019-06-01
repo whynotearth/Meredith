@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task CreateCharge(Guid companyId, string token, decimal amount, string email,
+        public async Task CreateCharge(int companyId, string token, decimal amount, string email,
             Dictionary<string, string> metadata)
         {
             var accountId = await MeredithDbContext.StripeAccounts

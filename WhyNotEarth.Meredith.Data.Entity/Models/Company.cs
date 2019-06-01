@@ -7,7 +7,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
     public class Company : IEntityTypeConfiguration<Company>
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

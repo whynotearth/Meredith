@@ -8,7 +8,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
     using Models;
     using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
-    public class MeredithDbContext : IdentityDbContext<User, Role, Guid>
+    public class MeredithDbContext : IdentityDbContext<User, Role, int>
     {
         public DbSet<Amenity> Amenities { get; set; }
 

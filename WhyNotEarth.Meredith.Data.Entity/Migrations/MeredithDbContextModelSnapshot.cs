@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<Guid>("RoleId");
+                    b.Property<int>("RoleId");
 
                     b.HasKey("Id");
 
@@ -38,7 +38,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetRoleClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
@@ -56,7 +56,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider");
 
@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ProviderDisplayName");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -73,11 +73,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
-                    b.Property<Guid>("RoleId");
+                    b.Property<int>("RoleId");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -86,9 +86,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.Property<string>("LoginProvider");
 
@@ -103,7 +103,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Card", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("BackgroundUrl");
@@ -116,7 +116,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<int>("Order");
 
-                    b.Property<Guid>("PageId");
+                    b.Property<int>("PageId");
 
                     b.Property<string>("PosterUrl");
 
@@ -131,7 +131,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Company", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
@@ -145,10 +145,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("HotelId");
+                    b.Property<int>("HotelId");
 
                     b.Property<string>("Text");
 
@@ -161,14 +161,14 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Bed", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("BedType");
 
                     b.Property<int>("Count");
 
-                    b.Property<Guid>("HotelId");
+                    b.Property<int>("HotelId");
 
                     b.HasKey("Id");
 
@@ -179,7 +179,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("Capacity");
@@ -188,7 +188,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("Location");
 
-                    b.Property<Guid>("PageId");
+                    b.Property<int>("PageId");
 
                     b.HasKey("Id");
 
@@ -200,10 +200,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("HotelId");
+                    b.Property<int>("HotelId");
 
                     b.Property<string>("Text");
 
@@ -216,10 +216,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("HotelId");
+                    b.Property<int>("HotelId");
 
                     b.Property<string>("Name");
 
@@ -232,7 +232,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("BackgroundImage");
@@ -241,7 +241,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("CallToActionLink");
 
-                    b.Property<Guid>("CompanyId");
+                    b.Property<int>("CompanyId");
 
                     b.Property<string>("Header");
 
@@ -260,7 +260,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Role", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
@@ -283,13 +283,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.StripeAccount", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccessToken")
                         .HasMaxLength(64);
 
-                    b.Property<Guid>("CompanyId");
+                    b.Property<int>("CompanyId");
 
                     b.Property<bool>("LiveMode");
 
@@ -320,7 +320,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CompanyId");
+                    b.Property<int>("CompanyId");
 
                     b.HasKey("Id");
 
@@ -331,7 +331,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
@@ -379,7 +379,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Role")
                         .WithMany()
@@ -387,7 +387,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()
@@ -395,7 +395,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()
@@ -403,7 +403,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Role")
                         .WithMany()
@@ -416,7 +416,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()

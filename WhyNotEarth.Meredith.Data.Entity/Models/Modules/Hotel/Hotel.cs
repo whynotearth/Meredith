@@ -15,11 +15,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public string GettingAround { get; set; }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public Page Page { get; set; }
 
-        public Guid PageId { get; set; }
+        public int PageId { get; set; }
 
         public string Location { get; set; }
 

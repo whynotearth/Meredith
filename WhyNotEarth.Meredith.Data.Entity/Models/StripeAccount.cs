@@ -10,8 +10,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public Company Company { get; set; }
 
-        public Guid CompanyId { get; set; }
-        public Guid Id { get; set; }
+        public int CompanyId { get; set; }
+
+        public int Id { get; set; }
 
         public bool LiveMode { get; set; }
 

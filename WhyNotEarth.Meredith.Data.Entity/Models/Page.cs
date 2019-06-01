@@ -18,13 +18,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public Company Company { get; set; }
 
-        public Guid CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         public string Header { get; set; }
 
         public Hotel Hotel { get; set; }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

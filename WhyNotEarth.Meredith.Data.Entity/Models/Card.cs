@@ -17,11 +17,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string CallToActionUrl { get; set; }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public Page Page { get; set; }
 
-        public Guid PageId { get; set; }
+        public int PageId { get; set; }
 
         public string PosterUrl { get; set; }
 

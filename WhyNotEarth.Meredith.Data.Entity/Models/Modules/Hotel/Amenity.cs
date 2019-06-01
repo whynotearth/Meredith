@@ -8,9 +8,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public Hotel Hotel { get; set; }
 
-        public Guid HotelId { get; set; }
+        public int HotelId { get; set; }
 
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string Text { get; set; }
 
