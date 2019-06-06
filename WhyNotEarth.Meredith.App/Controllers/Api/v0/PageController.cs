@@ -37,8 +37,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Include(p => p.Hotel)
                 .ThenInclude(p => p.Spaces)
                 .FirstOrDefaultAsync(p =>
-                    p.Company.Slug == companySlug
-                    && p.Slug == pageSlug);
+                    p.Company.Slug.ToLower() == companySlug.ToLower()
+                    && p.Slug.ToLower() == pageSlug.ToLower());
 
             if (page == null)
             {
@@ -47,6 +47,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
             return Ok(new
             {
+                id = page.Id,
                 brand = page.Company.Slug,
                 name = page.Name,
                 title = page.Title,
