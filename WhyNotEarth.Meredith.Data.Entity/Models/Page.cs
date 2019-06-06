@@ -20,11 +20,15 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public int CompanyId { get; set; }
 
+        public string FeaturedImage { get; set; }
+
         public string Header { get; set; }
 
         public Hotel Hotel { get; set; }
 
         public int Id { get; set; }
+
+        public ICollection<Image> Images { get; set; }
 
         public string Name { get; set; }
 

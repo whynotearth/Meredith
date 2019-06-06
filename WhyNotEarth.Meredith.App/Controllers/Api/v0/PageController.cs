@@ -36,6 +36,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .ThenInclude(p => p.Rules)
                 .Include(p => p.Hotel)
                 .ThenInclude(p => p.Spaces)
+                .Include(p => p.Images)
                 .FirstOrDefaultAsync(p =>
                     p.Company.Slug.ToLower() == companySlug.ToLower()
                     && p.Slug.ToLower() == pageSlug.ToLower());
@@ -53,7 +54,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 title = page.Title,
                 h2 = page.Header,
                 slug = page.Slug,
-                image = page.BackgroundImage,
+                backgroundImage = page.BackgroundImage,
+                featuredImage = page.FeaturedImage,
+                images = page.Images
+                    .OrderBy(i => i.Order)
+                    .Select(i => new
+                    {
+                        i.Order,
+                        i.Url
+                    }).ToArray(),
                 ctaText = page.CallToAction,
                 ctaLink = page.CallToActionLink,
                 stories = page.Cards

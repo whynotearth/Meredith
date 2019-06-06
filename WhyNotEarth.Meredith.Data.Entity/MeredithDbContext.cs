@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Hotel> Hotels { get; set; }
 
+        public DbSet<Image> Images { get; set; }
+
         public DbSet<Page> Pages { get; set; }
 
         public DbSet<Rule> Rules { get; set; }
