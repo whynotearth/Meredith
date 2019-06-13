@@ -77,7 +77,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         blur = "2px",
                         type = GetCardType(c.CardType)
                     }),
-                Custom = JsonConvert.DeserializeObject<dynamic>(page.Custom),
+                Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
                 modules = new
                 {
                     Hotel = new
