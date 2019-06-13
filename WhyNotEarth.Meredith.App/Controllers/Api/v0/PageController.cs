@@ -6,6 +6,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Newtonsoft.Json;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
@@ -76,6 +77,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         blur = "2px",
                         type = GetCardType(c.CardType)
                     }),
+                Custom = JsonConvert.DeserializeObject<dynamic>(page.Custom),
                 modules = new
                 {
                     Hotel = new

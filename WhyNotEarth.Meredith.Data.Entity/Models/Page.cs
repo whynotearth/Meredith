@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public int CompanyId { get; set; }
 
+        public string Custom { get; set; }
+
         public string FeaturedImage { get; set; }
 
         public string Header { get; set; }
@@ -38,7 +40,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public void Configure(EntityTypeBuilder<Page> builder)
         {
-
+            builder.Property(e => e.Custom).HasColumnType("jsonb");
         }
     }
 }
