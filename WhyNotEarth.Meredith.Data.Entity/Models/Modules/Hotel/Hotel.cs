@@ -17,11 +17,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public int Id { get; set; }
 
+        public string Location { get; set; }
+
         public Page Page { get; set; }
 
         public int PageId { get; set; }
 
-        public string Location { get; set; }
+        public ICollection<Price> Prices { get; set; }
 
         public ICollection<Rule> Rules { get; set; }
 
