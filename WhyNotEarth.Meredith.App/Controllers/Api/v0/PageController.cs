@@ -41,7 +41,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .FirstOrDefaultAsync(p =>
                     p.Company.Slug.ToLower() == companySlug.ToLower()
                     && p.Slug.ToLower() == pageSlug.ToLower());
-
             if (page == null)
             {
                 return NotFound();
@@ -49,24 +48,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
             return Ok(new
             {
-                id = page.Id,
-                brand = page.Company.Slug,
-                name = page.Name,
-                title = page.Title,
-                h2 = page.Header,
-                slug = page.Slug,
-                backgroundImage = page.BackgroundImage,
-                featuredImage = page.FeaturedImage,
-                images = page.Images
+                Id = page.Id,
+                Brand = page.Company.Slug,
+                Name = page.Name,
+                Title = page.Title,
+                page.Description,
+                H2 = page.Header,
+                Slug = page.Slug,
+                BackgroundImage = page.BackgroundImage,
+                FeaturedImage = page.FeaturedImage,
+                Images = page.Images
                     .OrderBy(i => i.Order)
                     .Select(i => new
                     {
                         i.Order,
                         i.Url
                     }).ToArray(),
-                ctaText = page.CallToAction,
-                ctaLink = page.CallToActionLink,
-                stories = page.Cards
+                CtaText = page.CallToAction,
+                CtaLink = page.CallToActionLink,
+                Stories = page.Cards
                     .OrderBy(c => c.Order)
                     .Select(c => new
                     {
@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         type = GetCardType(c.CardType)
                     }),
                 Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
-                modules = new
+                Modules = new
                 {
                     Hotel = new
                     {
@@ -95,7 +95,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
                     }
                 }
-
             });
         }
 

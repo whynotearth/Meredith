@@ -22,6 +22,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string Custom { get; set; }
 
+        public string Description { get; set; }
+
         public string FeaturedImage { get; set; }
 
         public string Header { get; set; }
