@@ -2,7 +2,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
