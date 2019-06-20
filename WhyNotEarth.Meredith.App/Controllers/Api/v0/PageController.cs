@@ -69,11 +69,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [HttpGet]
-        [Route("by-company/{companyId}/categories/by-name/{categoryName}")]
-        public async Task<IActionResult> ByCompanyByCategoryName(int companyId, string categoryName)
+        [Route("slug/{companySlug}/categories/by-name/{categoryName}")]
+        public async Task<IActionResult> ByCompanyByCategoryName(string companySlug, string categoryName)
         {
             var pages = await PageIncludes()
-                .Where(p => p.CompanyId == companyId
+                .Where(p => p.Slug == companySlug
                     && p.Category.Name == categoryName)
                 .ToListAsync();
             return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
