@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> ByCompanyByCategoryName(string companySlug, string categoryName)
         {
             var pages = await PageIncludes()
-                .Where(p => p.Slug == companySlug
+                .Where(p => p.Company.Slug == companySlug
                     && p.Category.Name == categoryName)
                 .ToListAsync();
             return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
