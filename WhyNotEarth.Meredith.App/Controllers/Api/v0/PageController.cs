@@ -2,6 +2,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private MeredithDbContext MeredithDbContext { get; }
 
+        private IQueryable<Page> PageIncludes() => MeredithDbContext.Pages
+            .Include(p => p.Company)
+            .Include(p => p.Cards)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.Amenities)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.Beds)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.Rules)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.Spaces)
+            .Include(p => p.Images);
+
         public PageController(MeredithDbContext meredithDbContext)
         {
             MeredithDbContext = meredithDbContext;
@@ -26,18 +40,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [Route("slug/{companySlug}/{pageSlug}")]
         public async Task<IActionResult> Get(string companySlug, string pageSlug)
         {
-            var page = await MeredithDbContext.Pages
-                .Include(p => p.Company)
-                .Include(p => p.Cards)
-                .Include(p => p.Hotel)
-                .ThenInclude(p => p.Amenities)
-                .Include(p => p.Hotel)
-                .ThenInclude(p => p.Beds)
-                .Include(p => p.Hotel)
-                .ThenInclude(p => p.Rules)
-                .Include(p => p.Hotel)
-                .ThenInclude(p => p.Spaces)
-                .Include(p => p.Images)
+            var page = await PageIncludes()
                 .FirstOrDefaultAsync(p =>
                     p.Company.Slug.ToLower() == companySlug.ToLower()
                     && p.Slug.ToLower() == pageSlug.ToLower());
@@ -46,27 +49,68 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(new
+            return Ok(new[] { page }.AsQueryable().Select(PageToReturn).FirstOrDefault());
+        }
+
+        [HttpGet]
+        [Route("slug/{companySlug}")]
+        public async Task<IActionResult> GetPages(string companySlug)
+        {
+            var pages = await PageIncludes()
+                .Where(p =>
+                    p.Company.Slug.ToLower() == companySlug.ToLower())
+                .ToListAsync();
+            if (pages.Count == 0)
             {
-                Id = page.Id,
-                Brand = page.Company.Slug,
-                Name = page.Name,
-                Title = page.Title,
-                page.Description,
-                H2 = page.Header,
-                Slug = page.Slug,
-                BackgroundImage = page.BackgroundImage,
-                FeaturedImage = page.FeaturedImage,
-                Images = page.Images
+                return NotFound();
+            }
+
+            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+        }
+
+        [HttpGet]
+        [Route("by-company/{companyId}/categories/by-name/{categoryName}")]
+        public async Task<IActionResult> ByCompanyByCategoryName(int companyId, string categoryName)
+        {
+            var pages = await PageIncludes()
+                .Where(p => p.CompanyId == companyId
+                    && p.Category.Name == categoryName)
+                .ToListAsync();
+            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+        }
+
+        private static string GetCardType(Card.CardTypes cardType)
+        {
+            switch (cardType)
+            {
+                case Card.CardTypes.Card:
+                    return "story-card";
+                default:
+                    throw new Exception($"Card type {cardType} not mapped.");
+            }
+        }
+
+        private Func<Page, dynamic> PageToReturn = (page) => new
+        {
+            Id = page.Id,
+            Brand = page.Company.Slug,
+            Name = page.Name,
+            Title = page.Title,
+            page.Description,
+            H2 = page.Header,
+            Slug = page.Slug,
+            BackgroundImage = page.BackgroundImage,
+            FeaturedImage = page.FeaturedImage,
+            Images = page.Images
                     .OrderBy(i => i.Order)
                     .Select(i => new
                     {
                         i.Order,
                         i.Url
                     }).ToArray(),
-                CtaText = page.CallToAction,
-                CtaLink = page.CallToActionLink,
-                Stories = page.Cards
+            CtaText = page.CallToAction,
+            CtaLink = page.CallToActionLink,
+            Stories = page.Cards
                     .OrderBy(c => c.Order)
                     .Select(c => new
                     {
@@ -77,36 +121,24 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         blur = "2px",
                         type = GetCardType(c.CardType)
                     }),
-                Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
-                Modules = new
-                {
-                    Hotel = new
-                    {
-                        page.Hotel?.Capacity,
-                        page.Hotel?.GettingAround,
-                        page.Hotel?.Location,
-                        Amenities = page.Hotel?.Amenities.Select(a => a.Text).ToList(),
-                        Beds = page.Hotel?.Beds.Select(b => new
-                        {
-                            b.Count,
-                            Type = b.BedType.ToString()
-                        }).ToList(),
-                        Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
-                        Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
-                    }
-                }
-            });
-        }
-
-        private string GetCardType(Card.CardTypes cardType)
-        {
-            switch (cardType)
+            Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
+            Modules = new
             {
-                case Card.CardTypes.Card:
-                    return "story-card";
-                default:
-                    throw new Exception($"Card type {cardType} not mapped.");
+                Hotel = new
+                {
+                    page.Hotel?.Capacity,
+                    page.Hotel?.GettingAround,
+                    page.Hotel?.Location,
+                    Amenities = page.Hotel?.Amenities.Select(a => a.Text).ToList(),
+                    Beds = page.Hotel?.Beds.Select(b => new
+                    {
+                        b.Count,
+                        Type = b.BedType.ToString()
+                    }).ToList(),
+                    Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
+                    Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
+                }
             }
-        }
+        };
     }
 }

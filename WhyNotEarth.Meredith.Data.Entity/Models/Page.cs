@@ -1,6 +1,5 @@
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    using System;
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,6 +14,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public string CallToActionLink { get; set; }
 
         public ICollection<Card> Cards { get; set; }
+
+        public Category Category { get; set; }
+
+        public int? CategoryId { get; set; }
 
         public Company Company { get; set; }
 

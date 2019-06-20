@@ -16,6 +16,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Card> Cards { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public DbSet<Company> Companies { get; set; }
 
         public DbSet<Hotel> Hotels { get; set; }
