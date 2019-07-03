@@ -132,6 +132,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     Beds = page.Hotel?.Beds.Select(b => new
                     {
                         b.Count,
+                        Id = (int)b.BedType,
                         Type = b.BedType.ToString()
                     }).ToList(),
                     Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
