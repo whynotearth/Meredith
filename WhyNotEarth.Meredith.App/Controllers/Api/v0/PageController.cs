@@ -125,6 +125,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 Hotel = new
                 {
+                    page.Hotel?.Id,
                     page.Hotel?.Capacity,
                     page.Hotel?.GettingAround,
                     page.Hotel?.Location,
