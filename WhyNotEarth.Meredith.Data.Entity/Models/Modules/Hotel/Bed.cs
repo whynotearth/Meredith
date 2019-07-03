@@ -10,7 +10,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         {
             King,
             Queen,
-            Twin
+            Twin,
+            Single
         };
 
         public BedTypes BedType { get; set; }
