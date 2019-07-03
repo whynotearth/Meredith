@@ -1,6 +1,5 @@
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Stripe
 {
-    using System;
     using System.Collections.Generic;
 
     public class CreateModel
