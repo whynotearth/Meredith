@@ -10,18 +10,19 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    [Migration("20181217125607_Initial")]
+    [Migration("20190601054950_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -30,7 +31,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<Guid>("RoleId");
+                    b.Property<int>("RoleId");
 
                     b.HasKey("Id");
 
@@ -39,7 +40,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetRoleClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -48,7 +49,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
@@ -57,7 +58,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider");
 
@@ -65,7 +66,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("ProviderDisplayName");
 
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -74,11 +75,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
-                    b.Property<Guid>("RoleId");
+                    b.Property<int>("RoleId");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -87,9 +88,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<Guid>("UserId");
+                    b.Property<int>("UserId");
 
                     b.Property<string>("LoginProvider");
 
@@ -104,52 +105,36 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Card", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BackgroundUrl")
-                        .HasMaxLength(256);
+                    b.Property<string>("BackgroundUrl");
 
-                    b.Property<string>("CallToAction")
-                        .HasMaxLength(256);
+                    b.Property<string>("CallToAction");
 
-                    b.Property<string>("CallToActionUrl")
-                        .HasMaxLength(256);
+                    b.Property<string>("CallToActionUrl");
 
-                    b.Property<Guid>("PageId");
+                    b.Property<int>("CardType");
 
-                    b.Property<string>("PosterUrl")
-                        .HasMaxLength(256);
+                    b.Property<int>("Order");
+
+                    b.Property<int>("PageId");
+
+                    b.Property<string>("PosterUrl");
+
+                    b.Property<string>("Text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PageId");
 
-                    b.ToTable("Card");
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Company", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(64);
-
-                    b.Property<string>("Slug")
-                        .HasMaxLength(64);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("CompanyId");
 
                     b.Property<string>("Name");
 
@@ -157,14 +142,127 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.HasKey("Id");
 
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Amenities","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Bed", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BedType");
+
+                    b.Property<int>("Count");
+
+                    b.Property<int>("HotelId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Beds","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Capacity");
+
+                    b.Property<string>("GettingAround");
+
+                    b.Property<string>("Location");
+
+                    b.Property<int>("PageId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId")
+                        .IsUnique();
+
+                    b.ToTable("Hotels","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Rules","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Spaces","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("BackgroundImage");
+
+                    b.Property<string>("CallToAction");
+
+                    b.Property<string>("CallToActionLink");
+
+                    b.Property<int>("CompanyId");
+
+                    b.Property<string>("Header");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Slug");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Page");
+                    b.ToTable("Pages");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Role", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
@@ -187,13 +285,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.StripeAccount", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AccessToken")
                         .HasMaxLength(64);
 
-                    b.Property<Guid>("CompanyId");
+                    b.Property<int>("CompanyId");
 
                     b.Property<bool>("LiveMode");
 
@@ -224,7 +322,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CompanyId");
+                    b.Property<int>("CompanyId");
 
                     b.HasKey("Id");
 
@@ -235,7 +333,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
@@ -283,7 +381,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Role")
                         .WithMany()
@@ -291,7 +389,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()
@@ -299,7 +397,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()
@@ -307,7 +405,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Role")
                         .WithMany()
@@ -320,7 +418,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User")
                         .WithMany()
@@ -331,15 +429,55 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Card", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
-                        .WithMany()
+                        .WithMany("Cards")
                         .HasForeignKey("PageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("Amenities")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Bed", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("Beds")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
+                        .WithOne("Hotel")
+                        .HasForeignKey("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "PageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("Rules")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("Spaces")
+                        .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
-                        .WithMany()
+                        .WithMany("Pages")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190620043227_AddPageDescription")]
+    partial class AddPageDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,18 +129,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("PageId");
 
                     b.ToTable("Cards");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Company", b =>
@@ -291,8 +281,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("CallToActionLink");
 
-                    b.Property<int?>("CategoryId");
-
                     b.Property<int>("CompanyId");
 
                     b.Property<string>("Custom")
@@ -311,8 +299,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<string>("Title");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CompanyId");
 
@@ -551,10 +537,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
                         .WithMany("Pages")
                         .HasForeignKey("CompanyId")

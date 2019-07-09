@@ -8,13 +8,20 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "ModuleHotel");
+
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:uuid-ossp", ",,");
+
             migrationBuilder.CreateTable(
                 name: "Companies",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 64, nullable: true),
-                    Slug = table.Column<string>(maxLength: 64, nullable: true)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Name = table.Column<string>(nullable: true),
+                    Slug = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,7 +32,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true)
@@ -39,7 +47,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -61,19 +70,25 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Page",
+                name: "Pages",
                 columns: table => new
                 {
-                    CompanyId = table.Column<Guid>(nullable: false),
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    BackgroundImage = table.Column<string>(nullable: true),
+                    CallToAction = table.Column<string>(nullable: true),
+                    CallToActionLink = table.Column<string>(nullable: true),
+                    CompanyId = table.Column<int>(nullable: false),
+                    Header = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Slug = table.Column<string>(nullable: true)
+                    Slug = table.Column<string>(nullable: true),
+                    Title = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Page", x => x.Id);
+                    table.PrimaryKey("PK_Pages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Page_Companies_CompanyId",
+                        name: "FK_Pages_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
@@ -84,9 +99,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "StripeAccounts",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     AccessToken = table.Column<string>(maxLength: 64, nullable: true),
-                    CompanyId = table.Column<Guid>(nullable: false),
-                    Id = table.Column<Guid>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: false),
                     LiveMode = table.Column<bool>(nullable: false),
                     RefreshToken = table.Column<string>(maxLength: 64, nullable: true),
                     Scope = table.Column<string>(maxLength: 32, nullable: true),
@@ -109,8 +125,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "StripeOAuthRequests",
                 columns: table => new
                 {
-                    CompanyId = table.Column<Guid>(nullable: false),
-                    Id = table.Column<Guid>(nullable: false)
+                    Id = table.Column<Guid>(nullable: false),
+                    CompanyId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,7 +145,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    RoleId = table.Column<Guid>(nullable: false),
+                    RoleId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -150,7 +166,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
-                    UserId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
                 },
@@ -172,7 +188,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     LoginProvider = table.Column<string>(nullable: false),
                     ProviderKey = table.Column<string>(nullable: false),
                     ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: false)
+                    UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,8 +205,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(nullable: false),
-                    RoleId = table.Column<Guid>(nullable: false)
+                    UserId = table.Column<int>(nullable: false),
+                    RoleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -213,7 +229,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
                     LoginProvider = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Value = table.Column<string>(nullable: true)
@@ -230,23 +246,139 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Card",
+                name: "Cards",
                 columns: table => new
                 {
-                    BackgroundUrl = table.Column<string>(maxLength: 256, nullable: true),
-                    CallToAction = table.Column<string>(maxLength: 256, nullable: true),
-                    CallToActionUrl = table.Column<string>(maxLength: 256, nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
-                    PageId = table.Column<Guid>(nullable: false),
-                    PosterUrl = table.Column<string>(maxLength: 256, nullable: true)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    BackgroundUrl = table.Column<string>(nullable: true),
+                    CallToAction = table.Column<string>(nullable: true),
+                    CallToActionUrl = table.Column<string>(nullable: true),
+                    PageId = table.Column<int>(nullable: false),
+                    PosterUrl = table.Column<string>(nullable: true),
+                    CardType = table.Column<int>(nullable: false),
+                    Order = table.Column<int>(nullable: false),
+                    Text = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Card", x => x.Id);
+                    table.PrimaryKey("PK_Cards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Card_Page_PageId",
+                        name: "FK_Cards_Pages_PageId",
                         column: x => x.PageId,
-                        principalTable: "Page",
+                        principalTable: "Pages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Hotels",
+                schema: "ModuleHotel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    Capacity = table.Column<int>(nullable: false),
+                    GettingAround = table.Column<string>(nullable: true),
+                    PageId = table.Column<int>(nullable: false),
+                    Location = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Hotels", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Hotels_Pages_PageId",
+                        column: x => x.PageId,
+                        principalTable: "Pages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Amenities",
+                schema: "ModuleHotel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    HotelId = table.Column<int>(nullable: false),
+                    Text = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Amenities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Amenities_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalSchema: "ModuleHotel",
+                        principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Beds",
+                schema: "ModuleHotel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    BedType = table.Column<int>(nullable: false),
+                    Count = table.Column<int>(nullable: false),
+                    HotelId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Beds", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Beds_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalSchema: "ModuleHotel",
+                        principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rules",
+                schema: "ModuleHotel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    HotelId = table.Column<int>(nullable: false),
+                    Text = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Rules_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalSchema: "ModuleHotel",
+                        principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Spaces",
+                schema: "ModuleHotel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
+                    HotelId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Spaces", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Spaces_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalSchema: "ModuleHotel",
+                        principalTable: "Hotels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -272,13 +404,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Card_PageId",
-                table: "Card",
+                name: "IX_Cards_PageId",
+                table: "Cards",
                 column: "PageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Page_CompanyId",
-                table: "Page",
+                name: "IX_Pages_CompanyId",
+                table: "Pages",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
@@ -307,6 +439,37 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 table: "Users",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Amenities_HotelId",
+                schema: "ModuleHotel",
+                table: "Amenities",
+                column: "HotelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Beds_HotelId",
+                schema: "ModuleHotel",
+                table: "Beds",
+                column: "HotelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Hotels_PageId",
+                schema: "ModuleHotel",
+                table: "Hotels",
+                column: "PageId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rules_HotelId",
+                schema: "ModuleHotel",
+                table: "Rules",
+                column: "HotelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Spaces_HotelId",
+                schema: "ModuleHotel",
+                table: "Spaces",
+                column: "HotelId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -327,7 +490,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Card");
+                name: "Cards");
 
             migrationBuilder.DropTable(
                 name: "StripeAccounts");
@@ -336,13 +499,33 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "StripeOAuthRequests");
 
             migrationBuilder.DropTable(
+                name: "Amenities",
+                schema: "ModuleHotel");
+
+            migrationBuilder.DropTable(
+                name: "Beds",
+                schema: "ModuleHotel");
+
+            migrationBuilder.DropTable(
+                name: "Rules",
+                schema: "ModuleHotel");
+
+            migrationBuilder.DropTable(
+                name: "Spaces",
+                schema: "ModuleHotel");
+
+            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Page");
+                name: "Hotels",
+                schema: "ModuleHotel");
+
+            migrationBuilder.DropTable(
+                name: "Pages");
 
             migrationBuilder.DropTable(
                 name: "Companies");

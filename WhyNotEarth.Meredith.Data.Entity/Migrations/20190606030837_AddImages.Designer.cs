@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190606030837_AddImages")]
+    partial class AddImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,18 +131,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Cards");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -228,26 +218,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Hotels","ModuleHotel");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Price", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric(5, 2)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<int>("HotelId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
-
-                    b.ToTable("Prices","ModuleHotel");
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
                 {
                     b.Property<int>("Id")
@@ -291,14 +261,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("CallToActionLink");
 
-                    b.Property<int?>("CategoryId");
-
                     b.Property<int>("CompanyId");
-
-                    b.Property<string>("Custom")
-                        .HasColumnType("jsonb");
-
-                    b.Property<string>("Description");
 
                     b.Property<string>("FeaturedImage");
 
@@ -311,8 +274,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<string>("Title");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CompanyId");
 
@@ -525,14 +486,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Price", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
-                        .WithMany("Prices")
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
@@ -551,10 +504,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
-
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
                         .WithMany("Pages")
                         .HasForeignKey("CompanyId")

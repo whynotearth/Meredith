@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    public class Role : IdentityRole<Guid>, IEntityTypeConfiguration<Role>
+    public class Role : IdentityRole<int>, IEntityTypeConfiguration<Role>
     {
         public void Configure(EntityTypeBuilder<Role> builder)
         {

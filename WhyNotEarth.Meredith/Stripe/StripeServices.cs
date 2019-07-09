@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task CreateCharge(Guid companyId, string token, decimal amount, string email,
+        public async Task CreateCharge(int companyId, string token, decimal amount, string email,
             Dictionary<string, string> metadata)
         {
             var accountId = await MeredithDbContext.StripeAccounts
@@ -42,10 +42,10 @@ namespace WhyNotEarth.Meredith.Stripe
             var chargeService = new ChargeService();
             await chargeService.CreateAsync(new ChargeCreateOptions
             {
-                Amount = (int) (amount * 100),
+                Amount = (int)(amount * 100),
                 Currency = "usd",
                 SourceId = token,
-                ApplicationFee = (int) Math.Ceiling(amount * 0.12m),
+                ApplicationFeeAmount = (int)Math.Ceiling(amount * 0.12m),
                 Destination = new ChargeDestinationCreateOptions
                 {
                     Account = accountId

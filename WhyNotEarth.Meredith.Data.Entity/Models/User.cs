@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    public class User : IdentityUser<Guid>, IEntityTypeConfiguration<User>
+    public class User : IdentityUser<int>, IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {

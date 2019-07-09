@@ -1,8 +1,8 @@
-# MEREDITH 
+# MEREDITH
 
 MEREDITH is a way to build web pages that render with reliable and fast performance in a single experience. Built for the Cambodian and other developing countries in mind, it streamlines the of creating a basic yet performant website.
 
-## We'd love your help making MEREDITH better!
+## We'd love your help making MEREDITH better
 
 There are a lot of ways you can contribute to making MEREDITH better! You can report bugs and feature requests or ideally become an ongoing participant in the MEREDITH Project community and contribute code to the open source project.
 
