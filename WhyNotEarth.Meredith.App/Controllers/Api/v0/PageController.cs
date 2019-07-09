@@ -7,6 +7,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
+    using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
@@ -89,41 +90,46 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             }
         }
 
-        private Func<Page, dynamic> PageToReturn = (page) => new
+        private Func<Page, PageModel> PageToReturn = (page) =>
         {
-            Id = page.Id,
-            Brand = page.Company.Slug,
-            Name = page.Name,
-            Title = page.Title,
-            page.Description,
-            H2 = page.Header,
-            Slug = page.Slug,
-            BackgroundImage = page.BackgroundImage,
-            FeaturedImage = page.FeaturedImage,
-            Images = page.Images
-                    .OrderBy(i => i.Order)
-                    .Select(i => new
-                    {
-                        i.Order,
-                        i.Url
-                    }).ToArray(),
-            CtaText = page.CallToAction,
-            CtaLink = page.CallToActionLink,
-            Stories = page.Cards
-                    .OrderBy(c => c.Order)
-                    .Select(c => new
-                    {
-                        content = c.Text,
-                        ctaText = c.CallToAction,
-                        ctaLink = c.CallToActionUrl,
-                        image = c.BackgroundUrl,
-                        blur = "2px",
-                        type = GetCardType(c.CardType)
-                    }),
-            Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
-            Modules = new
+            var pageModel = new PageModel
             {
-                Hotel = new
+                Id = page.Id,
+                Brand = page.Company.Slug,
+                Name = page.Name,
+                Title = page.Title,
+                Description = page.Description,
+                H2 = page.Header,
+                Slug = page.Slug,
+                BackgroundImage = page.BackgroundImage,
+                FeaturedImage = page.FeaturedImage,
+                Images = page.Images
+                    .OrderBy(i => i.Order)
+                    .Select(i => new Models.Api.V0.Page.Image
+                    {
+                        Order = i.Order,
+                        Url = i.Url
+                    }).ToList(),
+                CtaText = page.CallToAction,
+                CtaLink = page.CallToActionLink,
+                Stories = page.Cards
+                    .OrderBy(c => c.Order)
+                    .Select(c => new Story
+                    {
+                        Content = c.Text,
+                        CtaText = c.CallToAction,
+                        CtaLink = c.CallToActionUrl,
+                        Image = c.BackgroundUrl,
+                        Blur = "2px",
+                        Type = GetCardType(c.CardType)
+                    })
+                    .ToList(),
+                Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
+            };
+
+            if (page.Hotel != null)
+            {
+                pageModel.Modules.Add("hotel", new
                 {
                     page.Hotel?.Id,
                     page.Hotel?.Capacity,
@@ -138,8 +144,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     }).ToList(),
                     Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
                     Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
-                }
+                });
             }
+
+            return pageModel;
         };
     }
 }
