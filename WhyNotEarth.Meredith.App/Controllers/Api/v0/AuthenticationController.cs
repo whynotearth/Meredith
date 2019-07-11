@@ -12,7 +12,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
     using WhyNotEarth.Meredith.App.Configuration;

@@ -1,6 +1,7 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
     using System;
+    using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Text;
@@ -73,6 +74,18 @@
                             .SelectMany(attr => attr.Versions);
                         return versions.Any(v => $"v{v.ToString()}" == docName);
                     });
+                    c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey"
+                    });
+                    var security = new Dictionary<string, IEnumerable<string>>
+                    {
+                        {"Bearer", new string[] { }},
+                    };
+                    c.AddSecurityRequirement(security);
                 });
             services
                 .AddIdentity<User, Role>()
