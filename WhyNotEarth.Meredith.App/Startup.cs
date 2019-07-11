@@ -1,16 +1,21 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
     using System;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Text;
     using Company;
     using Data.Entity;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
     using Pages;
     using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
@@ -19,6 +24,7 @@
     using Stripe.Data;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using WhyNotEarth.Meredith.Data.Entity.Models;
 
     public class Startup
     {
@@ -65,7 +71,33 @@
                             .SelectMany(attr => attr.Versions);
                         return versions.Any(v => $"v{v.ToString()}" == docName);
                     });
+                });
+            services
+                .AddIdentity<User, Role>()
+                    .AddEntityFrameworkStores<MeredithDbContext>()
+                    .AddDefaultTokenProviders();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
                 })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+            services
                 .AddMvc();
 
             return services.BuildServiceProvider();
@@ -87,6 +119,7 @@
             }
 
             app
+                .UseAuthentication()
                 .UseStaticFiles()
                 .UseSwagger()
                 .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0"); })
