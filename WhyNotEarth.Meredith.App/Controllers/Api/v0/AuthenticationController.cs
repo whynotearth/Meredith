@@ -13,7 +13,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using Microsoft.IdentityModel.Tokens;
+    using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
@@ -24,17 +26,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private SignInManager<User> SignInManager { get; }
         private UserManager<User> UserManager { get; }
-        private IConfiguration Configuration { get; }
+        private JwtOptions JwtOptions { get; }
 
         public AuthenticationController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IConfiguration configuration
+            IOptions<JwtOptions> jwtOptions
             )
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            Configuration = configuration;
+            JwtOptions = jwtOptions.Value;
         }
 
         [Route("login")]
@@ -96,13 +98,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(Configuration["Jwt:ExpireDays"]));
+            var expires = DateTime.Now.AddDays(JwtOptions.ExpireDays);
 
             var token = new JwtSecurityToken(
-                Configuration["Jwt:Issuer"],
-                Configuration["Jwt:Issuer"],
+                JwtOptions.Issuer,
+                JwtOptions.Issuer,
                 claims,
                 expires: expires,
                 signingCredentials: creds

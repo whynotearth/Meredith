@@ -24,6 +24,7 @@
     using Stripe.Data;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
     public class Startup
@@ -47,6 +48,7 @@
                 .AddOptions()
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
+                .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
                 .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
                     options => options.SetPostgresVersion(new Version(9, 6))))
@@ -76,6 +78,8 @@
                 .AddIdentity<User, Role>()
                     .AddEntityFrameworkStores<MeredithDbContext>()
                     .AddDefaultTokenProviders();
+
+            var jwtOptions = Configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication(options =>
@@ -91,9 +95,9 @@
                     cfg.SaveToken = true;
                     cfg.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidIssuer = Configuration["Jwt:Issuer"],
-                        ValidAudience = Configuration["Jwt:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
