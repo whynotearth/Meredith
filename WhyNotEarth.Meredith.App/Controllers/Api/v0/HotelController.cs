@@ -19,24 +19,5 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         {
             MeredithDbContext = meredithDbContext;
         }
-
-        [HttpGet]
-        [Route("{hotelId}/prices/")]
-        public async Task<IActionResult> Prices(int hotelId, DateTime startDate, DateTime endDate)
-        {
-            var prices = await MeredithDbContext.Prices
-                .Where(p => p.HotelId == hotelId
-                    && p.Date >= startDate
-                    && p.Date <= endDate)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.HotelId,
-                    p.Date,
-                    p.Amount
-                })
-                .ToListAsync();
-            return Ok(prices);
-        }
     }
 }
