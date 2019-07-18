@@ -42,6 +42,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
             if (result.Succeeded)
             {
@@ -57,6 +62,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if (model == null)
+            {
+                return BadRequest();
+            }
+
             var user = new User
             {
                 UserName = model.Email,
