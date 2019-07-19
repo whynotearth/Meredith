@@ -9,7 +9,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using WhyNotEarth.Meredith.Data.Entity;
 
     [ApiVersion("0")]
-    [Route("/api/v0/rooms")]
+    [Route("/api/v0/roomtypes")]
     [EnableCors]
     public class RoomTypeController : Controller
     {
