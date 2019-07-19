@@ -1,6 +1,5 @@
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

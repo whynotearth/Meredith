@@ -22,8 +22,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             .Include(p => p.Company)
             .Include(p => p.Cards)
             .Include(p => p.Hotel)
+            .ThenInclude(p => p.RoomTypes)
             .ThenInclude(p => p.Amenities)
             .Include(p => p.Hotel)
+            .ThenInclude(p => p.RoomTypes)
             .ThenInclude(p => p.Beds)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Rules)
@@ -135,12 +137,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     page.Hotel?.Capacity,
                     page.Hotel?.GettingAround,
                     page.Hotel?.Location,
-                    Amenities = page.Hotel?.Amenities.Select(a => a.Text).ToList(),
-                    Beds = page.Hotel?.Beds.Select(b => new
+                    RoomTypes = page.Hotel?.RoomTypes.Select(r => new
                     {
-                        b.Count,
-                        Id = (int)b.BedType,
-                        Type = b.BedType.ToString()
+                        Amenities = r.Amenities.Select(a => a.Text).ToList(),
+                        Beds = r.Beds.Select(b => new
+                        {
+                            b.Count,
+                            Id = (int)b.BedType,
+                            Type = b.BedType.ToString()
+                        }).ToList(),
+                        r.Name,
+                        r.Id
                     }).ToList(),
                     Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
                     Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
