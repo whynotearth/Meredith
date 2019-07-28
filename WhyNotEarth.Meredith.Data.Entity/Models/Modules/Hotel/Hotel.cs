@@ -6,7 +6,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
     public class Hotel : IEntityTypeConfiguration<Hotel>
     {
-        public int Capacity { get; set; }
+        public ICollection<Amenity> Amenities { get; set; }
 
         public Company Company { get; set; }
 
