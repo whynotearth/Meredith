@@ -129,6 +129,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
             };
 
+            if (page.Category != null)
+            {
+                pageModel.Categories.Add(
+                    new Models.Api.V0.Page.Category
+                    {
+                        Name = page.Category.Name,
+                        Id = page.Category.Id
+                    });
+            }
+
             if (page.Hotel != null)
             {
                 pageModel.Modules.Add("hotel", new

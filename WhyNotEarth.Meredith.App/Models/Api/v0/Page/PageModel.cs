@@ -8,6 +8,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public string Brand { get; set; }
 
+        public IList<Category> Categories { get; set; } = new List<Category>();
+
         public string Name { get; set; }
 
         public string Title { get; set; }
@@ -56,5 +58,12 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public string Url { get; set; }
 
+    }
+
+    public class Category
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
     }
 }
