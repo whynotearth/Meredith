@@ -20,8 +20,8 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task CreateCharge(int companyId, string token, decimal amount, string email,
-            Dictionary<string, string> metadata)
+        public async Task<string> CreateCharge(int companyId, string token, decimal amount, string email,
+            Dictionary<string, string> metadata, bool capture = true)
         {
             var accountId = await MeredithDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
@@ -40,7 +40,7 @@ namespace WhyNotEarth.Meredith.Stripe
             }
 
             var chargeService = new ChargeService();
-            await chargeService.CreateAsync(new ChargeCreateOptions
+            var charge = await chargeService.CreateAsync(new ChargeCreateOptions
             {
                 Amount = (int)(amount * 100),
                 Currency = "usd",
@@ -51,8 +51,22 @@ namespace WhyNotEarth.Meredith.Stripe
                     Account = accountId
                 },
                 ReceiptEmail = email,
-                Metadata = metadata
+                Metadata = metadata,
+                Capture = capture
             }, GetRequestOptions());
+            return charge.Id;
+        }
+
+        public async Task<string> CreateAuthorization(int companyId, string token, decimal amount, string email,
+            Dictionary<string, string> metadata)
+        {
+            return await CreateCharge(companyId, token, amount, email, metadata, false);
+        }
+
+        public async Task CaptureCharge(string chargeId)
+        {
+            var chargeService = new ChargeService();
+            await chargeService.CaptureAsync(chargeId, new ChargeCaptureOptions());
         }
     }
 }

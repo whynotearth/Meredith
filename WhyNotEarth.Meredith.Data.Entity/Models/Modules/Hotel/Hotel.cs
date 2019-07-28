@@ -8,6 +8,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public int Capacity { get; set; }
 
+        public Company Company { get; set; }
+
+        public int? CompanyId { get; set; }
+
         public string GettingAround { get; set; }
 
         public int Id { get; set; }

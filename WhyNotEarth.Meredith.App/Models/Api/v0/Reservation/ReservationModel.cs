@@ -10,5 +10,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Reservation
 
         [Required]
         public DateTime End { get; set; }
+
+        public PayModel Payment { get; set; }
     }
 }

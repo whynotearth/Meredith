@@ -26,6 +26,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Page> Pages { get; set; }
 
+        public DbSet<Payment> Payments { get; set; }
+
         public DbSet<Price> Prices { get; set; }
 
         public DbSet<Reservation> Reservations { get; set; }

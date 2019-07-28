@@ -1,6 +1,7 @@
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
     using System;
+    using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,9 +9,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public decimal Amount { get; set; }
 
+        public DateTime Created { get; set; }
+
         public DateTime End { get; set; }
 
         public int Id { get; set; }
+
+        public ICollection<Payment> Payments { get; set; }
 
         public Room Room { get; set; }
 

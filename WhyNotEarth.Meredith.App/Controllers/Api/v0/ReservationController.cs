@@ -1,6 +1,7 @@
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+    using WhyNotEarth.Meredith.Stripe;
 
     [ApiVersion("0")]
     [Route("/api/v0/reservations")]
@@ -20,22 +22,73 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private MeredithDbContext MeredithDbContext { get; }
 
+        private StripeServices StripeService { get; }
+
         private UserManager<User> UserManager { get; }
 
         public ReservationController(
             MeredithDbContext meredithDbContext,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            StripeServices stripeService)
         {
             MeredithDbContext = meredithDbContext;
+            StripeService = stripeService;
             UserManager = userManager;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{reservationId}")]
         public async Task<IActionResult> Get(int reservationId)
         {
-            return Ok();
+            var user = await UserManager.GetUserAsync(User);
+            var reservation = await MeredithDbContext.Reservations
+                .Include(r => r.Payments)
+                .Where(r => r.Id == reservationId && r.UserId == user.Id)
+                .FirstOrDefaultAsync();
+            return Ok(reservation);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("{reservationId}/pay")]
+        public async Task<IActionResult> PayReservation(int reservationId, [FromBody] PayModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = await UserManager.GetUserAsync(User);
+            var reservation = await MeredithDbContext.Reservations
+                .Where(r => r.Id == reservationId && r.UserId == user.Id)
+                .Select(r => new
+                {
+                    Reservation = r,
+                    r.Room.RoomType.Hotel.Company
+                })
+                .FirstOrDefaultAsync();
+            if (reservation == null)
+            {
+                return NotFound();
+            }
+
+            await StripeService.CreateCharge(reservation.Company.Id, model.Token, model.Amount, user.Email, new Dictionary<string, string>());
+            var payment = new Payment
+            {
+                Amount = model.Amount,
+                Created = DateTime.UtcNow,
+                ReservationId = reservation.Reservation.Id,
+                UserId = user.Id,
+            };
+            MeredithDbContext.Payments.Add(payment);
+            await MeredithDbContext.SaveChangesAsync();
+            return Ok(new
+            {
+                paymentId = payment.Id
+            });
+        }
+
 
         [Authorize]
         [HttpPost]
@@ -85,6 +138,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var reservation = new Reservation
             {
                 Amount = roomType.Price,
+                Created = DateTime.UtcNow,
                 Start = startDate,
                 End = endDate,
                 RoomId = roomType.AvailableRooms.First().Id,
