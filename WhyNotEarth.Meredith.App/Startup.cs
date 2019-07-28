@@ -102,6 +102,18 @@
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
                 })
+                .AddGoogle(options =>
+                {
+                    var config = Configuration.GetSection("Authentication:Google");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                })
+                .AddFacebook(options =>
+                {
+                    var config = Configuration.GetSection("Authentication:Facebook");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                })
                 .AddJwtBearer(cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;

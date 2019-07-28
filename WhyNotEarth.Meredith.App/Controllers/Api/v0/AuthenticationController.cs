@@ -7,6 +7,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,85 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return BadRequest();
         }
 
+        [Route("provider/login")]
+        [HttpGet]
+        public IActionResult ProviderLogin(string provider, string returnUrl = null)
+        {
+            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, "/api/v0/authentication/provider/callback");
+            return new ChallengeResult(provider, properties);
+        }
+
+        [Route("provider/callback")]
+        [HttpGet]
+        public async Task<IActionResult> ProviderCallback(string returnUrl = null, string remoteError = null)
+        {
+            if (remoteError != null)
+            {
+                return Unauthorized(new { error = $"Error from external provider: {remoteError}" });
+            }
+
+            var info = await SignInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return Unauthorized(new { error = "Error loading external login information." });
+            }
+
+            if (!info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+            {
+                return Unauthorized(new { error = "Provider did not return an e-mail address" });
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var user = await UserManager.FindByEmailAsync(email);
+            var result = await SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            if (result.Succeeded)
+            {
+                await SignInManager.UpdateExternalAuthenticationTokensAsync(info);
+                return Ok(GenerateJwtToken(email, user));
+            }
+
+            if (result.IsLockedOut)
+            {
+                return Unauthorized(new { error = "User is locked out" });
+            }
+            else
+            {
+                if (user != null)
+                {
+                    var addLoginResult = await UserManager.AddLoginAsync(user, info);
+                    if (addLoginResult.Succeeded)
+                    {
+                        await SignInManager.SignInAsync(user, false);
+                        return Ok(GenerateJwtToken(email, user));
+                    }
+                    else
+                    {
+                        var errors = string.Join(",", addLoginResult.Errors.Select(e => e.Description).ToList());
+                        return Unauthorized(new { error = $"Error adding login to user: {errors}" });
+                    }
+                }
+                else
+                {
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email
+                    };
+                    var createResult = await UserManager.CreateAsync(user);
+                    if (createResult.Succeeded)
+                    {
+                        await SignInManager.SignInAsync(user, false);
+                        return Ok(GenerateJwtToken(email, user));
+                    }
+                    else
+                    {
+                        var errors = string.Join(",", createResult.Errors.Select(e => e.Description).ToList());
+                        return Unauthorized(new { error = $"Error creating user: {errors}" });
+                    }
+                }
+            }
+        }
+
 
         [Route("register")]
         [HttpPost]
@@ -73,7 +153,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 Email = model.Email
             };
             var result = await UserManager.CreateAsync(user, model.Password);
-
             if (result.Succeeded)
             {
                 await SignInManager.SignInAsync(user, false);
