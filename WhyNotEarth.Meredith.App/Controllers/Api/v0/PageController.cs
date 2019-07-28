@@ -21,6 +21,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         private IQueryable<Page> PageIncludes() => MeredithDbContext.Pages
             .Include(p => p.Company)
             .Include(p => p.Cards)
+            .Include(p => p.Category)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.RoomTypes)
             .ThenInclude(p => p.Amenities)
@@ -92,7 +93,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             }
         }
 
-        private Func<Page, PageModel> PageToReturn = (page) =>
+        private readonly Func<Page, PageModel> PageToReturn = (page) =>
         {
             var pageModel = new PageModel
             {
