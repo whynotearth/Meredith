@@ -96,11 +96,7 @@
                     .AddEntityFrameworkStores<MeredithDbContext>()
                    .AddDefaultTokenProviders()
                 .Services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                })
+                .AddAuthentication()
                 .AddGoogle(options =>
                 {
                     var config = Configuration.GetSection("Authentication:Google");
@@ -113,7 +109,8 @@
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                 })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                .Services
+                .ConfigureApplicationCookie(options =>
                 {
                     options.Cookie.Name = "auth";
                     options.Cookie.HttpOnly = false;
