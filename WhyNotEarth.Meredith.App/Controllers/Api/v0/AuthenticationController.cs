@@ -7,7 +7,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Identity;
@@ -58,6 +57,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return BadRequest();
         }
 
+        [Route("logout")]
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await SignInManager.SignOutAsync();
+            return Ok();
+        }
+
         [Route("provider/login")]
         [HttpGet]
         public IActionResult ProviderLogin(string provider, string returnUrl = null)
@@ -68,6 +75,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         [Route("provider/callback")]
         [HttpGet]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ProviderCallback(string returnUrl = null, string remoteError = null)
         {
             if (remoteError != null)
@@ -92,7 +100,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             if (result.Succeeded)
             {
                 await SignInManager.UpdateExternalAuthenticationTokensAsync(info);
-                return Ok(GenerateJwtToken(email, user));
+                return Ok(new { status = "You are now logged in" });
             }
 
             if (result.IsLockedOut)
@@ -106,8 +114,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     var addLoginResult = await UserManager.AddLoginAsync(user, info);
                     if (addLoginResult.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, false);
-                        return Ok(GenerateJwtToken(email, user));
+                        await SignInManager.SignInAsync(user, true);
+                        return Ok(new { status = "You are now logged in" });
                     }
                     else
                     {
@@ -125,8 +133,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     var createResult = await UserManager.CreateAsync(user);
                     if (createResult.Succeeded)
                     {
-                        await SignInManager.SignInAsync(user, false);
-                        return Ok(GenerateJwtToken(email, user));
+                        await SignInManager.SignInAsync(user, true);
+                        return Ok(new { status = "You are now logged in" });
                     }
                     else
                     {
@@ -155,7 +163,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var result = await UserManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await SignInManager.SignInAsync(user, false);
+                await SignInManager.SignInAsync(user, true);
                 return Ok(GenerateJwtToken(model.Email, user));
             }
 
