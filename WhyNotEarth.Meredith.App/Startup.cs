@@ -42,9 +42,10 @@
             services
                 .AddCors(o => o
                     .AddDefaultPolicy(builder => builder
+                        .SetIsOriginAllowed(origin => true)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowAnyOrigin()))
+                        .AllowCredentials()))
                 .AddRollbarWeb()
                 .AddOptions()
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
