@@ -116,6 +116,7 @@
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.Name = "auth";
+                    options.Cookie.HttpOnly = false;
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.LoginPath = null;
                     options.Events = new CookieAuthenticationEvents
