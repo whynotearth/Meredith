@@ -4,19 +4,19 @@
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
-    using System.Text;
+    using System.Threading.Tasks;
     using Company;
     using Data.Entity;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
     using Pages;
     using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
@@ -87,31 +87,43 @@
                     };
                     c.AddSecurityRequirement(security);
                 });
-            services
-                .AddIdentity<User, Role>()
-                    .AddEntityFrameworkStores<MeredithDbContext>()
-                    .AddDefaultTokenProviders();
 
             var jwtOptions = Configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
+                .AddIdentity<User, Role>()
+                    .AddEntityFrameworkStores<MeredithDbContext>()
+                   .AddDefaultTokenProviders()
+                .Services
                 .AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(cfg =>
+                .AddGoogle(options =>
                 {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    var config = Configuration.GetSection("Authentication:Google");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                })
+                .AddFacebook(options =>
+                {
+                    var config = Configuration.GetSection("Authentication:Facebook");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.Name = "auth";
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.LoginPath = null;
+                    options.Events = new CookieAuthenticationEvents
                     {
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidAudience = jwtOptions.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
-                        ClockSkew = TimeSpan.Zero
+                        OnRedirectToLogin = redirectContext =>
+                        {
+                            redirectContext.HttpContext.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        }
                     };
                 });
             services
