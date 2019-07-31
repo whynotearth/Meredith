@@ -73,6 +73,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
+            if (reservation.Company == null)
+            {
+                return BadRequest(new
+                {
+                    error = $"This hotel does not have a bound company"
+                });
+            }
+
             await StripeService.CreateCharge(reservation.Company.Id, model.Token, model.Amount, user.Email, new Dictionary<string, string>());
             var payment = new Payment
             {
