@@ -62,6 +62,10 @@
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                    options.ForwardLimit = null;
+                    options.RequireHeaderSymmetry = false;
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
                 })
                 .AddSwaggerGen(c =>
                 {

@@ -4,6 +4,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Net;
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
@@ -69,7 +70,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [HttpGet]
         public IActionResult ProviderLogin(string provider, string returnUrl = null)
         {
-            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, "/api/v0/authentication/provider/callback");
+            var urlEncoded = WebUtility.UrlEncode(returnUrl);
+            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, $"/api/v0/authentication/provider/callback?returnUrl={urlEncoded}");
             return new ChallengeResult(provider, properties);
         }
 
@@ -100,7 +102,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             if (result.Succeeded)
             {
                 await SignInManager.UpdateExternalAuthenticationTokensAsync(info);
-                return Ok(new { status = "You are now logged in" });
+                return Redirect(returnUrl);
             }
 
             if (result.IsLockedOut)
@@ -115,7 +117,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     if (addLoginResult.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, true);
-                        return Ok(new { status = "You are now logged in" });
+                        return Redirect(returnUrl);
                     }
                     else
                     {
@@ -134,7 +136,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     if (createResult.Succeeded)
                     {
                         await SignInManager.SignInAsync(user, true);
-                        return Ok(new { status = "You are now logged in" });
+                        return Redirect(returnUrl);
                     }
                     else
                     {
