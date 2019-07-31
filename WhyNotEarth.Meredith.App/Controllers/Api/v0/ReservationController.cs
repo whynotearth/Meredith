@@ -81,7 +81,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 });
             }
 
-            await StripeService.CreateCharge(reservation.Company.Id, model.Token, model.Amount, user.Email, new Dictionary<string, string>());
+            try
+            {
+                await StripeService.CreateCharge(reservation.Company.Id, model.Token, model.Amount, user.Email, new Dictionary<string, string>());
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500, new
+                {
+                    error = exception.Message
+                });
+            }
+
             var payment = new Payment
             {
                 Amount = model.Amount,
