@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public void Configure(EntityTypeBuilder<Reservation> builder)
         {
-            builder.Property(e => e.Amount).HasColumnType("numeric(5, 2)");
+            builder.Property(e => e.Amount).HasColumnType("numeric(10, 2)");
             builder.Property(e => e.Start).HasColumnType("date");
             builder.Property(e => e.End).HasColumnType("date");
             builder.ToTable("Reservations", "ModuleHotel");
