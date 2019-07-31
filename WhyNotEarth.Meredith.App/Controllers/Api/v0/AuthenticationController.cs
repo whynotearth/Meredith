@@ -70,15 +70,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [HttpGet]
         public IActionResult ProviderLogin(string provider, string returnUrl = null)
         {
-            var urlEncoded = WebUtility.UrlEncode(returnUrl);
-            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, $"/api/v0/authentication/provider/callback?returnUrl={urlEncoded}");
+            var state = WebUtility.UrlEncode(returnUrl);
+            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider, $"/api/v0/authentication/provider/callback?returnUrl={returnUrl}");
             return new ChallengeResult(provider, properties);
         }
 
         [Route("provider/callback")]
         [HttpGet]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> ProviderCallback(string returnUrl = null, string remoteError = null)
+        public async Task<IActionResult> ProviderCallback(string remoteError = null, string returnUrl = null)
         {
             if (remoteError != null)
             {
