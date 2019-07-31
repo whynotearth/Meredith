@@ -20,6 +20,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [Route("{companyId}/stripe/keys/publishable")]
+        [HttpGet]
         public async Task<IActionResult> StripePublishableKey(int companyId)
         {
             var key = await MeredithDbContext.StripeAccounts
