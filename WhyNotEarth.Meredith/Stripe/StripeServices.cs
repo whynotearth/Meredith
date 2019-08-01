@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.Stripe
             {
                 Amount = (int)(amount * 100),
                 Currency = "usd",
-                SourceId = token,
+                Source = token,
                 ApplicationFeeAmount = (int)Math.Ceiling(amount * 0.12m),
                 Destination = new ChargeDestinationCreateOptions
                 {
