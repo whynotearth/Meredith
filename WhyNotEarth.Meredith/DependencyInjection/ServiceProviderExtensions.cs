@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             IConfiguration configuration)
         {
             return serviceCollection
-                .AddScoped<StripeServices>()
+                .AddScoped<StripeService>()
                 .AddScoped<StripeOAuthServices>();
         }
     }

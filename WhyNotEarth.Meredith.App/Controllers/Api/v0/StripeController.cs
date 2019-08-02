@@ -14,17 +14,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     [EnableCors]
     public class StripeController : Controller
     {
-        protected StripeServices StripeServices { get; }
-        
+        protected StripeService StripeServices { get; }
+
         protected ILogger<StripeController> Logger { get; }
 
-        public StripeController(StripeServices stripeServices,
+        public StripeController(StripeService stripeServices,
             ILogger<StripeController> logger)
         {
             StripeServices = stripeServices;
             Logger = logger;
         }
-        
+
         [HttpPost]
         [Route("charge/create")]
         public async Task<IActionResult> Create([FromBody] CreateModel model)
@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 });
             }
 
-            return Ok(new {status = "success"});
+            return Ok(new { status = "success" });
         }
     }
 }

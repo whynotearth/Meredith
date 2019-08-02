@@ -8,11 +8,11 @@ namespace WhyNotEarth.Meredith.Tests.Stripe
 
     public class StripeServiceTests : DatabaseContextTest
     {
-        public StripeServices StripeServices { get; }
+        public StripeService StripeServices { get; }
 
         public StripeServiceTests()
         {
-            StripeServices = ServiceProvider.GetRequiredService<StripeServices>();
+            StripeServices = ServiceProvider.GetRequiredService<StripeService>();
         }
 
         [Fact]

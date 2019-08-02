@@ -22,14 +22,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private MeredithDbContext MeredithDbContext { get; }
 
-        private StripeServices StripeService { get; }
+        private StripeService StripeService { get; }
 
         private UserManager<User> UserManager { get; }
 
         public ReservationController(
             MeredithDbContext meredithDbContext,
             UserManager<User> userManager,
-            StripeServices stripeService)
+            StripeService stripeService)
         {
             MeredithDbContext = meredithDbContext;
             StripeService = stripeService;
@@ -59,31 +59,30 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            var user = await UserManager.GetUserAsync(User);
-            var reservation = await MeredithDbContext.Reservations
-                .Where(r => r.Id == reservationId && r.UserId == user.Id)
-                .Select(r => new
-                {
-                    Reservation = r,
-                    r.Room.RoomType.Hotel.Company
-                })
-                .FirstOrDefaultAsync();
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-
-            if (reservation.Company == null)
-            {
-                return BadRequest(new
-                {
-                    error = $"This hotel does not have a bound company"
-                });
-            }
-
             try
             {
-                await StripeService.CreateCharge(reservation.Company.Id, model.Token, model.Amount, user.Email, new Dictionary<string, string>());
+                var (reservation, company, user) = await GetReservationAsync(reservationId);
+                if (reservation == null)
+                {
+                    return NotFound();
+                }
+
+                var paymentIntent = await StripeService.CreatePaymentIntent(company.Id, model.Amount, user.Email, new Dictionary<string, string>());
+                var payment = new Payment
+                {
+                    Amount = Convert.ToDecimal(model.Amount) / 100m,
+                    Created = DateTime.UtcNow,
+                    ReservationId = reservation.Id,
+                    Status = Payment.Statuses.IntentGenerated,
+                    PaymentIntentId = paymentIntent.Id,
+                    UserId = user.Id,
+                };
+                MeredithDbContext.Payments.Add(payment);
+                await MeredithDbContext.SaveChangesAsync();
+                return Ok(new
+                {
+                    paymentIntent.ClientSecret
+                });
             }
             catch (Exception exception)
             {
@@ -92,22 +91,26 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     error = exception.Message
                 });
             }
-
-            var payment = new Payment
-            {
-                Amount = model.Amount,
-                Created = DateTime.UtcNow,
-                ReservationId = reservation.Reservation.Id,
-                UserId = user.Id,
-            };
-            MeredithDbContext.Payments.Add(payment);
-            await MeredithDbContext.SaveChangesAsync();
-            return Ok(new
-            {
-                paymentId = payment.Id
-            });
         }
 
+        private async Task<(Reservation, Company, User)> GetReservationAsync(int reservationId)
+        {
+            var user = await UserManager.GetUserAsync(User);
+            var results = await MeredithDbContext.Reservations
+                .Where(r => r.Id == reservationId && r.UserId == user.Id)
+                .Select(r => new
+                {
+                    Reservation = r,
+                    r.Room.RoomType.Hotel.Company
+                })
+                .FirstOrDefaultAsync();
+            if (results.Company == null)
+            {
+                throw new Exception("This hotel does not have a bound company");
+            }
+
+            return (results.Reservation, results.Company, user);
+        }
 
         [Authorize]
         [HttpPost]
