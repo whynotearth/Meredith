@@ -1,5 +1,6 @@
 namespace WhyNotEarth.Meredith.Tests.Data
 {
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -18,7 +19,8 @@ namespace WhyNotEarth.Meredith.Tests.Data
                 .AddMeredith(DatabaseConfiguration.Instance.Configuration)
                 .AddDbContext<MeredithDbContext>(options => options
                     .UseInMemoryDatabase("test")
-                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
+                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)))
+                .AddScoped<ClaimsPrincipal>(o => new ClaimsPrincipal());
             DatabaseConfiguration.Instance.CreateServiceProvider();
             DatabaseConfiguration.Instance.CreateDatabases();
             Task.Run(Seed).Wait();

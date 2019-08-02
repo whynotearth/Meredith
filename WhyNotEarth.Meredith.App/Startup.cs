@@ -26,6 +26,7 @@
     using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.DependencyInjection;
+    using WhyNotEarth.Meredith.Identity;
 
     public class Startup
     {
@@ -95,10 +96,6 @@
             var jwtOptions = Configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
-                .AddIdentity<User, Role>()
-                    .AddEntityFrameworkStores<MeredithDbContext>()
-                   .AddDefaultTokenProviders()
-                .Services
                 .AddAuthentication()
                 .AddGoogle(options =>
                 {

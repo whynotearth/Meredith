@@ -9,12 +9,12 @@ namespace WhyNotEarth.Meredith.Stripe
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
 
-    public class StripeOAuthServices : StripeServiceBase
+    public class StripeOAuthService : StripeServiceBase
     {
         protected MeredithDbContext MeredithDbContext { get; }
 
 
-        public StripeOAuthServices(IOptions<StripeOptions> stripeOptions,
+        public StripeOAuthService(IOptions<StripeOptions> stripeOptions,
             MeredithDbContext meredithDbContext) : base(stripeOptions)
         {
             MeredithDbContext = meredithDbContext;

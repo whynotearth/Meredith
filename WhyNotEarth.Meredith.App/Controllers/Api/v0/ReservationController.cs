@@ -6,13 +6,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+    using WhyNotEarth.Meredith.Hotel;
+    using WhyNotEarth.Meredith.Identity;
     using WhyNotEarth.Meredith.Stripe;
 
     [ApiVersion("0")]
@@ -22,16 +23,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private MeredithDbContext MeredithDbContext { get; }
 
+        private ReservationService ReservationService { get; }
+
         private StripeService StripeService { get; }
 
-        private UserManager<User> UserManager { get; }
+        private UserManager UserManager { get; }
 
         public ReservationController(
             MeredithDbContext meredithDbContext,
-            UserManager<User> userManager,
-            StripeService stripeService)
+            UserManager userManager,
+            StripeService stripeService,
+            ReservationService reservationService)
         {
             MeredithDbContext = meredithDbContext;
+            ReservationService = reservationService;
             StripeService = stripeService;
             UserManager = userManager;
         }
@@ -122,57 +127,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            var startDate = model.Start.Date;
-            var endDate = model.End.Date;
-            var roomType = await MeredithDbContext.RoomTypes
-                .Where(rt => rt.Id == roomTypeId)
-                .Select(rt => new
-                {
-                    Price = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate)
-                        .Sum(p => p.Amount),
-                    PaidDays = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate)
-                        .Count(),
-                    AvailableRooms = rt.Rooms
-                        .Where(r => !r.Reservations
-                            .Any(re => re.Start >= startDate && re.End <= endDate))
-                        .ToList()
-                })
-                .FirstOrDefaultAsync();
-            if (roomType.AvailableRooms.Count == 0)
-            {
-                return BadRequest("There are no rooms available of this type");
-            }
-
-            var totalDays = endDate.Subtract(startDate).TotalDays;
-            if (totalDays <= 0)
-            {
-                return BadRequest("Invalid number of days to reserve");
-            }
-
-            if (roomType.PaidDays != totalDays)
-            {
-                return BadRequest("Not all days have prices set");
-            }
-
-            var user = await UserManager.GetUserAsync(User);
-            var reservation = new Reservation
-            {
-                Amount = roomType.Price,
-                Created = DateTime.UtcNow,
-                Start = startDate,
-                End = endDate,
-                Email = model.Email,
-                Message = model.Message,
-                Name = model.Name,
-                NumberOfGuests = model.NumberOfGuests,
-                Phone = model.Phone,
-                RoomId = roomType.AvailableRooms.First().Id,
-                User = user
-            };
-            MeredithDbContext.Reservations.Add(reservation);
-            await MeredithDbContext.SaveChangesAsync();
+            var reservation = await ReservationService.CreateReservation(
+                roomTypeId, model.Start, model.End, model.Name, model.Email, model.Message, model.Phone, model.NumberOfGuests);
             return Ok(new
             {
                 reservationId = reservation.Id
