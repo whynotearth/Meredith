@@ -160,6 +160,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 Created = DateTime.UtcNow,
                 Start = startDate,
                 End = endDate,
+                Email = model.Email,
+                Message = model.Message,
+                Name = model.Name,
+                NumberOfGuests = model.NumberOfGuests,
+                Phone = model.Phone,
                 RoomId = roomType.AvailableRooms.First().Id,
                 User = user
             };
