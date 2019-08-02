@@ -50,6 +50,8 @@
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
+                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
+                    options => options.SetPostgresVersion(new Version(9, 6))))
                 .AddMeredith(Configuration)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {

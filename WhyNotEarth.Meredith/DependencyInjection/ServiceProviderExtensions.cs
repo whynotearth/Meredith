@@ -14,8 +14,6 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             IConfiguration configuration)
         {
             return serviceCollection
-                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(configuration.GetConnectionString("Default"),
-                    options => options.SetPostgresVersion(new Version(9, 6))))
                 .AddScoped<StripeServices>()
                 .AddScoped<StripeOAuthServices>();
         }

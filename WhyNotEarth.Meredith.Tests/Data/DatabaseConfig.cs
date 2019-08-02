@@ -1,7 +1,12 @@
 namespace WhyNotEarth.Meredith.Tests.Data
 {
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Diagnostics;
+    using Microsoft.Extensions.DependencyInjection;
     using RoushTech.Xunit.EntityFrameworkCore;
+    using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.DependencyInjection;
 
     public class DatabaseConfig
     {
@@ -9,6 +14,11 @@ namespace WhyNotEarth.Meredith.Tests.Data
 
         private DatabaseConfig()
         {
+            DatabaseConfiguration.Instance.ServiceCollection
+                .AddMeredith(DatabaseConfiguration.Instance.Configuration)
+                .AddDbContext<MeredithDbContext>(options => options
+                    .UseInMemoryDatabase("test")
+                    .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)));
             DatabaseConfiguration.Instance.CreateServiceProvider();
             DatabaseConfiguration.Instance.CreateDatabases();
             Task.Run(Seed).Wait();
