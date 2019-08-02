@@ -5,7 +5,6 @@
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Threading.Tasks;
-    using Company;
     using Data.Entity;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
@@ -18,16 +17,15 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Pages;
     using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
     using RollbarDotNet.Logger;
-    using Stripe;
     using Stripe.Data;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.DependencyInjection;
 
     public class Startup
     {
@@ -52,13 +50,7 @@
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
-                .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
-                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
-                    options => options.SetPostgresVersion(new Version(9, 6))))
-                .AddScoped<StripeServices>()
-                .AddScoped<StripeOAuthServices>()
-                .AddSingleton<PageDatabase>()
-                .AddScoped<CompanyService>()
+                .AddMeredith(Configuration)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
