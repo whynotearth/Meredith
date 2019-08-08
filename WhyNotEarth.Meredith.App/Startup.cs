@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using Data.Entity;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -54,6 +55,7 @@
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
                     options => options.SetPostgresVersion(new Version(9, 6))))
                 .AddMeredith(Configuration)
+                .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;

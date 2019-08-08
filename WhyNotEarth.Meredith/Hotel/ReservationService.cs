@@ -16,7 +16,6 @@ namespace WhyNotEarth.Meredith.Hotel
 
         protected ClaimsPrincipal User { get; }
 
-
         protected UserManager UserManager { get; }
 
         public ReservationService(
