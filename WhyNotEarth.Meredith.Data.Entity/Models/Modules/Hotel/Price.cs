@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public void Configure(EntityTypeBuilder<Price> builder)
         {
-            builder.Property(e => e.Amount).HasColumnType("numeric(5, 2)");
+            builder.Property(e => e.Amount).HasColumnType("numeric(10, 2)");
             builder.Property(e => e.Date).HasColumnType("date");
             builder.ToTable("Prices", "ModuleHotel");
         }

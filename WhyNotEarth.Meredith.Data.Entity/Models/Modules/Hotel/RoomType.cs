@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public void Configure(EntityTypeBuilder<RoomType> builder)
         {
-            builder.Property(e => e.Name).HasMaxLength(64);
+            builder.Property(e => e.Name);
             builder.ToTable("RoomTypes", "ModuleHotel");
         }
     }
