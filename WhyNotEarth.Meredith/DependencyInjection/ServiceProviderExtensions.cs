@@ -7,6 +7,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.Hotel;
     using WhyNotEarth.Meredith.Identity;
+    using WhyNotEarth.Meredith.Public;
     using WhyNotEarth.Meredith.Stripe;
 
     public static class ServiceProviderExtensions
@@ -23,7 +24,9 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .Services
                 .AddScoped<StripeService>()
                 .AddScoped<StripeOAuthService>()
-                .AddScoped<ReservationService>();
+                .AddScoped<ReservationService>()
+                .AddScoped<CompanyService>()
+                .AddScoped<PriceService>();
         }
     }
 }
