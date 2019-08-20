@@ -1,6 +1,5 @@
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Cors;
@@ -8,6 +7,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.EntityFrameworkCore;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Company;
     using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.Exceptions;
     using WhyNotEarth.Meredith.Public;
 
     [ApiVersion("0")]
@@ -29,14 +29,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> Create(CompanyModel company)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest();
+            }
 
             try
             {
                 var newCompany = await CompanyService.CreateCompanyAsync(company.Name, company.Slug);
                 return Ok(new { CompanyId = newCompany.Id });
             }
-            catch (Exception e)
+            catch (InvalidActionException e)
             {
                 return StatusCode(500, new { error = e.Message });
             }

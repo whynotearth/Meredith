@@ -1,11 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-
-namespace WhyNotEarth.Meredith.Public
+﻿namespace WhyNotEarth.Meredith.Public
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.Exceptions;
+
     public class CompanyService
     {
         protected MeredithDbContext Context { get; }
@@ -19,15 +20,21 @@ namespace WhyNotEarth.Meredith.Public
         public async Task<Company> CreateCompanyAsync(string name, string slug)
         {
             if (name == null)
-                throw new ArgumentNullException("name", "Name cannot be null");
+            {
+                throw new InvalidActionException("Name must be provided");
+            }
 
-            if (name.Trim() == string.Empty)
-                throw new ArgumentException("Name cannot be empty");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new InvalidActionException("Name cannot be empty");
+            }
 
             var companyExists = await Context.Companies.AnyAsync(a => a.Name.Equals(name));
 
             if (companyExists)
-                throw new ArgumentException("Company with that name already exists");
+            {
+                throw new InvalidActionException("Company with that name already exists");
+            }
 
             var company = new Company()
             {

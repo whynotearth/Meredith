@@ -1,16 +1,14 @@
-﻿using WhyNotEarth.Meredith.Tests.Data;
-using WhyNotEarth.Meredith.Hotel;
-using Xunit;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-
-namespace WhyNotEarth.Meredith.Tests.Hotel.PriceServiceTests
+﻿namespace WhyNotEarth.Meredith.Tests.Hotel.PriceServiceTests
 {
+    using WhyNotEarth.Meredith.Tests.Data;
+    using WhyNotEarth.Meredith.Hotel;
+    using Xunit;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.DependencyInjection;
+    using System;
+    using WhyNotEarth.Meredith.Exceptions;
+    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+
     public class PriceTests : DatabaseContextTest 
     {
         private PriceService PriceService { get; }
@@ -33,8 +31,8 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.PriceServiceTests
         [Fact]
         public async Task ThrowsInvalidRoomType()
         {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () => await PriceService.CreatePriceAsync(-1, Date, 0));
-            Assert.Equal("Roomtype 0 does not exist", exception.Message);
+            var exception = await Assert.ThrowsAsync<InvalidActionException>(async () => await PriceService.CreatePriceAsync(-1, Date, 0));
+            Assert.Equal("Roomtype does not exist", exception.Message);
         }
 
         private async Task<RoomType> CreateRoomType(int days = 0)

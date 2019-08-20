@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WhyNotEarth.Meredith.App.Models.Api.v0.Company
+﻿namespace WhyNotEarth.Meredith.App.Models.Api.v0.Company
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class CompanyModel
     {
         [Required]

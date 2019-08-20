@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-using WhyNotEarth.Meredith.Exceptions;
-
-namespace WhyNotEarth.Meredith.Hotel
+﻿namespace WhyNotEarth.Meredith.Hotel
 {
+    using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+    using WhyNotEarth.Meredith.Exceptions;
+
     public class PriceService
     {
         protected MeredithDbContext Context { get; }
@@ -18,15 +18,19 @@ namespace WhyNotEarth.Meredith.Hotel
             Context = meredithDbContext;
         }
 
-        public async Task<Price> CreatePriceAsync(int amount, DateTime date, int roomTypeId)
+        public async Task<Price> CreatePriceAsync(decimal amount, DateTime date, int roomTypeId)
         {
             var roomType = await Context.RoomTypes.SingleOrDefaultAsync(a => a.Id == roomTypeId);
 
             if (roomType == null)
-                throw new ArgumentException(string.Format("Roomtype {0} does not exist", roomTypeId));
+            {
+                throw new InvalidActionException("Roomtype does not exist");
+            }
 
             if (amount < 0)
+            {
                 throw new InvalidActionException("Amount cannot be below zero");
+            }
 
             var price = new Price
             {

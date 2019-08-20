@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Hotel;
-
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
+﻿namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
+    using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Threading.Tasks;
+    using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
+    using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.Exceptions;
+    using WhyNotEarth.Meredith.Hotel;
+
     [ApiVersion("0")]
     [Route("/api/v0/prices")]
     [EnableCors]
@@ -27,14 +27,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> Create(PriceModel price)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest();
+            }
 
             try
             {
                 var newPrice = await PriceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
                 return Ok(new { PriceId = newPrice.Id });
             }
-            catch(Exception e)
+            catch(InvalidActionException e)
             {
                 return StatusCode(500, new { error = e.Message });
             }
