@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 {
+    using System.Collections.Generic;
+
     public class PageModel
     {
         public int Id { get; set; }
