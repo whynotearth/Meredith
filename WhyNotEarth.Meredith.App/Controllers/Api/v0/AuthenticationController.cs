@@ -172,7 +172,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [Route("ping")]
-        [Authorize]
+        [Authorize(Policy = "DataEntry")]
         [HttpGet]
         public async Task<IActionResult> Ping()
         {
