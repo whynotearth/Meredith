@@ -85,13 +85,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         private static string GetCardType(Card.CardTypes cardType)
         {
-            switch (cardType)
+            return cardType switch
             {
-                case Card.CardTypes.Card:
-                    return "story-card";
-                default:
-                    throw new Exception($"Card type {cardType} not mapped.");
-            }
+                Card.CardTypes.Card => "story-card",
+                _ => throw new Exception($"Card type {cardType} not mapped."),
+            };
         }
 
         private readonly Func<Page, PageModel> PageToReturn = (page) =>

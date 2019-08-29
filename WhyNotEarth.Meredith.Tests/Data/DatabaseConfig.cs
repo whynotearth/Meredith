@@ -8,6 +8,7 @@ namespace WhyNotEarth.Meredith.Tests.Data
     using RoushTech.Xunit.EntityFrameworkCore;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.DependencyInjection;
+    using WhyNotEarth.Meredith.Hotel;
 
     public class DatabaseConfig
     {
@@ -16,18 +17,20 @@ namespace WhyNotEarth.Meredith.Tests.Data
         private DatabaseConfig()
         {
             DatabaseConfiguration.Instance.ServiceCollection
-                .AddMeredith(DatabaseConfiguration.Instance.Configuration)
+                .AddMeredith()
                 .AddDbContext<MeredithDbContext>(options => options
                     .UseInMemoryDatabase("test")
                     .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)))
-                .AddScoped<ClaimsPrincipal>(o => new ClaimsPrincipal());
+                .AddScoped(o => new ClaimsPrincipal())
+                .AddScoped<HotelUtility>();
             DatabaseConfiguration.Instance.CreateServiceProvider();
             DatabaseConfiguration.Instance.CreateDatabases();
             Task.Run(Seed).Wait();
         }
 
-        private async Task Seed()
+        private Task Seed()
         {
+            return Task.FromResult(false);
         }
     }
 }

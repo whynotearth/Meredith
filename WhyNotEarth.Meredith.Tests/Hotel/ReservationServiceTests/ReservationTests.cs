@@ -7,12 +7,12 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
     using Microsoft.Extensions.DependencyInjection;
     using System;
     using WhyNotEarth.Meredith.Exceptions;
-    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-    using System.Linq;
     using Microsoft.EntityFrameworkCore;
 
     public class ReservationTests : DatabaseContextTest
     {
+        private HotelUtility HotelUtility { get; }
+
         private ReservationService ReservationService { get; }
 
         private DateTime Start { get; } = new DateTime(2019, 1, 1);
@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
         [Fact]
         public async Task ThrowsNotAvailable()
         {
-            var roomType = await CreateRoomType(10);
+            var roomType = await HotelUtility.CreateRoomType(Start, 10);
             await ReservationService.CreateReservation(roomType.Id, Start, Start.AddDays(1), string.Empty, string.Empty, string.Empty, string.Empty, 0);
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () => await ReservationService.CreateReservation(roomType.Id, Start, Start.AddDays(1), string.Empty, string.Empty, string.Empty, string.Empty, 0));
             Assert.Equal("There are no rooms available of this type", exception.Message);
@@ -40,45 +40,19 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
         [Fact]
         public async Task ThrowsInvalidDate()
         {
-            var roomType = await CreateRoomType(10);
+            var roomType = await HotelUtility.CreateRoomType(Start, 10);
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () => await ReservationService.CreateReservation(roomType.Id, Start.AddDays(1), Start, string.Empty, string.Empty, string.Empty, string.Empty, 0));
-            Assert.Equal("Invalid number of days to reserve", exception.Message);
+            Assert.Equal("Start Date cannot be before End Date", exception.Message);
         }
-
 
         [Fact]
         public async Task ThrowsNotAllPricesAvailable()
         {
-            var roomType = await CreateRoomType(10);
+            var roomType = await HotelUtility.CreateRoomType(Start, 10);
             DbContext.Prices.Remove(await DbContext.Prices.FirstOrDefaultAsync(p => p.Date == Start.AddDays(1) && p.RoomTypeId == roomType.Id));
             await DbContext.SaveChangesAsync();
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () => await ReservationService.CreateReservation(roomType.Id, Start, Start.AddDays(10), string.Empty, string.Empty, string.Empty, string.Empty, 0));
             Assert.Equal("Not all days have prices set", exception.Message);
-        }
-
-        private async Task<RoomType> CreateRoomType(int days = 0)
-        {
-            var roomType = new RoomType
-            {
-                Name = "Test"
-            };
-            for (var i = 0; i < days; i++)
-            {
-                roomType.Prices.Add(new Price
-                {
-                    Amount = 10,
-                    Date = Start.AddDays(i)
-                });
-            }
-
-            for (var i = 0; i < 1; i++)
-            {
-                roomType.Rooms.Add(new Room { Number = i.ToString() });
-            }
-
-            DbContext.RoomTypes.Add(roomType);
-            await DbContext.SaveChangesAsync();
-            return roomType;
         }
     }
 }

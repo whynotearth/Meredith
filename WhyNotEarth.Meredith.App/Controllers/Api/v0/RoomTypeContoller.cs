@@ -1,42 +1,37 @@
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.Data.Entity;
+    using WhyNotEarth.Meredith.Hotel;
 
     [ApiVersion("0")]
     [Route("/api/v0/roomtypes")]
     [EnableCors]
     public class RoomTypeController : Controller
     {
-        private MeredithDbContext MeredithDbContext { get; }
+        private RoomTypeService RoomTypeService { get; }
 
-        public RoomTypeController(MeredithDbContext meredithDbContext)
+        public RoomTypeController(
+            RoomTypeService roomTypeService)
         {
-            MeredithDbContext = meredithDbContext;
+            RoomTypeService = roomTypeService;
         }
 
         [HttpGet]
         [Route("{roomTypeId}/prices/")]
         public async Task<IActionResult> Prices(int roomTypeId, DateTime startDate, DateTime endDate)
         {
-            var prices = await MeredithDbContext.Prices
-                .Where(p => p.RoomTypeId == roomTypeId
-                    && p.Date >= startDate
-                    && p.Date <= endDate)
-                .Select(p => new
-                {
-                    p.Id,
-                    p.RoomTypeId,
-                    p.Date,
-                    p.Amount
-                })
-                .ToListAsync();
+            var prices = await RoomTypeService.GetPrices(roomTypeId, startDate, endDate);
             return Ok(prices);
+        }
+
+        [HttpGet]
+        [Route("{roomTypeId}/availability/")]
+        public async Task<IActionResult> Availability(int roomTypeId, DateTime startDate, DateTime endDate)
+        {
+            return Ok();
         }
     }
 }

@@ -1,7 +1,6 @@
 namespace WhyNotEarth.Meredith.DependencyInjection
 {
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
@@ -12,8 +11,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
     public static class ServiceProviderExtensions
     {
 
-        public static IServiceCollection AddMeredith(this IServiceCollection serviceCollection,
-            IConfiguration configuration)
+        public static IServiceCollection AddMeredith(this IServiceCollection serviceCollection)
         {
             return serviceCollection
                 .AddIdentity<User, Role>()
@@ -23,7 +21,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .Services
                 .AddScoped<StripeService>()
                 .AddScoped<StripeOAuthService>()
-                .AddScoped<ReservationService>();
+                .AddScoped<ReservationService>()
+                .AddScoped<RoomTypeService>();
         }
     }
 }

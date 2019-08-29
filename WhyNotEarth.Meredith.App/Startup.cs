@@ -54,7 +54,7 @@
                 .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
                     options => options.SetPostgresVersion(new Version(9, 6))))
-                .AddMeredith(Configuration)
+                .AddMeredith()
                 .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {

@@ -14,11 +14,5 @@ namespace WhyNotEarth.Meredith.Tests.Stripe
         {
             StripeServices = ServiceProvider.GetRequiredService<StripeService>();
         }
-
-        [Fact]
-        public async Task Test()
-        {
-
-        }
     }
 }
