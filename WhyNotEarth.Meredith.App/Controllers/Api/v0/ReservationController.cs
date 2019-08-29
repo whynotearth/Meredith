@@ -51,7 +51,28 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Include(r => r.Payments)
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .FirstOrDefaultAsync();
-            return Ok(reservation);
+            return Ok(new
+            {
+                reservation.Created,
+                reservation.Email,
+                reservation.End,
+                reservation.Id,
+                reservation.Message,
+                reservation.Name,
+                reservation.NumberOfGuests,
+                Payments = reservation.Payments.Select(p => new
+                {
+                    p.Amount,
+                    p.Created,
+                    p.Id,
+                    p.Status,
+                    p.UserId,
+                }).ToList(),
+                reservation.Phone,
+                reservation.RoomId,
+                reservation.Start,
+                reservation.UserId
+            });
         }
 
         [Authorize]
