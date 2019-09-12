@@ -124,6 +124,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         CtaText = c.CallToAction,
                         CtaLink = c.CallToActionUrl,
                         Image = c.BackgroundUrl,
+                        PosterUrl = c.PosterUrl,
                         Blur = "2px",
                         Type = GetCardType(c.CardType)
                     })

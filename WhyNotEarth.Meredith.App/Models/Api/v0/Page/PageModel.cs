@@ -39,6 +39,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
     public class Story
     {
+        public string Blur { get; set; }
+
         public string Content { get; set; }
 
         public string CtaText { get; set; }
@@ -47,7 +49,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public string Image { get; set; }
 
-        public string Blur { get; set; }
+        public string PosterUrl { get; set; }
 
         public string Type { get; set; }
     }
