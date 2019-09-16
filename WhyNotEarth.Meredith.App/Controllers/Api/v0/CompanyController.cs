@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             MeredithDbContext = meredithDbContext;
         }
 
-        [Route("/")]
+        [Route("")]
         [HttpPost]
         public async Task<IActionResult> Create(CompanyModel company)
         {

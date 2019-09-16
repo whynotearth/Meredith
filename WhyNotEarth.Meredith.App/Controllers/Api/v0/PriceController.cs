@@ -14,7 +14,7 @@
     public class PriceController : Controller
     {
         private MeredithDbContext MeredithDbContext { get; }
-        private PriceService PriceService { get;  }
+        private PriceService PriceService { get; }
 
         public PriceController(MeredithDbContext meredithDbContext, PriceService priceService)
         {
@@ -23,7 +23,7 @@
         }
 
         [HttpPost]
-        [Route("/")]
+        [Route("")]
         public async Task<IActionResult> Create(PriceModel price)
         {
             if (!ModelState.IsValid)
@@ -36,7 +36,7 @@
                 var newPrice = await PriceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
                 return Ok(new { PriceId = newPrice.Id });
             }
-            catch(InvalidActionException e)
+            catch (InvalidActionException e)
             {
                 return StatusCode(500, new { error = e.Message });
             }
