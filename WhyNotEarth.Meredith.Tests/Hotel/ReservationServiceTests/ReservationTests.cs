@@ -22,6 +22,19 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             ReservationService = ServiceProvider.GetRequiredService<ReservationService>();
         }
 
+        public static object[][] ValidReservationTests = new[]{
+            new object [] { new DateTime(2019, 8, 30, 6, 16, 3, 304, DateTimeKind.Utc), new DateTime(2019, 9, 31, 6, 16, 3, 339, DateTimeKind.Utc) }
+        };
+
+        [Theory]
+        [MemberData(nameof(ValidReservationTests))]
+        public async Task ValidReservations(DateTime start, DateTime end)
+        {
+            var roomType = await CreateRoomType(10);
+            var reservation = await ReservationService.CreateReservation(roomType.Id, start, end, string.Empty, string.Empty, string.Empty, string.Empty, 0);
+            Assert.NotNull(reservation);
+        }
+
         [Fact]
         public async Task ThrowsInvalidRoomType()
         {

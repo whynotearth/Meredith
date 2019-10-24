@@ -47,6 +47,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public string CtaLink { get; set; }
 
+        public int Id { get; set; }
+
         public string Image { get; set; }
 
         public string PosterUrl { get; set; }

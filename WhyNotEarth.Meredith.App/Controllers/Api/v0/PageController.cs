@@ -10,6 +10,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.Pages;
 
     [ApiVersion("0")]
     [Route("/api/v0/pages")]
@@ -17,6 +18,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     public class PageController : Controller
     {
         private MeredithDbContext MeredithDbContext { get; }
+
+        private StoryService StoryService { get; }
 
         private IQueryable<Page> PageIncludes() => MeredithDbContext.Pages
             .Include(p => p.Company)
@@ -35,8 +38,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             .ThenInclude(p => p.Spaces)
             .Include(p => p.Images);
 
-        public PageController(MeredithDbContext meredithDbContext)
+        public PageController(
+            StoryService storyService,
+            MeredithDbContext meredithDbContext)
         {
+            StoryService = storyService;
             MeredithDbContext = meredithDbContext;
         }
 
@@ -53,7 +59,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(new[] { page }.AsQueryable().Select(PageToReturn).FirstOrDefault());
+            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, StoryService)).FirstOrDefault());
         }
 
         [HttpGet]
@@ -69,7 +75,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService)).ToList());
         }
 
         [HttpGet]
@@ -80,21 +86,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Where(p => p.Company.Slug == companySlug
                     && p.Category.Name == categoryName)
                 .ToListAsync();
-            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService)).ToList());
         }
 
-        private static string GetCardType(Card.CardTypes cardType)
-        {
-            switch (cardType)
-            {
-                case Card.CardTypes.Card:
-                    return "story-card";
-                default:
-                    throw new Exception($"Card type {cardType} not mapped.");
-            }
-        }
-
-        private readonly Func<Page, PageModel> PageToReturn = (page) =>
+        private readonly Func<Page, StoryService, PageModel> PageToReturn = (page, storyService) =>
         {
             var pageModel = new PageModel
             {
@@ -123,10 +118,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         Content = c.Text,
                         CtaText = c.CallToAction,
                         CtaLink = c.CallToActionUrl,
+                        Id = c.Id,
                         Image = c.BackgroundUrl,
                         PosterUrl = c.PosterUrl,
                         Blur = "2px",
-                        Type = GetCardType(c.CardType)
+                        Type = storyService.GetCardType(c.CardType)
                     })
                     .ToList(),
                 Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),

@@ -3,10 +3,12 @@ namespace WhyNotEarth.Meredith.DependencyInjection
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using WhyNotEarth.Meredith.Cloudinary;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.Hotel;
     using WhyNotEarth.Meredith.Identity;
+    using WhyNotEarth.Meredith.Pages;
     using WhyNotEarth.Meredith.Public;
     using WhyNotEarth.Meredith.Stripe;
 
@@ -22,11 +24,13 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                     .AddEntityFrameworkStores<MeredithDbContext>()
                     .AddDefaultTokenProviders()
                 .Services
+                .Configure<CloudinaryOptions>(o => configuration.GetSection("Cloudinary").Bind(o))
                 .AddScoped<StripeService>()
                 .AddScoped<StripeOAuthService>()
                 .AddScoped<ReservationService>()
                 .AddScoped<CompanyService>()
-                .AddScoped<PriceService>();
+                .AddScoped<PriceService>()
+                .AddScoped<StoryService>();
         }
     }
 }
