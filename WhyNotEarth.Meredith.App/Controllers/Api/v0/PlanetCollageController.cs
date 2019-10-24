@@ -73,14 +73,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var clodinaryUrl = new Url(CloudinaryOptions.CloudName);
             return Ok(new
             {
-                Id = model.PublicId,
-                Url = clodinaryUrl.BuildUrl(model.PublicId)
+                Id = model.Id,
+                Url = clodinaryUrl.BuildUrl(model.Id)
             });
         }
 
         public class FullResolutionModel
         {
-            public string PublicId { get; set; }
+            public string Id { get; set; }
         }
     }
 }
