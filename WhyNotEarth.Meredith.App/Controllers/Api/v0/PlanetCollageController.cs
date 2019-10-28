@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             CloudinaryOptions = cloudinaryOptions.Value;
         }
 
-        protected List<SearchResource> GetResources(int totalCount)
+        protected List<SearchResource> GetResources(string tag, int totalCount)
         {
             var cloudinary = new Cloudinary(new Account(CloudinaryOptions.CloudName, CloudinaryOptions.ApiKey, CloudinaryOptions.ApiSecret));
             var resources = new List<SearchResource>();
@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 var requestSize = Math.Min(totalCount, 500);
                 var results = cloudinary.Search()
-                    .Expression("folder=Bensley Website/Monday - Disruption/*")
+                    .Expression($"tags={tag}")
                     .MaxResults(requestSize)
                     .NextCursor(nextCursor)
                     .Execute();
@@ -48,10 +48,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [HttpGet]
-        [Route("")]
-        public IActionResult Get()
+        [Route("by-tag/{tag}")]
+        public IActionResult Get(string tag)
         {
-            var resources = GetResources(800);
+            var resources = GetResources(tag, 800);
             var clodinaryUrl = new Url(CloudinaryOptions.CloudName);
             var imageSize = 75;
             return Ok(resources.Select(r => new
