@@ -2,6 +2,10 @@
 
 MEREDITH is a way to build web pages that render with reliable and fast performance in a single experience. Built for the Cambodian and other developing countries in mind, it streamlines the of creating a basic yet performant website.
 
+A backend .net API which manages our database (postgres, google cloud). Data from this database is used by meredith-core to provide endpoints to any front end team. All content for websites, email marketing, ad buying, etc. is all stored in the same database, allowing easy content management for large brands and marketing agencies.
+
+She comes with all the backend functionalities needed to build a full webapp, including a hotel booking/calendar engine, integration with stripe for ecommerce, authentication with facebook/google, and is getting better every day!
+
 ## We'd love your help making MEREDITH better
 
 There are a lot of ways you can contribute to making MEREDITH better! You can report bugs and feature requests or ideally become an ongoing participant in the MEREDITH Project community and contribute code to the open source project.
