@@ -6,15 +6,13 @@ A backend .net API which manages our database (postgres, google cloud). Data fro
 
 She comes with all the backend functionalities needed to build a full webapp, including a hotel booking/calendar engine, integration with stripe for ecommerce, authentication with facebook/google, and is getting better every day!
 
-## We'd love your help making MEREDITH better
+## We'd love your help making WHY NOT EARTH better
 
-There are a lot of ways you can contribute to making MEREDITH better! You can report bugs and feature requests or ideally become an ongoing participant in the MEREDITH Project community and contribute code to the open source project.
+There are a lot of ways you can contribute to making WHY NOT EARTH better! You can report bugs and feature requests or ideally become an ongoing participant in the WHY NOT EARTH Project community and contribute code to the open source project.
 
-We enthusiastically welcome new contributors to the MEREDITH Project **_even if you have no experience being part of an open source project_**.  
+We enthusiastically welcome new contributors to the WHY NOT EARTH Projects **_even if you have no experience being part of an open source project_**.  
 
-If you're new to **contributing to the MEREDITH open source project**, sign up for our [Discord](https://discord.gg/EBpyFM3) and say Hi!
-Check out our [wiki](https://github.com/whynotearth/whynot.earth/wiki) for more info about us!
-
+If you're new to **contributing to the WHY NOT EARTH open source project**, sign up for our [Discord](https://discord.gg/EBpyFM3) and say Hi! Check out our [wiki](https://github.com/whynotearth/whynot.earth/wiki) for more info about our team and what we do!
 
 ## License
 
