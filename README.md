@@ -6,6 +6,12 @@ A backend .net API which manages our database (postgres, google cloud). Data fro
 
 She comes with all the backend functionalities needed to build a full webapp, including a hotel booking/calendar engine, integration with stripe for ecommerce, authentication with facebook/google, and is getting better every day!
 
+## Features
+.net for rest API 
+python 
+
+## Deployment
+
 ## We'd love your help making WHY NOT EARTH better
 
 There are a lot of ways you can contribute to making WHY NOT EARTH better! You can report bugs and feature requests or ideally become an ongoing participant in the WHY NOT EARTH Project community and contribute code to the open source project.
