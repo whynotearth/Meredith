@@ -7,10 +7,14 @@ A backend .net API which manages our database (postgres, google cloud). Data fro
 She comes with all the backend functionalities needed to build a full webapp, including a hotel booking/calendar engine, integration with stripe for ecommerce, authentication with facebook/google, and is getting better every day!
 
 ## Features
-.net for rest API 
-python 
+* Building a web app
+* Hotel booking enigne  
+* E-commerce integration
+* Authentication for Google/Facebook 
 
 ## Deployment
+.net for rest API   
+python 
 
 ## We'd love your help making WHY NOT EARTH better
 
