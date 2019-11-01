@@ -33,7 +33,7 @@ MEREDITH comes with all the backend functionalities needed to build a full web a
 
 <p align="center">
   <a href="#features">Features</a> •
-  <a href="#deployment">deployment</a> •
+  <a href="#deployment">Deployment</a> •
   <a href="#wed-love-your-help-making-WHY-NOT-EARTH-better">We'd love your help making WHY NOT EARTH better</a> •
   <a href="#license">License</a>
 </p>
