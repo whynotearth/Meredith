@@ -40,7 +40,7 @@ MEREDITH comes with all the backend functionalities needed to build a full web a
 
 ## Features
 * Build web applications with ease
-* Hotel booking enigne
+* Hotel booking engine
 * E-commerce integration for business solutions
 * Authentication for Google/Facebook interfaces
 
