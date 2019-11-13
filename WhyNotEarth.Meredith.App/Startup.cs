@@ -132,7 +132,6 @@
                 });
             services
                 .AddMvc();
-            services.AddSingleton<IAuthorizationHandler, DataEntryHandler>();
             return services.BuildServiceProvider();
         }
 
