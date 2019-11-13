@@ -52,7 +52,7 @@
                         .AllowCredentials()))
                 .AddRollbarWeb()
                 .AddOptions()
-                //.Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
+                .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
@@ -132,15 +132,7 @@
                 });
             services
                 .AddMvc();
-
-            services.AddAuthorization(options =>
-           {
-               options.AddPolicy("DataEntry", policy =>
-                policy.Requirements.Add(new RoleRequirement("data-entry")));
-           });
-
             services.AddSingleton<IAuthorizationHandler, DataEntryHandler>();
-
             return services.BuildServiceProvider();
         }
 
@@ -152,7 +144,7 @@
                 app.UseDeveloperExceptionPage();
             }
 
-            //loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
+            loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
