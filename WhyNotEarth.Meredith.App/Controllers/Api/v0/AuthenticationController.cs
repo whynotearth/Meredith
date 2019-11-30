@@ -87,7 +87,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var info = await SignInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return Unauthorized(new { error = "Error loading external login information." });
+                // Login failed, typically because they cancelled.
+                return Redirect(returnUrl);
             }
 
             if (!info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
