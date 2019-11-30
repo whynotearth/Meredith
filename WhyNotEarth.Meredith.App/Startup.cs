@@ -154,7 +154,11 @@
                 .UseAuthentication()
                 .UseStaticFiles()
                 .UseSwagger()
-                .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0"); })
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
+                    c.RoutePrefix = string.Empty;
+                })
                 .UseMvc();
         }
     }
