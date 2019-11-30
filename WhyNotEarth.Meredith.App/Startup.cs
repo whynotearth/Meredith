@@ -31,6 +31,7 @@
     using WhyNotEarth.Meredith.App.Auth.Requirements;
     using Microsoft.AspNetCore.Authorization;
     using WhyNotEarth.Meredith.App.Auth.Handlers;
+    using Microsoft.AspNetCore.Authentication;
 
     public class Startup
     {
@@ -107,12 +108,14 @@
                     var config = Configuration.GetSection("Authentication:Google");
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
+                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
                 })
                 .AddFacebook(options =>
                 {
                     var config = Configuration.GetSection("Authentication:Facebook");
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
+                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
                 })
                 .Services
                 .ConfigureApplicationCookie(options =>
@@ -133,6 +136,13 @@
             services
                 .AddMvc();
             return services.BuildServiceProvider();
+        }
+
+        private Task HandleOnRemoteFailure(RemoteFailureContext context)
+        {
+            context.Response.Redirect(context.Properties.RedirectUri);
+            context.HandleResponse();
+            return Task.FromResult(0);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
