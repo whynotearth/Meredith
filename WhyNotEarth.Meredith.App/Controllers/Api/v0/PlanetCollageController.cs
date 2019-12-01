@@ -63,6 +63,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         .Height(imageSize)
                         .Crop("fill")
                         .Effect("grayscale"))
+                    .Secure(true)
                     .BuildUrl(r.PublicId)
             }).ToList());
         }
@@ -75,7 +76,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return Ok(new
             {
                 model.Id,
-                Url = clodinaryUrl.BuildUrl(model.Id)
+                Url = clodinaryUrl
+                    .Secure(true)
+                    .BuildUrl(model.Id)
             });
         }
 
