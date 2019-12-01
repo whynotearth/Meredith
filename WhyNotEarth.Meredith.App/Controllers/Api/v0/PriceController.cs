@@ -31,15 +31,8 @@
                 return BadRequest();
             }
 
-            try
-            {
-                var newPrice = await PriceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
-                return Ok(new { PriceId = newPrice.Id });
-            }
-            catch (InvalidActionException e)
-            {
-                return StatusCode(500, new { error = e.Message });
-            }
+            var newPrice = await PriceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
+            return Ok(new { PriceId = newPrice.Id });
         }
     }
 }

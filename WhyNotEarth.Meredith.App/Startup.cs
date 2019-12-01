@@ -32,6 +32,7 @@
     using Microsoft.AspNetCore.Authorization;
     using WhyNotEarth.Meredith.App.Auth.Handlers;
     using Microsoft.AspNetCore.Authentication;
+    using WhyNotEarth.Meredith.App.Middleware;
 
     public class Startup
     {
@@ -152,6 +153,10 @@
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+
+            }
 
             loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -169,6 +174,7 @@
                     c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
                     c.RoutePrefix = string.Empty;
                 })
+                .UseMiddleware<ExceptionHandlingMiddleware>()
                 .UseMvc();
         }
     }

@@ -33,15 +33,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            try
-            {
-                var newCompany = await CompanyService.CreateCompanyAsync(company.Name, company.Slug);
-                return Ok(new { CompanyId = newCompany.Id });
-            }
-            catch (InvalidActionException e)
-            {
-                return StatusCode(500, new { error = e.Message });
-            }
+            var newCompany = await CompanyService.CreateCompanyAsync(company.Name, company.Slug);
+            return Ok(new { CompanyId = newCompany.Id });
         }
 
         [Route("{companyId}/stripe/keys/publishable")]
