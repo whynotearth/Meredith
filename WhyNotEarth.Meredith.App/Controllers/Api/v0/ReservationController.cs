@@ -96,7 +96,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 var paymentIntent = await StripeService.CreatePaymentIntent(company.Id, model.Amount, user.Email, new Dictionary<string, string>());
                 var payment = new Payment
                 {
-                    Amount = Convert.ToDecimal(model.Amount) / 100m,
+                    Amount = model.Amount,
                     Created = DateTime.UtcNow,
                     ReservationId = reservation.Id,
                     Status = Payment.Statuses.IntentGenerated,

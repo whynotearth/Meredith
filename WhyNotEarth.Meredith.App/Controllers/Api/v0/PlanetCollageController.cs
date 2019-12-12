@@ -52,12 +52,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public IActionResult Get(string tag)
         {
             var resources = GetResources(tag, 800);
-            var clodinaryUrl = new Url(CloudinaryOptions.CloudName);
             var imageSize = 75;
             return Ok(resources.Select(r => new
             {
                 Id = r.PublicId,
-                Url = clodinaryUrl
+                Url = new Url(CloudinaryOptions.CloudName)
                     .Transform(new Transformation()
                         .Width(imageSize)
                         .Height(imageSize)
@@ -72,11 +71,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [Route("full")]
         public IActionResult FullResolution([FromBody] FullResolutionModel model)
         {
-            var clodinaryUrl = new Url(CloudinaryOptions.CloudName);
             return Ok(new
             {
                 model.Id,
-                Url = clodinaryUrl
+                Url = new Url(CloudinaryOptions.CloudName)
                     .Secure(true)
                     .BuildUrl(model.Id)
             });
