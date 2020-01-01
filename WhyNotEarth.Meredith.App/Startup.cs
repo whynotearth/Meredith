@@ -12,7 +12,6 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -25,12 +24,7 @@
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using WhyNotEarth.Meredith.App.Configuration;
-    using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.DependencyInjection;
-    using WhyNotEarth.Meredith.Identity;
-    using WhyNotEarth.Meredith.App.Auth.Requirements;
-    using Microsoft.AspNetCore.Authorization;
-    using WhyNotEarth.Meredith.App.Auth.Handlers;
     using Microsoft.AspNetCore.Authentication;
     using WhyNotEarth.Meredith.App.Middleware;
 

@@ -4,7 +4,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
-    using System.Net;
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
@@ -18,6 +17,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
     using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.Identity;
 
     [ApiVersion("0")]
     [Route("/api/v0/authentication")]
@@ -25,11 +25,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     public class AuthenticationController : Controller
     {
         private SignInManager<User> SignInManager { get; }
-        private UserManager<User> UserManager { get; }
+        private UserManager UserManager { get; }
         private JwtOptions JwtOptions { get; }
 
         public AuthenticationController(
-            UserManager<User> userManager,
+            UserManager userManager,
             SignInManager<User> signInManager,
             IOptions<JwtOptions> jwtOptions
             )
@@ -63,6 +63,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> Logout()
         {
             await SignInManager.SignOutAsync();
+            return Ok();
+        }
+
+        [Route("password/forgot")]
+        public async Task<IActionResult> ForgotPassword()
+        {
+            return Ok();
+        }
+
+        [Route("password/reset/{token}")]
+        public async Task<IActionResult> ResetPassword(string token, [FromBody] ResetPasswordModel model)
+        {
             return Ok();
         }
 

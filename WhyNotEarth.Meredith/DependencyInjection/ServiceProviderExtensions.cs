@@ -8,6 +8,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
     using WhyNotEarth.Meredith.Data.Entity.Models;
     using WhyNotEarth.Meredith.Hotel;
     using WhyNotEarth.Meredith.Identity;
+    using WhyNotEarth.Meredith.Notifications.Email;
+    using WhyNotEarth.Meredith.Notifications.Email.Senders;
     using WhyNotEarth.Meredith.Pages;
     using WhyNotEarth.Meredith.Public;
     using WhyNotEarth.Meredith.Stripe;
@@ -30,7 +32,9 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<ReservationService>()
                 .AddScoped<CompanyService>()
                 .AddScoped<PriceService>()
-                .AddScoped<StoryService>();
+                .AddScoped<StoryService>()
+                .AddScoped<IEmailService, EmailService>()
+                .AddScoped<IEmailSender, SendGridEmailSender>();
         }
     }
 }
