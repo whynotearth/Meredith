@@ -1,6 +1,6 @@
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System;
+    using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public int Id { get; set; }
 
-        public string Text { get; set; }
+        public ICollection<RuleTranslation> Translations { get; set; }
 
         public void Configure(EntityTypeBuilder<Rule> builder)
         {
