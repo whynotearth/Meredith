@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             try
             {
                 var intent = await StripeServices.CreatePaymentIntent(model.CompanyId, model.Amount, model.Email, model.Metadata);
-                return Ok(new { status = "success", intent.ClientSecret });
+                return Ok(new { status = "success", intent.OnBehalfOfId });
             }
             catch (Exception exception)
             {
