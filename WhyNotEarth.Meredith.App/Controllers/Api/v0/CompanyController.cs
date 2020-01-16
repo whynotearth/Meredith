@@ -52,10 +52,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         {
             var accountId = await MeredithDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
-                .Select(s => new
-                {
-                    s.StripeUserId
-                })
+                .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
 
             if (accountId == null)
