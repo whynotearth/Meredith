@@ -6,10 +6,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
     using Models.Api.v0.Stripe;
     using Stripe;
-    using WhyNotEarth.Meredith.Stripe.Data;
 
     [ApiVersion("0")]
     [Route("/api/v0/stripe")]
@@ -18,29 +16,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         public StripeController(
             StripeService stripeServices,
-            IOptions<StripeOptions> stripeOptions,
             ILogger<StripeController> logger)
         {
-            StripeOptions = stripeOptions.Value;
             StripeServices = stripeServices;
             Logger = logger;
         }
 
-        protected StripeOptions StripeOptions { get; }
-
         protected StripeService StripeServices { get; }
 
         protected ILogger<StripeController> Logger { get; }
-
-        [HttpGet]
-        [Route("platform/keys")]
-        public IActionResult GetKeys()
-        {
-            return Ok(new
-            {
-                StripeOptions.PublishableKey
-            });
-        }
 
         [HttpPost]
         [Route("paymentintent/create")]
