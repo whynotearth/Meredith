@@ -52,8 +52,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         {
             try
             {
-                await StripeServices.CreateCharge(model.CompanyId, model.Token, model.Amount, model.Email,
+                var secret = await StripeServices.CreateCharge(model.CompanyId, model.Token, model.Amount, model.Email,
                     model.Metadata);
+                return Ok(new { status = "success", secret });
             }
             catch (Exception exception)
             {
@@ -64,8 +65,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     error = exception.Message
                 });
             }
-
-            return Ok(new { status = "success" });
         }
     }
 }
