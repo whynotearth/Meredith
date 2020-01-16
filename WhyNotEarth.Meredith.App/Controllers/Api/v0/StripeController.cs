@@ -31,7 +31,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         {
             try
             {
-                await StripeServices.CreatePaymentIntent(model.CompanyId, model.Amount, model.Email, model.Metadata);
+                var secret = await StripeServices.CreatePaymentIntent(model.CompanyId, model.Amount, model.Email, model.Metadata);
+                return Ok(new { status = "success", secret });
             }
             catch (Exception exception)
             {
@@ -43,7 +44,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 });
             }
 
-            return Ok(new { status = "success" });
         }
 
         [HttpPost]
@@ -54,6 +54,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 await StripeServices.CreateCharge(model.CompanyId, model.Token, model.Amount, model.Email,
                     model.Metadata);
+                return Ok(new { status = "success" });
             }
             catch (Exception exception)
             {
@@ -64,8 +65,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     error = exception.Message
                 });
             }
-
-            return Ok(new { status = "success" });
         }
     }
 }
