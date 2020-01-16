@@ -26,8 +26,29 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [HttpPost]
+        [Route("paymentintent/create")]
+        public async Task<IActionResult> Create([FromBody] CreatePaymentIntentModel model)
+        {
+            try
+            {
+                await StripeServices.CreatePaymentIntent(model.CompanyId, model.Amount, model.Email, model.Metadata);
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception, "Caught exception");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    status = "error",
+                    error = exception.Message
+                });
+            }
+
+            return Ok(new { status = "success" });
+        }
+
+        [HttpPost]
         [Route("charge/create")]
-        public async Task<IActionResult> Create([FromBody] CreateModel model)
+        public async Task<IActionResult> Create([FromBody] CreateChargeModel model)
         {
             try
             {

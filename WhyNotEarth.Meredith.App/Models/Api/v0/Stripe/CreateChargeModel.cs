@@ -2,7 +2,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Stripe
 {
     using System.Collections.Generic;
 
-    public class CreateModel
+    public class CreateChargeModel
     {
         public decimal Amount { get; set; }
 
