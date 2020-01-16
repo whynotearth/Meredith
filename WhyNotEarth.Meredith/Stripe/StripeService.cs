@@ -32,14 +32,10 @@ namespace WhyNotEarth.Meredith.Stripe
             {
                 Amount = (int)(amount * 100),
                 Currency = "usd",
-                ApplicationFeeAmount = (int)Math.Ceiling(amount * 0.12m),
+                ApplicationFeeAmount = (int)Math.Ceiling(amount * 12m), // 12% fee, amount * 100 * .12
                 Metadata = metadata,
-                ReceiptEmail = email,
-                TransferData = new PaymentIntentTransferDataOptions
-                {
-                    Destination = accountId
-                }
-            }, GetRequestOptions());
+                ReceiptEmail = email
+            }, GetRequestOptions(accountId));
             return paymentIntent;
         }
 
