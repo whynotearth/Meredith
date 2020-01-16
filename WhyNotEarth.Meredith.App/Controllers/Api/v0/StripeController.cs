@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         [HttpGet]
         [Route("platform/keys")]
-        public async Task<IActionResult> GetKeys()
+        public IActionResult GetKeys()
         {
             return Ok(new
             {
