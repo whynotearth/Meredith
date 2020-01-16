@@ -24,6 +24,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         {
             CompanyService = publicService;
             MeredithDbContext = meredithDbContext;
+            StripeOptions = stripeOptions.Value;
         }
 
         private CompanyService CompanyService { get; }
