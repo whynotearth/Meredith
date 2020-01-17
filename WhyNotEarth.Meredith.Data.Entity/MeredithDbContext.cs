@@ -24,6 +24,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Image> Images { get; set; }
 
+        public DbSet<Language> Languages { get; set; }
+
         public DbSet<Page> Pages { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
