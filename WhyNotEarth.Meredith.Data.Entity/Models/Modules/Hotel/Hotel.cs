@@ -12,11 +12,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public int? CompanyId { get; set; }
 
-        public string GettingAround { get; set; }
-
         public int Id { get; set; }
-
-        public string Location { get; set; }
 
         public Page Page { get; set; }
 
@@ -27,6 +23,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public ICollection<Rule> Rules { get; set; }
 
         public ICollection<Space> Spaces { get; set; }
+
+        public ICollection<HotelTranslation> Translations { get; set; }
 
         public void Configure(EntityTypeBuilder<Hotel> builder)
         {

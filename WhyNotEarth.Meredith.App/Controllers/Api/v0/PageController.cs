@@ -6,6 +6,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Localization;
     using Newtonsoft.Json;
     using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
     using WhyNotEarth.Meredith.Data.Entity;
@@ -59,7 +60,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, StoryService)).FirstOrDefault());
+            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).FirstOrDefault());
         }
 
         [HttpGet]
@@ -75,7 +76,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService)).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
         }
 
         [HttpGet]
@@ -86,10 +87,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Where(p => p.Company.Slug == companySlug
                     && p.Category.Name == categoryName)
                 .ToListAsync();
-            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService)).ToList());
+
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
         }
 
-        private readonly Func<Page, StoryService, PageModel> PageToReturn = (page, storyService) =>
+        private string GetCulture()
+        {
+            return Request.HttpContext.Features.Get<IRequestCultureFeature>()
+                .RequestCulture.Culture.Name;
+        }
+
+        private readonly Func<Page, StoryService, string, PageModel> PageToReturn = (page, storyService, culture) =>
         {
             var pageModel = new PageModel
             {
@@ -142,10 +150,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 pageModel.Modules.Add("hotel", new
                 {
-                    Amenities = page.Hotel.Amenities.Select(a => a.Text).ToList(),
+                    Amenities = page.Hotel.Amenities.SelectMany(a => a.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Text).ToList(),
                     page.Hotel?.Id,
-                    page.Hotel?.GettingAround,
-                    page.Hotel?.Location,
+                    page.Hotel?.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.GettingAround,
+                    page.Hotel?.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Location,
                     RoomTypes = page.Hotel?.RoomTypes.Select(r => new
                     {
                         r.Capacity,
@@ -158,8 +166,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         r.Name,
                         r.Id
                     }).ToList(),
-                    Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
-                    Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
+                    Rules = page.Hotel?.Rules.SelectMany(r => r.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Text).ToList(),
+                    Spaces = page.Hotel?.Spaces.SelectMany(s => s.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Name).ToList()
                 });
             }
 
