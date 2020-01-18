@@ -46,7 +46,6 @@ MEREDITH comes with all the backend functionalities needed to build a full web a
 
 ## Deployment
 * .NET REST API   
-* python
 
 ## We'd love your help making WHY NOT EARTH better
 
