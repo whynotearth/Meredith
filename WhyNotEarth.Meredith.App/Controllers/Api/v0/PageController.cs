@@ -27,7 +27,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             .Include(p => p.Cards)
             .Include(p => p.Category)
             .Include(p => p.Hotel)
+            .ThenInclude(p => p.Translations)
+            .Include(p => p.Hotel)
             .ThenInclude(p => p.Amenities)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.RoomTypes)
             .Include(p => p.Hotel)
@@ -35,8 +39,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             .ThenInclude(p => p.Beds)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Rules)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Spaces)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Images);
 
         public PageController(
