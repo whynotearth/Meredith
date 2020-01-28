@@ -1,26 +1,29 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using WhyNotEarth.Meredith.Exceptions;
+
 namespace WhyNotEarth.Meredith.App.Middleware
 {
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Serialization;
-    using WhyNotEarth.Meredith.Exceptions;
-
     public class ExceptionHandlingMiddleware
     {
-        private RequestDelegate Next { get; }
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly RequestDelegate _next;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
-            Next = next ?? throw new ArgumentNullException(nameof(next));
+            _next = next ?? throw new ArgumentNullException(nameof(next));
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await Next(context);
+                await _next(context);
             }
             catch (Exception exception)
             {
@@ -41,27 +44,22 @@ namespace WhyNotEarth.Meredith.App.Middleware
 
         private object PopulateResponse(Exception exception, HttpResponse httpResponse)
         {
-            switch (exception)
+            httpResponse.StatusCode = exception switch
             {
-                case InvalidActionException invalidActionException:
-                    httpResponse.StatusCode = 400;
-                    return new
-                    {
-                        invalidActionException.Message
-                    };
-                case RecordNotFoundException recordNotFoundException:
-                    httpResponse.StatusCode = 404;
-                    return new
-                    {
-                        recordNotFoundException.Message
-                    };
-                default:
-                    httpResponse.StatusCode = 500;
-                    return new
-                    {
-                        exception.Message
-                    };
+                InvalidActionException _ => StatusCodes.Status400BadRequest,
+                RecordNotFoundException _ => StatusCodes.Status404NotFound,
+                _ => httpResponse.StatusCode = StatusCodes.Status500InternalServerError
+            };
+
+            if (httpResponse.StatusCode == StatusCodes.Status500InternalServerError)
+            {
+                _logger.LogError(exception, "Unhandled exception");
             }
+
+            return new
+            {
+                exception.Message
+            };
         }
     }
 }

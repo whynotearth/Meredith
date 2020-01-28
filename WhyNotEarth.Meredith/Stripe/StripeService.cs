@@ -1,15 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Stripe;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Stripe.Data;
+
 namespace WhyNotEarth.Meredith.Stripe
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Data;
-    using global::Stripe;
-    using Meredith.Data.Entity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-
     public class StripeService : StripeServiceBase
     {
         protected MeredithDbContext MeredithDbContext { get; }
@@ -20,88 +18,33 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task<PaymentIntent> CreatePaymentIntent(
-            int companyId,
-            decimal amount,
-            string email,
+        public async Task<PaymentIntent> CreatePaymentIntent(string accountId, decimal amount, string email,
             Dictionary<string, string> metadata)
         {
-            var accountId = await GetAccountFromCompany(companyId);
             var paymentIntentService = new PaymentIntentService();
+
             var paymentIntent = await paymentIntentService.CreateAsync(new PaymentIntentCreateOptions
             {
-                Amount = (int)(amount * 100),
+                Amount = (int) (amount * 100),
                 Currency = "usd",
-                ApplicationFeeAmount = (int)Math.Ceiling(amount * 12m), // 12% fee, amount * 100 * .12
+                ApplicationFeeAmount = (int) Math.Ceiling(amount * 12m),
                 Metadata = metadata,
                 ReceiptEmail = email
             }, GetRequestOptions(accountId));
+
             return paymentIntent;
         }
 
-        public async Task<PaymentIntent> ConfirmPaymentIntent(string intentId)
+        public PaymentIntent ConfirmPaymentIntent(string json, string stripSignatureHeader)
         {
-            var paymentIntentService = new PaymentIntentService();
-            var paymentIntent = await paymentIntentService.ConfirmAsync(intentId, new PaymentIntentConfirmOptions
+            var stripeEvent = EventUtility.ConstructEvent(json, stripSignatureHeader, StripeOptions.EndpointSecret);
+
+            if (stripeEvent.Type != Events.PaymentIntentSucceeded)
             {
-
-            }, GetRequestOptions());
-            return paymentIntent;
-        }
-
-        public async Task<string> CreateCharge(int companyId, string token, decimal amount, string email,
-            Dictionary<string, string> metadata, bool capture = true)
-        {
-            var accountId = await GetAccountFromCompany(companyId);
-            var chargeService = new ChargeService();
-            var charge = await chargeService.CreateAsync(new ChargeCreateOptions
-            {
-                Amount = (int)(amount * 100),
-                Currency = "usd",
-                Source = token,
-                ApplicationFeeAmount = (int)Math.Ceiling(amount * 0.12m),
-                Destination = new ChargeDestinationCreateOptions
-                {
-                    Account = accountId
-                },
-                ReceiptEmail = email,
-                Metadata = metadata,
-                Capture = capture
-            }, GetRequestOptions());
-            return charge.Id;
-        }
-
-        public async Task<string> CreateAuthorization(int companyId, string token, decimal amount, string email,
-            Dictionary<string, string> metadata)
-        {
-            return await CreateCharge(companyId, token, amount, email, metadata, false);
-        }
-
-        public async Task CaptureCharge(string chargeId)
-        {
-            var chargeService = new ChargeService();
-            await chargeService.CaptureAsync(chargeId, new ChargeCaptureOptions());
-        }
-
-        private async Task<string> GetAccountFromCompany(int companyId)
-        {
-            var accountId = await MeredithDbContext.StripeAccounts
-                .Where(s => s.CompanyId == companyId)
-                .Select(s => s.StripeUserId)
-                .FirstOrDefaultAsync();
-            if (accountId == null)
-            {
-                if (await MeredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
-                {
-                    throw new Exception($"Company {companyId} does not have Stripe configured");
-                }
-                else
-                {
-                    throw new Exception($"Company {companyId} not found");
-                }
+                throw new StripeException("Invalid Stripe event.");
             }
 
-            return accountId;
+            return (PaymentIntent) stripeEvent.Data.Object;
         }
     }
 }
