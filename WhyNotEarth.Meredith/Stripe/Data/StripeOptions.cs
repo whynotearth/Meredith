@@ -9,5 +9,7 @@ namespace WhyNotEarth.Meredith.Stripe.Data
         public string PublishableKey { get; set; }
 
         public string RedirectUri { get; set; }
+
+        public string EndpointSecret { get; set; }
     }
 }

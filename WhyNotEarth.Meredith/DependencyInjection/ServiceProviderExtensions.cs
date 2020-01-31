@@ -14,7 +14,6 @@ namespace WhyNotEarth.Meredith.DependencyInjection
 
     public static class ServiceProviderExtensions
     {
-
         public static IServiceCollection AddMeredith(this IServiceCollection serviceCollection,
             IConfiguration configuration)
         {

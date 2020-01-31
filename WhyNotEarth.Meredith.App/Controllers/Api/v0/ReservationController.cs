@@ -1,20 +1,18 @@
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
-    using System;
-    using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
+    using WhyNotEarth.Meredith.App.Results.Api.v0.Reservation;
     using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Data.Entity.Models;
-    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
     using WhyNotEarth.Meredith.Hotel;
     using WhyNotEarth.Meredith.Identity;
-    using WhyNotEarth.Meredith.Stripe;
 
     [ApiVersion("0")]
     [Route("/api/v0/reservations")]
@@ -25,19 +23,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         private ReservationService ReservationService { get; }
 
-        private StripeService StripeService { get; }
-
         private UserManager UserManager { get; }
 
         public ReservationController(
             MeredithDbContext meredithDbContext,
             UserManager userManager,
-            StripeService stripeService,
             ReservationService reservationService)
         {
             MeredithDbContext = meredithDbContext;
             ReservationService = reservationService;
-            StripeService = stripeService;
             UserManager = userManager;
         }
 
@@ -51,6 +45,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Include(r => r.Payments)
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .FirstOrDefaultAsync();
+
             return Ok(new
             {
                 reservation.Created,
@@ -78,6 +73,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [Authorize]
         [HttpPost]
         [Route("{reservationId}/pay")]
+        [ProducesResponseType(typeof(PayReservationResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PayReservation(int reservationId, [FromBody] PayModel model)
         {
             if (!ModelState.IsValid)
@@ -85,57 +84,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            try
-            {
-                var (reservation, company, user) = await GetReservationAsync(reservationId);
-                if (reservation == null)
-                {
-                    return NotFound();
-                }
+            var clientSecret = await ReservationService.PayReservation(reservationId, model.Amount, model.Metadata);
 
-                var paymentIntent = await StripeService.CreatePaymentIntent(company.Id, model.Amount, user.Email, new Dictionary<string, string>());
-                var payment = new Payment
-                {
-                    Amount = model.Amount,
-                    Created = DateTime.UtcNow,
-                    ReservationId = reservation.Id,
-                    Status = Payment.Statuses.IntentGenerated,
-                    PaymentIntentId = paymentIntent.Id,
-                    UserId = user.Id,
-                };
-                MeredithDbContext.Payments.Add(payment);
-                await MeredithDbContext.SaveChangesAsync();
-                return Ok(new
-                {
-                    paymentIntent.ClientSecret
-                });
-            }
-            catch (Exception exception)
-            {
-                return StatusCode(500, new
-                {
-                    error = exception.Message
-                });
-            }
-        }
-
-        private async Task<(Reservation, Company, User)> GetReservationAsync(int reservationId)
-        {
-            var user = await UserManager.GetUserAsync(User);
-            var results = await MeredithDbContext.Reservations
-                .Where(r => r.Id == reservationId && r.UserId == user.Id)
-                .Select(r => new
-                {
-                    Reservation = r,
-                    r.Room.RoomType.Hotel.Company
-                })
-                .FirstOrDefaultAsync();
-            if (results.Company == null)
-            {
-                throw new Exception("This hotel does not have a bound company");
-            }
-
-            return (results.Reservation, results.Company, user);
+            return Ok(new PayReservationResult(clientSecret));
         }
 
         [Authorize]
@@ -154,6 +105,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 reservationId = reservation.Id
             });
+        }
+
+        [HttpPost]
+        [Route("paymentintent/confirm")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ConfirmPaymentIntent()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            await ReservationService.ConfirmPayment(json, Request.Headers["Stripe-Signature"]);
+
+            return Ok();
         }
     }
 }
