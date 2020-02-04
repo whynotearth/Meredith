@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Middleware
             {
                 InvalidActionException _ => StatusCodes.Status400BadRequest,
                 RecordNotFoundException _ => StatusCodes.Status404NotFound,
-                _ => httpResponse.StatusCode = StatusCodes.Status500InternalServerError
+                _ => StatusCodes.Status500InternalServerError
             };
 
             if (httpResponse.StatusCode == StatusCodes.Status500InternalServerError)

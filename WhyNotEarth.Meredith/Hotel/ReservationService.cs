@@ -113,12 +113,12 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new RecordNotFoundException();
             }
 
-            var accountId = await GetAccountFromCompany(company.Id);
+            var stripeAccountId = await GetStripeAccountFromCompany(company.Id);
 
             metadata[MetadataReservationIdKey] = reservationId.ToString();
             metadata[MetadataUserIdKey] = user.Id.ToString();
 
-            var paymentIntent = await StripeService.CreatePaymentIntent(accountId, amount, user.Email, metadata);
+            var paymentIntent = await StripeService.CreatePaymentIntent(stripeAccountId, amount, user.Email, metadata);
 
             var payment = new Payment
             {
@@ -173,14 +173,14 @@ namespace WhyNotEarth.Meredith.Hotel
             return (results.Reservation, results.Company, user);
         }
 
-        private async Task<string> GetAccountFromCompany(int companyId)
+        private async Task<string> GetStripeAccountFromCompany(int companyId)
         {
-            var accountId = await MeredithDbContext.StripeAccounts
+            var stripeAccountId = await MeredithDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
 
-            if (accountId == null)
+            if (stripeAccountId == null)
             {
                 if (await MeredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
                 {
@@ -190,7 +190,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new RecordNotFoundException($"Company {companyId} not found");
             }
 
-            return accountId;
+            return stripeAccountId;
         }
     }
 }
