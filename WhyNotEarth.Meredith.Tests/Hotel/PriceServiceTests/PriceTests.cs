@@ -13,7 +13,7 @@
     {
         private PriceService PriceService { get; }
 
-        private DateTime Date { get; } = new DateTime(2019, 1, 1);
+        private DateTime Date { get; } = new DateTime(2020, 1, 1);
 
         public PriceTests()
         {

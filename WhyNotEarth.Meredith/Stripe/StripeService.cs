@@ -27,7 +27,7 @@ namespace WhyNotEarth.Meredith.Stripe
             {
                 Amount = (int) (amount * 100),
                 Currency = "usd",
-                ApplicationFeeAmount = (int) Math.Ceiling(amount * 12m),
+                ApplicationFeeAmount = (int) Math.Ceiling(amount * 5m),
                 Metadata = metadata,
                 ReceiptEmail = email
             }, GetRequestOptions(accountId));

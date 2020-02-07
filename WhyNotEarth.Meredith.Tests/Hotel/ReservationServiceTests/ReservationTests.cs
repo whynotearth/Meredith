@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
     {
         private ReservationService ReservationService { get; }
 
-        private DateTime Start { get; } = new DateTime(2019, 1, 1);
+        private DateTime Start { get; } = new DateTime(2020, 1, 1);
 
         public ReservationTests()
         {
@@ -23,7 +23,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
         }
 
         public static object[][] ValidReservationTests = new[]{
-            new object [] { new DateTime(2019, 8, 30, 6, 16, 3, 304, DateTimeKind.Utc), new DateTime(2019, 9, 30, 6, 16, 3, 339, DateTimeKind.Utc) }
+            new object [] { new DateTime(2020, 8, 30, 6, 16, 3, 304, DateTimeKind.Utc), new DateTime(2020, 9, 30, 6, 16, 3, 339, DateTimeKind.Utc) }
         };
 
         [Theory(Skip = "Need valid dates")]
