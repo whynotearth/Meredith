@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-
+    [DebuggerDisplay("{" + nameof(Slug) + "}")]
     public class Page : IEntityTypeConfiguration<Page>
     {
         public string BackgroundImage { get; set; }
