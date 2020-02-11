@@ -1,12 +1,14 @@
-using System.Collections.Generic;
-
 namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 {
+    using System.Collections.Generic;
+
     public class PageModel
     {
         public int Id { get; set; }
 
         public string Brand { get; set; }
+
+        public IList<Category> Categories { get; set; } = new List<Category>();
 
         public string Name { get; set; }
 
@@ -37,15 +39,19 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
     public class Story
     {
+        public string Blur { get; set; }
+
         public string Content { get; set; }
 
         public string CtaText { get; set; }
 
         public string CtaLink { get; set; }
 
+        public int Id { get; set; }
+
         public string Image { get; set; }
 
-        public string Blur { get; set; }
+        public string PosterUrl { get; set; }
 
         public string Type { get; set; }
     }
@@ -56,5 +62,12 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public string Url { get; set; }
 
+    }
+
+    public class Category
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

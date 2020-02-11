@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -180,13 +180,31 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<int>("HotelId");
 
-                    b.Property<string>("Text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("HotelId");
 
                     b.ToTable("Amenities","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.AmenityTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AmenityId");
+
+                    b.Property<int>("LanguageId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmenityId");
+
+                    b.HasIndex("LanguageId");
+
+                    b.ToTable("AmenityTranslations","ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Bed", b =>
@@ -198,11 +216,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<int>("Count");
 
-                    b.Property<int>("HotelId");
+                    b.Property<int>("RoomTypeId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId");
+                    b.HasIndex("RoomTypeId");
 
                     b.ToTable("Beds","ModuleHotel");
                 });
@@ -212,20 +230,80 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("Capacity");
-
-                    b.Property<string>("GettingAround");
-
-                    b.Property<string>("Location");
+                    b.Property<int?>("CompanyId");
 
                     b.Property<int>("PageId");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("PageId")
                         .IsUnique();
 
                     b.ToTable("Hotels","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.HotelTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("GettingAround");
+
+                    b.Property<int>("HotelId");
+
+                    b.Property<int>("LanguageId");
+
+                    b.Property<string>("Location");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("LanguageId");
+
+                    b.ToTable("HotelTranslations","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Culture");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<string>("PaymentIntentId");
+
+                    b.Property<int>("ReservationId");
+
+                    b.Property<int>("Status");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments","ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Price", b =>
@@ -234,40 +312,82 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("numeric(5, 2)");
+                        .HasColumnType("numeric(10, 2)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int>("HotelId");
+                    b.Property<int>("RoomTypeId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId");
+                    b.HasIndex("RoomTypeId");
 
                     b.ToTable("Prices","ModuleHotel");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Reservation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("HotelId");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(10, 2)");
 
-                    b.Property<string>("Text");
+                    b.Property<DateTime>("Created");
+
+                    b.Property<string>("Email");
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Message");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("NumberOfGuests");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<int>("RoomId");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("date");
+
+                    b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HotelId");
+                    b.HasIndex("RoomId");
 
-                    b.ToTable("Rules","ModuleHotel");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reservations","ModuleHotel");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Room", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(16);
+
+                    b.Property<int>("RoomTypeId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomTypeId");
+
+                    b.ToTable("Rooms","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RoomType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Capacity");
 
                     b.Property<int>("HotelId");
 
@@ -277,7 +397,75 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.HasIndex("HotelId");
 
+                    b.ToTable("RoomTypes","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Rules","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RuleTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LanguageId");
+
+                    b.Property<int>("RuleId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("RuleId");
+
+                    b.ToTable("RuleTranslations","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("HotelId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
+
                     b.ToTable("Spaces","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.SpaceTranslation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("LanguageId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("SpaceId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("SpaceId");
+
+                    b.ToTable("SpaceTranslations","ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>
@@ -509,26 +697,98 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.AmenityTranslation", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", "Amenity")
+                        .WithMany("Translations")
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Bed", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RoomType", "RoomType")
                         .WithMany("Beds")
-                        .HasForeignKey("HotelId")
+                        .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", b =>
                 {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
                         .WithOne("Hotel")
                         .HasForeignKey("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "PageId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Price", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.HotelTranslation", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("Translations")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Payment", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Reservation", "Reservation")
+                        .WithMany("Payments")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Price", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RoomType", "RoomType")
                         .WithMany("Prices")
+                        .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Reservation", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Room", "Room")
+                        .WithMany("Reservations")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Room", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RoomType", "RoomType")
+                        .WithMany("Rooms")
+                        .HasForeignKey("RoomTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RoomType", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
+                        .WithMany("RoomTypes")
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -541,11 +801,37 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RuleTranslation", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Rule", "Rule")
+                        .WithMany("Translations")
+                        .HasForeignKey("RuleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
                         .WithMany("Spaces")
                         .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.SpaceTranslation", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Space", "Space")
+                        .WithMany("Translations")
+                        .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

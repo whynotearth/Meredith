@@ -11,13 +11,13 @@ namespace WhyNotEarth.Meredith.App.Controllers
     [Route("/stripe/oauth")]
     public class StripeOAuthController : Controller
     {
-        protected StripeOAuthServices StripeOAuthServices { get; }
+        protected StripeOAuthService StripeOAuthServices { get; }
 
-        public StripeOAuthController(StripeOAuthServices stripeOAuthServices)
+        public StripeOAuthController(StripeOAuthService stripeOAuthServices)
         {
             StripeOAuthServices = stripeOAuthServices;
         }
-        
+
         [Route("register/{requestId}")]
         public IActionResult Register(Guid requestId)
         {

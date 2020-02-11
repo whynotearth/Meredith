@@ -6,10 +6,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Localization;
     using Newtonsoft.Json;
     using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.Pages;
 
     [ApiVersion("0")]
     [Route("/api/v0/pages")]
@@ -18,21 +20,38 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     {
         private MeredithDbContext MeredithDbContext { get; }
 
+        private StoryService StoryService { get; }
+
         private IQueryable<Page> PageIncludes() => MeredithDbContext.Pages
             .Include(p => p.Company)
             .Include(p => p.Cards)
+            .Include(p => p.Category)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.Translations)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Amenities)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Hotel)
+            .ThenInclude(p => p.RoomTypes)
+            .Include(p => p.Hotel)
+            .ThenInclude(p => p.RoomTypes)
             .ThenInclude(p => p.Beds)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Rules)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Spaces)
+            .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Images);
 
-        public PageController(MeredithDbContext meredithDbContext)
+        public PageController(
+            StoryService storyService,
+            MeredithDbContext meredithDbContext)
         {
+            StoryService = storyService;
             MeredithDbContext = meredithDbContext;
         }
 
@@ -49,7 +68,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(new[] { page }.AsQueryable().Select(PageToReturn).FirstOrDefault());
+            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).FirstOrDefault());
         }
 
         [HttpGet]
@@ -65,7 +84,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
         }
 
         [HttpGet]
@@ -76,21 +95,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Where(p => p.Company.Slug == companySlug
                     && p.Category.Name == categoryName)
                 .ToListAsync();
-            return Ok(pages.AsQueryable().Select(PageToReturn).ToList());
+
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
         }
 
-        private static string GetCardType(Card.CardTypes cardType)
+        private string GetCulture()
         {
-            switch (cardType)
-            {
-                case Card.CardTypes.Card:
-                    return "story-card";
-                default:
-                    throw new Exception($"Card type {cardType} not mapped.");
-            }
+            return Request.HttpContext.Features.Get<IRequestCultureFeature>()
+                .RequestCulture.Culture.Name;
         }
 
-        private Func<Page, PageModel> PageToReturn = (page) =>
+        private readonly Func<Page, StoryService, string, PageModel> PageToReturn = (page, storyService, culture) =>
         {
             var pageModel = new PageModel
             {
@@ -119,31 +134,48 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                         Content = c.Text,
                         CtaText = c.CallToAction,
                         CtaLink = c.CallToActionUrl,
+                        Id = c.Id,
                         Image = c.BackgroundUrl,
+                        PosterUrl = c.PosterUrl,
                         Blur = "2px",
-                        Type = GetCardType(c.CardType)
+                        Type = storyService.GetCardType(c.CardType)
                     })
                     .ToList(),
                 Custom = page.Custom == null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom),
             };
 
+            if (page.Category != null)
+            {
+                pageModel.Categories.Add(
+                    new Models.Api.V0.Page.Category
+                    {
+                        Name = page.Category.Name,
+                        Id = page.Category.Id
+                    });
+            }
+
             if (page.Hotel != null)
             {
                 pageModel.Modules.Add("hotel", new
                 {
+                    Amenities = page.Hotel.Amenities.SelectMany(a => a.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Text).ToList(),
                     page.Hotel?.Id,
-                    page.Hotel?.Capacity,
-                    page.Hotel?.GettingAround,
-                    page.Hotel?.Location,
-                    Amenities = page.Hotel?.Amenities.Select(a => a.Text).ToList(),
-                    Beds = page.Hotel?.Beds.Select(b => new
+                    page.Hotel?.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.GettingAround,
+                    page.Hotel?.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Location,
+                    RoomTypes = page.Hotel?.RoomTypes.Select(r => new
                     {
-                        b.Count,
-                        Id = (int)b.BedType,
-                        Type = b.BedType.ToString()
+                        r.Capacity,
+                        Beds = r.Beds.Select(b => new
+                        {
+                            b.Count,
+                            Id = (int)b.BedType,
+                            Type = b.BedType.ToString()
+                        }).ToList(),
+                        r.Name,
+                        r.Id
                     }).ToList(),
-                    Rules = page.Hotel?.Rules.Select(r => r.Text).ToList(),
-                    Spaces = page.Hotel?.Spaces.Select(s => s.Name).ToList()
+                    Rules = page.Hotel?.Rules.SelectMany(r => r.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Text).ToList(),
+                    Spaces = page.Hotel?.Spaces.SelectMany(s => s.Translations).Where(t => t.Language.Culture == culture).Select(t => t.Name).ToList()
                 });
             }
 

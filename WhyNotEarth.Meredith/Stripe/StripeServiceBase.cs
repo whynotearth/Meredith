@@ -13,11 +13,12 @@ namespace WhyNotEarth.Meredith.Stripe
             StripeOptions = stripeOptions.Value;
         }
 
-        protected RequestOptions GetRequestOptions()
+        protected RequestOptions GetRequestOptions(string stripeAccount = null)
         {
             return new RequestOptions
             {
-                ApiKey = StripeOptions.ClientSecret
+                ApiKey = StripeOptions.ClientSecret,
+                StripeAccount = stripeAccount
             };
         }
     }

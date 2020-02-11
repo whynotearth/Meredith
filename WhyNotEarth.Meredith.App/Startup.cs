@@ -1,24 +1,32 @@
 ﻿namespace WhyNotEarth.Meredith.App
 {
     using System;
+    using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
-    using Company;
+    using System.Threading.Tasks;
     using Data.Entity;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Pages;
     using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
     using RollbarDotNet.Logger;
-    using Stripe;
     using Stripe.Data;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using WhyNotEarth.Meredith.App.Configuration;
+    using WhyNotEarth.Meredith.App.Localization;
+    using WhyNotEarth.Meredith.App.Middleware;
+    using WhyNotEarth.Meredith.DependencyInjection;
 
     public class Startup
     {
@@ -34,20 +42,27 @@
             services
                 .AddCors(o => o
                     .AddDefaultPolicy(builder => builder
+                        .SetIsOriginAllowed(origin => true)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowAnyOrigin()))
+                        .AllowCredentials()))
                 .AddRollbarWeb()
                 .AddOptions()
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
-                .Configure<PageDatabaseOptions>(o => Configuration.GetSection("PageDatabase").Bind(o))
+                .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
                     options => options.SetPostgresVersion(new Version(9, 6))))
-                .AddScoped<StripeServices>()
-                .AddScoped<StripeOAuthServices>()
-                .AddSingleton<PageDatabase>()
-                .AddScoped<CompanyService>()
+                .AddMeredith(Configuration)
+                .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
+                .Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                    options.ForwardLimit = null;
+                    options.RequireHeaderSymmetry = false;
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                })
                 .AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v0", new Info
@@ -65,21 +80,80 @@
                             .SelectMany(attr => attr.Versions);
                         return versions.Any(v => $"v{v.ToString()}" == docName);
                     });
-                })
-                .AddMvc();
+                    c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        Name = "Authorization",
+                        In = "header",
+                        Type = "apiKey"
+                    });
+                    var security = new Dictionary<string, IEnumerable<string>>
+                    {
+                        {"Bearer", new string[] { }},
+                    };
+                    c.AddSecurityRequirement(security);
+                    c.OperationFilter<LocalizationHeaderParameter>();
+                });
 
+            var jwtOptions = Configuration.GetSection("Jwt").Get<JwtOptions>();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services
+                .AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    var config = Configuration.GetSection("Authentication:Google");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
+                })
+                .AddFacebook(options =>
+                {
+                    var config = Configuration.GetSection("Authentication:Facebook");
+                    options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
+                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
+                })
+                .Services
+                .ConfigureApplicationCookie(options =>
+                {
+                    options.Cookie.Name = "auth";
+                    options.Cookie.HttpOnly = false;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.LoginPath = null;
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        OnRedirectToLogin = redirectContext =>
+                        {
+                            redirectContext.HttpContext.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+            services
+                .AddMvc();
             return services.BuildServiceProvider();
+        }
+
+        private Task HandleOnRemoteFailure(RemoteFailureContext context)
+        {
+            context.Response.Redirect(context.Properties.RedirectUri);
+            context.HandleResponse();
+            return Task.FromResult(0);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+
+            }
 
             loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
-
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
@@ -87,9 +161,16 @@
             }
 
             app
+                .UseCustomLocalization()
+                .UseAuthentication()
                 .UseStaticFiles()
                 .UseSwagger()
-                .UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0"); })
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
+                    c.RoutePrefix = string.Empty;
+                })
+                .UseMiddleware<ExceptionHandlingMiddleware>()
                 .UseMvc();
         }
     }
