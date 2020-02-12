@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task<PaymentIntent> CreatePaymentIntent(string accountId, decimal amount, string email,
+        public async Task<PaymentIntent> CreatePaymentIntent(string stripeAccountId, decimal amount, string email,
             Dictionary<string, string> metadata)
         {
             var paymentIntentService = new PaymentIntentService();
@@ -30,7 +30,7 @@ namespace WhyNotEarth.Meredith.Stripe
                 ApplicationFeeAmount = (int) Math.Ceiling(amount * 5m),
                 Metadata = metadata,
                 ReceiptEmail = email
-            }, GetRequestOptions(accountId));
+            }, GetRequestOptions(stripeAccountId));
 
             return paymentIntent;
         }

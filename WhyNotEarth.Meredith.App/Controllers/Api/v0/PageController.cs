@@ -28,6 +28,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             .Include(p => p.Category)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Translations)
+            .ThenInclude(p => p.Language)
             .Include(p => p.Hotel)
             .ThenInclude(p => p.Amenities)
             .ThenInclude(p => p.Translations)
