@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (result.Succeeded)
             {
                 var appUser = await UserManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
