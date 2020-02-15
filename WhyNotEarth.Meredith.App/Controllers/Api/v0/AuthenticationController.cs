@@ -55,7 +55,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return Ok(GenerateJwtToken(model.Email, appUser));
             }
 
-            return BadRequest();
+            return Unauthorized();
         }
 
         [Route("logout")]
