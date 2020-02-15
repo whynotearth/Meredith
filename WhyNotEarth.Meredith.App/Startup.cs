@@ -181,17 +181,16 @@
                 .UseAuthentication()
                 .Use(async (context, next) =>
                 {
-                    // If we found nothing on the default identity.
-                    if (context.User.Identities.Count() == 0)
+                    // If the default identity failed to authenticate (cookies)
+                    if (context.User.Identities.All(i => !i.IsAuthenticated))
                     {
                         var principal = new ClaimsPrincipal();
                         var jwtAuth = await context.AuthenticateAsync("jwt");
                         if (jwtAuth?.Principal != null)
                         {
                             principal.AddIdentities(jwtAuth.Principal.Identities);
+                            context.User = principal;
                         }
-
-                        context.User = principal;
                     }
 
                     await next();
