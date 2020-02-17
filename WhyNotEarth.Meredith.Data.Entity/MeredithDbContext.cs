@@ -40,6 +40,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Rule> Rules { get; set; }
 
+        public DbSet<SendGridAccount> SendGridAccounts { get; set; }
+
         public DbSet<Space> Spaces { get; set; }
 
         public DbSet<StripeAccount> StripeAccounts { get; set; }

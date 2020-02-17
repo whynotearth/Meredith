@@ -13,7 +13,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Reservation
 
         public string Message { get; set; }
 
-
         [Required]
         public string Name { get; set; }
 
@@ -21,6 +20,9 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Reservation
         public int NumberOfGuests { get; set; }
 
         public PayModel Payment { get; set; }
+
+        // TODO: Add required to this field
+        public string PhoneCountry { get; set; }
 
         [Required]
         public string Phone { get; set; }

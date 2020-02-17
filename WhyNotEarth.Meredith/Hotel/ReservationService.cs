@@ -9,7 +9,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Stripe;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Hotel
 {
@@ -18,77 +18,71 @@ namespace WhyNotEarth.Meredith.Hotel
         private const string MetadataReservationIdKey = "Reservation.Id";
         private const string MetadataUserIdKey = "User.Id";
 
-        protected MeredithDbContext MeredithDbContext { get; }
+        private readonly MeredithDbContext _meredithDbContext;
+        private readonly ClaimsPrincipal _user;
+        private readonly UserManager _userManager;
+        private readonly IStripeService _stripeService;
+        private readonly IEmailService _emailService;
 
-        protected ClaimsPrincipal User { get; }
-
-        protected UserManager UserManager { get; }
-
-        protected StripeService StripeService { get; }
-
-        public ReservationService(
-            MeredithDbContext meredithDbContext,
-            ClaimsPrincipal user,
-            UserManager userManager,
-            StripeService stripeService)
+        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, UserManager userManager,
+            IStripeService stripeService, IEmailService emailService)
         {
-            MeredithDbContext = meredithDbContext;
-            User = user;
-            UserManager = userManager;
-            StripeService = stripeService;
+            _meredithDbContext = meredithDbContext;
+            _user = user;
+            _userManager = userManager;
+            _stripeService = stripeService;
+            _emailService = emailService;
         }
 
-        public async Task<Reservation> CreateReservation(
-            int roomTypeId,
-            DateTime startDate,
-            DateTime endDate,
-            string fullName,
-            string email,
-            string message,
-            string phone,
-            int numberOfGuests)
+        public async Task<Reservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
+            string fullName, string email, string message, string phoneCountry, string phone, int numberOfGuests)
         {
-            var roomType = await MeredithDbContext.RoomTypes
+            var result = await _meredithDbContext.RoomTypes
                 .Where(rt => rt.Id == roomTypeId)
                 .Select(rt => new
                 {
-                    Price = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate)
-                        .Sum(p => p.Amount),
+                    RoomType = rt,
+                    DailyPrices = rt.Prices
+                        .Where(p => p.Date >= startDate && p.Date < endDate),
                     PaidDays = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate)
-                        .Count(),
+                        .Count(p => p.Date >= startDate && p.Date < endDate),
                     AvailableRooms = rt.Rooms
                         .Where(r => !r.Reservations
                             .Any(re => re.Start >= startDate && re.End <= endDate))
                         .ToList()
                 })
                 .FirstOrDefaultAsync();
-            if (roomType == null)
+
+            if (result is null)
             {
                 throw new RecordNotFoundException();
             }
 
-            if (roomType.AvailableRooms.Count == 0)
+            if (result.AvailableRooms.Count == 0)
             {
                 throw new InvalidActionException("There are no rooms available of this type");
             }
 
-            var totalDays = endDate.Subtract(startDate).TotalDays;
+            var totalDays = (int) endDate.Subtract(startDate).TotalDays;
             if (totalDays <= 0)
             {
                 throw new InvalidActionException("Invalid number of days to reserve");
             }
 
-            if (roomType.PaidDays != totalDays)
+            if (result.PaidDays != totalDays)
             {
                 throw new InvalidActionException("Not all days have prices set");
             }
 
-            var user = await UserManager.GetUserAsync(User);
+            var totalAmount = result.DailyPrices.Sum(item => item.Amount);
+            // 10% VAT
+            var vat = totalAmount / 10;
+            totalAmount += vat;
+
+            var user = await _userManager.GetUserAsync(_user);
             var reservation = new Reservation
             {
-                Amount = roomType.Price,
+                Amount = totalAmount,
                 Created = DateTime.UtcNow,
                 Start = startDate,
                 End = endDate,
@@ -97,11 +91,16 @@ namespace WhyNotEarth.Meredith.Hotel
                 Name = fullName,
                 NumberOfGuests = numberOfGuests,
                 Phone = phone,
-                RoomId = roomType.AvailableRooms.First().Id,
+                RoomId = result.AvailableRooms.First().Id,
                 User = user
             };
-            MeredithDbContext.Reservations.Add(reservation);
-            await MeredithDbContext.SaveChangesAsync();
+
+            _meredithDbContext.Reservations.Add(reservation);
+            await _meredithDbContext.SaveChangesAsync();
+
+            await _emailService.SendReservationEmail(reservation, result.RoomType, result.DailyPrices, vat,
+                result.PaidDays, phoneCountry, phone);
+
             return reservation;
         }
 
@@ -113,12 +112,12 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new RecordNotFoundException();
             }
 
-            var stripeAccountId = await GetStripeAccountFromCompany(company.Id);
+            var accountId = await GetStripeAccountFromCompany(company.Id);
 
             metadata[MetadataReservationIdKey] = reservationId.ToString();
             metadata[MetadataUserIdKey] = user.Id.ToString();
 
-            var paymentIntent = await StripeService.CreatePaymentIntent(stripeAccountId, amount, user.Email, metadata);
+            var paymentIntent = await _stripeService.CreatePaymentIntent(accountId, amount, user.Email, metadata);
 
             var payment = new Payment
             {
@@ -129,15 +128,15 @@ namespace WhyNotEarth.Meredith.Hotel
                 PaymentIntentId = paymentIntent.Id,
                 UserId = user.Id
             };
-            MeredithDbContext.Payments.Add(payment);
-            await MeredithDbContext.SaveChangesAsync();
+            _meredithDbContext.Payments.Add(payment);
+            await _meredithDbContext.SaveChangesAsync();
 
             return paymentIntent.ClientSecret;
         }
 
         public async Task ConfirmPayment(string json, string stripSignatureHeader)
         {
-            var paymentIntent =  StripeService.ConfirmPaymentIntent(json, stripSignatureHeader);
+            var paymentIntent = _stripeService.ConfirmPaymentIntent(json, stripSignatureHeader);
 
             var payment = new Payment
             {
@@ -149,14 +148,14 @@ namespace WhyNotEarth.Meredith.Hotel
                 UserId = int.Parse(paymentIntent.Metadata[MetadataUserIdKey])
             };
 
-            MeredithDbContext.Payments.Add(payment);
-            await MeredithDbContext.SaveChangesAsync();
+            _meredithDbContext.Payments.Add(payment);
+            await _meredithDbContext.SaveChangesAsync();
         }
 
         private async Task<(Reservation, Company, User)> GetReservation(int reservationId)
         {
-            var user = await UserManager.GetUserAsync(User);
-            var results = await MeredithDbContext.Reservations
+            var user = await _userManager.GetUserAsync(_user);
+            var results = await _meredithDbContext.Reservations
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .Select(r => new
                 {
@@ -175,14 +174,14 @@ namespace WhyNotEarth.Meredith.Hotel
 
         private async Task<string> GetStripeAccountFromCompany(int companyId)
         {
-            var stripeAccountId = await MeredithDbContext.StripeAccounts
+            var stripeAccountId = await _meredithDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
 
-            if (stripeAccountId == null)
+            if (stripeAccountId is null)
             {
-                if (await MeredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
+                if (await _meredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
                 {
                     throw new RecordNotFoundException($"Company {companyId} does not have Stripe configured");
                 }

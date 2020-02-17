@@ -1,3 +1,5 @@
+using WhyNotEarth.Meredith.Services;
+
 namespace WhyNotEarth.Meredith.DependencyInjection
 {
     using Microsoft.AspNetCore.Identity;
@@ -6,6 +8,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
     using WhyNotEarth.Meredith.Cloudinary;
     using WhyNotEarth.Meredith.Data.Entity;
     using WhyNotEarth.Meredith.Data.Entity.Models;
+    using WhyNotEarth.Meredith.Email;
     using WhyNotEarth.Meredith.Hotel;
     using WhyNotEarth.Meredith.Identity;
     using WhyNotEarth.Meredith.Pages;
@@ -24,12 +27,14 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                     .AddDefaultTokenProviders()
                 .Services
                 .Configure<CloudinaryOptions>(o => configuration.GetSection("Cloudinary").Bind(o))
-                .AddScoped<StripeService>()
+                .AddScoped<IStripeService, StripeService>()
                 .AddScoped<StripeOAuthService>()
                 .AddScoped<ReservationService>()
                 .AddScoped<CompanyService>()
                 .AddScoped<PriceService>()
-                .AddScoped<StoryService>();
+                .AddScoped<StoryService>()
+                .AddScoped<IEmailService, EmailService>()
+                .AddScoped<SendGridService>();
         }
     }
 }

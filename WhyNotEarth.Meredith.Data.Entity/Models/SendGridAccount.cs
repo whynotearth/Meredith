@@ -1,0 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace WhyNotEarth.Meredith.Data.Entity.Models
+{
+    public class SendGridAccount : IEntityTypeConfiguration<SendGridAccount>
+    {
+        public int Id { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public string TemplateId { get; set; }
+
+        public string FromEmail { get; set; }
+
+        public string FromEmailName { get; set; }
+
+        public string Bcc { get; set; }
+
+        public void Configure(EntityTypeBuilder<SendGridAccount> builder)
+        {
+        }
+    }
+}

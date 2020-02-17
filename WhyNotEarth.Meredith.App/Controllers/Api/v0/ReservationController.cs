@@ -107,7 +107,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             }
 
             var reservation = await ReservationService.CreateReservation(
-                roomTypeId, model.Start, model.End, model.Name, model.Email, model.Message, model.Phone, model.NumberOfGuests);
+                roomTypeId, model.Start, model.End, model.Name, model.Email, model.Message, model.PhoneCountry, model.Phone,
+                model.NumberOfGuests);
+
             return Ok(new
             {
                 reservationId = reservation.Id

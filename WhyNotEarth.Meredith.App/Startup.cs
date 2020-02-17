@@ -1,4 +1,6 @@
-﻿namespace WhyNotEarth.Meredith.App
+﻿using WhyNotEarth.Meredith.Email;
+
+namespace WhyNotEarth.Meredith.App
 {
     using System;
     using System.Collections.Generic;
@@ -53,6 +55,7 @@
                 .AddRollbarWeb()
                 .AddOptions()
                 .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
+                .Configure<SendGridOptions>(options => Configuration.GetSection("SendGrid").Bind(options))
                 .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
                 .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
