@@ -56,14 +56,14 @@ namespace WhyNotEarth.Meredith.Hotel
                         .Where(p => p.Date >= startDate && p.Date < endDate)
                         .Sum(p => p.Amount),
                     PaidDays = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate)
-                        .Count(),
+                        .Count(p => p.Date >= startDate && p.Date < endDate),
                     AvailableRooms = rt.Rooms
                         .Where(r => !r.Reservations
                             .Any(re => re.Start >= startDate && re.End <= endDate))
                         .ToList()
                 })
                 .FirstOrDefaultAsync();
+
             if (roomType == null)
             {
                 throw new RecordNotFoundException();
@@ -85,10 +85,13 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new InvalidActionException("Not all days have prices set");
             }
 
+            // Add 10% VAT
+            var totalAmount = roomType.Price + roomType.Price / 10;
+
             var user = await UserManager.GetUserAsync(User);
             var reservation = new Reservation
             {
-                Amount = roomType.Price,
+                Amount = totalAmount,
                 Created = DateTime.UtcNow,
                 Start = startDate,
                 End = endDate,
@@ -100,8 +103,10 @@ namespace WhyNotEarth.Meredith.Hotel
                 RoomId = roomType.AvailableRooms.First().Id,
                 User = user
             };
+
             MeredithDbContext.Reservations.Add(reservation);
             await MeredithDbContext.SaveChangesAsync();
+
             return reservation;
         }
 
