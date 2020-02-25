@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+    [DebuggerDisplay("{" + nameof(Slug) + "}")]
     public class Company : IEntityTypeConfiguration<Company>
     {
         public int Id { get; set; }

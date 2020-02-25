@@ -84,7 +84,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest();
             }
 
-            var clientSecret = await ReservationService.PayReservation(reservationId, model.Amount, model.Metadata);
+            var reservation = await MeredithDbContext.Reservations.FirstOrDefaultAsync(item => item.Id == reservationId);
+
+            if (reservation is null)
+            {
+                return NotFound();
+            }
+
+            var clientSecret = await ReservationService.PayReservation(reservationId, reservation.Amount, model.Metadata);
 
             return Ok(new PayReservationResult(clientSecret));
         }

@@ -4,10 +4,13 @@
     using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
     using Data.Entity;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -17,6 +20,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
     using RollbarDotNet.Configuration;
     using RollbarDotNet.Core;
     using RollbarDotNet.Logger;
@@ -99,6 +103,18 @@
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication()
+                .AddJwtBearer("jwt", config =>
+                {
+                    config.RequireHttpsMetadata = false;
+                    config.SaveToken = true;
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                })
                 .AddGoogle(options =>
                 {
                     var config = Configuration.GetSection("Authentication:Google");
@@ -163,6 +179,22 @@
             app
                 .UseCustomLocalization()
                 .UseAuthentication()
+                .Use(async (context, next) =>
+                {
+                    // If the default identity failed to authenticate (cookies)
+                    if (context.User.Identities.All(i => !i.IsAuthenticated))
+                    {
+                        var principal = new ClaimsPrincipal();
+                        var jwtAuth = await context.AuthenticateAsync("jwt");
+                        if (jwtAuth?.Principal != null)
+                        {
+                            principal.AddIdentities(jwtAuth.Principal.Identities);
+                            context.User = principal;
+                        }
+                    }
+
+                    await next();
+                })
                 .UseStaticFiles()
                 .UseSwagger()
                 .UseSwaggerUI(c =>
