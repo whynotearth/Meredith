@@ -1,6 +1,5 @@
 ﻿namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
@@ -10,7 +9,6 @@
 
     [ApiVersion("0")]
     [Route("/api/v0/prices")]
-    [EnableCors]
     public class PriceController : Controller
     {
         private MeredithDbContext MeredithDbContext { get; }

@@ -3,7 +3,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Localization;
@@ -15,7 +14,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/pages")]
-    [EnableCors]
     public class PageController : Controller
     {
         private MeredithDbContext MeredithDbContext { get; }

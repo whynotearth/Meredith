@@ -2,7 +2,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
@@ -14,7 +13,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/companies")]
-    [EnableCors]
     public class CompanyController : Controller
     {
         public CompanyController(

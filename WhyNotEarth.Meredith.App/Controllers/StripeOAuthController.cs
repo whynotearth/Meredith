@@ -5,10 +5,12 @@ namespace WhyNotEarth.Meredith.App.Controllers
     using System;
     using System.Threading.Tasks;
     using Areas.Stripe.StripeOAuth;
+    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Stripe;
 
     [Route("/stripe/oauth")]
+    [DisableCors]
     public class StripeOAuthController : Controller
     {
         protected StripeOAuthService StripeOAuthServices { get; }

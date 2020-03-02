@@ -4,7 +4,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/reservations")]
-    [EnableCors]
     public class ReservationController : Controller
     {
         private MeredithDbContext MeredithDbContext { get; }
