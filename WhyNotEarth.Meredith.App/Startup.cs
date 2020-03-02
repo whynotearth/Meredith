@@ -1,37 +1,33 @@
-﻿
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using RollbarDotNet.Configuration;
+using RollbarDotNet.Core;
+using WhyNotEarth.Meredith.App.Configuration;
+using WhyNotEarth.Meredith.App.ConfigureServices;
+using WhyNotEarth.Meredith.App.Localization;
+using WhyNotEarth.Meredith.App.Middleware;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.DependencyInjection;
+using WhyNotEarth.Meredith.Stripe.Data;
+
 namespace WhyNotEarth.Meredith.App
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Data.Entity;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
-    using RollbarDotNet.Configuration;
-    using RollbarDotNet.Core;
-    using RollbarDotNet.Logger;
-    using Stripe.Data;
-    using Swashbuckle.AspNetCore.Swagger;
-    using Swashbuckle.AspNetCore.SwaggerGen;
-    using WhyNotEarth.Meredith.App.Configuration;
-    using WhyNotEarth.Meredith.App.Localization;
-    using WhyNotEarth.Meredith.App.Middleware;
-    using WhyNotEarth.Meredith.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
-
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -44,24 +40,25 @@ namespace WhyNotEarth.Meredith.App
         public void ConfigureServices(IServiceCollection services)
         {
             // CORS
-            services
-                .AddCors(o => o
-                    .AddDefaultPolicy(builder => builder
-                        .SetIsOriginAllowed(origin => true)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()));
+            services.AddCors(o => o
+                .AddDefaultPolicy(builder => builder
+                    .SetIsOriginAllowed(origin => true)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()));
 
-            services
-                .AddRollbarWeb()
-                .AddOptions()
+            services.AddRollbarWeb();
+
+            services.AddOptions()
                 .Configure<RollbarOptions>(options => _configuration.GetSection("Rollbar").Bind(options))
                 .Configure<SendGridOptions>(options => _configuration.GetSection("SendGrid").Bind(options))
                 .Configure<StripeOptions>(o => _configuration.GetSection("Stripe").Bind(o))
-                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o))
-                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
-                    options => options.SetPostgresVersion(new Version(9, 6))))
-                .AddMeredith(_configuration)
+                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o));
+
+            services.AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
+                options => options.SetPostgresVersion(new Version(9, 6))));
+
+            services.AddMeredith(_configuration)
                 .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
@@ -70,38 +67,9 @@ namespace WhyNotEarth.Meredith.App
                     options.RequireHeaderSymmetry = false;
                     options.KnownNetworks.Clear();
                     options.KnownProxies.Clear();
-                })
-                .AddSwaggerGen(c =>
-                {
-                    c.SwaggerDoc("v0", new Info
-                    {
-                        Title = "Interface API",
-                        Version = "v0",
-                        Description =
-                            "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"
-                    });
-                    c.DocInclusionPredicate((docName, apiDesc) =>
-                    {
-                        apiDesc.TryGetMethodInfo(out var methodInfo);
-                        var versions = methodInfo.DeclaringType.GetCustomAttributes(true)
-                            .OfType<ApiVersionAttribute>()
-                            .SelectMany(attr => attr.Versions);
-                        return versions.Any(v => $"v{v.ToString()}" == docName);
-                    });
-                    c.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                    {
-                        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                        Name = "Authorization",
-                        In = "header",
-                        Type = "apiKey"
-                    });
-                    var security = new Dictionary<string, IEnumerable<string>>
-                    {
-                        {"Bearer", new string[] { }},
-                    };
-                    c.AddSecurityRequirement(security);
-                    c.OperationFilter<LocalizationHeaderParameter>();
                 });
+
+            services.AddSwagger();
 
             var jwtOptions = _configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -212,9 +180,7 @@ namespace WhyNotEarth.Meredith.App
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
