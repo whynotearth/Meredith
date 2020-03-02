@@ -2,7 +2,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
@@ -11,7 +10,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/cards")]
-    [EnableCors]
     public class CardController : Controller
     {
         protected MeredithDbContext MeredithDbContext { get; }

@@ -1,5 +1,4 @@
-﻿using WhyNotEarth.Meredith.Email;
-
+﻿
 namespace WhyNotEarth.Meredith.App
 {
     using System;
@@ -12,12 +11,10 @@ namespace WhyNotEarth.Meredith.App
     using Data.Entity;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.HttpOverrides;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -33,34 +30,38 @@ namespace WhyNotEarth.Meredith.App
     using WhyNotEarth.Meredith.App.Localization;
     using WhyNotEarth.Meredith.App.Middleware;
     using WhyNotEarth.Meredith.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
 
     public class Startup
     {
-        protected IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
+            // CORS
             services
                 .AddCors(o => o
                     .AddDefaultPolicy(builder => builder
                         .SetIsOriginAllowed(origin => true)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials()))
+                        .AllowCredentials()));
+
+            services
                 .AddRollbarWeb()
                 .AddOptions()
-                .Configure<RollbarOptions>(options => Configuration.GetSection("Rollbar").Bind(options))
-                .Configure<SendGridOptions>(options => Configuration.GetSection("SendGrid").Bind(options))
-                .Configure<StripeOptions>(o => Configuration.GetSection("Stripe").Bind(o))
-                .Configure<JwtOptions>(o => Configuration.GetSection("Jwt").Bind(o))
-                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(Configuration.GetConnectionString("Default"),
+                .Configure<RollbarOptions>(options => _configuration.GetSection("Rollbar").Bind(options))
+                .Configure<SendGridOptions>(options => _configuration.GetSection("SendGrid").Bind(options))
+                .Configure<StripeOptions>(o => _configuration.GetSection("Stripe").Bind(o))
+                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o))
+                .AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
                     options => options.SetPostgresVersion(new Version(9, 6))))
-                .AddMeredith(Configuration)
+                .AddMeredith(_configuration)
                 .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
@@ -102,7 +103,7 @@ namespace WhyNotEarth.Meredith.App
                     c.OperationFilter<LocalizationHeaderParameter>();
                 });
 
-            var jwtOptions = Configuration.GetSection("Jwt").Get<JwtOptions>();
+            var jwtOptions = _configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services
                 .AddAuthentication()
@@ -120,14 +121,14 @@ namespace WhyNotEarth.Meredith.App
                 })
                 .AddGoogle(options =>
                 {
-                    var config = Configuration.GetSection("Authentication:Google");
+                    var config = _configuration.GetSection("Authentication:Google");
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
                 })
                 .AddFacebook(options =>
                 {
-                    var config = Configuration.GetSection("Authentication:Facebook");
+                    var config = _configuration.GetSection("Authentication:Facebook");
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
@@ -148,9 +149,9 @@ namespace WhyNotEarth.Meredith.App
                         }
                     };
                 });
-            services
-                .AddMvc();
-            return services.BuildServiceProvider();
+
+            services.AddControllers()
+                .AddNewtonsoftJson();
         }
 
         private Task HandleOnRemoteFailure(RemoteFailureContext context)
@@ -160,16 +161,12 @@ namespace WhyNotEarth.Meredith.App
             return Task.FromResult(0);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-
             }
 
             loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
@@ -198,15 +195,26 @@ namespace WhyNotEarth.Meredith.App
 
                     await next();
                 })
-                .UseStaticFiles()
                 .UseSwagger()
                 .UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
                     c.RoutePrefix = string.Empty;
                 })
-                .UseMiddleware<ExceptionHandlingMiddleware>()
-                .UseMvc();
+                .UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseCors("default");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
         }
     }
 }

@@ -5,14 +5,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Linq;
     using CloudinaryDotNet;
     using CloudinaryDotNet.Actions;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using WhyNotEarth.Meredith.Cloudinary;
 
     [ApiVersion("0")]
     [Route("/api/v0/planetcollage")]
-    [EnableCors]
     public class PlanetCollageController : Controller
     {
         protected CloudinaryOptions CloudinaryOptions { get; }
