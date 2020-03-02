@@ -5,10 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.App.Configuration;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Identity;
 
 namespace WhyNotEarth.Meredith.App.ConfigureServices
 {
@@ -18,6 +22,12 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
         {
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services
+                .AddIdentity<User, Role>()
+                .AddUserManager<UserManager>()
+                .AddEntityFrameworkStores<MeredithDbContext>()
+                .AddDefaultTokenProviders();
 
             services
                 .AddAuthentication()
