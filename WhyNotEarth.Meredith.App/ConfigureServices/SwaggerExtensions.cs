@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WhyNotEarth.Meredith.App.Localization;
 
@@ -14,13 +14,14 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v0", new Info
+                c.SwaggerDoc("v0", new OpenApiInfo
                 {
                     Title = "Interface API",
                     Version = "v0",
                     Description =
                         "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"
                 });
+
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
                     apiDesc.TryGetMethodInfo(out var methodInfo);
@@ -29,19 +30,31 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
                         .SelectMany(attr => attr.Versions);
                     return versions.Any(v => $"v{v.ToString()}" == docName);
                 });
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description =
                         "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
                 });
-                var security = new Dictionary<string, IEnumerable<string>>
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    {"Bearer", new string[] { }}
-                };
-                c.AddSecurityRequirement(security);
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
+
                 c.OperationFilter<LocalizationHeaderParameter>();
             });
         }
