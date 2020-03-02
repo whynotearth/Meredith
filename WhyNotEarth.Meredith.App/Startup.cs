@@ -1,11 +1,7 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using RollbarDotNet.Configuration;
 using RollbarDotNet.Core;
+using RollbarDotNet.Logger;
 using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.ConfigureServices;
 using WhyNotEarth.Meredith.App.Localization;
@@ -39,7 +35,6 @@ namespace WhyNotEarth.Meredith.App
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // CORS
             services.AddCors(o => o
                 .AddDefaultPolicy(builder => builder
                     .SetIsOriginAllowed(origin => true)
@@ -71,62 +66,10 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddSwagger();
 
-            var jwtOptions = _configuration.GetSection("Jwt").Get<JwtOptions>();
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            services
-                .AddAuthentication()
-                .AddJwtBearer("jwt", config =>
-                {
-                    config.RequireHttpsMetadata = false;
-                    config.SaveToken = true;
-                    config.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidAudience = jwtOptions.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                })
-                .AddGoogle(options =>
-                {
-                    var config = _configuration.GetSection("Authentication:Google");
-                    options.ClientId = config["ClientId"];
-                    options.ClientSecret = config["ClientSecret"];
-                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                })
-                .AddFacebook(options =>
-                {
-                    var config = _configuration.GetSection("Authentication:Facebook");
-                    options.ClientId = config["ClientId"];
-                    options.ClientSecret = config["ClientSecret"];
-                    options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                })
-                .Services
-                .ConfigureApplicationCookie(options =>
-                {
-                    options.Cookie.Name = "auth";
-                    options.Cookie.HttpOnly = false;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                    options.LoginPath = null;
-                    options.Events = new CookieAuthenticationEvents
-                    {
-                        OnRedirectToLogin = redirectContext =>
-                        {
-                            redirectContext.HttpContext.Response.StatusCode = 401;
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+            services.AddCustomAuthentication(_configuration);
 
             services.AddControllers()
                 .AddNewtonsoftJson();
-        }
-
-        private Task HandleOnRemoteFailure(RemoteFailureContext context)
-        {
-            context.Response.Redirect(context.Properties.RedirectUri);
-            context.HandleResponse();
-            return Task.FromResult(0);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
