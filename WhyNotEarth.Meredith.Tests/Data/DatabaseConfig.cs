@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.Tests.Data
         private DatabaseConfig()
         {
             DatabaseConfiguration.Instance.ServiceCollection
-                .AddMeredith(DatabaseConfiguration.Instance.Configuration)
+                .AddMeredith()
                 .AddDbContext<MeredithDbContext>(options => options
                     .UseInMemoryDatabase("test")
                     .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning)))

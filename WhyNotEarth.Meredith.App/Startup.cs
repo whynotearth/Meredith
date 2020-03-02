@@ -18,6 +18,7 @@ using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.ConfigureServices;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
+using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Stripe.Data;
@@ -45,7 +46,8 @@ namespace WhyNotEarth.Meredith.App
             services.AddRollbarWeb();
 
             services.AddOptions()
-                .Configure<RollbarOptions>(options => _configuration.GetSection("Rollbar").Bind(options))
+                .Configure<CloudinaryOptions>(o => _configuration.GetSection("Cloudinary").Bind(o))
+                .Configure<RollbarOptions>(o => _configuration.GetSection("Rollbar").Bind(o))
                 .Configure<SendGridOptions>(options => _configuration.GetSection("SendGrid").Bind(options))
                 .Configure<StripeOptions>(o => _configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o));
@@ -53,8 +55,9 @@ namespace WhyNotEarth.Meredith.App
             services.AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
                 options => options.SetPostgresVersion(new Version(9, 6))));
 
-            services.AddMeredith(_configuration)
-                .AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
+            services.AddMeredith();
+
+            services.AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
