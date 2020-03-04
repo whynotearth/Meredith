@@ -17,6 +17,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.IdentityModel.Tokens;
     using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
+    using WhyNotEarth.Meredith.App.Results.Api.v0.Authentication;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
     [ApiVersion("0")]
@@ -39,11 +40,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             JwtOptions = jwtOptions.Value;
         }
 
-        [Route("login")]
         [HttpPost]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [Route("login")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (model == null)
@@ -61,8 +62,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return Ok(GenerateJwtToken(model.Email, appUser));
         }
 
-        [Route("logout")]
         [HttpPost]
+        [Route("logout")]
         public async Task<IActionResult> Logout()
         {
             await SignInManager.SignOutAsync();
@@ -70,8 +71,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return Ok();
         }
 
-        [Route("provider/login")]
         [HttpGet]
+        [Route("provider/login")]
         public IActionResult ProviderLogin(string provider, string returnUrl = null)
         {
             var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider,
@@ -80,8 +81,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return new ChallengeResult(provider, properties);
         }
 
-        [Route("provider/callback")]
         [HttpGet]
+        [Route("provider/callback")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ProviderCallback(string remoteError = null, string returnUrl = null)
         {
@@ -117,48 +118,36 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             {
                 return Unauthorized(new { error = "User is locked out" });
             }
-            else
+
+            if (user is null)
             {
-                if (user != null)
+                user = new User
                 {
-                    var addLoginResult = await UserManager.AddLoginAsync(user, info);
-                    if (addLoginResult.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, true);
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        var errors = string.Join(",", addLoginResult.Errors.Select(e => e.Description).ToList());
-                        return Unauthorized(new { error = $"Error adding login to user: {errors}" });
-                    }
-                }
-                else
+                    UserName = email,
+                    Email = email
+                };
+
+                var createResult = await UserManager.CreateAsync(user);
+                if (!createResult.Succeeded)
                 {
-                    user = new User
-                    {
-                        UserName = email,
-                        Email = email
-                    };
-                    var createResult = await UserManager.CreateAsync(user);
-                    if (createResult.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, true);
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        var errors = string.Join(",", createResult.Errors.Select(e => e.Description).ToList());
-                        return Unauthorized(new { error = $"Error creating user: {errors}" });
-                    }
+                    return Error("Error creating user", createResult.Errors);
                 }
             }
+
+            var addLoginResult = await UserManager.AddLoginAsync(user, info);
+            if (!addLoginResult.Succeeded)
+            {
+                return Error("Error adding login to user", addLoginResult.Errors);
+            }
+
+            await SignInManager.SignInAsync(user, true);
+            return Redirect(returnUrl);
         }
 
-        [Route("register")]
         [HttpPost]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [Route("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             if (model == null)
@@ -199,20 +188,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return await SignIn(newUser);
         }
 
-        [Route("ping")]
-        [Authorize]
         [HttpGet]
+        [Authorize]
+        [Route("ping")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(List<PingResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Ping()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var user = await UserManager.GetUserAsync(User);
+            var logins = await UserManager.GetLoginsAsync(user);
 
-            return Ok(new
-            {
-                user.Id,
-                user.UserName,
-                User.Identity.IsAuthenticated
-            });
+            return Ok(new PingResult(user.Id, user.UserName, User.Identity.IsAuthenticated,
+                logins.Select(item => item.LoginProvider).ToList()));
         }
 
         private async Task<IActionResult> SignIn(User user)
@@ -244,6 +231,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private UnauthorizedObjectResult Error(string message, IEnumerable<IdentityError> identityErrors)
+        {
+            var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
+
+            return Unauthorized(new { error = $"{message}: {errors}" });
         }
     }
 }
