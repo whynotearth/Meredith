@@ -121,7 +121,7 @@ namespace WhyNotEarth.Meredith.App
 
             app.UseRouting();
 
-            app.UseCors("default");
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();
