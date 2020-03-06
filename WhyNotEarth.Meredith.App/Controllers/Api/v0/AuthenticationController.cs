@@ -29,11 +29,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         private UserManager<User> UserManager { get; }
         private JwtOptions JwtOptions { get; }
 
-        public AuthenticationController(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IOptions<JwtOptions> jwtOptions
-            )
+        public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
+            IOptions<JwtOptions> jwtOptions)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -55,7 +52,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (!result.Succeeded)
             {
-                return Unauthorized();
+                return Unauthorized(new {error = "You have entered an invalid username or password"});
             }
 
             var appUser = await UserManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
@@ -81,6 +78,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             return new ChallengeResult(provider, properties);
         }
 
+        [HttpPost]
+        [Route("provider/logout")]
+        public async Task<IActionResult> ProviderLogout(string provider)
+        {
+            var user = await UserManager.GetUserAsync(User);
+            var userLoginInfos = await UserManager.GetLoginsAsync(user);
+
+            var userLoginInfo = userLoginInfos.FirstOrDefault(item => item.LoginProvider == provider);
+
+            if (userLoginInfo is null)
+            {
+                return Ok();
+            }
+
+            await UserManager.RemoveLoginAsync(user, userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+            
+            return Ok();
+        }
+
         [HttpGet]
         [Route("provider/callback")]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -103,10 +119,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return Unauthorized(new { error = "Provider did not return an e-mail address" });
             }
 
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            var user = await UserManager.FindByEmailAsync(email);
             var result = await SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
-                isPersistent: false, bypassTwoFactor: true);
+                false, true);
 
             if (result.Succeeded)
             {
@@ -116,7 +130,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
             if (result.IsLockedOut)
             {
-                return Unauthorized(new { error = "User is locked out" });
+                return Unauthorized(new {error = "User is locked out"});
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            User user;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                user = await UserManager.GetUserAsync(User);
+            }
+            else
+            {
+                user = await UserManager.FindByEmailAsync(email);
             }
 
             if (user is null)
@@ -162,7 +188,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             };
 
             IdentityResult identityResult;
-            if (model.Password != null)
+            if (model.Password is null)
             {
                 var user = await UserManager.FindByEmailAsync(model.Email);
 
@@ -182,9 +208,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
             if (!identityResult.Succeeded)
             {
-                return BadRequest(identityResult.Errors);    
+                return BadRequest(identityResult.Errors);
             }
-            
+
             return await SignIn(newUser);
         }
 
