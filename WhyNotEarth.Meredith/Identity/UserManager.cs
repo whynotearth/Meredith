@@ -7,7 +7,7 @@ namespace WhyNotEarth.Meredith.Identity
     using Microsoft.Extensions.Options;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
-    public class UserManager : UserManager<User>
+    public class UserManager : UserManager<User>, IUserManager
     {
         public UserManager(
             IUserStore<User> store,

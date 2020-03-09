@@ -20,11 +20,11 @@ namespace WhyNotEarth.Meredith.Hotel
 
         private readonly MeredithDbContext _meredithDbContext;
         private readonly ClaimsPrincipal _user;
-        private readonly UserManager _userManager;
+        private readonly IUserManager _userManager;
         private readonly IStripeService _stripeService;
         private readonly IEmailService _emailService;
 
-        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, UserManager userManager,
+        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, IUserManager userManager,
             IStripeService stripeService, IEmailService emailService)
         {
             _meredithDbContext = meredithDbContext;
@@ -37,28 +37,20 @@ namespace WhyNotEarth.Meredith.Hotel
         public async Task<Reservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
             string fullName, string email, string message, string phoneCountry, string phone, int numberOfGuests)
         {
-            var result = await _meredithDbContext.RoomTypes
-                .Where(rt => rt.Id == roomTypeId)
-                .Select(rt => new
-                {
-                    RoomType = rt,
-                    DailyPrices = rt.Prices
-                        .Where(p => p.Date >= startDate && p.Date < endDate),
-                    PaidDays = rt.Prices
-                        .Count(p => p.Date >= startDate && p.Date < endDate),
-                    AvailableRooms = rt.Rooms
-                        .Where(r => !r.Reservations
-                            .Any(re => re.Start >= startDate && re.End <= endDate))
-                        .ToList()
-                })
-                .FirstOrDefaultAsync();
+            var roomType = await _meredithDbContext.RoomTypes
+                .FirstOrDefaultAsync(rt => rt.Id == roomTypeId);
 
-            if (result is null)
+            if (roomType is null)
             {
                 throw new RecordNotFoundException();
             }
 
-            if (result.AvailableRooms.Count == 0)
+            var availableRooms = await _meredithDbContext.Rooms
+                .Where(r => !r.Reservations
+                    .Any(re => re.Start >= startDate && re.End <= endDate))
+                .ToListAsync();
+
+            if (availableRooms.Count == 0)
             {
                 throw new InvalidActionException("There are no rooms available of this type");
             }
@@ -69,12 +61,17 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new InvalidActionException("Invalid number of days to reserve");
             }
 
-            if (result.PaidDays != totalDays)
+            var dailyPrices = await _meredithDbContext.Prices
+                .Where(p => p.Date >= startDate && p.Date < endDate).ToListAsync();
+            
+            var paidDays = dailyPrices.Count;
+
+            if (paidDays != totalDays)
             {
                 throw new InvalidActionException("Not all days have prices set");
             }
 
-            var totalAmount = result.DailyPrices.Sum(item => item.Amount);
+            var totalAmount = dailyPrices.Sum(item => item.Amount);
             // 10% VAT
             var vat = totalAmount / 10;
             totalAmount += vat;
@@ -91,15 +88,15 @@ namespace WhyNotEarth.Meredith.Hotel
                 Name = fullName,
                 NumberOfGuests = numberOfGuests,
                 Phone = phone,
-                RoomId = result.AvailableRooms.First().Id,
+                RoomId = availableRooms.First().Id,
                 User = user
             };
 
             _meredithDbContext.Reservations.Add(reservation);
             await _meredithDbContext.SaveChangesAsync();
 
-            await _emailService.SendReservationEmail(reservation, result.RoomType, result.DailyPrices, vat,
-                result.PaidDays, phoneCountry, phone);
+            await _emailService.SendReservationEmail(reservation, roomType, dailyPrices, vat,
+                paidDays, phoneCountry, phone);
 
             return reservation;
         }

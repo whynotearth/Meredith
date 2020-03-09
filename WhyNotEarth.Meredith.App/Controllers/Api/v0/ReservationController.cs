@@ -21,11 +21,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         private ReservationService ReservationService { get; }
 
-        private UserManager UserManager { get; }
+        private IUserManager UserManager { get; }
 
         public ReservationController(
             MeredithDbContext meredithDbContext,
-            UserManager userManager,
+            IUserManager userManager,
             ReservationService reservationService)
         {
             MeredithDbContext = meredithDbContext;

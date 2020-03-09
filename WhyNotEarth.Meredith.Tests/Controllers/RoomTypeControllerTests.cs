@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
         public async Task Prices_ReturnsEmptyResult_WithInvalidDates()
         {
             // Arrange
-            using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsEmptyResult_WithInvalidDates));
+            await using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsEmptyResult_WithInvalidDates));
 
             var controller = new RoomTypeController(meredithDbContext);
 
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
         public async Task Prices_ReturnsEmptyResult_WithInvalidRoomTypeId()
         {
             // Arrange
-            using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsEmptyResult_WithInvalidRoomTypeId));
+            await using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsEmptyResult_WithInvalidRoomTypeId));
 
             var controller = new RoomTypeController(meredithDbContext);
 
@@ -51,7 +51,7 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
         public async Task Prices_ReturnsResult_WithSpecifiedDates()
         {
             // Arrange
-            using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsResult_WithSpecifiedDates));
+            await using var meredithDbContext = await InitializeDb(nameof(Prices_ReturnsResult_WithSpecifiedDates));
 
             var controller = new RoomTypeController(meredithDbContext);
             var expected = new List<PricesResult>
