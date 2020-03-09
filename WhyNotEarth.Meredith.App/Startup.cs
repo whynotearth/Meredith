@@ -21,6 +21,7 @@ using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
+using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Stripe.Data;
 
 namespace WhyNotEarth.Meredith.App
