@@ -7,13 +7,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using Microsoft.Extensions.Options;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Company;
     using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Exceptions;
     using WhyNotEarth.Meredith.Public;
     using WhyNotEarth.Meredith.Stripe.Data;
 
     [ApiVersion("0")]
     [Route("/api/v0/companies")]
-    public class CompanyController : Controller
+    public class CompanyController : ControllerBase
     {
         public CompanyController(
             MeredithDbContext meredithDbContext,
@@ -35,11 +34,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [HttpPost]
         public async Task<IActionResult> Create(CompanyModel company)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var newCompany = await CompanyService.CreateCompanyAsync(company.Name, company.Slug);
             return Ok(new { CompanyId = newCompany.Id });
         }

@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/planetcollage")]
-    public class PlanetCollageController : Controller
+    public class PlanetCollageController : ControllerBase
     {
         protected CloudinaryOptions CloudinaryOptions { get; }
 
@@ -67,7 +67,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         [HttpPost]
         [Route("full")]
-        public IActionResult FullResolution([FromBody] FullResolutionModel model)
+        public IActionResult FullResolution(FullResolutionModel model)
         {
             return Ok(new
             {

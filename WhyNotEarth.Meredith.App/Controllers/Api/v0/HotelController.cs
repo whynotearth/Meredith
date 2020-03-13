@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/hotels")]
-    public class HotelController : Controller
+    public class HotelController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
 

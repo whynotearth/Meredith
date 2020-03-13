@@ -8,7 +8,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/categories")]
-    public class CategoryController : Controller
+    public class CategoryController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
 

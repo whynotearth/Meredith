@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/pages")]
-    public class PageController : Controller
+    public class PageController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
 

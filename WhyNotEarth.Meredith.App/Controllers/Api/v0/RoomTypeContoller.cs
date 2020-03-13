@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
     [ApiVersion("0")]
     [Route("/api/v0/roomtypes")]
-    public class RoomTypeController : Controller
+    public class RoomTypeController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
 
