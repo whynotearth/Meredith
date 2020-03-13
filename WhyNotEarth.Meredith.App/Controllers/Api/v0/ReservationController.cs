@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/reservations")]
-    public class ReservationController : Controller
+    public class ReservationController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
 
@@ -75,13 +75,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PayReservation(int reservationId, [FromBody] PayModel model)
+        public async Task<IActionResult> PayReservation(int reservationId, PayModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var reservation = await MeredithDbContext.Reservations.FirstOrDefaultAsync(item => item.Id == reservationId);
 
             if (reservation is null)
@@ -97,13 +92,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [Authorize]
         [HttpPost]
         [Route("roomtype/{roomTypeId}/reserve")]
-        public async Task<IActionResult> ReserveByRoomType(int roomTypeId, [FromBody] ReservationModel model)
+        public async Task<IActionResult> ReserveByRoomType(int roomTypeId, ReservationModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var reservation = await ReservationService.CreateReservation(
                 roomTypeId, model.Start, model.End, model.Name, model.Email, model.Message, model.PhoneCountry, model.Phone,
                 model.NumberOfGuests);

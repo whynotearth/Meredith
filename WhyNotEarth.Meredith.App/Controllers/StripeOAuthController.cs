@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.App.Controllers
 
     [Route("/stripe/oauth")]
     [DisableCors]
-    public class StripeOAuthController : Controller
+    public class StripeOAuthController : ControllerBase
     {
         protected StripeOAuthService StripeOAuthServices { get; }
 
@@ -35,7 +35,8 @@ namespace WhyNotEarth.Meredith.App.Controllers
             }
 
             await StripeOAuthServices.Register(Guid.Parse(model.State), model.Code);
-            return View();
+
+            return Ok("Your Stripe account has been connected with Meredith, you can now close your browser.");
         }
     }
 }

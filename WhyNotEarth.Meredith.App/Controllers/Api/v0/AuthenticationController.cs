@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/authentication")]
-    public class AuthenticationController : Controller
+    public class AuthenticationController : ControllerBase
     {
         private SignInManager<User> SignInManager { get; }
         private UserManager<User> UserManager { get; }
@@ -41,13 +41,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
-            if (model == null)
-            {
-                return BadRequest();
-            }
-
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (!result.Succeeded)
             {
@@ -173,13 +168,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         [Route("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel model)
         {
-            if (model == null)
-            {
-                return BadRequest();
-            }
-
             var newUser = new User
             {
                 UserName = model.Email,

@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
     [ApiVersion("0")]
     [Route("/api/v0/cards")]
-    public class CardController : Controller
+    public class CardController : ControllerBase
     {
         protected MeredithDbContext MeredithDbContext { get; }
 
