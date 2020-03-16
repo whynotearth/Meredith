@@ -1,10 +1,8 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Pages;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
@@ -14,31 +12,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class CardController : ControllerBase
     {
         private readonly MeredithDbContext _meredithDbContext;
-        private readonly StoryService _storyService;
 
-        public CardController(StoryService storyService, MeredithDbContext meredithDbContext)
+        public CardController(MeredithDbContext meredithDbContext)
         {
-            _storyService = storyService;
             _meredithDbContext = meredithDbContext;
         }
 
+        [Returns404]
         [HttpGet("{id}/related")]
-        public async Task<IActionResult> Related(int id)
+        public async Task<ActionResult<StoryResult>> Related(int id)
         {
-            return Ok(await _meredithDbContext.Cards
-                .Where(c => c.Id == id)
-                .Select(c => new Story
-                {
-                    Content = c.Text,
-                    CtaText = c.CallToAction,
-                    CtaLink = c.CallToActionUrl,
-                    Id = c.Id,
-                    Image = c.BackgroundUrl,
-                    PosterUrl = c.PosterUrl,
-                    Blur = "2px",
-                    Type = _storyService.GetCardType(c.CardType)
-                })
-                .ToListAsync());
+            var card = await _meredithDbContext.Cards.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (card is null)
+            {
+                return NotFound();
+            }
+
+            var result = new StoryResult(card.Id, card.Text, card.CallToAction, card.CallToActionUrl,
+                card.BackgroundUrl, card.PosterUrl, card.CardType);
+
+            return Ok(result);
         }
     }
 }

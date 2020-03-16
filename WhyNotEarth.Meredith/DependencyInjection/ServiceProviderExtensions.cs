@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IStripeService, StripeService>()
                 .AddScoped<StripeOAuthService>()
                 .AddScoped<CompanyService>()
-                .AddScoped<StoryService>()
+                .AddScoped<PageService>()
                 .AddScoped<SendGridService>()
                 .AddScoped<IUserManager, UserManager>()
                 .AddScoped<GoogleStorageService>();
