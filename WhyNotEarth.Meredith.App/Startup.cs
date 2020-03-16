@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,8 +12,8 @@ using Microsoft.Extensions.Logging;
 using RollbarDotNet.Configuration;
 using RollbarDotNet.Core;
 using RollbarDotNet.Logger;
+using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Configuration;
-using WhyNotEarth.Meredith.App.ConfigureServices;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
@@ -75,13 +72,15 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddCustomAuthentication(_configuration);
 
-            services.AddControllers()
-                .AddNewtonsoftJson();
+            services.AddCustomAuthorization();
+
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -94,27 +93,11 @@ namespace WhyNotEarth.Meredith.App
                 context.Database.Migrate();
             }
 
-            app
-                .UseCustomLocalization()
-                .UseAuthentication()
-                .Use(async (context, next) =>
-                {
-                    // If the default identity failed to authenticate (cookies)
-                    if (context.User.Identities.All(i => !i.IsAuthenticated))
-                    {
-                        var principal = new ClaimsPrincipal();
-                        var jwtAuth = await context.AuthenticateAsync("jwt");
-                        if (jwtAuth?.Principal != null)
-                        {
-                            principal.AddIdentities(jwtAuth.Principal.Identities);
-                            context.User = principal;
-                        }
-                    }
+            app.UseCustomLocalization();
 
-                    await next();
-                })
-                .UseCustomSwagger()
-                .UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseCustomSwagger();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseStaticFiles();
 

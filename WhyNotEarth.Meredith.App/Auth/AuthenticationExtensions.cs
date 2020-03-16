@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +15,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Identity;
 
-namespace WhyNotEarth.Meredith.App.ConfigureServices
+namespace WhyNotEarth.Meredith.App.Auth
 {
     public static class AuthenticationExtensions
     {
@@ -26,12 +27,18 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
             services
                 .AddIdentity<User, Role>()
                 .AddUserManager<UserManager>()
+                .AddRoleManager<RoleManager>()
                 .AddEntityFrameworkStores<MeredithDbContext>()
                 .AddDefaultTokenProviders();
 
             services
-                .AddAuthentication()
-                .AddJwtBearer("jwt", config =>
+                .AddAuthentication(o =>
+                {
+                    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    o.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddCookie()
+                .AddJwtBearer(config =>
                 {
                     config.RequireHttpsMetadata = false;
                     config.SaveToken = true;
@@ -56,22 +63,14 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                })
-                .Services
-                .ConfigureApplicationCookie(options =>
+                });
+
+                services.ConfigureApplicationCookie(options =>
                 {
                     options.Cookie.Name = "auth";
                     options.Cookie.HttpOnly = false;
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.LoginPath = null;
-                    options.Events = new CookieAuthenticationEvents
-                    {
-                        OnRedirectToLogin = redirectContext =>
-                        {
-                            redirectContext.HttpContext.Response.StatusCode = 401;
-                            return Task.CompletedTask;
-                        }
-                    };
                 });
         }
 
