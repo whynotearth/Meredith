@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WhyNotEarth.Meredith.App.Localization;
 
-namespace WhyNotEarth.Meredith.App.ConfigureServices
+namespace WhyNotEarth.Meredith.App.Swagger
 {
     public static class SwaggerExtensions
     {
@@ -57,6 +58,19 @@ namespace WhyNotEarth.Meredith.App.ConfigureServices
 
                 c.OperationFilter<LocalizationHeaderParameter>();
             });
+        }
+
+        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
+        {
+            app
+                .UseSwagger()
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
+                    c.RoutePrefix = string.Empty;
+                });
+
+            return app;
         }
     }
 }

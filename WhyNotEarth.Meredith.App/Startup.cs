@@ -19,6 +19,7 @@ using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.ConfigureServices;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
+using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
@@ -112,12 +113,7 @@ namespace WhyNotEarth.Meredith.App
 
                     await next();
                 })
-                .UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
-                    c.RoutePrefix = string.Empty;
-                })
+                .UseCustomSwagger()
                 .UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseStaticFiles();
