@@ -1,17 +1,17 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-    using WhyNotEarth.Meredith.App.Models.Api.v0.Company;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Public;
-    using WhyNotEarth.Meredith.Stripe.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Company;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Stripe.Data;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
+{
     [ApiVersion("0")]
-    [Route("/api/v0/companies")]
+    [Route("api/v0/companies")]
     public class CompanyController : ControllerBase
     {
         public CompanyController(

@@ -1,12 +1,12 @@
-﻿namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using Microsoft.AspNetCore.Mvc;
-    using System.Threading.Tasks;
-    using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
-    using WhyNotEarth.Meredith.Hotel;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
+using WhyNotEarth.Meredith.Hotel;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
+{
     [ApiVersion("0")]
-    [Route("/api/v0/prices")]
+    [Route("api/v0/hotel/prices")]
     public class PriceController : ControllerBase
     {
         private PriceService PriceService { get; }
