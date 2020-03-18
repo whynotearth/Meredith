@@ -1,20 +1,20 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
-    using WhyNotEarth.Meredith.App.Results.Api.v0.Reservation;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Hotel;
-    using WhyNotEarth.Meredith.Identity;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Reservation;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Identity;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
+{
     [ApiVersion("0")]
-    [Route("/api/v0/reservations")]
+    [Route("api/v0/hotel/reservations")]
     public class ReservationController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }

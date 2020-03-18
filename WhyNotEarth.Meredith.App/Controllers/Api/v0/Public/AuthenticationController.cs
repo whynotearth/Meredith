@@ -1,4 +1,4 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;

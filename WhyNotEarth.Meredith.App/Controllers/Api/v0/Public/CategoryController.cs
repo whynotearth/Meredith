@@ -1,13 +1,13 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Data.Entity;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
+{
     [ApiVersion("0")]
-    [Route("/api/v0/categories")]
+    [Route("api/v0/categories")]
     public class CategoryController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }

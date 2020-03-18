@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Price;
 using WhyNotEarth.Meredith.Data.Entity;
 
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 {
     [ApiVersion("0")]
-    [Route("/api/v0/roomtypes")]
+    [Route("api/v0/hotel/roomtypes")]
     public class RoomTypeController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }

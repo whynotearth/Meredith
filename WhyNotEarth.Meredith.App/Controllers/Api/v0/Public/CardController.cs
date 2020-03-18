@@ -1,15 +1,15 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Pages;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Pages;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
+{
     [ApiVersion("0")]
-    [Route("/api/v0/cards")]
+    [Route("api/v0/cards")]
     public class CardController : ControllerBase
     {
         protected MeredithDbContext MeredithDbContext { get; }

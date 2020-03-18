@@ -1,20 +1,20 @@
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
-{
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.AspNetCore.Localization;
-    using Newtonsoft.Json;
-    using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Data.Entity.Models;
-    using WhyNotEarth.Meredith.Pages;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Pages;
 
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
+{
     [ApiVersion("0")]
-    [Route("/api/v0/pages")]
+    [Route("api/v0/pages")]
     public class PageController : ControllerBase
     {
         private MeredithDbContext MeredithDbContext { get; }
