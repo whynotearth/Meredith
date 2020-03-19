@@ -45,6 +45,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string Title { get; set; }
 
+        public string LandingPageData { get; set; }
+
         public void Configure(EntityTypeBuilder<Page> builder)
         {
             builder.Property(e => e.Custom).HasColumnType("jsonb");

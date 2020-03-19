@@ -3,6 +3,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Localization;
@@ -96,6 +97,24 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .ToListAsync();
 
             return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
+        }
+
+        [HttpGet]
+        [Route("slug/{companySlug}/{pageSlug}/landingpage")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetLandingPageData(string companySlug, string pageSlug)
+        {
+            var page = await MeredithDbContext.Pages.FirstOrDefaultAsync(p =>
+                    p.Company.Slug.ToLower() == companySlug.ToLower()
+                    && p.Slug.ToLower() == pageSlug.ToLower());
+            
+            if (page is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(page.LandingPageData);
         }
 
         private string GetCulture()
