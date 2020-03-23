@@ -1,3 +1,5 @@
+using WhyNotEarth.Meredith.App.Auth;
+
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     using System;
@@ -16,7 +18,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     using Microsoft.IdentityModel.Tokens;
     using WhyNotEarth.Meredith.App.Configuration;
     using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
-    using WhyNotEarth.Meredith.App.Results.Api.v0.Authentication;
+    using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
     using WhyNotEarth.Meredith.Data.Entity.Models;
 
     [ApiVersion("0")]

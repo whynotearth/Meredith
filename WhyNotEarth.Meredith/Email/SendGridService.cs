@@ -62,6 +62,27 @@ namespace WhyNotEarth.Meredith.Email
             }
         }
 
+        public async Task SendEmail(string emailFrom, string emailFromName, List<Tuple<string, string>> tos,
+            List<string> subjects, string content, string htmlContent, List<Dictionary<string, string>> substitutions)
+        {
+            var client = new SendGridClient(_sendGridOptions.ApiKey);
+
+            var from = new EmailAddress(emailFrom, emailFromName);
+
+            var toEmails = tos.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
+
+            var msg = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, toEmails, subjects, content,
+                htmlContent, substitutions);
+
+            var response = await client.SendEmailAsync(msg);
+
+            if (response.StatusCode >= HttpStatusCode.Ambiguous)
+            {
+                var errorMessage = await GetErrorMessage(response);
+                throw new Exception(errorMessage);
+            }
+        }
+
         private async Task<string> GetErrorMessage(Response response)
         {
             var body = await response.DeserializeResponseBodyAsync(response.Body);

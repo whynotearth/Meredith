@@ -61,7 +61,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
         public int Order { get; set; }
 
         public string Url { get; set; }
-
     }
 
     public class Category

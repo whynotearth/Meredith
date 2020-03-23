@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhyNotEarth.Meredith.App.Results.Api.v0.Price
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price
 {
     public class PricesResult
     {

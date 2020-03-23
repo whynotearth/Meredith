@@ -2,7 +2,9 @@
 {
     public static class Policies
     {
-        public const string CreatePage = "CreatePage";
+        public const string Developer = "Developer";
+
+        public const string ManageJumpStart = "ManageJumpStart";
     }
 }
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
-using WhyNotEarth.Meredith.App.Results.Api.v0.Reservation;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Reservation;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;

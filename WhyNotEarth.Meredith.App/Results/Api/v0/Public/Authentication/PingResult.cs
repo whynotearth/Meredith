@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WhyNotEarth.Meredith.App.Results.Api.v0.Authentication
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication
 {
     public class PingResult
     {
