@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public int? CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public PageCategory Category { get; set; }
 
         public Hotel Hotel { get; set; }
 
@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string Header { get; set; }
 
-        public ICollection<Image> Images { get; set; }
+        public ICollection<PageImage> Images { get; set; }
 
         public string Name { get; set; }
 
@@ -55,5 +55,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         {
             builder.Property(e => e.Custom).HasColumnType("jsonb");
         }
+    }
+
+    public class PageImage : Image
+    {
+    }
+
+    public class PageCategory : Category
+    {
     }
 }

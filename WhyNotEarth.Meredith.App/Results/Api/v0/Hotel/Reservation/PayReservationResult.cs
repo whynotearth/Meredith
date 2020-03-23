@@ -1,4 +1,4 @@
-﻿namespace WhyNotEarth.Meredith.App.Results.Api.v0.Reservation
+﻿namespace WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Reservation
 {
     public class PayReservationResult
     {

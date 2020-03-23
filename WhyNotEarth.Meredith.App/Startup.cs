@@ -1,5 +1,6 @@
 ﻿using System;
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,7 @@ using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Stripe.Data;
 
 [assembly: ApiController]
@@ -53,7 +55,8 @@ namespace WhyNotEarth.Meredith.App
                 .Configure<RollbarOptions>(o => _configuration.GetSection("Rollbar").Bind(o))
                 .Configure<SendGridOptions>(options => _configuration.GetSection("SendGrid").Bind(options))
                 .Configure<StripeOptions>(o => _configuration.GetSection("Stripe").Bind(o))
-                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o));
+                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o))
+                .Configure<GoogleCloudOptions>(o => _configuration.GetSection("GoogleCloud").Bind(o));
 
             services.AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
                 options => options.SetPostgresVersion(new Version(9, 6))));
@@ -98,7 +101,7 @@ namespace WhyNotEarth.Meredith.App
             {
                 loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
             }
-            
+
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
@@ -124,7 +127,11 @@ namespace WhyNotEarth.Meredith.App
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHangfireDashboard();
+                endpoints.MapHangfireDashboard(new DashboardOptions
+                    {
+                        Authorization = new IDashboardAuthorizationFilter[] { }
+                    })
+                    .RequireAuthorization(Policies.Developer);
             });
 
             app.UseHangfireDashboard();

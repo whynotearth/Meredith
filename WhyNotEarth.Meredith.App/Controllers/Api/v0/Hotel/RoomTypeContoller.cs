@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.App.Results.Api.v0.Price;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
 using WhyNotEarth.Meredith.Data.Entity;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
