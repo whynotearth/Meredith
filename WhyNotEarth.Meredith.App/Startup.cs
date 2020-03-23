@@ -1,4 +1,6 @@
 ﻿using System;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -70,6 +72,13 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddSwagger();
 
+            services.AddHangfire(c => c.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage(_configuration.GetConnectionString("Default")));
+
+            services.AddHangfireServer();
+
             services.AddCustomAuthentication(_configuration);
 
             services.AddCustomAuthorization();
@@ -108,7 +117,14 @@ namespace WhyNotEarth.Meredith.App
             app.UseCustomAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+
+                endpoints.MapHangfireDashboard();
+            });
+
+            app.UseHangfireDashboard();
         }
     }
 }
