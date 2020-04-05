@@ -172,7 +172,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             var newUser = new User
             {
                 UserName = model.Email,
-                Email = model.Email
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Name = model.Email,
+                Address = model.Address,
+                GoogleLocation = model.GoogleLocation
             };
 
             IdentityResult identityResult;

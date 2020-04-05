@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public ICollection<Page> Pages { get; set; }
 
+        public ICollection<Tenant> Tenants { get; set; }
+
         public string Slug { get; set; }
 
         public void Configure(EntityTypeBuilder<Company> builder)

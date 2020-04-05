@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Company> Companies { get; set; }
 
+        public DbSet<Tenant> Tenants { get; set; }
+
         public DbSet<Hotel> Hotels { get; set; }
 
         public DbSet<Image> Images { get; set; }

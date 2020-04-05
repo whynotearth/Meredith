@@ -9,6 +9,22 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     [DebuggerDisplay("{" + nameof(Slug) + "}")]
     public class Page : IEntityTypeConfiguration<Page>
     {
+        public int Id { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public Company Company { get; set; }
+
+        public int? TenantId { get; set; }
+
+        public Tenant Tenant { get; set; }
+
+        public int? CategoryId { get; set; }
+
+        public Category Category { get; set; }
+
+        public Hotel Hotel { get; set; }
+
         public string BackgroundImage { get; set; }
 
         public string CallToAction { get; set; }
@@ -17,14 +33,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public ICollection<Card> Cards { get; set; }
 
-        public Category Category { get; set; }
-
-        public int? CategoryId { get; set; }
-
-        public Company Company { get; set; }
-
-        public int CompanyId { get; set; }
-
         public string Custom { get; set; }
 
         public string Description { get; set; }
@@ -32,10 +40,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public string FeaturedImage { get; set; }
 
         public string Header { get; set; }
-
-        public Hotel Hotel { get; set; }
-
-        public int Id { get; set; }
 
         public ICollection<Image> Images { get; set; }
 
