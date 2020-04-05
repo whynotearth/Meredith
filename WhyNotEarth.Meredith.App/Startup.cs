@@ -94,8 +94,11 @@ namespace WhyNotEarth.Meredith.App
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
+            else
+            {
+                loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
+            }
+            
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
