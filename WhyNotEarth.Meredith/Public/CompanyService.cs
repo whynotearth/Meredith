@@ -35,7 +35,7 @@
             {
                 throw new InvalidActionException("Company with that name already exists");
             }
-
+            
             var company = new Company()
             {
                 Name = name,

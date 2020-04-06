@@ -103,8 +103,8 @@ namespace WhyNotEarth.Meredith.App
             }
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            using (var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>())
             {
+                using var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>();
                 context.Database.Migrate();
             }
 

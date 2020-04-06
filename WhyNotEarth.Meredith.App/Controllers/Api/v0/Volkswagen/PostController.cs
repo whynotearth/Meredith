@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post;
-using WhyNotEarth.Meredith.App.Results.Api.v0.Public;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post;
 using WhyNotEarth.Meredith.Volkswagen;
 
