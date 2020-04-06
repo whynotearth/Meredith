@@ -9,8 +9,16 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string Name { get; set; }
 
+        public CategoryImage Image { get; set; }
+
+        public string Description { get; set; }
+
         public void Configure(EntityTypeBuilder<Category> builder)
         {
         }
+    }
+
+    public class CategoryImage : Image
+    {
     }
 }

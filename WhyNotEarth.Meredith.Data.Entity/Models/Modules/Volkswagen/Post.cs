@@ -39,6 +39,5 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
     public class PostCategory : Category
     {
-        public string Description { get; set; }
     }
 }
