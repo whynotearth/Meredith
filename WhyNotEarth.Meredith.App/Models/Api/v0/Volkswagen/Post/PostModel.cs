@@ -15,6 +15,10 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post
         public string Description { get; set; }
 
         public DateTime Date { get; set; }
+        
+        public decimal Price { get; set; }
+        
+        public DateTime EventDate { get; set; }
 
         public List<string> Images { get; set; }
     }
