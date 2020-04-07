@@ -52,7 +52,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
                 substitutions.Add(new Dictionary<string, string>
                 {
-                    {"print_url", await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart)}
+                    {"{{print_url}}", await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart)}
                 });
             }
 

@@ -53,9 +53,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.SaveChangesAsync();
 
-            // TODO: Fix the execution time
             _backgroundJobClient.Schedule<JumpStartEmailService>(service =>
-                service.SendAsync(jumpStart.Id), DateTime.Now - dateTime);
+                service.SendAsync(jumpStart.Id), DateTime.UtcNow - dateTime);
 
             _backgroundJobClient.Enqueue<JumpStartPdfService>(service =>
                 service.CreatePdfAsync(jumpStart.Id));
