@@ -86,7 +86,12 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddCustomAuthorization();
 
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers()
+                .AddMvcOptions(options =>
+                {
+                    // https://github.com/dotnet/aspnetcore/issues/11584
+                    options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
+                }).AddNewtonsoftJson();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
