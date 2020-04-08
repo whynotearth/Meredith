@@ -18,8 +18,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext = dbContext;
         }
 
-        public async Task CreateAsync(int categoryId, DateTime date, string headline, string description,
-            List<string> imageUrls)
+        public async Task<Post> CreateAsync(int categoryId, DateTime date, string headline, string description,
+            decimal price, DateTime eventDate, List<string> imageUrls)
         {
             var category = await _dbContext.Categories.FirstOrDefaultAsync(item => item.Id == categoryId);
 
@@ -34,6 +34,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Date = date,
                 Headline = headline,
                 Description = description,
+                Price = price,
+                EventDate = eventDate,
                 Images = new List<PostImage>(imageUrls.Select((item, index) =>
                     new PostImage
                     {
@@ -45,14 +47,58 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.Posts.AddAsync(post);
             await _dbContext.SaveChangesAsync();
+
+            return post;
         }
 
         public async Task<List<Post>> GetAvailablePosts(DateTime date)
         {
-            var posts = await _dbContext.Posts.Where(item => item.Date <= date.AddDays(1).AddSeconds(-1) && item.JumpStartId == null)
+            var posts = await _dbContext.Posts
+                .Include(item => item.Category)
+                .Where(item => item.Date <= date.AddDays(1).AddSeconds(-1) && item.JumpStartId == null)
+                .OrderByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
             return posts;
+        }
+
+        public async Task<Post> EditAsync(int postId, int categoryId, DateTime date, string headline,
+            string description, decimal price, DateTime eventDate)
+        {
+            var post = await _dbContext.Posts.FirstOrDefaultAsync(item => item.Id == postId);
+
+            if (post is null)
+            {
+                throw new RecordNotFoundException($"Post {postId} not found");
+            }
+
+            post.CategoryId = categoryId;
+            post.Date = date;
+            post.Headline = headline;
+            post.Description = description;
+            post.Price = price;
+            post.EventDate = eventDate;
+
+            await _dbContext.Posts.AddAsync(post);
+            await _dbContext.SaveChangesAsync();
+
+            return post;
+        }
+
+        public async Task DeleteAsync(int postId)
+        {
+            var post = await _dbContext.Posts.Include(item => item.Images)
+                .FirstOrDefaultAsync(item => item.Id == postId);
+
+            if (post is null)
+            {
+                throw new RecordNotFoundException($"Post {postId} not found");
+            }
+
+            _dbContext.Images.RemoveRange(post.Images);
+            _dbContext.Posts.Remove(post);
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

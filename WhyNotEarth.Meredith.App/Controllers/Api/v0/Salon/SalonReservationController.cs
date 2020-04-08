@@ -29,24 +29,23 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
 
         [HttpPost]
         [Authorize]
-        [Route("{tenantId}/{pageSlug}/reserve")]
+        [Route("{tenantId}/reserve")]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Reserve(int tenantId, string pageSlug, SalonReservationModel model)
+        public async Task<IActionResult> Reserve(int tenantId, SalonReservationModel model)
         {
-            var page = await _meredithDbContext.Pages.Include(item => item.Company).FirstOrDefaultAsync(p =>
-                p.TenantId == tenantId && p.Slug.ToLower() == pageSlug.ToLower());
+            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
 
-            if (page is null)
+            if (tenant is null)
             {
                 return NotFound();
             }
 
             var userId = _userManager.GetUserId(User);
 
-            _reservationService.Reserve(tenantId, pageSlug, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal, model.DeliveryFee,
+            _reservationService.Reserve(tenantId, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal, model.DeliveryFee,
                 model.Amount, model.DeliveryDateTime, model.Message, userId);
 
             return Ok();

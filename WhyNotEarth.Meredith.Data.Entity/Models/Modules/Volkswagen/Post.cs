@@ -17,15 +17,19 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public DateTime Date { get; set; }
 
+        public decimal Price { get; set; }
+
+        public DateTime EventDate { get; set; }
+
+        public int? JumpStartId { get; set; }
+
+        public int? Order { get; set; }
+
         public List<PostImage> Images { get; set; }
 
         public PostCategory Category { get; set; }
 
-        public int? JumpStartId { get; set; }
-
         public JumpStart JumpStart { get; set; }
-
-        public int? Order { get; set; }
 
         public void Configure(EntityTypeBuilder<Post> builder)
         {
@@ -39,5 +43,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
     public class PostCategory : Category
     {
+        public int Priority { get; set; }
     }
 }

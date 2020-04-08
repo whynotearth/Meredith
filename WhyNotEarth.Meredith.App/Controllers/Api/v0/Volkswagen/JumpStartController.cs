@@ -10,7 +10,7 @@ using WhyNotEarth.Meredith.Volkswagen;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
     [ApiVersion("0")]
-    [Route("api/v0/Volkswagen/jumpstart")]
+    [Route("api/v0/volkswagen/jumpstart")]
     public class JumpStartController : ControllerBase
     {
         private readonly JumpStartService _jumpStartService;

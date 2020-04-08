@@ -12,8 +12,9 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
+    // TODO: Fix images
     [ApiVersion("0")]
-    [Route("api/v0/Volkswagen/posts")]
+    [Route("api/v0/volkswagen/posts")]
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;
@@ -23,23 +24,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _postService = postService;
         }
 
-        [HttpPost]
-        [Route("")]
+        [HttpPost("")]
         [Authorize(Policy = Policies.ManageJumpStart)]
         [ProducesErrorResponseType(typeof(void))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Create(PostModel postModel)
+        [ProducesResponseType(typeof(PostResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Create(PostModel model)
         {
-            await _postService.CreateAsync(postModel.CategoryId, postModel.Date, postModel.Headline,
-                postModel.Description, postModel.Images);
+            var post = await _postService.CreateAsync(model.CategoryId, model.Date, model.Headline,
+                model.Description, model.Price, model.EventDate, model.Images);
 
-            return Ok();
+            return Ok(new PostResult(post));
         }
 
-        [HttpGet]
-        [Route("")]
+        [HttpGet("")]
         [Authorize(Policy = Policies.ManageJumpStart)]
         [ProducesErrorResponseType(typeof(void))]
         [ProducesResponseType(typeof(List<PostResult>), StatusCodes.Status200OK)]
@@ -47,10 +45,34 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var availablePosts = await _postService.GetAvailablePosts(date);
 
-            var result = availablePosts.Select(item => new PostResult(item.Id, item.Headline, item.Description, item.Date,
-                item.Images)).ToList();
+            var result = availablePosts.Select(item => new PostResult(item)).ToList();
 
             return Ok(result);
+        }
+
+        [HttpPut("{postId}")]
+        [Authorize(Policy = Policies.ManageJumpStart)]
+        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Edit(int postId, PostModel model)
+        {
+            await _postService.EditAsync(postId, model.CategoryId, model.Date, model.Headline,
+                model.Description, model.Price, model.EventDate);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{postId}")]
+        [Authorize(Policy = Policies.ManageJumpStart)]
+        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete(int postId)
+        {
+            await _postService.DeleteAsync(postId);
+
+            return NoContent();
         }
     }
 }

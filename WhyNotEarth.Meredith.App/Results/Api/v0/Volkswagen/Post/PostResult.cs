@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post
 {
@@ -15,28 +15,24 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post
 
         public DateTime Date { get; }
 
-        public List<ImageResult> Images { get; set; } = new List<ImageResult>();
+        public decimal Price { get; }
 
-        public PostResult(int id, string headline, string description, DateTime date)
+        public DateTime EventDate { get; }
+
+        public List<ImageResult> Images { get; }
+
+        public PostResult(Data.Entity.Models.Modules.Volkswagen.Post post)
         {
-            Id = id;
-            Headline = headline;
-            Description = description;
-            Date = date;
-        }
+            Id = post.Id;
+            Headline = post.Headline;
+            Description = post.Description;
+            Date = post.Date;
+            Price = post.Price;
+            EventDate = post.EventDate;
 
-        public PostResult(int id, string headline, string description, DateTime date, List<PostImage> images) : this(id,
-            headline, description, date)
-        {
-            if (images is null)
-            {
-                return;
-            }
-
-            foreach (var postImage in images)
-            {
-                Images.Add(new ImageResult(postImage.Order, postImage.Url));
-            }
+            Images = post.Images != null
+                ? post.Images.Select(item => new ImageResult(item)).ToList()
+                : new List<ImageResult>();
         }
     }
 }

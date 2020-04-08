@@ -25,33 +25,29 @@ namespace WhyNotEarth.Meredith.Salon
             _userManager = userManager;
         }
 
-        public void Reserve(int tenantId, string pageSlug, List<string> orders, decimal subTotal,
+        public void Reserve(int tenantId, List<string> orders, decimal subTotal,
             decimal deliveryFee, decimal amount, DateTime deliveryDateTime, string message, string userId)
         {
             _backgroundJobClient.Enqueue<ReservationService>(service =>
-                service.SendEmail(tenantId, pageSlug, orders, subTotal, deliveryFee, amount, deliveryDateTime, message,
+                service.SendEmail(tenantId, orders, subTotal, deliveryFee, amount, deliveryDateTime, message,
                     userId));
         }
 
-        public async Task SendEmail(int tenantId, string pageSlug, List<string> orders, decimal subTotal,
+        public async Task SendEmail(int tenantId, List<string> orders, decimal subTotal,
             decimal deliveryFee, decimal amount, DateTime deliveryDateTime, string message, string userId)
         {
-            var page = await _meredithDbContext.Pages.Include(item => item.Company).FirstOrDefaultAsync(p =>
-                p.TenantId == tenantId && p.Slug.ToLower() == pageSlug.ToLower());
+            var user = await _userManager.FindByIdAsync(userId);
 
             var tenant = await _meredithDbContext.Tenants
                 .Include(item => item.User)
                 .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
-            var user = await _userManager.FindByIdAsync(userId);
-
+            
             var templateData = new Dictionary<string, object>
             {
                 {
                     "tenant", new
                     {
-                        featuredImage = page.FeaturedImage,
-                        h2 = page.Header,
                         phone = tenant.User.PhoneNumber,
                         email = tenant.User.Email
                     }

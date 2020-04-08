@@ -1,15 +1,20 @@
-﻿namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
+﻿using WhyNotEarth.Meredith.Data.Entity.Models;
+
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 {
     public class ImageResult
     {
+        public int Id { get; }
+
         public int Order { get; }
 
         public string Url { get; }
 
-        public ImageResult(int order, string url)
+        public ImageResult(Image image)
         {
-            Order = order;
-            Url = url;
+            Id = image.Id;
+            Order = image.Order;
+            Url = image.Url;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200407143153_AddNewFieldsToPost")]
+    partial class AddNewFieldsToPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -934,9 +936,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.PostCategory", b =>
                 {
                     b.HasBaseType("WhyNotEarth.Meredith.Data.Entity.Models.Category");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
 
                     b.HasDiscriminator().HasValue("PostCategory");
                 });
