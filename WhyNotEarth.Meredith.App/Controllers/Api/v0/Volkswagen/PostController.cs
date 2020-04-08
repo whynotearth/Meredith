@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
     // TODO: Fix images
     [ApiVersion("0")]
-    [Route("api/v0/Volkswagen/posts")]
+    [Route("api/v0/volkswagen/posts")]
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;
