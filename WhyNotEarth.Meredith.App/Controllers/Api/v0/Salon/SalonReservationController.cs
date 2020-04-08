@@ -40,7 +40,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
 
             if (tenant is null)
             {
-                return NotFound();
+                return NotFound($"Tenant {tenantId} not found");
             }
 
             var userId = _userManager.GetUserId(User);

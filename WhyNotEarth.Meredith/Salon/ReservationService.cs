@@ -42,9 +42,16 @@ namespace WhyNotEarth.Meredith.Salon
                 .Include(item => item.User)
                 .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
-            
+
+            var recipients = new List<Tuple<string, string>>
+            {
+                Tuple.Create(user.Email, user.Name),
+                Tuple.Create(tenant.User.Email, tenant.User.Name)
+            };
+
             var templateData = new Dictionary<string, object>
             {
+                {"subject", $"your order with {tenant.Company.Name}"},
                 {
                     "tenant", new
                     {
@@ -66,7 +73,7 @@ namespace WhyNotEarth.Meredith.Salon
                 {"googleMaps", user.GoogleLocation}
             };
 
-            await _sendGridService.SendEmail(tenant.Company.Id, user.Email, user.Name, templateData);
+            await _sendGridService.SendEmail(tenant.Company.Id, recipients, templateData);
         }
     }
 }

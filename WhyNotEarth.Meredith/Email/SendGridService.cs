@@ -43,17 +43,20 @@ namespace WhyNotEarth.Meredith.Email
             }
         }
 
-        public async Task SendEmail(int companyId, string emailTo, string emailToName, Dictionary<string, object> templateData)
+        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients,
+            Dictionary<string, object> templateData)
         {
             var client = new SendGridClient(_sendGridOptions.ApiKey);
 
             var sendGridAccount = await GetAccount(companyId);
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
-            var to = new EmailAddress(emailTo, emailToName);
+            var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
 
-            var msg = MailHelper.CreateSingleTemplateEmail(from, to, sendGridAccount.TemplateId, templateData);
+            var sendGridMessage =
+                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, sendGridAccount.TemplateId,
+                    templateData);
 
-            var response = await client.SendEmailAsync(msg);
+            var response = await client.SendEmailAsync(sendGridMessage);
 
             if (response.StatusCode >= HttpStatusCode.Ambiguous)
             {
