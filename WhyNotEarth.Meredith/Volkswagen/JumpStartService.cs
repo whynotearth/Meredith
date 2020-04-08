@@ -40,13 +40,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Posts = posts
             };
 
-            var order = 0;
             foreach (var post in posts)
             {
                 post.JumpStart = jumpStart;
-                post.Order = order;
-
-                order += 1;
+                post.Order = postIds.IndexOf(post.Id);
             }
 
             _dbContext.UpdateRange(posts);

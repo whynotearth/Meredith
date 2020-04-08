@@ -54,7 +54,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task<List<Post>> GetAvailablePosts(DateTime date)
         {
             var posts = await _dbContext.Posts
+                .Include(item => item.Category)
                 .Where(item => item.Date <= date.AddDays(1).AddSeconds(-1) && item.JumpStartId == null)
+                .OrderByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
             return posts;

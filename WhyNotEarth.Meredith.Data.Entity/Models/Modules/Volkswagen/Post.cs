@@ -43,5 +43,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
     public class PostCategory : Category
     {
+        public int Priority { get; set; }
     }
 }
