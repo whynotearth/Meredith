@@ -39,6 +39,10 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<JumpStartPdfService>()
                 .AddScoped<JumpStartEmailTemplateService>();
 
+            // Salon
+            serviceCollection
+                .AddScoped<Salon.ReservationService>();
+
             return serviceCollection;
         }
     }
