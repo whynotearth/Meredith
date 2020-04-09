@@ -58,6 +58,8 @@ namespace WhyNotEarth.Meredith.Email
 
             var response = await client.SendEmailAsync(sendGridMessage);
 
+            throw new Exception(sendGridMessage.Serialize());
+
             if (true || response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);
