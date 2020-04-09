@@ -79,10 +79,10 @@ namespace WhyNotEarth.Meredith.Email
 
             var response = await client.SendEmailAsync(msg);
 
-            if (response.StatusCode >= HttpStatusCode.Ambiguous)
+            if (true || response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);
-                throw new Exception(errorMessage);
+                throw new Exception(response.StatusCode + ": " + errorMessage);
             }
         }
 
