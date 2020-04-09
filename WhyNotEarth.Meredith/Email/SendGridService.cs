@@ -89,9 +89,7 @@ namespace WhyNotEarth.Meredith.Email
 
         private async Task<string> GetErrorMessage(Response response)
         {
-            var body = await response.DeserializeResponseBodyAsync(response.Body);
-
-            return string.Join(", ", body.Select(item => item.Key + ":" + item.Value).ToArray());
+            return await response.Body.ReadAsStringAsync();
         }
 
         private async Task<SendGridAccount> GetAccount(int companyId)
