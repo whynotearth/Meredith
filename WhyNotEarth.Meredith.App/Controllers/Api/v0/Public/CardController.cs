@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.App.Models.Api.V0.Page;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Pages;
 
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("api/v0/cards")]

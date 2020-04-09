@@ -15,6 +15,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
 
         public DateTime DeliveryDateTime { get; set; }
 
+        public string PaymentMethod { get; set; }
+
         public string Message { get; set; }
     }
 
