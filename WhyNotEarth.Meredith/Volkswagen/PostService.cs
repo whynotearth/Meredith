@@ -36,13 +36,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Description = description,
                 Price = price,
                 EventDate = eventDate,
-                Images = new List<PostImage>(imageUrls.Select((item, index) =>
+                Images = imageUrls?.Select((item, index) =>
                     new PostImage
                     {
                         Url = item,
                         Order = index
                     }
-                ))
+                ).ToList()
             };
 
             await _dbContext.Posts.AddAsync(post);
