@@ -58,10 +58,11 @@ namespace WhyNotEarth.Meredith.Email
 
             var response = await client.SendEmailAsync(sendGridMessage);
 
-            if (response.StatusCode >= HttpStatusCode.Ambiguous)
+            if (true || response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);
-                throw new Exception(errorMessage);
+
+                throw new Exception(response.StatusCode + ": " + errorMessage);
             }
         }
 
@@ -79,10 +80,10 @@ namespace WhyNotEarth.Meredith.Email
 
             var response = await client.SendEmailAsync(msg);
 
-            if (true || response.StatusCode >= HttpStatusCode.Ambiguous)
+            if (response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);
-                throw new Exception(response.StatusCode + ": " + errorMessage);
+                throw new Exception(errorMessage);
             }
         }
 
