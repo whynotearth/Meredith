@@ -2,8 +2,6 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace WhyNotEarth.Meredith.App.Localization
 {
@@ -14,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Localization
             DateTimeStyles.AdjustToUniversal | DateTimeStyles.AllowWhiteSpaces;
 
         /// <inheritdoc />
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
+        public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
             if (context == null)
             {
@@ -22,10 +20,9 @@ namespace WhyNotEarth.Meredith.App.Localization
             }
 
             var modelType = context.Metadata.UnderlyingOrModelType;
-            var loggerFactory = context.Services.GetRequiredService<ILoggerFactory>();
             if (modelType == typeof(DateTime))
             {
-                return new UtcAwareDateTimeModelBinder(SupportedStyles, loggerFactory);
+                return new UtcAwareDateTimeModelBinder(SupportedStyles);
             }
 
             return null;
@@ -34,18 +31,11 @@ namespace WhyNotEarth.Meredith.App.Localization
 
     public class UtcAwareDateTimeModelBinder : IModelBinder
     {
-        private readonly ILogger _logger;
         private readonly DateTimeStyles _supportedStyles;
 
-        public UtcAwareDateTimeModelBinder(DateTimeStyles supportedStyles, ILoggerFactory loggerFactory)
+        public UtcAwareDateTimeModelBinder(DateTimeStyles supportedStyles)
         {
-            if (loggerFactory == null)
-            {
-                throw new ArgumentNullException(nameof(loggerFactory));
-            }
-
             _supportedStyles = supportedStyles;
-            _logger = loggerFactory.CreateLogger<UtcAwareDateTimeModelBinder>();
         }
 
         public Task BindModelAsync(ModelBindingContext bindingContext)
@@ -72,7 +62,7 @@ namespace WhyNotEarth.Meredith.App.Localization
             var value = valueProviderResult.FirstValue;
             var culture = valueProviderResult.Culture;
 
-            object model;
+            object? model;
             if (string.IsNullOrWhiteSpace(value))
             {
                 model = null;

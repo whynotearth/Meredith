@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [HttpGet]
         [Route("provider/login")]
-        public IActionResult ProviderLogin(string provider, string returnUrl = null)
+        public IActionResult ProviderLogin(string provider, string? returnUrl = null)
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,
                 $"/api/v0/authentication/provider/callback?returnUrl={returnUrl}");
@@ -94,7 +94,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpGet]
         [Route("provider/callback")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> ProviderCallback(string remoteError = null, string returnUrl = null)
+        public async Task<IActionResult> ProviderCallback(string? remoteError = null, string? returnUrl = null)
         {
             if (remoteError != null)
             {

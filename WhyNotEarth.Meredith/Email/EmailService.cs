@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.Email
         }
 
         public async Task SendReservationEmail(Reservation reservation, RoomType roomType, IEnumerable<Price> dailyPrices,
-            decimal vatAmount, int paidDays, string country, string phoneNumber)
+            decimal vatAmount, int paidDays, string? country, string phoneNumber)
         {
             var hotel = await _meredithDbContext.Hotels
                 .Include(item => item.Translations)
@@ -41,6 +41,13 @@ namespace WhyNotEarth.Meredith.Email
                 .ThenInclude(item => item.Translations)
                 .ThenInclude(item => item.Language)
                 .FirstOrDefaultAsync(item => item.Id == roomType.HotelId);
+
+            if (hotel?.CompanyId is null)
+            {
+                // I don't think this is possible and I don't see any hotel without a companyId in db either
+                // I don't know why we marked this is nullable
+                throw new Exception("Hotel is not connected to any company.");
+            }
 
             var sendGridAccount = await GetSendGridAccount(hotel.CompanyId.Value);
 

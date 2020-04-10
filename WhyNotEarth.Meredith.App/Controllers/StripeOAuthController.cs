@@ -1,10 +1,11 @@
 // ReSharper disable InconsistentNaming
 
+using WhyNotEarth.Meredith.App.Models.StripeOAuth;
+
 namespace WhyNotEarth.Meredith.App.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using Areas.Stripe.StripeOAuth;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Stripe;

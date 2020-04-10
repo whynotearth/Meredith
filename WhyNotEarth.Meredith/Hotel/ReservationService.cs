@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.Hotel
         }
 
         public async Task<Reservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
-            string fullName, string email, string message, string phoneCountry, string phone, int numberOfGuests)
+            string fullName, string email, string? message, string? phoneCountry, string phone, int numberOfGuests)
         {
             var roomType = await _meredithDbContext.RoomTypes
                 .FirstOrDefaultAsync(rt => rt.Id == roomTypeId);
@@ -137,7 +137,7 @@ namespace WhyNotEarth.Meredith.Hotel
 
             var payment = new Payment
             {
-                Amount = (long) paymentIntent.Amount,
+                Amount = paymentIntent.Amount ?? 0,
                 Created = DateTime.UtcNow,
                 ReservationId = int.Parse(paymentIntent.Metadata[MetadataReservationIdKey]),
                 Status = Payment.Statuses.Fulfilled,

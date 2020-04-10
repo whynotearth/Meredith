@@ -26,7 +26,7 @@ namespace WhyNotEarth.Meredith.Salon
         }
 
         public void Reserve(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee, decimal amount,
-            DateTime deliveryDateTime, string paymentMethod, string message, string userId)
+            DateTime deliveryDateTime, string paymentMethod, string? message, string userId)
         {
             _backgroundJobClient.Enqueue<ReservationService>(service =>
                 service.SendEmail(tenantId, orders, subTotal, deliveryFee, amount, deliveryDateTime, paymentMethod,
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.Salon
         }
 
         public async Task SendEmail(int tenantId, List<string> orders, decimal subTotal,
-            decimal deliveryFee, decimal amount, DateTime deliveryDateTime, string paymentMethod, string message,
+            decimal deliveryFee, decimal amount, DateTime deliveryDateTime, string paymentMethod, string? message,
             string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -70,7 +70,7 @@ namespace WhyNotEarth.Meredith.Salon
                 {"email", user.Email},
                 {"paymentMethod", paymentMethod},
                 {"deliveryTime", deliveryDateTime},
-                {"message", message},
+                {"message", message ?? string.Empty},
                 {"googleMaps", user.GoogleLocation}
             };
 

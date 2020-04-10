@@ -26,10 +26,10 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
                     apiDesc.TryGetMethodInfo(out var methodInfo);
-                    var versions = methodInfo.DeclaringType.GetCustomAttributes(true)
+                    var versions = methodInfo?.DeclaringType?.GetCustomAttributes(true)
                         .OfType<ApiVersionAttribute>()
                         .SelectMany(attr => attr.Versions);
-                    return versions.Any(v => $"v{v.ToString()}" == docName);
+                    return versions?.Any(v => $"v{v}" == docName) ?? false;
                 });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

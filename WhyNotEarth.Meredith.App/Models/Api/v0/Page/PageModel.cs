@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.V0.Page
 
         public List<Story> Stories { get; set; } = new List<Story>();
 
-        public object Custom { get; set; }
+        public object? Custom { get; set; }
 
         public Dictionary<string, object> Modules { get; set; } = new Dictionary<string, object>();
 

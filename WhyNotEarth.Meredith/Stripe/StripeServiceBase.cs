@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.Stripe
             StripeOptions = stripeOptions.Value;
         }
 
-        protected RequestOptions GetRequestOptions(string stripeAccountId = null)
+        protected RequestOptions GetRequestOptions(string? stripeAccountId = null)
         {
             return new RequestOptions
             {

@@ -1,7 +1,7 @@
-namespace WhyNotEarth.Meredith.App.Areas.Stripe.StripeOAuth
-{
-    using Newtonsoft.Json;
+using Newtonsoft.Json;
 
+namespace WhyNotEarth.Meredith.App.Models.StripeOAuth
+{
     public class AuthorizeModel
     {
         [JsonProperty("code")]

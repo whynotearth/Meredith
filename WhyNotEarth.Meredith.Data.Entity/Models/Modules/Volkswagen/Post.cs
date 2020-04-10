@@ -17,9 +17,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public DateTime Date { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
-        public DateTime EventDate { get; set; }
+        public DateTime? EventDate { get; set; }
 
         public int? JumpStartId { get; set; }
 

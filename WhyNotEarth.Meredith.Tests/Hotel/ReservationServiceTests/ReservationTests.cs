@@ -36,7 +36,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
 
             var roomType = await CreateRoomType(dbContext, 10);
             var reservation = await reservationService.CreateReservation(roomType.Id, start, end, string.Empty,
-                string.Empty, string.Empty, default, string.Empty, 0);
+                string.Empty, string.Empty, string.Empty, string.Empty, 0);
             Assert.NotNull(reservation);
         }
 
@@ -85,7 +85,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             var roomType = await CreateRoomType(dbContext, 10);
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
                 await reservationService.CreateReservation(roomType.Id, Start.AddDays(1), Start, string.Empty,
-                    string.Empty, string.Empty, default, string.Empty, 0));
+                    string.Empty, string.Empty, string.Empty, string.Empty, 0));
             Assert.Equal("Invalid number of days to reserve", exception.Message);
         }
 
@@ -97,7 +97,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
 
             await Assert.ThrowsAsync<RecordNotFoundException>(async () =>
                 await reservationService.CreateReservation(0, Start, Start, string.Empty, string.Empty, string.Empty,
-                    default, string.Empty, 0));
+                    string.Empty, string.Empty, 0));
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             await dbContext.SaveChangesAsync();
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
                 await reservationService.CreateReservation(roomType.Id, Start, Start.AddDays(10), string.Empty,
-                    string.Empty, string.Empty, default, string.Empty, 0));
+                    string.Empty, string.Empty, string.Empty, string.Empty, 0));
             Assert.Equal("Not all days have prices set", exception.Message);
         }
 
@@ -125,10 +125,10 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             var roomType = await CreateRoomType(dbContext, 10);
             await reservationService.CreateReservation(roomType.Id, Start, Start.AddDays(1), string.Empty,
                 string.Empty,
-                string.Empty, default, string.Empty, 0);
+                string.Empty, string.Empty, string.Empty, 0);
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
                 await reservationService.CreateReservation(roomType.Id, Start, Start.AddDays(1), string.Empty,
-                    string.Empty, string.Empty, default, string.Empty, 0));
+                    string.Empty, string.Empty, string.Empty, string.Empty, 0));
             Assert.Equal("There are no rooms available of this type", exception.Message);
         }
     }

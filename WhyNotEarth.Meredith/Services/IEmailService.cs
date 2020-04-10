@@ -7,6 +7,6 @@ namespace WhyNotEarth.Meredith.Services
     public interface IEmailService
     {
         Task SendReservationEmail(Reservation reservation, RoomType roomType, IEnumerable<Price> dailyPrices,
-            decimal vatAmount, int paidDays, string country, string phoneNumber);
+            decimal vatAmount, int paidDays, string? country, string phoneNumber);
     }
 }

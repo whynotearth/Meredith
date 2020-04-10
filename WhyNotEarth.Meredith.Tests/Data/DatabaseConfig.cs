@@ -26,8 +26,9 @@ namespace WhyNotEarth.Meredith.Tests.Data
             Task.Run(Seed).Wait();
         }
 
-        private async Task Seed()
+        private Task Seed()
         {
+            return Task.CompletedTask;
         }
     }
 }

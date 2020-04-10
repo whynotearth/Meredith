@@ -15,11 +15,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post
 
         public DateTime Date { get; }
 
-        public decimal Price { get; }
+        public decimal? Price { get; }
 
-        public DateTime EventDate { get; }
+        public DateTime? EventDate { get; }
 
-        public List<ImageResult> Images { get; }
+        public List<ImageResult>? Images { get; }
 
         public PostResult(Data.Entity.Models.Modules.Volkswagen.Post post)
         {

@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task<Post> CreateAsync(int categoryId, DateTime date, string headline, string description,
-            decimal price, DateTime eventDate, List<string> imageUrls)
+            decimal? price, DateTime? eventDate, List<string>? imageUrls)
         {
             var category = await _dbContext.Categories.FirstOrDefaultAsync(item => item.Id == categoryId);
 
@@ -63,7 +63,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task<Post> EditAsync(int postId, int categoryId, DateTime date, string headline,
-            string description, decimal price, DateTime eventDate)
+            string description, decimal? price, DateTime? eventDate)
         {
             var post = await _dbContext.Posts.FirstOrDefaultAsync(item => item.Id == postId);
 
