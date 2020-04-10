@@ -268,6 +268,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         private string GenerateJwtToken(string email, User user)
         {
+            if (!_jwtOptions.IsValid())
+            {
+                throw new Exception("Missing JWT configurations.");
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),

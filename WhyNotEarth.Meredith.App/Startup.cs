@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RollbarDotNet.Configuration;
 using RollbarDotNet.Core;
 using RollbarDotNet.Logger;
 using WhyNotEarth.Meredith.App.Auth;
@@ -20,12 +19,8 @@ using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
-using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
-using WhyNotEarth.Meredith.Email;
-using WhyNotEarth.Meredith.GoogleCloud;
-using WhyNotEarth.Meredith.Stripe.Data;
 
 [assembly: ApiController]
 namespace WhyNotEarth.Meredith.App
@@ -50,13 +45,7 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddRollbarWeb();
 
-            services.AddOptions()
-                .Configure<CloudinaryOptions>(o => _configuration.GetSection("Cloudinary").Bind(o))
-                .Configure<RollbarOptions>(o => _configuration.GetSection("Rollbar").Bind(o))
-                .Configure<SendGridOptions>(options => _configuration.GetSection("SendGrid").Bind(options))
-                .Configure<StripeOptions>(o => _configuration.GetSection("Stripe").Bind(o))
-                .Configure<JwtOptions>(o => _configuration.GetSection("Jwt").Bind(o))
-                .Configure<GoogleCloudOptions>(o => _configuration.GetSection("GoogleCloud").Bind(o));
+            services.AddCustomOptions(_configuration);
 
             services.AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
                 options => options.SetPostgresVersion(new Version(9, 6))));
