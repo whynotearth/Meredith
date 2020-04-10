@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -29,6 +30,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<IActionResult> Create(DateTime dateTime, List<int> postIds)
         {
             await _jumpStartService.CreateAsync(dateTime, postIds);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("test")]
+        [Authorize(Policy = Policies.ManageJumpStart)]
+        [ProducesErrorResponseType(typeof(void))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create(TestModel model)
+        {
+            await _jumpStartService.SendTestAsync(model.Subject, model.Date, model.To, model.Description);
 
             return Ok();
         }

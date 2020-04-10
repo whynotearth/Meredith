@@ -55,6 +55,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<JumpStart> JumpStarts { get; set; }
 
+        public DbSet<Recipient> Recipients { get; set; }
+
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {
         }

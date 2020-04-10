@@ -9,6 +9,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Email
@@ -54,6 +55,26 @@ namespace WhyNotEarth.Meredith.Email
 
             var sendGridMessage =
                 MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, sendGridAccount.TemplateId,
+                    templateData);
+
+            var response = await client.SendEmailAsync(sendGridMessage);
+
+            if (response.StatusCode >= HttpStatusCode.Ambiguous)
+            {
+                var errorMessage = await GetErrorMessage(response);
+                throw new Exception(errorMessage);
+            }
+        }
+
+        public async Task SendEmail(string fromEmail, List<Recipient> recipients, string templateId, Dictionary<string, object> templateData)
+        {
+            var client = new SendGridClient(_sendGridOptions.ApiKey);
+
+            var from = new EmailAddress(fromEmail);
+            var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
+
+            var sendGridMessage =
+                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, templateId,
                     templateData);
 
             var response = await client.SendEmailAsync(sendGridMessage);
