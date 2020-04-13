@@ -198,6 +198,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                         var logins = await _userManager.GetLoginsAsync(user);
                         if (!logins.Any())
                         {
+                            await UpdateUser(user, model);
+
                             return await SignIn(user);
                         }
                     }
@@ -237,6 +239,31 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             await _signInManager.SignInAsync(user, true);
 
             return Ok(GenerateJwtToken(user.Email, user));
+        }
+
+        private Task UpdateUser(User user, RegisterModel model)
+        {
+            if (!string.IsNullOrEmpty(model.Name))
+            {
+                user.Name = model.Name;
+            }
+
+            if (!string.IsNullOrEmpty(model.PhoneNumber))
+            {
+                user.PhoneNumber = model.PhoneNumber;
+            }
+
+            if (!string.IsNullOrEmpty(model.Address))
+            {
+                user.Address = model.Address;
+            }
+
+            if (!string.IsNullOrEmpty(model.GoogleLocation))
+            {
+                user.GoogleLocation = model.GoogleLocation;
+            }
+
+            return _userManager.UpdateAsync(user);
         }
 
         private string GenerateJwtToken(string email, User user)
