@@ -1,40 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Configuration;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-    using Microsoft.IdentityModel.Tokens;
-    using WhyNotEarth.Meredith.App.Configuration;
-    using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
-    using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
-    using WhyNotEarth.Meredith.Data.Entity.Models;
-
     [ApiVersion("0")]
     [Route("/api/v0/authentication")]
     public class AuthenticationController : ControllerBase
     {
-        private SignInManager<User> SignInManager { get; }
-        private UserManager<User> UserManager { get; }
-        private JwtOptions JwtOptions { get; }
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly JwtOptions _jwtOptions;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
             IOptions<JwtOptions> jwtOptions)
         {
-            UserManager = userManager;
-            SignInManager = signInManager;
-            JwtOptions = jwtOptions.Value;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _jwtOptions = jwtOptions.Value;
         }
 
         [HttpPost]
@@ -44,13 +43,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (!result.Succeeded)
             {
                 return Unauthorized(new {error = "You have entered an invalid username or password"});
             }
 
-            var appUser = await UserManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
+            var appUser = await _userManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
             return Ok(GenerateJwtToken(model.Email, appUser));
         }
 
@@ -58,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Route("logout")]
         public async Task<IActionResult> Logout()
         {
-            await SignInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
 
             return Ok();
         }
@@ -67,7 +66,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Route("provider/login")]
         public IActionResult ProviderLogin(string provider, string returnUrl = null)
         {
-            var properties = SignInManager.ConfigureExternalAuthenticationProperties(provider,
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,
                 $"/api/v0/authentication/provider/callback?returnUrl={returnUrl}");
 
             return new ChallengeResult(provider, properties);
@@ -77,8 +76,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Route("provider/logout")]
         public async Task<IActionResult> ProviderLogout(string provider)
         {
-            var user = await UserManager.GetUserAsync(User);
-            var userLoginInfos = await UserManager.GetLoginsAsync(user);
+            var user = await _userManager.GetUserAsync(User);
+            var userLoginInfos = await _userManager.GetLoginsAsync(user);
 
             var userLoginInfo = userLoginInfos.FirstOrDefault(item => item.LoginProvider == provider);
 
@@ -87,8 +86,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return Ok();
             }
 
-            await UserManager.RemoveLoginAsync(user, userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
-            
+            await _userManager.RemoveLoginAsync(user, userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+
             return Ok();
         }
 
@@ -99,10 +98,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             if (remoteError != null)
             {
-                return Unauthorized(new { error = $"Error from external provider: {remoteError}" });
+                return Unauthorized(new {error = $"Error from external provider: {remoteError}"});
             }
 
-            var info = await SignInManager.GetExternalLoginInfoAsync();
+            var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 // Login failed, typically because they cancelled.
@@ -111,15 +110,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             if (!info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
             {
-                return Unauthorized(new { error = "Provider did not return an e-mail address" });
+                return Unauthorized(new {error = "Provider did not return an e-mail address"});
             }
 
-            var result = await SignInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
+            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
                 false, true);
 
             if (result.Succeeded)
             {
-                await SignInManager.UpdateExternalAuthenticationTokensAsync(info);
+                await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return Redirect(returnUrl);
             }
 
@@ -133,11 +132,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             if (User.Identity.IsAuthenticated)
             {
-                user = await UserManager.GetUserAsync(User);
+                user = await _userManager.GetUserAsync(User);
             }
             else
             {
-                user = await UserManager.FindByEmailAsync(email);
+                user = await _userManager.FindByEmailAsync(email);
             }
 
             if (user is null)
@@ -148,20 +147,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                     Email = email
                 };
 
-                var createResult = await UserManager.CreateAsync(user);
+                var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     return Error("Error creating user", createResult.Errors);
                 }
             }
 
-            var addLoginResult = await UserManager.AddLoginAsync(user, info);
+            var addLoginResult = await _userManager.AddLoginAsync(user, info);
             if (!addLoginResult.Succeeded)
             {
                 return Error("Error adding login to user", addLoginResult.Errors);
             }
 
-            await SignInManager.SignInAsync(user, true);
+            await _signInManager.SignInAsync(user, true);
             return Redirect(returnUrl);
         }
 
@@ -184,20 +183,31 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             IdentityResult identityResult;
             if (model.Password is null)
             {
-                var user = await UserManager.FindByEmailAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
 
                 if (user is null)
                 {
-                    identityResult = await UserManager.CreateAsync(newUser);
+                    identityResult = await _userManager.CreateAsync(newUser);
                 }
                 else
                 {
-                    return await SignIn(user);
+                    // We only let users that registered without password and
+                    // also don't have any other provider linked to login this way
+                    if (user.PasswordHash is null)
+                    {
+                        var logins = await _userManager.GetLoginsAsync(user);
+                        if (!logins.Any())
+                        {
+                            return await SignIn(user);
+                        }
+                    }
+
+                    identityResult = IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email));
                 }
             }
             else
             {
-                identityResult = await UserManager.CreateAsync(newUser, model.Password);
+                identityResult = await _userManager.CreateAsync(newUser, model.Password);
             }
 
             if (!identityResult.Succeeded)
@@ -215,8 +225,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [ProducesResponseType(typeof(List<PingResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Ping()
         {
-            var user = await UserManager.GetUserAsync(User);
-            var logins = await UserManager.GetLoginsAsync(user);
+            var user = await _userManager.GetUserAsync(User);
+            var logins = await _userManager.GetLoginsAsync(user);
 
             return Ok(new PingResult(user.Id, user.UserName, User.Identity.IsAuthenticated,
                 logins.Select(item => item.LoginProvider).ToList()));
@@ -224,7 +234,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         private async Task<IActionResult> SignIn(User user)
         {
-            await SignInManager.SignInAsync(user, true);
+            await _signInManager.SignInAsync(user, true);
 
             return Ok(GenerateJwtToken(user.Email, user));
         }
@@ -238,13 +248,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtOptions.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(JwtOptions.ExpireDays);
+            var expires = DateTime.Now.AddDays(_jwtOptions.ExpireDays);
 
             var token = new JwtSecurityToken(
-                JwtOptions.Issuer,
-                JwtOptions.Issuer,
+                _jwtOptions.Issuer,
+                _jwtOptions.Issuer,
                 claims,
                 expires: expires,
                 signingCredentials: creds
@@ -257,7 +267,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
 
-            return Unauthorized(new { error = $"{message}: {errors}" });
+            return Unauthorized(new {error = $"{message}: {errors}"});
         }
     }
 }
