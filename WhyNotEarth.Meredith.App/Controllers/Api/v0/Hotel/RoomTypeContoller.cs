@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
@@ -12,21 +11,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 {
     [ApiVersion("0")]
     [Route("api/v0/hotel/roomtypes")]
+    [ProducesErrorResponseType(typeof(void))]
     public class RoomTypeController : ControllerBase
     {
-        private MeredithDbContext MeredithDbContext { get; }
+        private readonly MeredithDbContext _meredithDbContext;
 
         public RoomTypeController(MeredithDbContext meredithDbContext)
         {
-            MeredithDbContext = meredithDbContext;
+            _meredithDbContext = meredithDbContext;
         }
 
-        [Route("{roomTypeId}/prices/")]
-        [HttpGet]
-        [ProducesResponseType(typeof(List<PricesResult>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Prices(int roomTypeId, DateTime startDate, DateTime endDate)
+        [HttpGet("{roomTypeId}/prices/")]
+        public async Task<ActionResult<List<PricesResult>>> Prices(int roomTypeId, DateTime startDate, DateTime endDate)
         {
-            var prices = await MeredithDbContext.Prices
+            var prices = await _meredithDbContext.Prices
                 .Where(p => p.RoomTypeId == roomTypeId &&
                             startDate <= p.Date && p.Date <= endDate &&
                             p.RoomType.Rooms.Count(room => !room.Reservations.Any(

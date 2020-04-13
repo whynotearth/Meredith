@@ -7,21 +7,22 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 {
     [ApiVersion("0")]
     [Route("api/v0/hotel/prices")]
+    [ProducesErrorResponseType(typeof(void))]
     public class PriceController : ControllerBase
     {
-        private PriceService PriceService { get; }
+        private readonly PriceService _priceService;
 
         public PriceController(PriceService priceService)
         {
-            PriceService = priceService;
+            _priceService = priceService;
         }
 
-        [HttpPost]
-        [Route("")]
+        [HttpPost("")]
         public async Task<IActionResult> Create(PriceModel price)
         {
-            var newPrice = await PriceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
-            return Ok(new { PriceId = newPrice.Id });
+            var newPrice = await _priceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
+
+            return Ok(new {PriceId = newPrice.Id});
         }
     }
 }

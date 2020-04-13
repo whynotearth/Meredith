@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Salon;
@@ -13,6 +12,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
 {
     [ApiVersion("0")]
     [Route("api/v0/salon/reservations")]
+    [ProducesErrorResponseType(typeof(void))]
     public class SalonReservationController : ControllerBase
     {
         private readonly MeredithDbContext _meredithDbContext;
@@ -27,13 +27,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
             _userManager = userManager;
         }
 
-        [HttpPost]
         [Authorize]
-        [Route("{tenantId}/reserve")]
-        [ProducesErrorResponseType(typeof(void))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Returns404]
+        [HttpPost("{tenantId}/reserve")]
         public async Task<IActionResult> Reserve(int tenantId, SalonReservationModel model)
         {
             var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);

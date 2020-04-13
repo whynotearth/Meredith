@@ -10,25 +10,22 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("api/v0/companies")]
+    [ProducesErrorResponseType(typeof(void))]
     public class CompanyController : ControllerBase
     {
-        public CompanyController(
-            MeredithDbContext meredithDbContext,
-            IOptions<StripeOptions> stripeOptions)
+        private readonly MeredithDbContext _meredithDbContext;
+        private readonly StripeOptions _stripeOptions;
+
+        public CompanyController(MeredithDbContext meredithDbContext, IOptions<StripeOptions> stripeOptions)
         {
-            MeredithDbContext = meredithDbContext;
-            StripeOptions = stripeOptions.Value;
+            _meredithDbContext = meredithDbContext;
+            _stripeOptions = stripeOptions.Value;
         }
 
-        private MeredithDbContext MeredithDbContext { get; }
-
-        private StripeOptions StripeOptions { get; }
-
-        [Route("{companyId}/stripe/keys/publishable")]
-        [HttpGet]
+        [HttpGet("{companyId}/stripe/keys/publishable")]
         public async Task<IActionResult> StripePublishableKey(int companyId)
         {
-            var accountId = await MeredithDbContext.StripeAccounts
+            var accountId = await _meredithDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
@@ -41,7 +38,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok(new
             {
                 accountId,
-                key = StripeOptions.PublishableKey
+                key = _stripeOptions.PublishableKey
             });
         }
     }

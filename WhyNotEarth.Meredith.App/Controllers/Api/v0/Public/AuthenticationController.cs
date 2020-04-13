@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +21,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("/api/v0/authentication")]
+    [ProducesErrorResponseType(typeof(void))]
     public class AuthenticationController : ControllerBase
     {
         private readonly SignInManager<User> _signInManager;
@@ -36,12 +36,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _jwtOptions = jwtOptions.Value;
         }
 
-        [HttpPost]
-        [Route("login")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Login(LoginModel model)
+        [Returns401]
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(LoginModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (!result.Succeeded)
@@ -53,8 +50,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok(GenerateJwtToken(model.Email, appUser));
         }
 
-        [HttpPost]
-        [Route("logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -62,8 +58,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok();
         }
 
-        [HttpGet]
-        [Route("provider/login")]
+        [HttpGet("provider/login")]
         public IActionResult ProviderLogin(string provider, string? returnUrl = null)
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,
@@ -72,8 +67,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return new ChallengeResult(provider, properties);
         }
 
-        [HttpPost]
-        [Route("provider/logout")]
+        [HttpPost("provider/logout")]
         public async Task<IActionResult> ProviderLogout(string provider)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -91,8 +85,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok();
         }
 
-        [HttpGet]
-        [Route("provider/callback")]
+        [HttpGet("provider/callback")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> ProviderCallback(string? remoteError = null, string? returnUrl = null)
         {
@@ -164,11 +157,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Redirect(returnUrl);
         }
 
-        [HttpPost]
-        [Route("register")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Register(RegisterModel model)
+        [Returns400]
+        [HttpPost("register")]
+        public async Task<ActionResult<string>> Register(RegisterModel model)
         {
             var newUser = new User
             {
@@ -220,12 +211,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return await SignIn(newUser);
         }
 
-        [HttpGet]
         [Authorize]
-        [Route("ping")]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(List<PingResult>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Ping()
+        [Returns401]
+        [HttpGet("ping")]
+        public async Task<ActionResult<List<PingResult>>> Ping()
         {
             var user = await _userManager.GetUserAsync(User);
             var logins = await _userManager.GetLoginsAsync(user);
@@ -234,7 +223,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 logins.Select(item => item.LoginProvider).ToList()));
         }
 
-        private async Task<IActionResult> SignIn(User user)
+        private async Task<ActionResult<string>> SignIn(User user)
         {
             await _signInManager.SignInAsync(user, true);
 

@@ -1,30 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using WhyNotEarth.Meredith.Cloudinary;
+
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using CloudinaryDotNet;
-    using CloudinaryDotNet.Actions;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Options;
-    using WhyNotEarth.Meredith.Cloudinary;
-
     [ApiVersion("0")]
     [Route("/api/v0/planetcollage")]
+    [ProducesErrorResponseType(typeof(void))]
     public class PlanetCollageController : ControllerBase
     {
-        protected CloudinaryOptions CloudinaryOptions { get; }
+        private readonly CloudinaryOptions _cloudinaryOptions;
 
         public PlanetCollageController(IOptions<CloudinaryOptions> cloudinaryOptions)
         {
-            CloudinaryOptions = cloudinaryOptions.Value;
+            _cloudinaryOptions = cloudinaryOptions.Value;
         }
 
-        protected List<SearchResource> GetResources(string tag, int totalCount)
+        private List<SearchResource> GetResources(string tag, int totalCount)
         {
-            var cloudinary = new Cloudinary(new Account(CloudinaryOptions.CloudName, CloudinaryOptions.ApiKey, CloudinaryOptions.ApiSecret));
+            var cloudinary = new CloudinaryDotNet.Cloudinary(new Account(_cloudinaryOptions.CloudName,
+                _cloudinaryOptions.ApiKey, _cloudinaryOptions.ApiSecret));
             var resources = new List<SearchResource>();
-            string nextCursor = null;
+            string? nextCursor = null;
             do
             {
                 var requestSize = Math.Min(totalCount, 500);
@@ -40,40 +42,38 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 {
                     break;
                 }
-            }
-            while (totalCount > 0);
+            } while (totalCount > 0);
+
             return resources;
         }
 
-        [HttpGet]
-        [Route("by-tag/{tag}")]
+        [HttpGet("by-tag/{tag}")]
         public IActionResult Get(string tag)
         {
             var resources = GetResources(tag, 800);
-            var imageSize = 75;
+            const int imageSize = 75;
             return Ok(resources.Select(r => new
             {
                 Id = r.PublicId,
-                Url = new Url(CloudinaryOptions.CloudName)
+                Url = new Url(_cloudinaryOptions.CloudName)
                     .Transform(new Transformation()
                         .Width(imageSize)
                         .Height(imageSize)
                         .Crop("fill")
                         .Effect("grayscale"))
-                    .Secure(true)
+                    .Secure()
                     .BuildUrl(r.PublicId)
             }).ToList());
         }
 
-        [HttpPost]
-        [Route("full")]
+        [HttpPost("full")]
         public IActionResult FullResolution(FullResolutionModel model)
         {
             return Ok(new
             {
                 model.Id,
-                Url = new Url(CloudinaryOptions.CloudName)
-                    .Secure(true)
+                Url = new Url(_cloudinaryOptions.CloudName)
+                    .Secure()
                     .BuildUrl(model.Id)
             });
         }

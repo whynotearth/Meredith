@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Auth;
@@ -12,8 +11,12 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
+    [Returns401]
+    [Returns403]
     [ApiVersion("0")]
     [Route("api/v0/volkswagen/categories")]
+    [ProducesErrorResponseType(typeof(void))]
+    [Authorize(Policy = Policies.ManageJumpStart)]
     public class PostCategoryController : ControllerBase
     {
         private readonly MeredithDbContext _dbContext;
@@ -24,9 +27,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [HttpGet("")]
-        [Authorize(Policy = Policies.ManageJumpStart)]
-        [ProducesResponseType(typeof(List<PostCategoryResult>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<ActionResult<List<PostCategoryResult>>> List()
         {
             var categories = await _dbContext.Categories.Where(item => item is PostCategory).ToListAsync();
 

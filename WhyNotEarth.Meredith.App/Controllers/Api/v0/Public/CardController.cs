@@ -10,25 +10,22 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("api/v0/cards")]
+    [ProducesErrorResponseType(typeof(void))]
     public class CardController : ControllerBase
     {
-        protected MeredithDbContext MeredithDbContext { get; }
+        private readonly MeredithDbContext _meredithDbContext;
+        private readonly StoryService _storyService;
 
-        protected StoryService StoryService { get; }
-
-        public CardController(
-            StoryService storyService,
-            MeredithDbContext meredithDbContext)
+        public CardController(StoryService storyService, MeredithDbContext meredithDbContext)
         {
-            StoryService = storyService;
-            MeredithDbContext = meredithDbContext;
+            _storyService = storyService;
+            _meredithDbContext = meredithDbContext;
         }
 
-        [HttpGet]
-        [Route("{id}/related")]
+        [HttpGet("{id}/related")]
         public async Task<IActionResult> Related(int id)
         {
-            return Ok(await MeredithDbContext.Cards
+            return Ok(await _meredithDbContext.Cards
                 .Where(c => c.Id == id)
                 .Select(c => new Story
                 {
@@ -39,7 +36,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                     Image = c.BackgroundUrl,
                     PosterUrl = c.PosterUrl,
                     Blur = "2px",
-                    Type = StoryService.GetCardType(c.CardType)
+                    Type = _storyService.GetCardType(c.CardType)
                 })
                 .ToListAsync());
         }

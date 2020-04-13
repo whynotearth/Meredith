@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +14,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("api/v0/pages")]
+    [ProducesErrorResponseType(typeof(void))]
     public class PageController : ControllerBase
     {
-        private MeredithDbContext MeredithDbContext { get; }
+        private readonly MeredithDbContext _meredithDbContext;
+        private readonly StoryService _storyService;
 
-        private StoryService StoryService { get; }
-
-        private IQueryable<Page> PageIncludes() => MeredithDbContext.Pages
+        private IQueryable<Page> PageIncludes() => _meredithDbContext.Pages
             .Include(p => p.Company)
             .Include(p => p.Cards)
             .Include(p => p.Category)
@@ -47,16 +46,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             .ThenInclude(p => p.Language)
             .Include(p => p.Images);
 
-        public PageController(
-            StoryService storyService,
-            MeredithDbContext meredithDbContext)
+        public PageController(StoryService storyService, MeredithDbContext meredithDbContext)
         {
-            StoryService = storyService;
-            MeredithDbContext = meredithDbContext;
+            _storyService = storyService;
+            _meredithDbContext = meredithDbContext;
         }
 
-        [HttpGet]
-        [Route("slug/{companySlug}/{pageSlug}")]
+        [HttpGet("slug/{companySlug}/{pageSlug}")]
         public async Task<IActionResult> Get(string companySlug, string pageSlug)
         {
             var page = await PageIncludes()
@@ -68,11 +64,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return NotFound();
             }
 
-            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).FirstOrDefault());
+            return Ok(new[] { page }.AsQueryable().Select(p => PageToReturn(p, _storyService, GetCulture())).FirstOrDefault());
         }
 
-        [HttpGet]
-        [Route("slug/{companySlug}")]
+        [HttpGet("slug/{companySlug}")]
         public async Task<IActionResult> GetPages(string companySlug)
         {
             var pages = await PageIncludes()
@@ -84,11 +79,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return NotFound();
             }
 
-            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, _storyService, GetCulture())).ToList());
         }
 
-        [HttpGet]
-        [Route("slug/{companySlug}/categories/by-name/{categoryName}")]
+        [HttpGet("slug/{companySlug}/categories/by-name/{categoryName}")]
         public async Task<IActionResult> ByCompanyByCategoryName(string companySlug, string categoryName)
         {
             var pages = await PageIncludes()
@@ -96,22 +90,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                     && p.Category.Name == categoryName)
                 .ToListAsync();
 
-            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, StoryService, GetCulture())).ToList());
+            return Ok(pages.AsQueryable().Select(p => PageToReturn(p, _storyService, GetCulture())).ToList());
         }
 
-        [HttpGet]
-        [Route("slug/{companySlug}/{pageSlug}/landingpage")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetLandingPageData(string companySlug, string pageSlug)
+        [Returns404]
+        [HttpGet("slug/{companySlug}/{pageSlug}/landingpage")]
+        public async Task<ActionResult<string>> GetLandingPageData(string companySlug, string pageSlug)
         {
-            var page = await MeredithDbContext.Pages.FirstOrDefaultAsync(p =>
+            var page = await _meredithDbContext.Pages.FirstOrDefaultAsync(p =>
                     p.Company.Slug.ToLower() == companySlug.ToLower()
                     && p.Slug.ToLower() == pageSlug.ToLower());
             
             if (page is null)
             {
-                return NotFound();
+                return NotFound($"Page {pageSlug} in company {companySlug} not found");
             }
 
             return Ok(page.LandingPageData);
