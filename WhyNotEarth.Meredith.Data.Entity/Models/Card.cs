@@ -1,15 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    using System;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
     public class Card : IEntityTypeConfiguration<Card>
     {
         public enum CardTypes
         {
             Card
-        };
+        }
 
         public string BackgroundUrl { get; set; }
 
