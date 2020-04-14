@@ -4,7 +4,7 @@
     {
         public const string Developer = "Developer";
 
-        public const string ManageJumpStart = "ManageJumpStart";
+        public const string ManageVolkswagen = "ManageVolkswagen";
     }
 }
 

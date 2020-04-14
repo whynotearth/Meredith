@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.App.Auth
                 options.AddPolicy(Policies.Developer, p => p.RequireRole(Roles.Developer)));
 
             // Volkswagen
-            services.AddPolicy(Policies.ManageJumpStart, Roles.VolkswagenAdmin);
+            services.AddPolicy(Policies.ManageVolkswagen, Roles.VolkswagenManager);
         }
 
         private static void AddPolicy(this IServiceCollection services, string policy, string role)

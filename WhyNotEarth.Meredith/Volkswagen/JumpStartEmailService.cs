@@ -66,7 +66,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private List<Recipient> GetRecipients()
         {
             // TODO: Implement
-
             return new List<Recipient>
             {
                 new Recipient("ShrGholami@gmail.com", "CT")

@@ -4,6 +4,6 @@
     {
         public const string Developer = "Developer";
 
-        public const string VolkswagenAdmin = "VolkswagenAdmin";
+        public const string VolkswagenManager = "VolkswagenManager";
     }
 }

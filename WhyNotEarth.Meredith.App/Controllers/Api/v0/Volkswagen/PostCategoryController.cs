@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [ApiVersion("0")]
     [Route("api/v0/volkswagen/categories")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.ManageJumpStart)]
+    [Authorize(Policy = Policies.ManageVolkswagen)]
     public class PostCategoryController : ControllerBase
     {
         private readonly MeredithDbContext _dbContext;

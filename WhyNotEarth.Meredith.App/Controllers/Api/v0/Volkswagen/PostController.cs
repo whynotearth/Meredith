@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post;
 using WhyNotEarth.Meredith.Volkswagen;
 
@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [ApiVersion("0")]
     [Route("api/v0/volkswagen/posts")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.ManageJumpStart)]
+    [Authorize(Policy = Policies.ManageVolkswagen)]
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;

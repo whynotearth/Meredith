@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post
+namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
-    public class TestModel
+    public class MemoModel
     {
         [Required]
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public string Subject { get; set; }
 
         [Required]
@@ -15,5 +16,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen.Post
 
         [Required]
         public string Description { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     }
 }
