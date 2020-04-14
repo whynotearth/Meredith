@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,12 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string LandingPageData { get; set; }
 
+        public ICollection<Keyword> Keywords { get; set; }
+
+        public DateTime CreationDateTime { get; set; }
+                
+        public DateTime? EditDateTime { get; set; }
+        
         public void Configure(EntityTypeBuilder<Page> builder)
         {
             builder.Property(e => e.Custom).HasColumnType("jsonb");

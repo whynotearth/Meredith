@@ -29,6 +29,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<StripeOAuthRequest> StripeOAuthRequests { get; set; }
 
+        public DbSet<Keyword> Keywords { get; set; }
+
         // Hotel
         public DbSet<Amenity> Amenities { get; set; }
 
