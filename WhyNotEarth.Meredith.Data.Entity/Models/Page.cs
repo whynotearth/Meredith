@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -52,11 +53,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string LandingPageData { get; set; }
 
-        public ICollection<PageKeyword> Keywords { get; set; }
+        public ICollection<Keyword> Keywords { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime? LastEdited { get; set; }
+        public DateTime CreationDateTime { get; set; }
+                
+        public DateTime? EditDateTime { get; set; }
         
         public void Configure(EntityTypeBuilder<Page> builder)
         {

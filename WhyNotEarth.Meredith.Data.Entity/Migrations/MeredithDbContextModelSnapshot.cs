@@ -230,6 +230,27 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Image");
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Keyword", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<int?>("PageId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Word")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId");
+
+                    b.ToTable("Keyword");
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
                 {
                     b.Property<int>("Id")
@@ -681,7 +702,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreationDateTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Custom")
@@ -689,6 +710,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("EditDateTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("FeaturedImage")
                         .HasColumnType("text");
@@ -698,9 +722,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<string>("LandingPageData")
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("LastEdited")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -723,26 +744,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Pages");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.PageKeyword", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<string>("Keyword")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("PageId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("PageKeyword");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Product", b =>
@@ -1145,6 +1146,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .HasForeignKey("ImageId");
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Keyword", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", null)
+                        .WithMany("Keywords")
+                        .HasForeignKey("PageId");
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Hotel", "Hotel")
@@ -1339,13 +1347,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Tenant", "Tenant")
                         .WithMany("Pages")
                         .HasForeignKey("TenantId");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.PageKeyword", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", null)
-                        .WithMany("Keywords")
-                        .HasForeignKey("PageId");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Product", b =>
