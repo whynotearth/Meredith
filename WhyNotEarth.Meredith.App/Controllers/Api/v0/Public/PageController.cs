@@ -37,6 +37,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [Returns200]
         [Returns404]
+        [HttpGet("slug/{companySlug}/{tenantSlug}/{pageSlug}")]
+        public async Task<ActionResult<PageResult>> GetTenant(string companySlug, string tenantSlug, string pageSlug)
+        {
+            var page = await _pageService.GetPageAsync(companySlug, tenantSlug, pageSlug);
+
+            if (page is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new PageResult(page, GetCulture()));
+        }
+
+        [Returns200]
+        [Returns404]
         [HttpGet("slug/{companySlug}")]
         public async Task<ActionResult<List<PageResult>>> GetPages(string companySlug)
         {

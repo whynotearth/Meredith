@@ -25,6 +25,14 @@ namespace WhyNotEarth.Meredith.Pages
                 && p.Slug.ToLower() == pageSlug.ToLower());
         }
 
+        public async Task<Page> GetPageAsync(string companySlug, string tenantSlug, string pageSlug)
+        {
+            return await Include().FirstOrDefaultAsync(p =>
+                p.Company.Slug.ToLower() == companySlug.ToLower()
+                && p.Tenant.Slug.ToLower() == tenantSlug.ToLower()
+                && p.Slug.ToLower() == pageSlug.ToLower());
+        }
+
         public async Task<List<Page>> GetPagesAsync(string companySlug)
         {
             return await Include().Where(p => p.Company.Slug.ToLower() == companySlug.ToLower())
@@ -35,15 +43,6 @@ namespace WhyNotEarth.Meredith.Pages
         {
             return await Include().Where(p => p.Company.Slug == companySlug && p.Category.Name == categoryName)
                 .ToListAsync();
-        }
-
-        public string GetCardType(Card.CardTypes cardType)
-        {
-            return cardType switch
-            {
-                Card.CardTypes.Card => "story-card",
-                _ => throw new Exception($"Card type {cardType} not mapped.")
-            };
         }
 
         public async Task<Page> CreateAsync(int companyId, int? categoryId, string slug, string name, string title,
@@ -136,6 +135,7 @@ namespace WhyNotEarth.Meredith.Pages
         {
             return _dbContext.Pages
                 .Include(p => p.Company)
+                .Include(p => p.Tenant)
                 .Include(p => p.Cards)
                 .Include(p => p.Category)
                 .Include(p => p.Hotel)

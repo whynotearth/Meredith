@@ -12,7 +12,7 @@ using WhyNotEarth.Meredith.Salon;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
 {
     [ApiVersion("0")]
-    [Route("api/v0/salon/reservations")]
+    [Route("api/v0/tenants/{tenantSlug}")]
     [ProducesErrorResponseType(typeof(void))]
     public class SalonReservationController : ControllerBase
     {
@@ -33,24 +33,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
         [Returns400]
         [Returns401]
         [Returns404]
-        [HttpPost("{tenantId}/reserve")]
-        public async Task<IActionResult> Reserve(int tenantId, SalonReservationModel model)
+        [HttpPost("reservations")]
+        public async Task<IActionResult> Reserve(string tenantSlug, SalonReservationModel model)
         {
             if (model.DeliveryDateTime < DateTime.UtcNow)
             {
                 return BadRequest("Invalid delivery date");
             }
 
-            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
+            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t =>
+                string.Equals(t.Slug, tenantSlug, StringComparison.CurrentCultureIgnoreCase));
 
             if (tenant is null)
             {
-                return NotFound($"Tenant {tenantId} not found");
+                return NotFound($"Tenant {tenantSlug} not found");
             }
 
             var userId = _userManager.GetUserId(User);
 
-            _reservationService.Reserve(tenantId, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
+            _reservationService.Reserve(tenant.Id, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
                 model.DeliveryFee, model.Amount, model.DeliveryDateTime, model.PaymentMethod, model.Message, userId);
 
             return Ok();

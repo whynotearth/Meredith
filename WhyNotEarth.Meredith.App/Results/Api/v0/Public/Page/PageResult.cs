@@ -11,6 +11,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public string Brand { get; }
 
+        public string? Tenant { get; }
+
         public List<CategoryResult> Categories { get; } = new List<CategoryResult>();
 
         public string Name { get; }
@@ -43,6 +45,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
         {
             Id = page.Id;
             Brand = page.Company.Slug;
+            Tenant = page.Tenant?.Slug;
             Name = page.Name;
             Title = page.Title;
             Description = page.Description;
