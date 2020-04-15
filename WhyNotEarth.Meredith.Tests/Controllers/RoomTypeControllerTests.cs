@@ -25,8 +25,9 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
             var result = await controller.Prices(1, new DateTime(2020, 2, 2), new DateTime(2020, 2, 4));
 
             // Assert
-            var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<PricesResult>>(viewResult.Value);
+            var viewResult = Assert.IsType<ActionResult<List<PricesResult>>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(viewResult.Result);
+            var model = Assert.IsAssignableFrom<IEnumerable<PricesResult>>(objectResult.Value);
             Assert.Empty(model);
         }
 
@@ -42,8 +43,9 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
             var result = await controller.Prices(-1, new DateTime(2020, 1, 2), new DateTime(2020, 1, 4));
 
             // Assert
-            var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<PricesResult>>(viewResult.Value);
+            var viewResult = Assert.IsType<ActionResult<List<PricesResult>>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(viewResult.Result);
+            var model = Assert.IsAssignableFrom<IEnumerable<PricesResult>>(objectResult.Value);
             Assert.Empty(model);
         }
 
@@ -65,8 +67,9 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
             var result = await controller.Prices(1, new DateTime(2020, 1, 2), new DateTime(2020, 1, 4));
 
             // Assert
-            var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<List<PricesResult>>(viewResult.Value);
+            var viewResult = Assert.IsType<ActionResult<List<PricesResult>>>(result);
+            var objectResult = Assert.IsType<OkObjectResult>(viewResult.Result);
+            var model = Assert.IsAssignableFrom<List<PricesResult>>(objectResult.Value);
             AssertEqual(expected, model);
         }
 
