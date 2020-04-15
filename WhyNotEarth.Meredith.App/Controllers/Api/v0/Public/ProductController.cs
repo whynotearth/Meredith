@@ -11,7 +11,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
-    [Route("api/v0/products")]
+    [Route("api/v0/tenant/{tenantId}")]
     [ProducesErrorResponseType(typeof(void))]
     public class ProductsController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _dbContext = dbContext;
         }
 
-        [HttpGet("{tenantId}/categories")]
+        [HttpGet("categories")]
         public async Task<ActionResult<List<CategoryResult>>> Categories(int tenantId)
         {
             var productCategories = await _dbContext.Categories.OfType<ProductCategory>()
@@ -31,10 +31,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok(productCategories.Select(item => new CategoryResult(item)).ToList());
         }
 
-        [HttpGet("{tenantId}/{categoryId}")]
+        [HttpGet("categories/{categoryId}/products")]
         public async Task<ActionResult<ProductResult>> Products(int tenantId, int categoryId)
         {
-            var products = await _dbContext.Products.Where(item => item.Id == tenantId && item.CategoryId == categoryId)
+            var products = await _dbContext.Products.Where(item => item.TenantId == tenantId && item.CategoryId == categoryId)
                 .ToListAsync();
 
             return Ok(products.Select(item => new ProductResult(item)).ToList());
