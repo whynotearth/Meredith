@@ -23,6 +23,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _jumpStartService = jumpStartService;
         }
 
+        [Returns200]
         [Returns400]
         [HttpPost("")]
         public async Task<IActionResult> Create(DateTime dateTime, List<int> postIds)

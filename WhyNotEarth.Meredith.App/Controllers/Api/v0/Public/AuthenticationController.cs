@@ -36,6 +36,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _jwtOptions = jwtOptions.Value;
         }
 
+        [Returns200]
         [Returns401]
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginModel model)
@@ -157,6 +158,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Redirect(returnUrl);
         }
 
+        [Returns200]
         [Returns400]
         [HttpPost("register")]
         public async Task<ActionResult<string>> Register(RegisterModel model)
@@ -212,6 +214,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Authorize]
+        [Returns200]
         [Returns401]
         [HttpGet("ping")]
         public async Task<ActionResult<List<PingResult>>> Ping()

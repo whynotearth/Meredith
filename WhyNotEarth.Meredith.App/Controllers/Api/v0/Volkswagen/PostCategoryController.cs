@@ -26,6 +26,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _dbContext = dbContext;
         }
 
+        [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<PostCategoryResult>>> List()
         {

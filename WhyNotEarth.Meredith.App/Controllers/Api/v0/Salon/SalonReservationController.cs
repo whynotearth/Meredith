@@ -29,6 +29,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
         }
 
         [Authorize]
+        [Returns200]
         [Returns400]
         [Returns401]
         [Returns404]

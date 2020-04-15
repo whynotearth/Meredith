@@ -27,6 +27,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _postService = postService;
         }
 
+        [Returns200]
         [Returns404]
         [HttpPost("")]
         public async Task<ActionResult<PostResult>> Create(PostModel model)
@@ -37,6 +38,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok(new PostResult(post));
         }
 
+        [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<PostResult>>> GetAvailable(DateTime date)
         {

@@ -63,6 +63,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         }
 
         [Authorize]
+        [Returns200]
         [Returns404]
         [HttpPost("{reservationId}/pay")]
         public async Task<ActionResult<PayReservationResult>> PayReservation(int reservationId, PayModel model)

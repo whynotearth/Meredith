@@ -18,6 +18,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _meredithDbContext = meredithDbContext;
         }
 
+        [Returns200]
         [Returns404]
         [HttpGet("{id}/related")]
         public async Task<ActionResult<StoryResult>> Related(int id)

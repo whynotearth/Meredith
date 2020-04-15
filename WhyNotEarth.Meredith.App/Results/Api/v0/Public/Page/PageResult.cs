@@ -54,7 +54,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             FeaturedImage = page.FeaturedImage;
             Slug = page.Slug;
 
-            var imageResults = page.Images.OrderBy(i => i.Order).Select(i => new ImageResult(i.Order, i.Url));
+            var imageResults = page.Images.OrderBy(i => i.Order).Select(i => new ImageResult(i));
             Images.AddRange(imageResults);
 
             var storyResults = page.Cards.OrderBy(c => c.Order).Select(c => new StoryResult(c.Id, c.Text, c.CallToAction,
