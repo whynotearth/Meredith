@@ -238,9 +238,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<int?>("PageId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<string>("Word")
+                    b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -1148,9 +1149,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Keyword", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", null)
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
                         .WithMany("Keywords")
-                        .HasForeignKey("PageId");
+                        .HasForeignKey("PageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>

@@ -10,8 +10,8 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    [Migration("20200414140621_PageCreationDateTimeAndEditDateTimeAndKeywords")]
-    partial class PageCreationDateTimeAndEditDateTimeAndKeywords
+    [Migration("20200415093123_PageAddCreationDateTimeAndEditDateTimeAndPageKeyword")]
+    partial class PageAddCreationDateTimeAndEditDateTimeAndPageKeyword
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -240,9 +240,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
                     b.Property<int?>("PageId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
-                    b.Property<string>("Word")
+                    b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -1150,9 +1151,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Keyword", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", null)
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
                         .WithMany("Keywords")
-                        .HasForeignKey("PageId");
+                        .HasForeignKey("PageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
