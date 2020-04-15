@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -28,10 +29,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
         }
 
         [Authorize]
+        [Returns400]
+        [Returns401]
         [Returns404]
         [HttpPost("{tenantId}/reserve")]
         public async Task<IActionResult> Reserve(int tenantId, SalonReservationModel model)
         {
+            if (model.DeliveryDateTime < DateTime.UtcNow)
+            {
+                return BadRequest("Invalid delivery date");
+            }
+
             var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
 
             if (tenant is null)
