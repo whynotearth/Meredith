@@ -11,7 +11,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
-    [Route("api/v0/tenant/{tenantSlug}")]
+    [Route("api/v0/tenants/{tenantSlug}")]
     [ProducesErrorResponseType(typeof(void))]
     public class ProductsController : ControllerBase
     {
