@@ -18,10 +18,20 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public User User { get; set; }
 
+        public string Name { get; set; }
+
+        public TenantImage Logo { get; set; }
+        
+        public string Tags { get; set; }
+
         public ICollection<Page> Pages { get; set; }
 
         public void Configure(EntityTypeBuilder<Tenant> builder)
         {
         }
+    }
+
+    public class TenantImage : Image
+    {
     }
 }
