@@ -1,21 +1,27 @@
-﻿namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
+﻿using System.Collections.Generic;
+
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 {
     public class TenantResult
     {
         public string Slug { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public string? Logo { get; set; }
+        public string? Logo { get; }
 
-        public string[] Tags { get; set; }
+        public List<string> Tags { get; } = new List<string>();
 
         public TenantResult(Data.Entity.Models.Tenant tenant)
         {
             Slug = tenant.Slug;
             Name = tenant.Name;
             Logo = tenant.Logo?.Url;
-            Tags = tenant.Tags.Split(',');
+
+            if (tenant.Tags != null)
+            {
+                Tags.AddRange(tenant.Tags.Split(','));
+            }
         }
     }
 }
