@@ -9,7 +9,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
-    [Route("api/v0/company/{companySlug}/tenants")]
+    [Route("api/v0/companies/{companySlug}/tenants")]
     [ProducesErrorResponseType(typeof(void))]
     public class TenantController : ControllerBase
     {
