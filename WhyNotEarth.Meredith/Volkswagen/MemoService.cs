@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -24,20 +24,21 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _sendGridService = sendGridService;
         }
 
-        public async Task CreateAsync(string subject, string date, string to, string description)
+        public async Task CreateAsync(string distributionGroup, string subject, string date, string to,
+            string description)
         {
-            var recipients = await GetRecipients();
+            var recipients = await GetRecipients(distributionGroup);
 
             // SendGrid accepts a maximum recipients of 1000 per API call
             // https://sendgrid.com/docs/for-developers/sending-email/v3-mail-send-faq/#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to
-            foreach (var batch in Split(recipients, 900))
+            foreach (var batch in recipients.Batch(900))
             {
                 _backgroundJobClient.Enqueue<MemoService>(service =>
-                    service.SendTestEmailAsync(subject, date, to, description, batch));
+                    service.SendMemoAsync(subject, date, to, description, batch.ToList()));
             }
         }
 
-        public async Task SendTestEmailAsync(string subject, string date, string to, string description,
+        public async Task SendMemoAsync(string subject, string date, string to, string description,
             List<Recipient> batch)
         {
             var templateData = new Dictionary<string, object>
@@ -51,17 +52,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _sendGridService.SendEmail("communications@vw.com", batch, MemoTemplateId, templateData);
         }
 
-        private async Task<List<Recipient>> GetRecipients()
+        private async Task<List<Recipient>> GetRecipients(string distributionGroup)
         {
-            return await _dbContext.Recipients.ToListAsync();
-        }
-
-        private IEnumerable<List<T>> Split<T>(List<T> list, int batchSize)
-        {
-            for (var i = 0; i < list.Count; i += batchSize)
-            {
-                yield return list.GetRange(i, Math.Min(batchSize, list.Count - i));
-            }
+            return await _dbContext.Recipients
+                .Where(item => item.DistributionGroup.ToLower() == distributionGroup.ToLower()).ToListAsync();
         }
     }
 }

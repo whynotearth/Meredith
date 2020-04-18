@@ -6,6 +6,9 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
     {
         [Required]
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public string DistributionGroup { get; set; }
+
+        [Required]
         public string Subject { get; set; }
 
         [Required]

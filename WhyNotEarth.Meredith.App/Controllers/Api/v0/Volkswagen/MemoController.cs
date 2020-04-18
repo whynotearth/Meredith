@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Returns401]
     [Returns403]
     [ApiVersion("0")]
-    [Route("api/v0/volkswagen/memo")]
+    [Route("api/v0/volkswagen/memos")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class MemoController : ControllerBase
@@ -27,7 +27,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<StatusCodeResult> Create(MemoModel model)
         {
-            await _memoService.CreateAsync(model.Subject, model.Date, model.To, model.Description);
+            await _memoService.CreateAsync(model.DistributionGroup, model.Subject, model.Date, model.To,
+                model.Description);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
         }

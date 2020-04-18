@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Returns401]
     [Returns403]
     [ApiVersion("0")]
-    [Route("api/v0/volkswagen/recipient")]
+    [Route("api/v0/volkswagen/recipients")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class RecipientController : ControllerBase
