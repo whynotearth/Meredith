@@ -25,6 +25,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var tenants = await _meredithDbContext.Tenants
                 .Include(item => item.Company)
+                .Include(item => item.Logo)
                 .Where(s => s.Company.Slug.ToLower() == companySlug.ToLower())
                 .ToListAsync();
 

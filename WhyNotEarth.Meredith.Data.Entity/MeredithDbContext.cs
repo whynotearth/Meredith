@@ -61,6 +61,10 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Recipient> Recipients { get; set; }
 
+        public DbSet<Memo> Memos { get; set; }
+
+        public DbSet<MemoRecipient> MemoRecipients { get; set; }
+
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {
         }

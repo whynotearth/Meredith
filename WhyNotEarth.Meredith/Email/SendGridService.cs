@@ -54,7 +54,8 @@ namespace WhyNotEarth.Meredith.Email
             var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
 
             var sendGridMessage =
-                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, sendGridAccount.TemplateId,
+                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses,
+                    sendGridAccount.TemplateId,
                     templateData);
 
             var response = await client.SendEmailAsync(sendGridMessage);
@@ -66,16 +67,19 @@ namespace WhyNotEarth.Meredith.Email
             }
         }
 
-        public async Task SendEmail(string fromEmail, List<Recipient> recipients, string templateId, Dictionary<string, object> templateData)
+        public async Task SendEmail(string fromEmail, List<MemoRecipient> recipients, string templateId,
+            Dictionary<string, object> templateData, string key, string keyValue)
         {
             var client = new SendGridClient(_sendGridOptions.ApiKey);
-
             var from = new EmailAddress(fromEmail);
+
             var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
 
             var sendGridMessage =
                 MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, templateId,
                     templateData);
+
+            sendGridMessage.AddCustomArg(key, keyValue);
 
             var response = await client.SendEmailAsync(sendGridMessage);
 
