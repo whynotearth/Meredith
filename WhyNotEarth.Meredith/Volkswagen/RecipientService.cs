@@ -58,6 +58,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
+        public async Task<List<string>> GetDistributionGroups()
+        {
+            return await _dbContext.Recipients.Select(item => item.DistributionGroup).Distinct().ToListAsync();
+        }
+
         private class RecipientCsvModel
         {
             [Name("Email Address")] public string? EmailAddress { get; set; }
