@@ -14,13 +14,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
     [ApiVersion("0")]
     [Route("api/v0/tenants/{tenantSlug}")]
     [ProducesErrorResponseType(typeof(void))]
-    public class SalonReservationController : ControllerBase
+    public class TenantReservationController : ControllerBase
     {
         private readonly MeredithDbContext _meredithDbContext;
         private readonly ReservationService _reservationService;
         private readonly UserManager _userManager;
 
-        public SalonReservationController(MeredithDbContext meredithDbContext, ReservationService reservationService,
+        public TenantReservationController(MeredithDbContext meredithDbContext, ReservationService reservationService,
             UserManager userManager)
         {
             _meredithDbContext = meredithDbContext;
@@ -41,8 +41,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
                 return BadRequest("Invalid delivery date");
             }
 
-            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t =>
-                string.Equals(t.Slug, tenantSlug, StringComparison.CurrentCultureIgnoreCase));
+            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug);
 
             if (tenant is null)
             {
