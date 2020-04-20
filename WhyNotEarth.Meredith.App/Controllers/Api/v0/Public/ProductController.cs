@@ -34,13 +34,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return Ok(productCategories.Select(item => new CategoryResult(item)).ToList());
         }
 
-        [HttpGet("categories/{categoryId}/products")]
-        public async Task<ActionResult<ProductResult>> Products(string tenantSlug, int categoryId)
+        [HttpGet("categories/{categorySlug}/products")]
+        public async Task<ActionResult<ProductResult>> Products(string tenantSlug, string categorySlug)
         {
             var products = await _dbContext.Products
                 .Include(item => item.Tenant)
+                .Include(item => item.Category)
                 .Include(item => item.Images)
-                .Where(item => item.Tenant.Slug.ToLower() == tenantSlug.ToLower() && item.CategoryId == categoryId)
+                .Where(item =>
+                    item.Tenant.Slug.ToLower() == tenantSlug.ToLower() &&
+                    item.Category.Slug.ToLower() == categorySlug.ToLower())
                 .ToListAsync();
 
             return Ok(products.Select(item => new ProductResult(item)).ToList());
