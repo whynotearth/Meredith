@@ -77,7 +77,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var group in distributionGroups)
             {
-                result.Add(new DistributionGroupInfo(group.Name, group.SubscriberCount, 0, 0 , 0));
+                // TODO: Improve this, query in a loop and loading too many records. Implemented in a hurry :(
+                var memoRecipients = await _dbContext.MemoRecipients
+                    .Where(item => item.DistributionGroup == group.Name && item.Status >= MemoStatus.Opened)
+                    .ToListAsync();
+
+                var memoCount = memoRecipients.Select(item => item.MemoId).Distinct().Count();
+                var openCount = memoRecipients.Count(item => item.Status == MemoStatus.Opened);
+                var clickCount = memoRecipients.Count(item => item.Status == MemoStatus.Clicked);
+
+                result.Add(new DistributionGroupInfo(group.Name, group.SubscriberCount, memoCount, openCount, clickCount));
             }
 
             return result;
