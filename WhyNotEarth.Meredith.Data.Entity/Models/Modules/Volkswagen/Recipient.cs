@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
@@ -18,6 +19,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         public string LastName { get; set; }
 
         public string DistributionGroup { get; set; }
+
+        public DateTime CreationDateTime { get; set; }
 
         public void Configure(EntityTypeBuilder<Recipient> builder)
         {

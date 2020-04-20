@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using CsvHelper.Configuration.Attributes;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -54,11 +56,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Email = csvModel.EmailAddress,
                 FirstName = csvModel.FirstName,
                 LastName = csvModel.LastName,
-                DistributionGroup = csvModel.DistributionGroup
+                DistributionGroup = csvModel.DistributionGroup,
+                CreationDateTime = DateTime.UtcNow
             };
         }
 
-        public async Task<List<string>> GetDistinctDistributionGroups()
+        public async Task<List<string>> GetDistributionGroups()
         {
             return await _dbContext.Recipients.Select(item => item.DistributionGroup).Distinct().ToListAsync();
         }
@@ -86,10 +89,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 var openCount = memoRecipients.Count(item => item.Status == MemoStatus.Opened);
                 var clickCount = memoRecipients.Count(item => item.Status == MemoStatus.Clicked);
 
-                result.Add(new DistributionGroupInfo(group.Name, group.SubscriberCount, memoCount, openCount, clickCount));
+                result.Add(new DistributionGroupInfo(group.Name, group.SubscriberCount, memoCount, openCount,
+                    clickCount));
             }
 
             return result;
+        }
+
+        public async Task<List<Recipient>> GetRecipients(string distributionGroup)
+        {
+            return await _dbContext.Recipients.Where(item => item.DistributionGroup == distributionGroup).ToListAsync();
         }
 
         private class RecipientCsvModel
@@ -101,6 +110,33 @@ namespace WhyNotEarth.Meredith.Volkswagen
             [Name("Last Name")] public string? LastName { get; set; }
 
             [Name("Distribution Group")] public string? DistributionGroup { get; set; }
+        }
+
+        public Task AddAsync(string distributionGroup, string email)
+        {
+            _dbContext.Recipients.Add(new Recipient
+            {
+                DistributionGroup = distributionGroup,
+                Email = email,
+                CreationDateTime = DateTime.UtcNow
+            });
+
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public async Task EditAsync(int recipientId, string email)
+        {
+            var recipient = await _dbContext.Recipients.FirstOrDefaultAsync(item => item.Id == recipientId);
+
+            if (recipient is null)
+            {
+                throw new RecordNotFoundException($"Recipient {recipientId} not found");
+            }
+
+            recipient.Email = email;
+            
+            _dbContext.Update(recipient);
+            await _dbContext.SaveChangesAsync();
         }
     }
 
