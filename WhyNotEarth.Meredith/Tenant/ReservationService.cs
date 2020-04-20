@@ -7,7 +7,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Identity;
 
-namespace WhyNotEarth.Meredith.Salon
+namespace WhyNotEarth.Meredith.Tenant
 {
     public class ReservationService
     {
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.Salon
                 {"phone", user.PhoneNumber},
                 {"email", user.Email},
                 {"paymentMethod", paymentMethod},
-                {"deliveryTime", deliveryDateTime},
+                {"deliveryTime", deliveryDateTime.ToString("ddd, d MMM H:m") },
                 {"message", message ?? string.Empty},
                 {"googleMaps", user.GoogleLocation}
             };

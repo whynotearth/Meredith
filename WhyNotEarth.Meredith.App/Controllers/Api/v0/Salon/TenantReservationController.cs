@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Salon;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Salon;
+using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
 {
