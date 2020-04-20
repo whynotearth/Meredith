@@ -16,6 +16,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public User User { get; set; }
 
+        public OpeningHours OpeningHours { get; set; }
+
         public ICollection<Page> Pages { get; set; }
 
         public void Configure(EntityTypeBuilder<Tenant> builder)
