@@ -109,5 +109,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return await _dbContext.Recipients
                 .Where(item => item.DistributionGroup.ToLower() == distributionGroup.ToLower()).ToListAsync();
         }
+
+        public Task<List<MemoRecipient>> GetStatsAsync()
+        {
+            return _dbContext.MemoRecipients.ToListAsync();
+        }
     }
 }

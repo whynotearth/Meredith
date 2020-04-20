@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -31,6 +33,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                 model.Description);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
+        }
+
+        [HttpPost("stats")]
+        public async Task<ActionResult<List<MemoRecipient>>> Stats()
+        {
+            var stats = await _memoService.GetStatsAsync();
+
+            return Ok(stats);
         }
     }
 }
