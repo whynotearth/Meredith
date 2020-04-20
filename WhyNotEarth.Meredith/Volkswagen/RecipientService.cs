@@ -58,9 +58,29 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
-        public async Task<List<string>> GetDistributionGroups()
+        public async Task<List<string>> GetDistinctDistributionGroups()
         {
             return await _dbContext.Recipients.Select(item => item.DistributionGroup).Distinct().ToListAsync();
+        }
+
+        public async Task<List<DistributionGroupInfo>> GetDistributionGroupStats()
+        {
+            var distributionGroups = await _dbContext.Recipients.GroupBy(item => item.DistributionGroup)
+                .Select(g => new
+                {
+                    Name = g.Key,
+                    SubscriberCount = g.Count()
+                })
+                .ToListAsync();
+
+            var result = new List<DistributionGroupInfo>();
+
+            foreach (var group in distributionGroups)
+            {
+                result.Add(new DistributionGroupInfo(group.Name, group.SubscriberCount, 0, 0 , 0));
+            }
+
+            return result;
         }
 
         private class RecipientCsvModel
@@ -72,6 +92,34 @@ namespace WhyNotEarth.Meredith.Volkswagen
             [Name("Last Name")] public string? LastName { get; set; }
 
             [Name("Distribution Group")] public string? DistributionGroup { get; set; }
+        }
+    }
+
+    public class DistributionGroupInfo
+    {
+        public string Name { get; }
+
+        public int SubscriberCount { get; }
+
+        public int OpenPercent { get; }
+
+        public int ClickPercent { get; }
+
+        public DistributionGroupInfo(string name, int subscriberCount, int memoCount, int openCount, int clickCount)
+        {
+            Name = name;
+            SubscriberCount = subscriberCount;
+
+            if (memoCount == 0)
+            {
+                OpenPercent = 100;
+                ClickPercent = 100;
+            }
+            else
+            {
+                OpenPercent = openCount / (memoCount * SubscriberCount) * 100;
+                ClickPercent = clickCount / (memoCount * SubscriberCount) * 100;
+            }
         }
     }
 }

@@ -13,6 +13,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public string Email { get; set; }
 
+        public string DistributionGroup { get; set; }
+
         public MemoStatus Status { get; set; }
 
         public void Configure(EntityTypeBuilder<MemoRecipient> builder)

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.DistributionGroup;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -25,9 +27,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("")]
         public async Task<ActionResult<List<string>>> Create()
         {
-            var result = await _recipientService.GetDistributionGroups();
+            var result = await _recipientService.GetDistinctDistributionGroups();
             
             return Ok(result);
+        }
+
+        [HttpGet("stats")]
+        public async Task<ActionResult<DistributionGroupStatResult>> Stats()
+        {
+            var stats = await _recipientService.GetDistributionGroupStats();
+
+            return Ok(stats.Select(item => new DistributionGroupStatResult(item)));
         }
     }
 }
