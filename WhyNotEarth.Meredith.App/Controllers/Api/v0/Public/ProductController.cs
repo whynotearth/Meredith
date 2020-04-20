@@ -27,6 +27,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var productCategories = await _dbContext.Categories.OfType<ProductCategory>()
                 .Include(item => item.Tenant)
+                .Include(item => item.Image)
                 .Where(item => item.Tenant.Slug.ToLower() == tenantSlug.ToLower())
                 .ToListAsync();
 
@@ -38,6 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var products = await _dbContext.Products
                 .Include(item => item.Tenant)
+                .Include(item => item.Images)
                 .Where(item => item.Tenant.Slug.ToLower() == tenantSlug.ToLower() && item.CategoryId == categoryId)
                 .ToListAsync();
 

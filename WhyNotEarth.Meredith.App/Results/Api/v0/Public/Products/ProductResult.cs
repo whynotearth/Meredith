@@ -23,7 +23,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Products
             Id = product.Id;
             Name = product.Name;
             Description = product.Description;
-            Images = product.Images?.OrderBy(item => item.Order)?.Select(item => item.Url)?.ToList();
+            Images = product.Images?.OrderBy(item => item.Order).Select(item => item.Url).ToList();
             Price = product.Price;
             Currency = product.Currency;
         }
