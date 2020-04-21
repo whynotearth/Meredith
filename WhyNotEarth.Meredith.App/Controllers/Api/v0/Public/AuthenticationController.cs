@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             var appUser = await _userManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
-            return Ok(GenerateJwtToken(model.Email, appUser));
+            return Ok(await GenerateJwtTokenAsync(model.Email, appUser));
         }
 
         [HttpPost("logout")]
@@ -230,7 +230,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             await _signInManager.SignInAsync(user, true);
 
-            return Ok(GenerateJwtToken(user.Email, user));
+            return Ok(await GenerateJwtTokenAsync(user.Email, user));
         }
 
         private Task UpdateUser(User user, RegisterModel model)
@@ -258,7 +258,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return _userManager.UpdateAsync(user);
         }
 
-        private string GenerateJwtToken(string email, User user)
+        private async Task<string> GenerateJwtTokenAsync(string email, User user)
         {
             if (!_jwtOptions.IsValid())
             {
@@ -269,8 +269,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
