@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 {
@@ -12,6 +13,10 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public List<string> Tags { get; } = new List<string>();
 
+        public TimeSpan DeliveryTime { get; set; }
+
+        public decimal DeliveryFee { get; set; }
+
         public TenantResult(Data.Entity.Models.Tenant tenant)
         {
             Slug = tenant.Slug;
@@ -22,6 +27,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             {
                 Tags.AddRange(tenant.Tags.Split(','));
             }
+
+            DeliveryTime = tenant.DeliveryTime;
+            DeliveryFee = tenant.DeliveryFee;
         }
     }
 }

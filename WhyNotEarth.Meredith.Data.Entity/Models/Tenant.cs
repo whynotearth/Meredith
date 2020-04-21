@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,6 +24,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public TenantImage Logo { get; set; }
         
         public string Tags { get; set; }
+
+        public TimeSpan DeliveryTime { get; set; }
+
+        public decimal DeliveryFee { get; set; }
 
         public ICollection<Page> Pages { get; set; }
 
