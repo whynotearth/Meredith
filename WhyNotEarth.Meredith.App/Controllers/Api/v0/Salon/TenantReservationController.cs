@@ -34,14 +34,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
         [Returns401]
         [Returns404]
         [HttpPost("reservations")]
-        public async Task<IActionResult> Reserve(string tenantSlug, SalonReservationModel model)
+        public async Task<IActionResult> Reserve(string tenantSlug, TenantReservationModel model)
         {
             if (model.DeliveryDateTime < DateTime.UtcNow)
             {
                 return BadRequest("Invalid delivery date");
             }
 
-            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug.ToLower());
+            var tenant =
+                await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug.ToLower());
 
             if (tenant is null)
             {
@@ -51,7 +52,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
             var userId = _userManager.GetUserId(User);
 
             _reservationService.Reserve(tenant.Id, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
-                model.DeliveryFee, model.Amount, model.DeliveryDateTime, model.PaymentMethod, model.Message, userId);
+                model.DeliveryFee, model.Amount, model.DeliveryDateTime, model.UserTimeZone, model.PaymentMethod,
+                model.Message, userId);
 
             return Ok();
         }
