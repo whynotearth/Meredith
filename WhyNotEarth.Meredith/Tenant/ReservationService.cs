@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 {"phone", user.PhoneNumber},
                 {"email", user.Email},
                 {"paymentMethod", paymentMethod},
-                {"deliveryTime", deliveryDateTime.ToString("ddd, d MMM H:m") },
+                {"deliveryTime", deliveryDateTime.ToString("ddd, d MMM hh:mm") },
                 {"message", message ?? string.Empty},
                 {"googleMaps", user.GoogleLocation}
             };
