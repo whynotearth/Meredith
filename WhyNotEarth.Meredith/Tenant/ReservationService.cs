@@ -26,15 +26,15 @@ namespace WhyNotEarth.Meredith.Tenant
         }
 
         public void Reserve(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee, decimal amount,
-            DateTime deliveryDateTime, string userTimeZone, string paymentMethod, string? message, string userId)
+            DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod, string? message, string userId)
         {
             _backgroundJobClient.Enqueue<ReservationService>(service =>
-                service.SendEmail(tenantId, orders, subTotal, deliveryFee, amount, deliveryDateTime, userTimeZone,
+                service.SendEmail(tenantId, orders, subTotal, deliveryFee, amount, deliveryDateTime, userTimeZoneOffset,
                     paymentMethod, message, userId));
         }
 
         public async Task SendEmail(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee,
-            decimal amount, DateTime deliveryDateTime, string userTimeZone, string paymentMethod, string? message,
+            decimal amount, DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod, string? message,
             string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 {"phone", user.PhoneNumber},
                 {"email", user.Email},
                 {"paymentMethod", paymentMethod},
-                {"deliveryTime", deliveryDateTime.InZone(userTimeZone, "ddd, d MMM hh:mm")},
+                {"deliveryTime", deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm")},
                 {"message", message ?? string.Empty},
                 {"googleMaps", user.GoogleLocation}
             };

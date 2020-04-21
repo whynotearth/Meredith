@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
         public DateTime DeliveryDateTime { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public string UserTimeZone { get; set; }
+        public int UserTimeZoneOffset { get; set; }
 
         public string PaymentMethod { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
