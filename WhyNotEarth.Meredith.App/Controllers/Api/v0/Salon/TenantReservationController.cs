@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
                 return BadRequest("Invalid delivery date");
             }
 
-            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug);
+            var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug.ToLower());
 
             if (tenant is null)
             {
