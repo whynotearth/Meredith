@@ -59,6 +59,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {
                     MemoId = memoId,
                     Email = item.Email,
+                    DistributionGroup = memo.DistributionGroup,
                     Status = MemoStatus.ReadyToSend
                 });
 
