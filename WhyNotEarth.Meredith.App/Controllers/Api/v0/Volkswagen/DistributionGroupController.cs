@@ -82,5 +82,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             return NoContent();
         }
+
+        [Returns204]
+        [Returns404]
+        [HttpDelete("{distributionGroupName}/recipients/{recipientId}")]
+        public async Task<NoContentResult> Delete(int recipientId)
+        {
+            await _recipientService.DeleteAsync(recipientId);
+
+            return NoContent();
+        }
     }
 }

@@ -128,6 +128,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int recipientId)
+        {
+            var recipient = await _dbContext.Recipients.FirstOrDefaultAsync(item => item.Id == recipientId);
+
+            if (recipient is null)
+            {
+                throw new RecordNotFoundException($"Recipient {recipientId} not found");
+            }
+
+            _dbContext.Remove(recipient);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private class RecipientCsvModel
         {
             [Name("Email Address")] public string? EmailAddress { get; set; }
@@ -137,35 +150,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             [Name("Last Name")] public string? LastName { get; set; }
 
             [Name("Distribution Group")] public string? DistributionGroup { get; set; }
-        }
-    }
-
-    public class DistributionGroupInfo
-    {
-        public string Name { get; }
-
-        public int SubscriberCount { get; }
-
-        public int OpenPercent { get; }
-
-        public int ClickPercent { get; }
-
-        public DistributionGroupInfo(string name, int subscriberCount, int memoCount, int openCount, int clickCount)
-        {
-            Name = name;
-            SubscriberCount = subscriberCount;
-
-            if (memoCount == 0)
-            {
-                OpenPercent = 100;
-                ClickPercent = 100;
-            }
-            else
-            {
-                var total = memoCount * SubscriberCount;
-                OpenPercent = (int) ((double) openCount / total * 100);
-                ClickPercent = (int) ((double) clickCount / total * 100);
-            }
         }
     }
 }
