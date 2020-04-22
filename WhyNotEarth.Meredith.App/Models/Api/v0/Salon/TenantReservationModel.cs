@@ -17,6 +17,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
 
         public decimal Amount { get; set; }
 
+        public decimal Tax { get; set; }
+        
         public DateTime DeliveryDateTime { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

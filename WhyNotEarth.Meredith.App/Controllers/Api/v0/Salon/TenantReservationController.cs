@@ -52,8 +52,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
             var userId = _userManager.GetUserId(User);
 
             _reservationService.Reserve(tenant.Id, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
-                model.DeliveryFee, model.Amount, model.DeliveryDateTime, model.UserTimeZoneOffset, model.PaymentMethod,
-                model.Message, userId);
+                model.DeliveryFee, model.Amount, model.Tax, model.DeliveryDateTime, model.UserTimeZoneOffset,
+                model.PaymentMethod, model.Message, userId);
 
             return Ok();
         }
