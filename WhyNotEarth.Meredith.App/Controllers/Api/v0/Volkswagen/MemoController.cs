@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -35,12 +36,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost("stats")]
-        public async Task<ActionResult<List<MemoRecipient>>> Stats()
+        [HttpGet("")]
+        public async Task<ActionResult<List<MemoResult>>> List()
         {
-            var stats = await _memoService.GetStatsAsync();
+            var memoInfos = await _memoService.GetListAsync();
 
-            return Ok(stats);
+            return Ok(memoInfos.Select(item => new MemoResult(item.Memo, item.OpenPercentage)).ToList());
         }
     }
 }

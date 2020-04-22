@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
@@ -33,7 +34,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Subject = subject,
                 Date = date,
                 To = to,
-                Description = description
+                Description = description,
+                CreationDateTime = DateTime.UtcNow
             };
 
             _dbContext.Memos.Add(memo);
@@ -69,6 +71,33 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             _backgroundJobClient.Enqueue<MemoService>(service =>
                 service.SendEmailAsync(memo.Id));
+        }
+
+        public async Task<List<MemoInfo>> GetListAsync()
+        {
+            var memos = await _dbContext.Memos.ToListAsync();
+
+            var result = new List<MemoInfo>();
+            foreach (var memo in memos)
+            {
+                var info = await _dbContext.MemoRecipients
+                    .Where(item => item.MemoId == memo.Id)
+                    .GroupBy(item => item.Status)
+                    .Select(g => new
+                    {
+                        g.Key,
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
+
+                var openCount = info.FirstOrDefault(item => item.Key == MemoStatus.Opened)?.Count ?? 0;
+                var totalCount = info.Sum(item => item.Count);
+                var openPercentage = (int)((double)openCount / totalCount * 100);
+
+                result.Add(new MemoInfo(memo, openPercentage));
+            }
+
+            return result;
         }
 
         public async Task SendEmailAsync(int memoId)
@@ -109,11 +138,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             return await _dbContext.Recipients
                 .Where(item => item.DistributionGroup.ToLower() == distributionGroup.ToLower()).ToListAsync();
-        }
-
-        public Task<List<MemoRecipient>> GetStatsAsync()
-        {
-            return _dbContext.MemoRecipients.ToListAsync();
         }
     }
 }
