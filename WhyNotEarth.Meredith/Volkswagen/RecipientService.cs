@@ -101,17 +101,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return await _dbContext.Recipients.Where(item => item.DistributionGroup == distributionGroup).ToListAsync();
         }
 
-        private class RecipientCsvModel
-        {
-            [Name("Email Address")] public string? EmailAddress { get; set; }
-
-            [Name("First Name")] public string? FirstName { get; set; }
-
-            [Name("Last Name")] public string? LastName { get; set; }
-
-            [Name("Distribution Group")] public string? DistributionGroup { get; set; }
-        }
-
         public Task AddAsync(string distributionGroup, string email)
         {
             _dbContext.Recipients.Add(new Recipient
@@ -134,9 +123,20 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             recipient.Email = email;
-            
+
             _dbContext.Update(recipient);
             await _dbContext.SaveChangesAsync();
+        }
+
+        private class RecipientCsvModel
+        {
+            [Name("Email Address")] public string? EmailAddress { get; set; }
+
+            [Name("First Name")] public string? FirstName { get; set; }
+
+            [Name("Last Name")] public string? LastName { get; set; }
+
+            [Name("Distribution Group")] public string? DistributionGroup { get; set; }
         }
     }
 
@@ -162,8 +162,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
             else
             {
-                OpenPercent = openCount / (memoCount * SubscriberCount) * 100;
-                ClickPercent = clickCount / (memoCount * SubscriberCount) * 100;
+                var total = memoCount * SubscriberCount;
+                OpenPercent = (int) ((double) openCount / total * 100);
+                ClickPercent = (int) ((double) clickCount / total * 100);
             }
         }
     }
