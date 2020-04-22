@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Recipient
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class RecipientResult
     {

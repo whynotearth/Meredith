@@ -1,6 +1,6 @@
 ﻿using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.DistributionGroup
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class DistributionGroupStatResult
     {

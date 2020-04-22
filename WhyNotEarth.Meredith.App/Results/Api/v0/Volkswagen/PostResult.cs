@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public;
 
-namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen.Post
+namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class PostResult
     {
