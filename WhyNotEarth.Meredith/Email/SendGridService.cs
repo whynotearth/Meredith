@@ -53,10 +53,14 @@ namespace WhyNotEarth.Meredith.Email
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
             var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
 
+            if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
+            {
+                recipientEmailAddresses.Add(new EmailAddress(sendGridAccount.Bcc));
+            }
+
             var sendGridMessage =
                 MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses,
-                    sendGridAccount.TemplateId,
-                    templateData);
+                    sendGridAccount.TemplateId, templateData);
 
             var response = await client.SendEmailAsync(sendGridMessage);
 
