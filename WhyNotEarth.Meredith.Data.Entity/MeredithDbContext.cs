@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using Product = WhyNotEarth.Meredith.Data.Entity.Models.Product;
 
 namespace WhyNotEarth.Meredith.Data.Entity
 {
@@ -21,8 +23,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Page> Pages { get; set; }
 
-        public DbSet<Product> Products { get; set; }
-
         public DbSet<SendGridAccount> SendGridAccounts { get; set; }
 
         public DbSet<StripeAccount> StripeAccounts { get; set; }
@@ -30,6 +30,16 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<StripeOAuthRequest> StripeOAuthRequests { get; set; }
 
         public DbSet<Keyword> Keywords { get; set; }
+
+        // Shop
+        public DbSet<Reservation> Reservations { get; set; }
+
+        public DbSet<HotelPrice> Prices { get; set; }
+
+        public DbSet<Payment> Payments { get; set; }
+        
+        // Remove in next steps
+        public DbSet<Product> Products { get; set; }
 
         // Hotel
         public DbSet<Amenity> Amenities { get; set; }
@@ -39,12 +49,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Hotel> Hotels { get; set; }
 
         public DbSet<Language> Languages { get; set; }
-
-        public DbSet<Payment> Payments { get; set; }
-
-        public DbSet<Price> Prices { get; set; }
-
-        public DbSet<Reservation> Reservations { get; set; }
 
         public DbSet<Room> Rooms { get; set; }
 

@@ -6,7 +6,7 @@ namespace WhyNotEarth.Meredith.Services
 {
     public interface IEmailService
     {
-        Task SendReservationEmail(Reservation reservation, RoomType roomType, IEnumerable<Price> dailyPrices,
+        Task SendReservationEmail(HotelReservation hotelReservation, RoomType roomType, IEnumerable<HotelPrice> dailyPrices,
             decimal vatAmount, int paidDays, string? country, string phoneNumber);
     }
 }

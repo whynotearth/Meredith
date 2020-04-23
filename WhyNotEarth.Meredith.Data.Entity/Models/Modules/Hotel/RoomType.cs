@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
     public class RoomType : IEntityTypeConfiguration<RoomType>
     {
         public ICollection<Bed> Beds { get; set; } = new List<Bed>();
@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public string Name { get; set; }
 
-        public ICollection<Price> Prices { get; set; } = new List<Price>();
+        public ICollection<HotelPrice> Prices { get; set; } = new List<HotelPrice>();
 
         public ICollection<Room> Rooms { get; set; } = new List<Room>();
 

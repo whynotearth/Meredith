@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Services;
@@ -34,7 +35,7 @@ namespace WhyNotEarth.Meredith.Hotel
             _emailService = emailService;
         }
 
-        public async Task<Reservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
+        public async Task<HotelReservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
             string fullName, string email, string? message, string? phoneCountry, string phone, int numberOfGuests)
         {
             var roomType = await _meredithDbContext.RoomTypes
@@ -77,7 +78,7 @@ namespace WhyNotEarth.Meredith.Hotel
             totalAmount += vat;
 
             var user = await _userManager.GetUserAsync(_user);
-            var reservation = new Reservation
+            var reservation = new HotelReservation
             {
                 Amount = totalAmount,
                 Created = DateTime.UtcNow,
@@ -121,7 +122,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 Amount = amount,
                 Created = DateTime.UtcNow,
                 ReservationId = reservation.Id,
-                Status = Payment.Statuses.IntentGenerated,
+                Status = PaymentStatus.IntentGenerated,
                 PaymentIntentId = paymentIntent.Id,
                 UserId = user.Id
             };
@@ -140,7 +141,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 Amount = paymentIntent.Amount ?? 0,
                 Created = DateTime.UtcNow,
                 ReservationId = int.Parse(paymentIntent.Metadata[MetadataReservationIdKey]),
-                Status = Payment.Statuses.Fulfilled,
+                Status = PaymentStatus.Fulfilled,
                 PaymentIntentId = paymentIntent.Id,
                 UserId = int.Parse(paymentIntent.Metadata[MetadataUserIdKey])
             };
@@ -149,10 +150,10 @@ namespace WhyNotEarth.Meredith.Hotel
             await _meredithDbContext.SaveChangesAsync();
         }
 
-        private async Task<(Reservation, Company, User)> GetReservation(int reservationId)
+        private async Task<(HotelReservation, Company, User)> GetReservation(int reservationId)
         {
             var user = await _userManager.GetUserAsync(_user);
-            var results = await _meredithDbContext.Reservations
+            var results = await _meredithDbContext.Reservations.OfType<HotelReservation>()
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .Select(r => new
                 {

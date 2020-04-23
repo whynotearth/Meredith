@@ -18,7 +18,7 @@
             Context = meredithDbContext;
         }
 
-        public async Task<Price> CreatePriceAsync(decimal amount, DateTime date, int roomTypeId)
+        public async Task<HotelPrice> CreatePriceAsync(decimal amount, DateTime date, int roomTypeId)
         {
             var roomType = await Context.RoomTypes.SingleOrDefaultAsync(a => a.Id == roomTypeId);
 
@@ -32,7 +32,7 @@
                 throw new InvalidActionException("Amount cannot be below zero");
             }
 
-            var price = new Price
+            var price = new HotelPrice
             {
                 Amount = amount,
                 Date = date,

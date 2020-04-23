@@ -118,7 +118,7 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
             {
                 for (var i = 0; i < 5; i++)
                 {
-                    meredithDbContext.Prices.Add(new Price
+                    meredithDbContext.Prices.Add(new HotelPrice
                     {
                         Id = id,
                         Date = new DateTime(2020, 1, 1).AddDays(i),
@@ -130,14 +130,14 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
                 }
             }
 
-            meredithDbContext.Reservations.AddRange(new Reservation
+            meredithDbContext.Reservations.AddRange(new HotelReservation
                 {
                     Id = 1,
                     RoomId = 1,
                     Start = new DateTime(2020, 1, 1),
                     End = new DateTime(2020, 1, 2)
                 },
-                new Reservation
+                new HotelReservation
                 {
                     Id = 2,
                     RoomId = 2,

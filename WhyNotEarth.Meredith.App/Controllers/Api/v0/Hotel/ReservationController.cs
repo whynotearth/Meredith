@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Reservation;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 
@@ -33,7 +34,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         public async Task<IActionResult> Get(int reservationId)
         {
             var user = await _userManager.GetUserAsync(User);
-            var reservation = await _meredithDbContext.Reservations
+            var reservation = await _meredithDbContext.Reservations.OfType<HotelReservation>()
                 .Include(r => r.Payments)
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .FirstOrDefaultAsync();

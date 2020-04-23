@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
                 Name = "Test"
             };
             for (var i = 0; i < days; i++)
-                roomType.Prices.Add(new Price
+                roomType.Prices.Add(new HotelPrice
                 {
                     Amount = 10,
                     Date = Start.AddDays(i)

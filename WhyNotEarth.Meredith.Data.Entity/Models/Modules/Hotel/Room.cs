@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public string Number { get; set; }
 
-        public ICollection<Reservation> Reservations { get; set; }
+        public ICollection<HotelReservation> Reservations { get; set; }
 
         public void Configure(EntityTypeBuilder<Room> builder)
         {

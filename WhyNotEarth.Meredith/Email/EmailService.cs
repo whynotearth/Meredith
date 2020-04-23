@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.Email
             _sendGridService = sendGridService;
         }
 
-        public async Task SendReservationEmail(Reservation reservation, RoomType roomType, IEnumerable<Price> dailyPrices,
+        public async Task SendReservationEmail(HotelReservation hotelReservation, RoomType roomType, IEnumerable<HotelPrice> dailyPrices,
             decimal vatAmount, int paidDays, string? country, string phoneNumber)
         {
             var hotel = await _meredithDbContext.Hotels
@@ -59,9 +59,9 @@ namespace WhyNotEarth.Meredith.Email
                     featuredImage = hotel.Page.FeaturedImage,
                     h2 = hotel.Page.Title
                 },
-                numberOfGuests = reservation.NumberOfGuests,
-                checkIn = reservation.Start.ToString("ddd, d MMM"),
-                checkOut = reservation.End.ToString("ddd, d MMM"),
+                numberOfGuests = hotelReservation.NumberOfGuests,
+                checkIn = hotelReservation.Start.ToString("ddd, d MMM"),
+                checkOut = hotelReservation.End.ToString("ddd, d MMM"),
                 nightsCount = paidDays,
                 prices = dailyPrices.Select(item => new
                 {
@@ -69,16 +69,16 @@ namespace WhyNotEarth.Meredith.Email
                     amount = Math.Round(item.Amount, 2)
                 }),
                 vat = Math.Round(vatAmount, 2),
-                amount = Math.Round(reservation.Amount, 2),
-                name = reservation.Name,
+                amount = Math.Round(hotelReservation.Amount, 2),
+                name = hotelReservation.Name,
                 phoneCountry = country,
                 phone = phoneNumber,
-                email = reservation.Email,
-                message = reservation.Message,
+                email = hotelReservation.Email,
+                message = hotelReservation.Message,
                 roomDescriptionHTML = GetRoomDescription(hotel)
             };
 
-            await _sendGridService.SendEmail(sendGridAccount.FromEmail, sendGridAccount.FromEmailName, reservation.User.Email, reservation.User.UserName, sendGridAccount.TemplateId, templateData);
+            await _sendGridService.SendEmail(sendGridAccount.FromEmail, sendGridAccount.FromEmailName, hotelReservation.User.Email, hotelReservation.User.UserName, sendGridAccount.TemplateId, templateData);
         }
 
         private string GetRoomDescription(Data.Entity.Models.Modules.Hotel.Hotel hotel)
