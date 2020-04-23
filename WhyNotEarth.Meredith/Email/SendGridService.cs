@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.Email
         }
 
         public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients,
-            Dictionary<string, object> templateData)
+            object templateData)
         {
             var client = new SendGridClient(_sendGridOptions.ApiKey);
 

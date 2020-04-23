@@ -51,29 +51,28 @@ namespace WhyNotEarth.Meredith.Tenant
                 Tuple.Create(tenant.User.Email, tenant.User.Name)
             };
 
-            var templateData = new Dictionary<string, object>
+            var templateData = new
             {
-                {"subject", $"your order with {tenant.Company.Name}"},
+                subject = $"your order with {tenant.Company.Name}",
+                tenant = new
                 {
-                    "tenant", new
-                    {
-                        phone = tenant.User.PhoneNumber,
-                        email = tenant.User.Email
-                    }
+                    h2 = tenant.Name,
+                    phone = tenant.User.PhoneNumber,
+                    email = tenant.User.Email
                 },
-                {"orderProducts", string.Join("<br />", orders)},
-                {"subTotal", subTotal},
-                {"deliveryFee", deliveryFee},
-                {"amount", amount},
-                {"tax", tax},
-                {"deliveryAddress", user.Address},
-                {"name", user.Name},
-                {"phone", user.PhoneNumber},
-                {"email", user.Email},
-                {"paymentMethod", paymentMethod},
-                {"deliveryTime", deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm")},
-                {"message", message ?? string.Empty},
-                {"googleMaps", user.GoogleLocation}
+                orderProducts = string.Join("<br />", orders),
+                subTotal =  subTotal,
+                deliveryFee =  deliveryFee,
+                amount = amount,
+                tax = tax,
+                deliveryAddress = user.Address,
+                name = user.Name,
+                phone = user.PhoneNumber,
+                email = user.Email,
+                paymentMethod = paymentMethod,
+                deliveryTime = deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm"),
+                message = message ?? string.Empty,
+                googleMaps = user.GoogleLocation
             };
 
             await _sendGridService.SendEmail(tenant.Company.Id, recipients, templateData);
