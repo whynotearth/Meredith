@@ -103,6 +103,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public Task AddAsync(string distributionGroup, string email)
         {
+            var hasDuplicate = _dbContext.Recipients.Any(item =>
+                item.DistributionGroup == distributionGroup && item.Email == email);
+
+            if (hasDuplicate)
+            {
+                throw new DuplicateRecordException($"The email {email} already exist in {distributionGroup}");
+            }
+
             _dbContext.Recipients.Add(new Recipient
             {
                 DistributionGroup = distributionGroup,
@@ -120,6 +128,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
             if (recipient is null)
             {
                 throw new RecordNotFoundException($"Recipient {recipientId} not found");
+            }
+
+            var hasDuplicate = _dbContext.Recipients.Any(item =>
+                item.Id != recipient.Id && item.DistributionGroup == recipient.DistributionGroup &&
+                item.Email == email);
+
+            if (hasDuplicate)
+            {
+                throw new DuplicateRecordException($"The email {email} already exist in {recipient.DistributionGroup}");
             }
 
             recipient.Email = email;
