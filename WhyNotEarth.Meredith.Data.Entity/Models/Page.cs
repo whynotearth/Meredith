@@ -28,27 +28,17 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string BackgroundImage { get; set; }
 
-        public string CallToAction { get; set; }
-
         public string CallToActionLink { get; set; }
 
         public ICollection<Card> Cards { get; set; }
 
         public string Custom { get; set; }
 
-        public string Description { get; set; }
-
         public string FeaturedImage { get; set; }
-
-        public string Header { get; set; }
 
         public ICollection<PageImage> Images { get; set; }
 
-        public string Name { get; set; }
-
         public string Slug { get; set; }
-
-        public string Title { get; set; }
 
         public string LandingPageData { get; set; }
 
@@ -57,7 +47,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public DateTime CreationDateTime { get; set; }
                 
         public DateTime? EditDateTime { get; set; }
-        
+
+        public ICollection<PageTranslation> Translations { get; set; }
+
         public void Configure(EntityTypeBuilder<Page> builder)
         {
             builder.Property(e => e.Custom).HasColumnType("jsonb");

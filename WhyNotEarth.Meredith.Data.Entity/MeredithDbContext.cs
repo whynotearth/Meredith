@@ -21,6 +21,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Page> Pages { get; set; }
 
+        public DbSet<Language> Languages { get; set; }
+
         public DbSet<Product> Products { get; set; }
 
         public DbSet<SendGridAccount> SendGridAccounts { get; set; }
@@ -37,8 +39,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Bed> Beds { get; set; }
 
         public DbSet<Hotel> Hotels { get; set; }
-
-        public DbSet<Language> Languages { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
 

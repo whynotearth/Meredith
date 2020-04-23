@@ -69,14 +69,14 @@ namespace WhyNotEarth.Meredith.Pages
                 CompanyId = companyId,
                 CategoryId = categoryId,
                 Slug = slug,
-                Name = name,
-                Title = title,
-                Header = header,
+                //Name = name,
+                //Title = title,
+                //Header = header,
                 FeaturedImage = featuredImage,
                 BackgroundImage = backgroundImage,
-                CallToAction = callToAction,
+                //CallToAction = callToAction,
                 CallToActionLink = callToActionLink,
-                Description = description,
+                //Description = description,
                 Custom = custom
             };
             
@@ -115,14 +115,14 @@ namespace WhyNotEarth.Meredith.Pages
             page.CompanyId = companyId;
             page.CategoryId = categoryId;
             page.Slug = slug;
-            page.Name = name;
-            page.Title = title;
-            page.Header = header;
-            page.FeaturedImage = featuredImage;
+            //page.Name = name;
+            //page.Title = title;
+            //page.Header = header;
+            //page.FeaturedImage = featuredImage;
             page.BackgroundImage = backgroundImage;
-            page.CallToAction = callToAction;
+            //page.CallToAction = callToAction;
             page.CallToActionLink = callToActionLink;
-            page.Description = description;
+            //page.Description = description;
             page.Custom = custom;
             
             _dbContext.Pages.Update(page);
@@ -134,6 +134,8 @@ namespace WhyNotEarth.Meredith.Pages
         private IQueryable<Page> Include()
         {
             return _dbContext.Pages
+                .Include(p => p.Translations)
+                .ThenInclude(p => p.Language)
                 .Include(p => p.Company)
                 .Include(p => p.Tenant)
                 .Include(p => p.Cards)

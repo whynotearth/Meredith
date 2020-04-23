@@ -1,7 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
+namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class Language : IEntityTypeConfiguration<Language>
     {
@@ -13,7 +16,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 
         public void Configure(EntityTypeBuilder<Language> builder)
         {
-            builder.ToTable("Languages", "ModuleHotel");
+            builder.ToTable("Languages", "public");
         }
     }
 }
