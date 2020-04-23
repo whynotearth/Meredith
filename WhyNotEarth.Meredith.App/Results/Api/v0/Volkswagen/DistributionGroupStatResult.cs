@@ -12,12 +12,12 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public decimal ClickPercent { get; }
 
-        public DistributionGroupStatResult(DistributionGroupInfo distributionGroupInfo)
+        public DistributionGroupStatResult(DistributionGroupStats distributionGroupStats)
         {
-            DistributionGroup = distributionGroupInfo.Name;
-            SubscriberCount = distributionGroupInfo.SubscriberCount;
-            OpenPercent = distributionGroupInfo.OpenPercent;
-            ClickPercent = distributionGroupInfo.ClickPercent;
+            DistributionGroup = distributionGroupStats.Name;
+            SubscriberCount = distributionGroupStats.RecipientsCount;
+            OpenPercent = distributionGroupStats.OpenPercent;
+            ClickPercent = distributionGroupStats.ClickPercent;
         }
     }
 }

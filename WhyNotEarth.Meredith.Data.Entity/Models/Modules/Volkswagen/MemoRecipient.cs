@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
@@ -16,6 +17,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         public string DistributionGroup { get; set; }
 
         public MemoStatus Status { get; set; }
+
+        public DateTime? DeliverDateTime { get; set; }
+
+        public DateTime? OpenDateTime { get; set; }
 
         public void Configure(EntityTypeBuilder<MemoRecipient> builder)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,18 +29,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             {
                 foreach (var eventItem in eventList)
                 {
-                    if (eventItem.Status == MemoStatus.None)
-                    {
-                        continue;
-                    }
-
-                    if (eventItem.MemoId == 0)
-                    {
-                        continue;
-                    }
-
                     var memoRecipient = await _dbContext.MemoRecipients.FirstOrDefaultAsync(item =>
                         item.MemoId == eventItem.MemoId && item.Email == eventItem.Email);
+
+                    if (eventItem.Status == MemoStatus.Delivered)
+                    {
+                        memoRecipient.DeliverDateTime = eventItem.DateTime;
+                    }
+                    else if (eventItem.Status == MemoStatus.Opened)
+                    {
+                        memoRecipient.OpenDateTime = eventItem.DateTime;
+                    }
 
                     if (memoRecipient.Status < eventItem.Status)
                     {
@@ -55,12 +55,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         public class EventItem
         {
+            // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
+
             [JsonProperty(nameof(MemoRecipient.MemoId))]
             public int MemoId { get; set; }
 
-            public string Email { get; set; }
+            public int Timestamp { get; set; }
 
-            public string Event { get; set; }
+            public string Email { get; set; } = null!;
+
+            public string Event { get; set; } = null!;
 
             public MemoStatus Status
             {
@@ -75,6 +79,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                     };
                 }
             }
+
+            public DateTime DateTime => DateTimeOffset.FromUnixTimeSeconds(Timestamp).UtcDateTime;
         }
     }
 }

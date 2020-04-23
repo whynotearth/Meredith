@@ -15,14 +15,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string MemoTemplateId = "d-5bf1030c93e04aed850ca9890fcb0b81";
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
+        private readonly MemoRecipientService _memoRecipientService;
         private readonly SendGridService _sendGridService;
 
         public MemoService(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
-            SendGridService sendGridService)
+            SendGridService sendGridService, MemoRecipientService memoRecipientService)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;
             _sendGridService = sendGridService;
+            _memoRecipientService = memoRecipientService;
         }
 
         public async Task CreateAsync(string distributionGroup, string subject, string date, string to,
@@ -41,36 +43,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext.Memos.Add(memo);
             await _dbContext.SaveChangesAsync();
 
-            _backgroundJobClient.Enqueue<MemoService>(service =>
+            _backgroundJobClient.Enqueue<MemoRecipientService>(service =>
                 service.CreateMemoRecipients(memo.Id));
-        }
-
-        public async Task CreateMemoRecipients(int memoId)
-        {
-            var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
-            var recipients = await GetRecipients(memo.DistributionGroup);
-
-            // In case something went wrong and this is a retry
-            var oldMemoRecipients = await _dbContext.MemoRecipients.Where(item => item.MemoId == memoId).ToListAsync();
-            _dbContext.MemoRecipients.RemoveRange(oldMemoRecipients);
-            await _dbContext.SaveChangesAsync();
-
-            foreach (var batch in recipients.Batch(100))
-            {
-                var memoRecipients = batch.Select(item => new MemoRecipient
-                {
-                    MemoId = memoId,
-                    Email = item.Email,
-                    DistributionGroup = memo.DistributionGroup,
-                    Status = MemoStatus.ReadyToSend
-                });
-
-                _dbContext.MemoRecipients.AddRange(memoRecipients);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            _backgroundJobClient.Enqueue<MemoService>(service =>
-                service.SendEmailAsync(memo.Id));
         }
 
         public async Task<List<MemoInfo>> GetListAsync()
@@ -80,24 +54,21 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var result = new List<MemoInfo>();
             foreach (var memo in memos)
             {
-                var info = await _dbContext.MemoRecipients
-                    .Where(item => item.MemoId == memo.Id)
-                    .GroupBy(item => item.Status)
-                    .Select(g => new
-                    {
-                        g.Key,
-                        Count = g.Count()
-                    })
-                    .ToListAsync();
-
-                var openCount = info.FirstOrDefault(item => item.Key == MemoStatus.Opened)?.Count ?? 0;
-                var totalCount = info.Sum(item => item.Count);
-                var openPercentage = (int)((double)openCount / totalCount * 100);
+                var openPercentage = await _memoRecipientService.GetOpenPercentage(memo.Id);
 
                 result.Add(new MemoInfo(memo, openPercentage));
             }
 
             return result;
+        }
+
+        public async Task<MemoInfo> Get(int memoId)
+        {
+            var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
+
+            var openPercentage = await _memoRecipientService.GetOpenPercentage(memo.Id);
+
+            return new MemoInfo(memo, openPercentage);;
         }
 
         public async Task SendEmailAsync(int memoId)
@@ -132,12 +103,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
                 await _dbContext.SaveChangesAsync();
             }
-        }
-
-        private async Task<List<Recipient>> GetRecipients(string distributionGroup)
-        {
-            return await _dbContext.Recipients
-                .Where(item => item.DistributionGroup.ToLower() == distributionGroup.ToLower()).ToListAsync();
         }
     }
 }
