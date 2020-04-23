@@ -46,12 +46,12 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             Id = page.Id;
             Brand = page.Company.Slug;
             Tenant = page.Tenant?.Slug;
-            Name = page.Name;
-            Title = page.Title;
-            Description = page.Description;
-            H2 = page.Header;
+            Name = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Name;
+            Title = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Title;
+            Description = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Description;
+            H2 = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Header;
             BackgroundImage = page.BackgroundImage;
-            CtaText = page.CallToAction;
+            CtaText = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.CallToAction;
             CtaLink = page.CallToActionLink;
             Custom = page.Custom is null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom);
             FeaturedImage = page.FeaturedImage;

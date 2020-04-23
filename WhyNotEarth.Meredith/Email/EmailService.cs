@@ -31,6 +31,8 @@ namespace WhyNotEarth.Meredith.Email
                 .Include(item => item.Translations)
                 .ThenInclude(item => item.Language)
                 .Include(item => item.Page)
+                .ThenInclude(item => item.Translations)
+                .ThenInclude(item => item.Language)
                 .Include(item => item.Spaces)
                 .ThenInclude(item => item.Translations)
                 .ThenInclude(item => item.Language)
@@ -54,7 +56,7 @@ namespace WhyNotEarth.Meredith.Email
                 resort = new
                 {
                     featuredImage = hotel.Page.FeaturedImage,
-                    h2 = hotel.Page.Title
+                    h2 = hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Title
                 },
                 numberOfGuests = hotelReservation.NumberOfGuests,
                 checkIn = hotelReservation.Start.ToString("ddd, d MMM"),
@@ -84,7 +86,7 @@ namespace WhyNotEarth.Meredith.Email
         {
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append($"<div>{Markdown.ToHtml(hotel.Page.Description)}</div>");
+            stringBuilder.Append($"<div>{Markdown.ToHtml(hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Description)}</div>");
             stringBuilder.Append("<div>");
             
             var values = hotel.Spaces.SelectMany(item => item.Translations)
