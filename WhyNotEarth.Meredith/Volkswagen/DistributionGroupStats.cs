@@ -6,25 +6,19 @@
 
         public int RecipientsCount { get; }
 
-        public int OpenPercent { get; }
+        public int OpenPercent { get; } = 100;
 
-        public int ClickPercent { get; }
+        public int ClickPercent { get; } = 100;
 
-        public DistributionGroupStats(string name, int recipientsCount, int memoCount, int openCount, int clickCount)
+        public DistributionGroupStats(string name, int recipientsCount, int totalCount, int openCount, int clickCount)
         {
             Name = name;
             RecipientsCount = recipientsCount;
 
-            if (memoCount == 0)
+            if (totalCount != 0)
             {
-                OpenPercent = 100;
-                ClickPercent = 100;
-            }
-            else
-            {
-                var total = memoCount * RecipientsCount;
-                OpenPercent = (int) ((double) openCount / total * 100);
-                ClickPercent = (int) ((double) clickCount / total * 100);
+                OpenPercent = (int) ((double) openCount / totalCount * 100);
+                ClickPercent = (int) ((double) clickCount / totalCount * 100);
             }
         }
     }

@@ -46,7 +46,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var distributionGroups = await _dbContext.Recipients.GroupBy(item => item.DistributionGroup)
                 .Select(g => new
                 {
-                    Name = g.Key
+                    Name = g.Key,
+                    RecipientCount = g.Count()
                 })
                 .ToListAsync();
 
@@ -54,7 +55,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var group in distributionGroups)
             {
-                var stats = await _memoRecipientService.GetDistributionGroupStats(group.Name);
+                var stats = await _memoRecipientService.GetDistributionGroupStats(group.Name, group.RecipientCount);
                 
                 result.Add(stats);
             }

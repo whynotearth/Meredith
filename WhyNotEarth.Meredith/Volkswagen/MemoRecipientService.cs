@@ -10,8 +10,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class MemoRecipientService
     {
-        private readonly MeredithDbContext _dbContext;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly MeredithDbContext _dbContext;
 
         public MemoRecipientService(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient)
         {
@@ -58,18 +58,24 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new MemoStats(notOpenedList, openedList);
         }
 
-        public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup)
+        public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup,
+            int recipientCount)
         {
-            var memoRecipients = await _dbContext.MemoRecipients
-                .Where(item => item.DistributionGroup == distributionGroup && item.Status >= MemoStatus.Opened)
+            var stats = await _dbContext.MemoRecipients
+                .Where(item => item.DistributionGroup == distributionGroup)
+                .GroupBy(item => item.Status)
+                .Select(g => new
+                {
+                    Status = g.Key,
+                    Count = g.Count()
+                })
                 .ToListAsync();
 
-            var memoCount = memoRecipients.Select(item => item.MemoId).Distinct().Count();
-            var openCount = memoRecipients.Count(item => item.Status == MemoStatus.Opened);
-            var clickCount = memoRecipients.Count(item => item.Status == MemoStatus.Clicked);
+            var total = stats.Sum(item => item.Count);
+            var openCount = stats.Where(item => item.Status >= MemoStatus.Opened).Sum(item => item.Count);
+            var clickCount = stats.Where(item => item.Status >= MemoStatus.Clicked).Sum(item => item.Count);
 
-            return new DistributionGroupStats(distributionGroup, memoRecipients.Count, memoCount, openCount,
-                clickCount);
+            return new DistributionGroupStats(distributionGroup, recipientCount, total, openCount, clickCount);
         }
 
         public async Task<int> GetOpenPercentage(int memoId)
@@ -90,7 +96,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var openPercentage = 100;
             if (totalCount != 0)
             {
-                openPercentage = (int)((double)openCount / totalCount * 100);
+                openPercentage = (int) ((double) openCount / totalCount * 100);
             }
 
             return openPercentage;
