@@ -29,8 +29,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             {
                 foreach (var eventItem in eventList)
                 {
+                    if (eventItem.MemoId is null)
+                    {
+                        continue;
+                    }
+
                     var memoRecipient = await _dbContext.MemoRecipients.FirstOrDefaultAsync(item =>
-                        item.MemoId == eventItem.MemoId && item.Email == eventItem.Email);
+                        item.MemoId == eventItem.MemoId.Value && item.Email == eventItem.Email);
 
                     if (eventItem.Status == MemoStatus.Delivered)
                     {
@@ -58,7 +63,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
 
             [JsonProperty(nameof(MemoRecipient.MemoId))]
-            public int MemoId { get; set; }
+            public int? MemoId { get; set; }
 
             public int Timestamp { get; set; }
 
