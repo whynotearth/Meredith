@@ -54,6 +54,7 @@ namespace WhyNotEarth.Meredith.App.Middleware
             httpResponse.StatusCode = exception switch
             {
                 InvalidActionException _ => StatusCodes.Status400BadRequest,
+                DuplicateRecordException _ => StatusCodes.Status400BadRequest,
                 RecordNotFoundException _ => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };

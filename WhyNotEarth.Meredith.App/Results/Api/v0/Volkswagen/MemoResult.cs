@@ -1,10 +1,12 @@
 ﻿using System;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class MemoResult
     {
+        public int Id { get; }
+
         public string Subject { get; }
 
         public DateTime CreationDateTime { get; }
@@ -13,15 +15,16 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string Description { get; }
 
-        public int OpenRate { get; }
+        public int OpenPercentage { get; }
 
-        public MemoResult(Memo memo, int openRate)
+        public MemoResult(MemoInfo memoInfo)
         {
-            Subject = memo.Subject;
-            CreationDateTime = memo.CreationDateTime;
-            To = memo.To;
-            Description = memo.Description;
-            OpenRate = openRate;
+            Id = memoInfo.Memo.Id;
+            Subject = memoInfo.Memo.Subject;
+            CreationDateTime = memoInfo.Memo.CreationDateTime;
+            To = memoInfo.Memo.To;
+            Description = memoInfo.Memo.Description;
+            OpenPercentage = memoInfo.OpenPercentage;
         }
     }
 }

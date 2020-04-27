@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200423143454_RemoveRecipientNameColumns")]
+    partial class RemoveRecipientNameColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,24 +261,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Keywords");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Language", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<string>("Culture")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Languages","public");
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Amenity", b =>
                 {
                     b.Property<int>("Id")
@@ -391,6 +375,24 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("LanguageId");
 
                     b.ToTable("HotelTranslations","ModuleHotel");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<string>("Culture")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Languages","ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Payment", b =>
@@ -781,6 +783,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<string>("BackgroundImage")
                         .HasColumnType("text");
 
+                    b.Property<string>("CallToAction")
+                        .HasColumnType("text");
+
                     b.Property<string>("CallToActionLink")
                         .HasColumnType("text");
 
@@ -796,13 +801,22 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<string>("Custom")
                         .HasColumnType("jsonb");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("EditDateTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("FeaturedImage")
                         .HasColumnType("text");
 
+                    b.Property<string>("Header")
+                        .HasColumnType("text");
+
                     b.Property<string>("LandingPageData")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.Property<string>("Slug")
@@ -810,6 +824,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -820,43 +837,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Pages");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.PageTranslation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<string>("CallToAction")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Header")
-                        .HasColumnType("text");
-
-                    b.Property<int>("LanguageId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PageId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LanguageId");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("PageTranslation");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Product", b =>
@@ -1297,7 +1277,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Language", "Language")
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1334,7 +1314,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Language", "Language")
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1409,7 +1389,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.RuleTranslation", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Language", "Language")
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1433,7 +1413,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.SpaceTranslation", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Language", "Language")
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel.Language", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1483,21 +1463,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Tenant", "Tenant")
                         .WithMany("Pages")
                         .HasForeignKey("TenantId");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.PageTranslation", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Language", "Language")
-                        .WithMany()
-                        .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
-                        .WithMany("Translations")
-                        .HasForeignKey("PageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Product", b =>
