@@ -10,8 +10,8 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    [Migration("20200423085701_AddMultiLanguageSupportForPage")]
-    partial class AddMultiLanguageSupportForPage
+    [Migration("20200427093043_AddMultiLanguageSupportToPage")]
+    partial class AddMultiLanguageSupportToPage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

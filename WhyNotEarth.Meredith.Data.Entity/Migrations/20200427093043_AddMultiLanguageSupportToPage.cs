@@ -3,30 +3,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
-    public partial class AddMultiLanguageSupportForPage : Migration
+    public partial class AddMultiLanguageSupportToPage : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "CallToAction",
-                table: "Pages");
-
-            migrationBuilder.DropColumn(
-                name: "Description",
-                table: "Pages");
-
-            migrationBuilder.DropColumn(
-                name: "Header",
-                table: "Pages");
-
-            migrationBuilder.DropColumn(
-                name: "Name",
-                table: "Pages");
-
-            migrationBuilder.DropColumn(
-                name: "Title",
-                table: "Pages");
-
+        {            
             migrationBuilder.EnsureSchema(
                 name: "public");
 
@@ -77,6 +57,29 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 name: "IX_PageTranslation_PageId",
                 table: "PageTranslation",
                 column: "PageId");
+
+            migrationBuilder.Sql(@"Insert INTO ""PageTranslation"" (""PageId"", ""LanguageId"", ""CallToAction"", ""Description"", ""Header"", ""Name"", ""Title"") 
+                            SELECT ""Id"", '1', ""CallToAction"", ""Description"", ""Header"", ""Name"", ""Title"" FROM ""Pages""");
+
+            migrationBuilder.DropColumn(
+                name: "CallToAction",
+                table: "Pages");
+
+            migrationBuilder.DropColumn(
+                name: "Description",
+                table: "Pages");
+
+            migrationBuilder.DropColumn(
+                name: "Header",
+                table: "Pages");
+
+            migrationBuilder.DropColumn(
+                name: "Name",
+                table: "Pages");
+
+            migrationBuilder.DropColumn(
+                name: "Title",
+                table: "Pages");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200423085359_AddMultiLanguageSupportForPages.cs" />
     <Compile Remove="Migrations\20200423085359_AddMultiLanguageSupportForPages.Designer.cs" />
+    <Compile Remove="Migrations\20200423085701_AddMultiLanguageSupportForPage.cs" />
+    <Compile Remove="Migrations\20200423085701_AddMultiLanguageSupportForPage.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
