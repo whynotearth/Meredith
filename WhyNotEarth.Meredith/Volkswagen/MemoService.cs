@@ -49,7 +49,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<List<MemoInfo>> GetListAsync()
         {
-            var memos = await _dbContext.Memos.ToListAsync();
+            var memos = await _dbContext.Memos.OrderByDescending(item => item.CreationDateTime).ToListAsync();
 
             var result = new List<MemoInfo>();
             foreach (var memo in memos)

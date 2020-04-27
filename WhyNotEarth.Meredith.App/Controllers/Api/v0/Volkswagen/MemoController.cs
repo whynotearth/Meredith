@@ -38,6 +38,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
+        [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<MemoResult>>> List()
         {
@@ -46,6 +47,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok(memoInfos.Select(item => new MemoResult(item)).ToList());
         }
 
+        [Returns200]
         [HttpGet("{memoId}/stats")]
         public async Task<ActionResult<List<MemoStatsResult>>> Details(int memoId)
         {
