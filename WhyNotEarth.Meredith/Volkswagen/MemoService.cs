@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -80,7 +82,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {"subject", memo.Subject},
                 {"date", memo.Date},
                 {"to", memo.To},
-                {"description", memo.Description}
+                // To handle new lines correctly we are replacing them with <br> and use {{{description}}}
+                // so we have to html encode here
+                {"description", Regex.Replace(HttpUtility.HtmlEncode(memo.Description), @"\r\n?|\n", "<br>")}
             };
 
             var memoRecipients = await _dbContext.MemoRecipients
