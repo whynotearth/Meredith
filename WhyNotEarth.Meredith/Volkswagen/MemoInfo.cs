@@ -6,12 +6,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         public Memo Memo { get; }
 
-        public int OpenPercentage { get; }
+        public MemoListStats ListStats { get; }
 
-        public MemoInfo(Memo memo, int openPercentage)
+        public MemoInfo(Memo memo, MemoListStats listStats)
         {
             Memo = memo;
-            OpenPercentage = openPercentage;
+            ListStats = listStats;
         }
     }
 }

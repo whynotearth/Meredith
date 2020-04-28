@@ -40,21 +40,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<MemoResult>>> List()
+        public async Task<ActionResult<List<MemoListResult>>> List()
         {
             var memoInfos = await _memoService.GetListAsync();
 
-            return Ok(memoInfos.Select(item => new MemoResult(item)).ToList());
+            return Ok(memoInfos.Select(item => new MemoListResult(item)).ToList());
         }
 
         [Returns200]
         [HttpGet("{memoId}/stats")]
-        public async Task<ActionResult<List<MemoStatsResult>>> Details(int memoId)
+        public async Task<ActionResult<List<MemoDetailResult>>> Details(int memoId)
         {
             var memoInfo = await _memoService.Get(memoId);
-            var result = new MemoStatsResult(memoInfo);
+            var result = new MemoDetailResult(memoInfo);
 
-            var memoStats = await _memoRecipientService.GetMemoStats(memoId);
+            var memoStats = await _memoRecipientService.GetMemoDetailStats(memoId);
 
             result.NotOpened.AddRange(memoStats.NotOpenedList.Select(item => new MemoRecipientResult(item)));
 

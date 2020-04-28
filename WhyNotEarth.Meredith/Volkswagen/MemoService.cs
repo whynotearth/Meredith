@@ -56,9 +56,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var result = new List<MemoInfo>();
             foreach (var memo in memos)
             {
-                var openPercentage = await _memoRecipientService.GetOpenPercentage(memo.Id);
+                var memoStat = await _memoRecipientService.GetMemoListStats(memo.Id);
 
-                result.Add(new MemoInfo(memo, openPercentage));
+                result.Add(new MemoInfo(memo, memoStat));
             }
 
             return result;
@@ -68,9 +68,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
 
-            var openPercentage = await _memoRecipientService.GetOpenPercentage(memo.Id);
+            var memoStat = await _memoRecipientService.GetMemoListStats(memo.Id);
 
-            return new MemoInfo(memo, openPercentage);;
+            return new MemoInfo(memo, memoStat);;
         }
 
         public async Task SendEmailAsync(int memoId)

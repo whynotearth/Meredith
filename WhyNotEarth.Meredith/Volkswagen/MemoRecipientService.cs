@@ -47,17 +47,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 service.SendEmailAsync(memo.Id));
         }
 
-        public async Task<MemoStats> GetMemoStats(int memoId)
-        {
-            var memoRecipients = await _dbContext.MemoRecipients.Include(item => item.Memo)
-                .Where(item => item.MemoId == memoId).ToListAsync();
-
-            var notOpenedList = memoRecipients.Where(item => item.Status < MemoStatus.Opened).ToList();
-            var openedList = memoRecipients.Where(item => item.Status >= MemoStatus.Opened).ToList();
-
-            return new MemoStats(notOpenedList, openedList);
-        }
-
         public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup,
             int recipientCount)
         {
@@ -78,7 +67,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new DistributionGroupStats(distributionGroup, recipientCount, total, openCount, clickCount);
         }
 
-        public async Task<int> GetOpenPercentage(int memoId)
+        public async Task<MemoListStats> GetMemoListStats(int memoId)
         {
             var info = await _dbContext.MemoRecipients
                 .Where(item => item.MemoId == memoId)
@@ -91,15 +80,20 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ToListAsync();
 
             var openCount = info.Where(item => item.Key >= MemoStatus.Opened).Sum(item => item.Count);
-            var totalCount = info.Sum(item => item.Count);
+            var sentCount = info.Sum(item => item.Count);
 
-            var openPercentage = 100;
-            if (totalCount != 0)
-            {
-                openPercentage = (int) ((double) openCount / totalCount * 100);
-            }
+            return new MemoListStats(sentCount, openCount);
+        }
 
-            return openPercentage;
+        public async Task<MemoDetailStats> GetMemoDetailStats(int memoId)
+        {
+            var memoRecipients = await _dbContext.MemoRecipients.Include(item => item.Memo)
+                .Where(item => item.MemoId == memoId).ToListAsync();
+
+            var notOpenedList = memoRecipients.Where(item => item.Status < MemoStatus.Opened).ToList();
+            var openedList = memoRecipients.Where(item => item.Status >= MemoStatus.Opened).ToList();
+
+            return new MemoDetailStats(notOpenedList, openedList);
         }
 
         private async Task<List<Recipient>> GetRecipients(string distributionGroup)

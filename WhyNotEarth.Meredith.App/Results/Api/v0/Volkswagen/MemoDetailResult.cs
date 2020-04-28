@@ -5,17 +5,17 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
-    public class MemoStatsResult
+    public class MemoDetailResult
     {
-        public MemoResult Memo { get; }
+        public MemoListResult MemoList { get; }
 
         public List<MemoRecipientResult> NotOpened { get; } = new List<MemoRecipientResult>();
 
         public List<MemoRecipientResult> Opened { get; } = new List<MemoRecipientResult>();
 
-        public MemoStatsResult(MemoInfo memoInfo)
+        public MemoDetailResult(MemoInfo memoInfo)
         {
-            Memo = new MemoResult(memoInfo);
+            MemoList = new MemoListResult(memoInfo);
         }
     }
 
