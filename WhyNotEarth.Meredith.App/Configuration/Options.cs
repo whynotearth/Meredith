@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using RollbarDotNet.Configuration;
 using WhyNotEarth.Meredith.Cloudinary;
-using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Stripe.Data;
 
@@ -15,7 +14,6 @@ namespace WhyNotEarth.Meredith.App.Configuration
             services.AddOptions()
                 .Configure<CloudinaryOptions>(o => configuration.GetSection("Cloudinary").Bind(o))
                 .Configure<RollbarOptions>(o => configuration.GetSection("Rollbar").Bind(o))
-                .Configure<SendGridOptions>(options => configuration.GetSection("SendGrid").Bind(options))
                 .Configure<StripeOptions>(o => configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => configuration.GetSection("Jwt").Bind(o))
                 .Configure<GoogleCloudOptions>(o => configuration.GetSection("GoogleCloud").Bind(o));

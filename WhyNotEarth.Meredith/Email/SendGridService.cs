@@ -4,12 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Email
@@ -17,40 +15,53 @@ namespace WhyNotEarth.Meredith.Email
     public class SendGridService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly SendGridOptions _sendGridOptions;
 
-        public SendGridService(IOptions<SendGridOptions> sendGridOptions, MeredithDbContext dbContext)
+        public SendGridService(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
-            _sendGridOptions = sendGridOptions.Value;
         }
 
-        public async Task SendEmail(string emailFrom, string emailFromName, string emailTo, string emailToName,
-            string templateId, object templateData)
+        public async Task SendEmail(int companyId, Tuple<string, string> recipient, object templateData)
         {
-            var client = new SendGridClient(_sendGridOptions.ApiKey);
-
-            var from = new EmailAddress(emailFrom, emailFromName);
-            var to = new EmailAddress(emailTo, emailToName);
-
-            var msg = MailHelper.CreateSingleTemplateEmail(from, to, templateId, templateData);
-
-            var response = await client.SendEmailAsync(msg);
-
-            if (response.StatusCode >= HttpStatusCode.Ambiguous)
-            {
-                var errorMessage = await GetErrorMessage(response);
-                throw new Exception(errorMessage);
-            }
+            await SendEmail(companyId, new List<Tuple<string, string>> {recipient}, templateData);
         }
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients,
-            object templateData)
+        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients, object templateData)
         {
-            var client = new SendGridClient(_sendGridOptions.ApiKey);
+            await SendEmailCore(companyId, recipients,
+                true, templateData,
+                null, null, null, null,
+                null, null);
+        }
 
+        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients, object templateData,
+            string uniqueArgument, string uniqueArgumentValue)
+        {
+            await SendEmailCore(companyId, recipients, 
+                true, templateData,
+                null, null, null, null,
+                uniqueArgument, uniqueArgumentValue);
+        }
+
+        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients, List<string> subjects,
+            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions)
+        {
+            await SendEmailCore(companyId, recipients, 
+                false, null, 
+                subjects, plainTextContent, htmlContent, substitutions,
+                null, null);
+        }
+
+        private async Task SendEmailCore(int companyId, List<Tuple<string, string>> recipients,
+            bool useTemplate, object? templateData,
+            List<string>? subjects, string? plainTextContent, string? htmlContent, List<Dictionary<string, string>>? substitutions,
+            string? uniqueArgument, string? uniqueArgumentValue)
+        {
             var sendGridAccount = await GetAccount(companyId);
+
+            var client = new SendGridClient(sendGridAccount.ApiKey);
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
+
             var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
 
             if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
@@ -58,37 +69,28 @@ namespace WhyNotEarth.Meredith.Email
                 recipientEmailAddresses.Add(new EmailAddress(sendGridAccount.Bcc));
             }
 
-            var sendGridMessage =
-                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses,
-                    sendGridAccount.TemplateId, templateData);
+            SendGridMessage sendGridMessage;
 
-            var response = await client.SendEmailAsync(sendGridMessage);
-
-            if (response.StatusCode >= HttpStatusCode.Ambiguous)
+            if (useTemplate)
             {
-                var errorMessage = await GetErrorMessage(response);
-                throw new Exception(errorMessage);
+                sendGridMessage = MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from,
+                    recipientEmailAddresses, sendGridAccount.TemplateId, templateData);
             }
-        }
-
-        public async Task SendEmail(string fromEmail, List<MemoRecipient> recipients, string templateId,
-            Dictionary<string, object> templateData, string uniqueArgument, string uniqueArgumentValue)
-        {
-            var client = new SendGridClient(_sendGridOptions.ApiKey);
-            var from = new EmailAddress(fromEmail);
-
-            var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
-
-            var sendGridMessage =
-                MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipientEmailAddresses, templateId,
-                    templateData);
-
-            foreach (var personalization in sendGridMessage.Personalizations)
+            else
             {
-                personalization.CustomArgs = new Dictionary<string, string>
+                sendGridMessage = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, recipientEmailAddresses,
+                    subjects, plainTextContent, htmlContent, substitutions);
+            }
+
+            if (uniqueArgument != null && uniqueArgumentValue != null)
+            {
+                foreach (var personalization in sendGridMessage.Personalizations)
                 {
-                    {uniqueArgument, uniqueArgumentValue}
-                };
+                    personalization.CustomArgs = new Dictionary<string, string>
+                    {
+                        {uniqueArgument, uniqueArgumentValue}
+                    };
+                }
             }
 
             var response = await client.SendEmailAsync(sendGridMessage);
@@ -98,34 +100,6 @@ namespace WhyNotEarth.Meredith.Email
                 var errorMessage = await GetErrorMessage(response);
                 throw new Exception(errorMessage);
             }
-        }
-
-        public async Task SendEmail(string emailFrom, string emailFromName, List<Tuple<string, string>> tos,
-            List<string> subjects, string content, string htmlContent, List<Dictionary<string, string>> substitutions)
-        {
-            var client = new SendGridClient(_sendGridOptions.ApiKey);
-
-            var from = new EmailAddress(emailFrom, emailFromName);
-
-            var toEmails = tos.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
-
-            var msg = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, toEmails, subjects, content,
-                htmlContent, substitutions);
-
-            var response = await client.SendEmailAsync(msg);
-
-            if (response.StatusCode >= HttpStatusCode.Ambiguous)
-            {
-                var errorMessage = await GetErrorMessage(response);
-                throw new Exception(errorMessage);
-            }
-        }
-
-        private async Task<string> GetErrorMessage(Response response)
-        {
-            var body = await response.DeserializeResponseBodyAsync(response.Body);
-
-            return string.Join(", ", body.Select(item => item.Key + ":" + item.Value).ToArray());
         }
 
         private async Task<SendGridAccount> GetAccount(int companyId)
@@ -145,6 +119,13 @@ namespace WhyNotEarth.Meredith.Email
             }
 
             return sendGridAccount;
+        }
+
+        private async Task<string> GetErrorMessage(Response response)
+        {
+            var body = await response.DeserializeResponseBodyAsync(response.Body);
+
+            return string.Join(", ", body.Select(item => item.Key + ":" + item.Value).ToArray());
         }
     }
 }

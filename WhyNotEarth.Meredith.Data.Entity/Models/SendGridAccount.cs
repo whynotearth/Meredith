@@ -10,6 +10,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public int CompanyId { get; set; }
 
+        public string ApiKey { get; set; }
+
         public string TemplateId { get; set; }
 
         public string FromEmail { get; set; }
@@ -20,6 +22,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public void Configure(EntityTypeBuilder<SendGridAccount> builder)
         {
+            builder.Property(b => b.ApiKey).IsRequired();
         }
     }
 }

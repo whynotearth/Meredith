@@ -76,6 +76,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task SendEmailAsync(int memoId)
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == "thebluedelta");
 
             var templateData = new Dictionary<string, object>
             {
@@ -95,12 +96,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             // https://sendgrid.com/docs/for-developers/sending-email/v3-mail-send-faq/#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to
             foreach (var batch in memoRecipients.Batch(900))
             {
-                var recipients = batch.ToList();
+                var cachedList = batch.ToList();
+                var recipients = cachedList.Select(item => Tuple.Create(item.Email, string.Empty)).ToList();
 
-                await _sendGridService.SendEmail("communications@vw.com", recipients, MemoTemplateId, templateData,
-                    nameof(MemoRecipient.MemoId), memo.Id.ToString());
+                await _sendGridService.SendEmail(company.Id, recipients, templateData, nameof(MemoRecipient.MemoId), memo.Id.ToString());
 
-                foreach (var memoRecipient in recipients)
+                foreach (var memoRecipient in cachedList)
                 {
                     memoRecipient.Status = MemoStatus.Sent;
                 }

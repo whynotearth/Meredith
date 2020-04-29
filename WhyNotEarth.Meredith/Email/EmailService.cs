@@ -49,11 +49,8 @@ namespace WhyNotEarth.Meredith.Email
                 throw new Exception("Hotel is not connected to any company.");
             }
 
-            var sendGridAccount = await GetSendGridAccount(hotel.CompanyId.Value);
-
             var templateData = new
             {
-                bcc = sendGridAccount.Bcc,
                 resort = new
                 {
                     featuredImage = hotel.Page.FeaturedImage,
@@ -78,7 +75,9 @@ namespace WhyNotEarth.Meredith.Email
                 roomDescriptionHTML = GetRoomDescription(hotel)
             };
 
-            await _sendGridService.SendEmail(sendGridAccount.FromEmail, sendGridAccount.FromEmailName, hotelReservation.User.Email, hotelReservation.User.UserName, sendGridAccount.TemplateId, templateData);
+            var to = Tuple.Create(hotelReservation.User.Email, hotelReservation.User.UserName);
+
+            await _sendGridService.SendEmail(hotel.CompanyId.Value, to, templateData);
         }
 
         private string GetRoomDescription(Data.Entity.Models.Modules.Hotel.Hotel hotel)

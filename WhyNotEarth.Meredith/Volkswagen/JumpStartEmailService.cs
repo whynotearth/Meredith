@@ -41,6 +41,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private async Task SendEmailAsync(JumpStart jumpStart)
         {
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == "thebluedelta");
             var tos = new List<Tuple<string, string>>();
             var subjects = new List<string>();
             var substitutions = new List<Dictionary<string, string>>();
@@ -58,9 +59,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailTemplate();
 
-            // TODO: Fix these variables
-            await _sendGridService.SendEmail("info@example.com", "Example", tos, subjects, emailTemplate,
-                emailTemplate, substitutions);
+            await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions);
         }
 
         private List<Recipient> GetRecipients()
