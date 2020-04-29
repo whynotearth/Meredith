@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
                     if (memoRecipient is null)
                     {
-                        throw new Exception($"{nameof(MemoRecipient)} Id:{eventItem.MemoId} Email:{eventItem.Email} not found!");
+                        continue;
                     }
 
                     if (eventItem.Status == MemoStatus.Delivered)
