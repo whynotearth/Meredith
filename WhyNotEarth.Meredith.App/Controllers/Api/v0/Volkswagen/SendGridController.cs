@@ -37,6 +37,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                     var memoRecipient = await _dbContext.MemoRecipients.FirstOrDefaultAsync(item =>
                         item.MemoId == eventItem.MemoId.Value && item.Email == eventItem.Email);
 
+                    if (memoRecipient is null)
+                    {
+                        throw new Exception($"{nameof(MemoRecipient)} Id:{eventItem.MemoId} Email:{eventItem.Email} not found!");
+                    }
+
                     if (eventItem.Status == MemoStatus.Delivered)
                     {
                         memoRecipient.DeliverDateTime = eventItem.DateTime;
