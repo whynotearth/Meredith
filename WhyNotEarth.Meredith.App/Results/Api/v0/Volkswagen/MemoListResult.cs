@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
@@ -7,7 +9,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public int Id { get; }
 
-        public string DistributionGroup { get; }
+        public List<string> DistributionGroups { get; }
 
         public string Subject { get; }
 
@@ -26,7 +28,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public MemoListResult(MemoInfo memoInfo)
         {
             Id = memoInfo.Memo.Id;
-            DistributionGroup = memoInfo.Memo.DistributionGroup;
+            DistributionGroups = memoInfo.Memo.DistributionGroups.Split(',').ToList();
             Subject = memoInfo.Memo.Subject;
             CreationDateTime = memoInfo.Memo.CreationDateTime;
             To = memoInfo.Memo.To;

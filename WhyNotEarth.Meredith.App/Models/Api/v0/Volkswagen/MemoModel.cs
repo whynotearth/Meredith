@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
@@ -6,7 +7,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
     {
         [Required]
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public string DistributionGroup { get; set; }
+        public List<string> DistributionGroups { get; set; }
 
         [Required]
         public string Subject { get; set; }

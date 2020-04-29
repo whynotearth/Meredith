@@ -29,12 +29,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _memoRecipientService = memoRecipientService;
         }
 
-        public async Task CreateAsync(string distributionGroup, string subject, string date, string to,
+        public async Task CreateAsync(List<string> distributionGroups, string subject, string date, string to,
             string description)
         {
             var memo = new Memo
             {
-                DistributionGroup = distributionGroup,
+                DistributionGroups = string.Join(',', distributionGroups),
                 Subject = subject,
                 Date = date,
                 To = to,

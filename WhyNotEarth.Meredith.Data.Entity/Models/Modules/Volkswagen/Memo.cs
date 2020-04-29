@@ -16,13 +16,18 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         
         public string Description { get; set; }
 
-        public string DistributionGroup { get; set; }
+        public string DistributionGroups { get; set; }
 
         public DateTime CreationDateTime { get; set; }
         
         public void Configure(EntityTypeBuilder<Memo> builder)
         {
             builder.ToTable("Memos", "ModuleVolkswagen");
+            builder.Property(b => b.Subject).IsRequired();
+            builder.Property(b => b.Date).IsRequired();
+            builder.Property(b => b.To).IsRequired();
+            builder.Property(b => b.Description).IsRequired();
+            builder.Property(b => b.DistributionGroups).IsRequired();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task CreateMemoRecipients(int memoId)
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
-            var recipients = await GetRecipients(memo.DistributionGroup);
+            var recipients = await GetRecipients(memo.DistributionGroups);
 
             // In case something went wrong and this is a retry
             var oldMemoRecipients = await _dbContext.MemoRecipients.Where(item => item.MemoId == memoId).ToListAsync();
@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {
                     MemoId = memoId,
                     Email = item.Email,
-                    DistributionGroup = memo.DistributionGroup,
+                    DistributionGroup = item.DistributionGroup,
                     Status = MemoStatus.ReadyToSend
                 });
 
@@ -96,10 +96,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new MemoDetailStats(notOpenedList, openedList);
         }
 
-        private async Task<List<Recipient>> GetRecipients(string distributionGroup)
+        private async Task<List<Recipient>> GetRecipients(string distributionGroups)
         {
+            var distributionGroupList = distributionGroups.ToLower().Split(',');
+
             return await _dbContext.Recipients
-                .Where(item => item.DistributionGroup.ToLower() == distributionGroup.ToLower()).ToListAsync();
+                .Where(item => distributionGroupList.Contains(item.DistributionGroup.ToLower())).ToListAsync();
         }
     }
 }
