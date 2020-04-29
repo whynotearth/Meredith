@@ -76,7 +76,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task SendEmailAsync(int memoId)
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
-            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == "thebluedelta");
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
 
             var templateData = new Dictionary<string, object>
             {

@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private async Task SendEmailAsync(JumpStart jumpStart)
         {
-            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == "thebluedelta");
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
             var tos = new List<Tuple<string, string>>();
             var subjects = new List<string>();
             var substitutions = new List<Dictionary<string, string>>();
