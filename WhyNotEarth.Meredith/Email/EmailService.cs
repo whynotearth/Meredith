@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Email
@@ -132,25 +130,6 @@ namespace WhyNotEarth.Meredith.Email
                   {string.Join("\n", values.Select(item => Markdown.ToHtml(item)))}
                 </div>"
             );
-        }
-
-        private async Task<SendGridAccount> GetSendGridAccount(int companyId)
-        {
-            var sendGridAccount = await _meredithDbContext.SendGridAccounts
-                .Where(s => s.CompanyId == companyId)
-                .FirstOrDefaultAsync();
-
-            if (sendGridAccount is null)
-            {
-                if (await _meredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
-                {
-                    throw new RecordNotFoundException($"Company {companyId} does not have SendGrid configured");
-                }
-
-                throw new RecordNotFoundException($"Company {companyId} not found");
-            }
-
-            return sendGridAccount;
         }
     }
 }

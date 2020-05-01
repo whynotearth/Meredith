@@ -10,6 +10,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public int CompanyId { get; set; }
 
+        public Company Company { get; set; }
+
         public string ApiKey { get; set; }
 
         public string TemplateId { get; set; }

@@ -4,18 +4,20 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Email;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
@@ -24,15 +26,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class AuthenticationController : ControllerBase
     {
+        private readonly JwtOptions _jwtOptions;
+        private readonly SendGridService _sendGridService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly JwtOptions _jwtOptions;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptions<JwtOptions> jwtOptions)
+            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _sendGridService = sendGridService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -226,6 +230,46 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 logins.Select(item => item.LoginProvider).ToList()));
         }
 
+        [HttpPost("forgotpassword")]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                // Don't reveal that the user does not exist
+                return Ok();
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var uriBuilder = new UriBuilder(model.ReturnUrl);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["email"] = user.Email;
+            query["token"] = token;
+            uriBuilder.Query = query.ToString();
+            var callbackUrl = uriBuilder.ToString();
+
+            await _sendGridService.SendAuthEmail(model.CompanySlug, user.Email, "Reset Password",
+                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+            return Ok();
+        }
+
+        [HttpPost("forgotpasswordreset")]
+        public async Task<ActionResult> ForgotPasswordReset(ForgotPasswordResetModel model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return Ok();
+            }
+
+            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+            return Ok();
+        }
+
         private async Task<ActionResult<string>> SignIn(User user)
         {
             await _signInManager.SignInAsync(user, true);
@@ -269,7 +313,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var roles = await _userManager.GetRolesAsync(user);

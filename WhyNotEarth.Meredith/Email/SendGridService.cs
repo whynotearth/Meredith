@@ -52,6 +52,26 @@ namespace WhyNotEarth.Meredith.Email
                 null, null);
         }
 
+        public async Task SendAuthEmail(string companySlug, string email, string subject, string message)
+        {
+            var sendGridAccount = await GetAccount(companySlug);
+            
+            var sendGridMessage = new SendGridMessage
+            {
+                From = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName),
+                Subject = subject,
+                PlainTextContent = message,
+                HtmlContent = message
+            };
+            sendGridMessage.AddTo(new EmailAddress(email));
+
+            // Disable click tracking.
+            // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
+            sendGridMessage.SetClickTracking(false, false);
+
+            await Send(sendGridAccount, sendGridMessage);
+        }
+
         private async Task SendEmailCore(int companyId, List<Tuple<string, string?>> recipients,
             bool useTemplate, object? templateData,
             List<string>? subjects, string? plainTextContent, string? htmlContent, List<Dictionary<string, string>>? substitutions,
@@ -59,7 +79,6 @@ namespace WhyNotEarth.Meredith.Email
         {
             var sendGridAccount = await GetAccount(companyId);
 
-            var client = new SendGridClient(sendGridAccount.ApiKey);
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
 
             var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
@@ -93,8 +112,15 @@ namespace WhyNotEarth.Meredith.Email
                 }
             }
 
-            var response = await client.SendEmailAsync(sendGridMessage);
+            await Send(sendGridAccount, sendGridMessage);
+        }
 
+        private async Task Send(SendGridAccount sendGridAccount, SendGridMessage sendGridMessage)
+        {
+            var client = new SendGridClient(sendGridAccount.ApiKey);
+
+            var response = await client.SendEmailAsync(sendGridMessage);
+            
             if (response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);
@@ -116,6 +142,26 @@ namespace WhyNotEarth.Meredith.Email
                 }
 
                 throw new RecordNotFoundException($"Company {companyId} not found");
+            }
+
+            return sendGridAccount;
+        }
+
+        private async Task<SendGridAccount> GetAccount(string companySlug)
+        {
+            var sendGridAccount = await _dbContext.SendGridAccounts
+                .Include(item => item.Company)
+                .Where(s => s.Company.Slug.ToLower() == companySlug.ToLower())
+                .FirstOrDefaultAsync();
+
+            if (sendGridAccount is null)
+            {
+                if (await _dbContext.Companies.AnyAsync(c => c.Slug.ToLower() == companySlug.ToLower()))
+                {
+                    throw new RecordNotFoundException($"Company {companySlug} does not have SendGrid configured");
+                }
+
+                throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
             return sendGridAccount;
