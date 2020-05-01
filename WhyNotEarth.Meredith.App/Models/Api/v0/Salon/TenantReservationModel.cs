@@ -7,9 +7,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
     public class TenantReservationModel
     {
         [Required]
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public List<Order> Orders { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public List<Order> Orders { get; set; } = null!;
 
         public decimal SubTotal { get; set; }
 
@@ -18,14 +16,12 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
         public decimal Amount { get; set; }
 
         public decimal Tax { get; set; }
-        
+
         public DateTime DeliveryDateTime { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
         public int UserTimeZoneOffset { get; set; }
 
-        public string PaymentMethod { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public string PaymentMethod { get; set; } = null!;
 
         public string? Message { get; set; }
     }
@@ -33,9 +29,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
     public class Order
     {
         [Required]
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public string Name { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public string Name { get; set; } = null!;
 
         [Required]
         public int Count { get; set; }

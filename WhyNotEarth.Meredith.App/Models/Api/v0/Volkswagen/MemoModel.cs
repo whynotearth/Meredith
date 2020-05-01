@@ -6,20 +6,18 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
     public class MemoModel
     {
         [Required]
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-        public List<string> DistributionGroups { get; set; }
+        public List<string> DistributionGroups { get; set; } = null!;
 
         [Required]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = null!;
 
         [Required]
-        public string Date { get; set; }
+        public string Date { get; set; } = null!;
 
         [Required]
-        public string To { get; set; }
+        public string To { get; set; } = null!;
 
         [Required]
-        public string Description { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+        public string Description { get; set; } = null!;
     }
 }
