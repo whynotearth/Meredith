@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -26,9 +25,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [Returns200]
         [Returns400]
         [HttpPost("")]
-        public async Task<IActionResult> Create(DateTime dateTime, List<int> postIds)
+        public async Task<IActionResult> Create(JumpStartModel model)
         {
-            await _jumpStartService.CreateAsync(dateTime, postIds);
+            await _jumpStartService.CreateAsync(model.DateTime, model.DistributionGroups, model.PostIds);
 
             return Ok();
         }

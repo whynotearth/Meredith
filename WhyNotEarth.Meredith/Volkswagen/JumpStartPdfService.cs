@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using PuppeteerSharp;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -13,13 +15,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private readonly MeredithDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
         private readonly JumpStartEmailTemplateService _jumpStartEmailTemplateService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public JumpStartPdfService(MeredithDbContext dbContext, GoogleStorageService googleStorageService,
-            JumpStartEmailTemplateService jumpStartEmailTemplateService)
+            JumpStartEmailTemplateService jumpStartEmailTemplateService, IBackgroundJobClient backgroundJobClient)
         {
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
             _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task CreatePdfAsync(int jumpStartId)
@@ -41,11 +45,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext.Update(jumpStart);
 
             await _dbContext.SaveChangesAsync();
+
+            _backgroundJobClient.Schedule<JumpStartEmailService>(service =>
+                service.SendAsync(jumpStart.Id), DateTime.UtcNow - jumpStart.DateTime);
         }
 
         public Task<string> CreatePdfUrlAsync(JumpStart jumpStart)
         {
-            return _googleStorageService.CreateSignedUrlAsync(GetName(jumpStart));
+            return _googleStorageService.CreateSignedUrlAsync(GetName(jumpStart), 24);
         }
 
         private async Task<Stream> BuildPdfAsync()
@@ -56,7 +63,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Headless = true
             });
 
-            using var page = await browser.NewPageAsync();
+            await using var page = await browser.NewPageAsync();
 
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailTemplate();
 

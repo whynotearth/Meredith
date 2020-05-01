@@ -19,16 +19,16 @@ namespace WhyNotEarth.Meredith.GoogleCloud
 
         public async Task UploadPdfAsync(string objectName, Stream content)
         {
-            using var storageClient = StorageClient.Create(GetCredential());
+            using var storageClient = await StorageClient.CreateAsync(GetCredential());
 
             await storageClient.UploadObjectAsync(_options.StorageBucket, objectName, "application/pdf", content);
         }
 
-        public Task<string> CreateSignedUrlAsync(string objectName)
+        public Task<string> CreateSignedUrlAsync(string objectName, int hours)
         {
             var urlSigner = UrlSigner.FromServiceAccountCredential(GetServiceAccount());
 
-            return urlSigner.SignAsync(_options.StorageBucket, objectName, TimeSpan.FromHours(1), HttpMethod.Get);
+            return urlSigner.SignAsync(_options.StorageBucket, objectName, TimeSpan.FromHours(hours), HttpMethod.Get);
         }
 
         private GoogleCredential GetCredential()

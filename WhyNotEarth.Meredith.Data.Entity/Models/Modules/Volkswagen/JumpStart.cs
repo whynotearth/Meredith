@@ -11,6 +11,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public DateTime DateTime { get; set; }
 
+        public string DistributionGroups { get; set; }
+
         public JumpStartStatus Status { get; set; }
 
         public bool HasPdf { get; set; }
@@ -20,6 +22,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         public void Configure(EntityTypeBuilder<JumpStart> builder)
         {
             builder.ToTable("JumpStarts", "ModuleVolkswagen");
+            builder.Property(b => b.DistributionGroups).IsRequired();
         }
     }
 

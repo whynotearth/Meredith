@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public async Task CreateAsync(DateTime dateTime, List<int> postIds)
+        public async Task CreateAsync(DateTime dateTime, List<string> distributionGroups, List<int> postIds)
         {
             var posts = await _dbContext.Posts.Where(item => postIds.Contains(item.Id))
                 .ToListAsync();
@@ -36,6 +36,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var jumpStart = new JumpStart
             {
                 DateTime = dateTime,
+                DistributionGroups = string.Join(',', distributionGroups),
                 Status = JumpStartStatus.ReadyToSend,
                 Posts = posts
             };
@@ -49,9 +50,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext.UpdateRange(posts);
 
             await _dbContext.SaveChangesAsync();
-
-            _backgroundJobClient.Schedule<JumpStartEmailService>(service =>
-                service.SendAsync(jumpStart.Id), DateTime.UtcNow - dateTime);
 
             _backgroundJobClient.Enqueue<JumpStartPdfService>(service =>
                 service.CreatePdfAsync(jumpStart.Id));

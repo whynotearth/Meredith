@@ -42,18 +42,22 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private async Task SendEmailAsync(JumpStart jumpStart)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
-            var tos = new List<Tuple<string, string>>();
+            var tos = new List<Tuple<string, string?>>();
             var subjects = new List<string>();
             var substitutions = new List<Dictionary<string, string>>();
-            foreach (var recipient in GetRecipients())
+
+            var pdfUrl = await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart);
+            var recipients = await GetRecipients(jumpStart);
+
+            foreach (var recipient in recipients)
             {
-                tos.Add(new Tuple<string, string>(recipient.Email, recipient.Name));
+                tos.Add(new Tuple<string, string?>(recipient.Email, null));
 
                 subjects.Add("Subject");
 
                 substitutions.Add(new Dictionary<string, string>
                 {
-                    {"{{print_url}}", await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart)}
+                    {"{{print_url}}", pdfUrl}
                 });
             }
 
@@ -62,26 +66,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions);
         }
 
-        private List<Recipient> GetRecipients()
+        private Task<List<Recipient>> GetRecipients(JumpStart jumpStart)
         {
-            // TODO: Implement
-            return new List<Recipient>
-            {
-                new Recipient("ShrGholami@gmail.com", "CT")
-            };
-        }
+            var distributionGroups = jumpStart.DistributionGroups.Split(',');
 
-        private class Recipient
-        {
-            public string Email { get; }
-
-            public string Name { get; }
-
-            public Recipient(string email, string name)
-            {
-                Email = email;
-                Name = name;
-            }
+            return _dbContext.Recipients.Where(item => distributionGroups.Contains(item.DistributionGroup))
+                .ToListAsync();
         }
     }
 }
