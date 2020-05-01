@@ -80,7 +80,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         public class FullResolutionModel
         {
-            public string Id { get; set; }
+            public string Id { get; set; } = null!;
         }
     }
 }

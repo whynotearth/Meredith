@@ -15,19 +15,19 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public List<CategoryResult> Categories { get; } = new List<CategoryResult>();
 
-        public string Name { get; }
+        public string? Name { get; }
 
-        public string Title { get; }
+        public string? Title { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
 
-        public string H2 { get; }
+        public string? H2 { get; }
 
         public string BackgroundImage { get; }
 
         public List<ImageResult> Images { get; } = new List<ImageResult>();
 
-        public string CtaText { get; }
+        public string? CtaText { get; }
 
         public string CtaLink { get; }
 

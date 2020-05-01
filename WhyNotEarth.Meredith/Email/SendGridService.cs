@@ -21,12 +21,12 @@ namespace WhyNotEarth.Meredith.Email
             _dbContext = dbContext;
         }
 
-        public async Task SendEmail(int companyId, Tuple<string, string> recipient, object templateData)
+        public async Task SendEmail(int companyId, Tuple<string, string?> recipient, object templateData)
         {
-            await SendEmail(companyId, new List<Tuple<string, string>> {recipient}, templateData);
+            await SendEmail(companyId, new List<Tuple<string, string?>> {recipient}, templateData);
         }
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients, object templateData)
+        public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData)
         {
             await SendEmailCore(companyId, recipients,
                 true, templateData,
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.Email
                 null, null);
         }
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string>> recipients, object templateData,
+        public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData,
             string uniqueArgument, string uniqueArgumentValue)
         {
             await SendEmailCore(companyId, recipients, 

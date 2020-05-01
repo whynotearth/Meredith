@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
 
-            var recipients = new List<Tuple<string, string>>
+            var recipients = new List<Tuple<string, string?>>
             {
                 Tuple.Create(user.Email, user.Name),
                 Tuple.Create(tenant.User.Email, tenant.User.Name)
