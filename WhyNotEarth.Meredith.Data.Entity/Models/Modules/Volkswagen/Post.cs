@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -41,8 +40,15 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
     {
     }
 
-    public class PostCategory : Category
+    public class PostCategory : Category, IEntityTypeConfiguration<PostCategory>
     {
+        public string Color { get; set; }
+
         public int Priority { get; set; }
+
+        public void Configure(EntityTypeBuilder<PostCategory> builder)
+        {
+            builder.Property(b => b.Color).IsRequired();
+        }
     }
 }
