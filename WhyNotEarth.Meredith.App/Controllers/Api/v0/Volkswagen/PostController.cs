@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,6 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
-    // TODO: Fix images
     [Returns401]
     [Returns403]
     [ApiVersion("0")]
@@ -32,10 +32,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<ActionResult<PostResult>> Create(PostModel model)
         {
-            var post = await _postService.CreateAsync(model.CategoryId, model.Date, model.Headline,
+            await _postService.CreateAsync(model.CategoryId, model.Date, model.Headline,
                 model.Description, model.Price, model.EventDate, model.Image);
 
-            return Ok(new PostResult(post));
+            return Ok();
         }
 
         [Returns200]

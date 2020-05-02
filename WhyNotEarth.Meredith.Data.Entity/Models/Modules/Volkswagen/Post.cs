@@ -33,6 +33,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         public void Configure(EntityTypeBuilder<Post> builder)
         {
             builder.ToTable("Posts", "ModuleVolkswagen");
+            builder.Property(e => e.Date).HasColumnType("date");
+            builder.Property(e => e.EventDate).HasColumnType("date");
         }
     }
 

@@ -52,7 +52,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var posts = await _dbContext.Posts
                 .Include(item => item.Category)
-                .Where(item => item.Date <= date.AddDays(1).AddSeconds(-1) && item.JumpStartId == null)
+                .ThenInclude(item => item.Image)
+                .Where(item => item.Date <= date && item.JumpStartId == null)
                 .OrderByDescending(item => item.Category.Priority)
                 .ToListAsync();
 

@@ -7,6 +7,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public int Id { get; }
 
+        public PostCategoryResult Category { get; }
+
         public string Headline { get; }
 
         public string Description { get; }
@@ -22,6 +24,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public PostResult(Data.Entity.Models.Modules.Volkswagen.Post post)
         {
             Id = post.Id;
+            Category = new PostCategoryResult(post.Category);
             Headline = post.Headline;
             Description = post.Description;
             Date = post.Date;
