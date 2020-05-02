@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
@@ -16,10 +17,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class JumpStartController : ControllerBase
     {
         private readonly JumpStartService _jumpStartService;
+        private readonly JumpStartPreviewService _jumpStartPreviewService;
 
-        public JumpStartController(JumpStartService jumpStartService)
+        public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService)
         {
             _jumpStartService = jumpStartService;
+            _jumpStartPreviewService = jumpStartPreviewService;
         }
 
         [Returns200]
@@ -30,6 +33,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _jumpStartService.CreateAsync(model.DateTime, model.DistributionGroups, model.PostIds);
 
             return Ok();
+        }
+
+        
+        [Returns200]
+        [HttpGet("preview")]
+        public async Task<FileStreamResult> Preview([FromQuery]List<int> postIds)
+        {
+            var stream = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
+
+            return File(stream, "application/octet-stream");
         }
     }
 }

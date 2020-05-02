@@ -27,10 +27,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task SendAsync(int jumpStartId)
         {
-            var jumpStart = await _dbContext.JumpStarts.Include(item => item.Posts)
+            var jumpStart = await _dbContext.JumpStarts
+                .Include(item => item.Posts)
+                .ThenInclude(item => item.Image)
+                .Include(item => item.Posts)
+                .ThenInclude(item => item.Category)
+                .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.Status == JumpStartStatus.ReadyToSend);
 
-            var posts = jumpStart.Posts.OrderBy(item => item.Order);
+            jumpStart.Posts = jumpStart.Posts.OrderBy(item => item.Order).ToList();
 
             await SendEmailAsync(jumpStart);
 
@@ -61,7 +66,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 });
             }
 
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailTemplate();
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Posts);
 
             await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions);
         }
