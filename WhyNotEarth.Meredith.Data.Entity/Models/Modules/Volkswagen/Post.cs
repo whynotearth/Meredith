@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public int? Order { get; set; }
 
-        public List<PostImage> Images { get; set; }
+        public PostImage Image { get; set; }
 
         public PostCategory Category { get; set; }
 

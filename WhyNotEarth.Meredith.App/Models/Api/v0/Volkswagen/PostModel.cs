@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
@@ -24,6 +23,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 
         public DateTime? EventDate { get; set; }
 
-        public List<string>? Images { get; set; }
+        public string? Image { get; set; }
     }
 }

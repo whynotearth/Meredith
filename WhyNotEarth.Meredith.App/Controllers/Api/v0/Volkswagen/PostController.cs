@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<ActionResult<PostResult>> Create(PostModel model)
         {
             var post = await _postService.CreateAsync(model.CategoryId, model.Date, model.Headline,
-                model.Description, model.Price, model.EventDate, model.Images);
+                model.Description, model.Price, model.EventDate, model.Image);
 
             return Ok(new PostResult(post));
         }

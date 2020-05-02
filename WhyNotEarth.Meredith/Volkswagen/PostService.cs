@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task<Post> CreateAsync(int categoryId, DateTime date, string headline, string description,
-            decimal? price, DateTime? eventDate, List<string>? imageUrls)
+            decimal? price, DateTime? eventDate, string? imageUrl)
         {
             var category = await _dbContext.Categories.FirstOrDefaultAsync(item => item.Id == categoryId);
 
@@ -36,13 +36,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Description = description,
                 Price = price,
                 EventDate = eventDate,
-                Images = imageUrls?.Select((item, index) =>
-                    new PostImage
-                    {
-                        Url = item,
-                        Order = index
-                    }
-                ).ToList()
+                Image = new PostImage
+                {
+                    Url = imageUrl
+                }
             };
 
             await _dbContext.Posts.AddAsync(post);
@@ -87,7 +84,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task DeleteAsync(int postId)
         {
-            var post = await _dbContext.Posts.Include(item => item.Images)
+            var post = await _dbContext.Posts.Include(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == postId);
 
             if (post is null)
@@ -95,7 +92,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"Post {postId} not found");
             }
 
-            _dbContext.Images.RemoveRange(post.Images);
+            _dbContext.Images.Remove(post.Image);
             _dbContext.Posts.Remove(post);
 
             await _dbContext.SaveChangesAsync();
