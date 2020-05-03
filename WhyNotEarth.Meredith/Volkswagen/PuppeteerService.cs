@@ -43,7 +43,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await page.SetContentAsync(emailTemplate);
 
-            var screenShotData = await page.ScreenshotDataAsync();
+            var screenShotData = await page.ScreenshotDataAsync(new ScreenshotOptions
+            {
+                FullPage = true
+            });
 
             return screenShotData;
         }
