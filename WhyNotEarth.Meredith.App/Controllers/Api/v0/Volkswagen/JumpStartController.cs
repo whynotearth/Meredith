@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stream = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
 
-            return File(stream, "application/octet-stream");
+            return File(stream, "application/octet-stream", Guid.NewGuid() + ".png");
         }
     }
 }
