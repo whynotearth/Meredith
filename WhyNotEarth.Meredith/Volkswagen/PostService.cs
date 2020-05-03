@@ -18,12 +18,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext = dbContext;
         }
 
-        public async Task<Post> CreateAsync(int categoryId, DateTime date, string headline, string description,
+        public async Task CreateAsync(int categoryId, DateTime date, string headline, string description,
             decimal? price, DateTime? eventDate, string? imageUrl)
         {
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(item => item.Id == categoryId);
+            var category = await _dbContext.Categories.OfType<PostCategory>()
+                .FirstOrDefaultAsync(item => item.Id == categoryId);
 
-            if (!(category is PostCategory))
+            if (category is null)
             {
                 throw new RecordNotFoundException($"Category {categoryId} not found");
             }
@@ -36,16 +37,18 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Description = description,
                 Price = price,
                 EventDate = eventDate,
-                Image = new PostImage
+            };
+
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                post.Image = new PostImage
                 {
                     Url = imageUrl
-                }
-            };
+                };
+            }
 
             await _dbContext.Posts.AddAsync(post);
             await _dbContext.SaveChangesAsync();
-
-            return post;
         }
 
         public async Task<List<Post>> GetAvailablePosts(DateTime date)
