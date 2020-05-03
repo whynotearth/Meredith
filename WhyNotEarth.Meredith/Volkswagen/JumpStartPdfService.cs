@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -48,8 +46,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.SaveChangesAsync();
 
-            _backgroundJobClient.Schedule<JumpStartEmailService>(service =>
-                service.SendAsync(jumpStart.Id), DateTime.UtcNow - jumpStart.DateTime);
+            _backgroundJobClient.Enqueue<JumpStartEmailService>(service =>
+                service.SendAsync(jumpStart.Id));
         }
 
         public Task<string> CreatePdfUrlAsync(JumpStart jumpStart)

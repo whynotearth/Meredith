@@ -68,7 +68,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Posts);
 
-            await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions);
+            await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions,
+                jumpStart.DateTime);
         }
 
         private Task<List<Recipient>> GetRecipients(JumpStart jumpStart)

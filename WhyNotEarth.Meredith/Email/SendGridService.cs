@@ -31,7 +31,8 @@ namespace WhyNotEarth.Meredith.Email
             await SendEmailCore(companyId, recipients,
                 true, templateData,
                 null, null, null, null,
-                null, null);
+                null, null,
+                null);
         }
 
         public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData,
@@ -40,16 +41,18 @@ namespace WhyNotEarth.Meredith.Email
             await SendEmailCore(companyId, recipients, 
                 true, templateData,
                 null, null, null, null,
-                uniqueArgument, uniqueArgumentValue);
+                uniqueArgument, uniqueArgumentValue,
+                null);
         }
 
         public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, List<string> subjects,
-            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions)
+            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions, DateTime sendAt)
         {
             await SendEmailCore(companyId, recipients, 
                 false, null, 
                 subjects, plainTextContent, htmlContent, substitutions,
-                null, null);
+                null, null,
+                sendAt);
         }
 
         public async Task SendAuthEmail(string companySlug, string email, string subject, string message)
@@ -75,7 +78,8 @@ namespace WhyNotEarth.Meredith.Email
         private async Task SendEmailCore(int companyId, List<Tuple<string, string?>> recipients,
             bool useTemplate, object? templateData,
             List<string>? subjects, string? plainTextContent, string? htmlContent, List<Dictionary<string, string>>? substitutions,
-            string? uniqueArgument, string? uniqueArgumentValue)
+            string? uniqueArgument, string? uniqueArgumentValue,
+            DateTime? sendAt)
         {
             var sendGridAccount = await GetAccount(companyId);
 
@@ -111,7 +115,12 @@ namespace WhyNotEarth.Meredith.Email
                     };
                 }
             }
-
+            
+            if (sendAt != null)
+            {
+                sendGridMessage.SendAt = new DateTimeOffset(sendAt.Value).ToUnixTimeSeconds();
+            }
+            
             await Send(sendGridAccount, sendGridMessage);
         }
 

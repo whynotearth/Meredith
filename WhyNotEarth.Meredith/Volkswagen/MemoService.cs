@@ -14,7 +14,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class MemoService
     {
-        private const string MemoTemplateId = "d-5bf1030c93e04aed850ca9890fcb0b81";
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
         private readonly MemoRecipientService _memoRecipientService;
