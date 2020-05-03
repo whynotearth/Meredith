@@ -43,7 +43,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var previewData = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
 
-            return File(previewData, "application/octet-stream", Guid.NewGuid() + ".png");
+            return File(previewData, "image/png", Guid.NewGuid() + ".png");
         }
     }
 }
