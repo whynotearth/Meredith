@@ -11,5 +11,13 @@ namespace WhyNotEarth.Meredith
 
             return localDateTime.ToString(format);
         }
+
+        public static string InZone(this DateTime datetime, string timeZoneId, string format)
+        {
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(datetime, timeZone);
+
+            return localDateTime.ToString(format);
+        }
     }
 }

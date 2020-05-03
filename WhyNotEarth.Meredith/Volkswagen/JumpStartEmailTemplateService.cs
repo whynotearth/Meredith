@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                     "general", new Dictionary<string, object>
                     {
                         {"title", title},
-                        {"date", date.ToString("dddd | MMM. d, yyyy")}
+                        {"date", date.InZone("Eastern Standard Time", "dddd | MMM. d, yyyy")}
                     }
                 }
             };
