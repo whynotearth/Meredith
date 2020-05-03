@@ -39,11 +39,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         
         [Returns200]
         [HttpGet("preview")]
-        public async Task<FileStreamResult> Preview([FromQuery]List<int> postIds)
+        public async Task<FileContentResult> Preview([FromQuery]List<int> postIds)
         {
-            var stream = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
+            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
 
-            return File(stream, "application/octet-stream", Guid.NewGuid() + ".png");
+            return File(previewData, "application/octet-stream", Guid.NewGuid() + ".png");
         }
     }
 }

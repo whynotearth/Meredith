@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using PuppeteerSharp;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
@@ -16,9 +15,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
         }
 
-        public async Task<Stream> BuildPdfAsync(DateTime date, List<Post> posts)
+        public async Task<byte[]> BuildPdfAsync(DateTime date, List<Post> posts)
         {
-            var browser = await GetBrowser();
+            await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
 
@@ -26,15 +25,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await page.SetContentAsync(emailTemplate);
 
-            return await page.PdfStreamAsync(new PdfOptions
+            var pdfData = await page.PdfDataAsync(new PdfOptions
             {
                 PrintBackground = true
             });
+
+            return pdfData;
         }
 
-        public async Task<Stream> BuildScreenshotAsync(List<Post> posts)
+        public async Task<byte[]> BuildScreenshotAsync(List<Post> posts)
         {
-            var browser = await GetBrowser();
+            await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
 
@@ -42,7 +43,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await page.SetContentAsync(emailTemplate);
 
-            return await page.ScreenshotStreamAsync();
+            var screenShotData = await page.ScreenshotDataAsync();
+
+            return screenShotData;
         }
 
         private async Task<Browser> GetBrowser()

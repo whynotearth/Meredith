@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _puppeteerService = puppeteerService;
         }
 
-        public async Task<Stream> CreatePreviewAsync(List<int> postIds)
+        public async Task<byte[]> CreatePreviewAsync(List<int> postIds)
         {
             var posts = await _dbContext.Posts
                 .Where(item => postIds.Contains(item.Id))

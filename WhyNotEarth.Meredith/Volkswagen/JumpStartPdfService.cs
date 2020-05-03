@@ -39,9 +39,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return;
             }
 
-            var pdfStream = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, jumpStart.Posts);
+            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, jumpStart.Posts);
 
-            await UploadPdfAsync(jumpStart, pdfStream);
+            await UploadPdfAsync(jumpStart, pdfData);
 
             jumpStart.HasPdf = true;
             _dbContext.Update(jumpStart);
@@ -57,9 +57,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return _googleStorageService.CreateSignedUrlAsync(GetName(jumpStart), 24);
         }
 
-        private async Task UploadPdfAsync(JumpStart jumpStart, Stream pdfStream)
+        private async Task UploadPdfAsync(JumpStart jumpStart, byte[] pdfData)
         {
-            await _googleStorageService.UploadPdfAsync(GetName(jumpStart), pdfStream);
+            await _googleStorageService.UploadPdfAsync(GetName(jumpStart), pdfData);
         }
 
         private string GetName(JumpStart jumpStart)
