@@ -9,9 +9,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public MemoListResult MemoList { get; }
 
-        public List<MemoRecipientResult> NotOpened { get; } = new List<MemoRecipientResult>();
+        public List<EmailRecipientResult> NotOpened { get; } = new List<EmailRecipientResult>();
 
-        public List<MemoRecipientResult> Opened { get; } = new List<MemoRecipientResult>();
+        public List<EmailRecipientResult> Opened { get; } = new List<EmailRecipientResult>();
 
         public MemoDetailResult(MemoInfo memoInfo)
         {
@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         }
     }
 
-    public class MemoRecipientResult
+    public class EmailRecipientResult
     {
         public string Email { get; }
 
@@ -27,11 +27,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime? OpenDateTime { get; }
 
-        public MemoRecipientResult(MemoRecipient memoRecipient)
+        public EmailRecipientResult(EmailRecipient emailRecipient)
         {
-            Email = memoRecipient.Email;
-            DeliverDateTime = memoRecipient.DeliverDateTime;
-            OpenDateTime = memoRecipient.OpenDateTime;
+            Email = emailRecipient.Email;
+            DeliverDateTime = emailRecipient.DeliverDateTime;
+            OpenDateTime = emailRecipient.OpenDateTime;
         }
     }
 }

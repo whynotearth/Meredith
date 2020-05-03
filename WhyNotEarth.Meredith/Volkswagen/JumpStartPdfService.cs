@@ -46,8 +46,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.SaveChangesAsync();
 
-            _backgroundJobClient.Enqueue<JumpStartEmailService>(service =>
-                service.SendAsync(jumpStart.Id));
+            _backgroundJobClient.Enqueue<EmailRecipientService>(service =>
+                service.CreateForJumpStart(jumpStart.Id));
         }
 
         public Task<string> CreatePdfUrlAsync(JumpStart jumpStart)

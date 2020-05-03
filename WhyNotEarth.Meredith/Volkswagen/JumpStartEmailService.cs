@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -47,36 +46,37 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private async Task SendEmailAsync(JumpStart jumpStart)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
-            var tos = new List<Tuple<string, string?>>();
-            var subjects = new List<string>();
-            var substitutions = new List<Dictionary<string, string>>();
 
             var pdfUrl = await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart);
-            var recipients = await GetRecipients(jumpStart);
-
-            foreach (var recipient in recipients)
-            {
-                tos.Add(new Tuple<string, string?>(recipient.Email, null));
-
-                subjects.Add("Subject");
-
-                substitutions.Add(new Dictionary<string, string>
-                {
-                    {"{{print_url}}", pdfUrl}
-                });
-            }
-
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Posts);
 
-            await _sendGridService.SendEmail(company.Id, tos, subjects, emailTemplate, emailTemplate, substitutions,
-                jumpStart.DateTime);
+            var recipients = await GetRecipients(jumpStart.Id);
+
+            foreach (var batch in recipients.Batch(SendGridService.BatchSize))
+            {
+                var subjects = Enumerable.Repeat("Subject", batch.Count).ToList();
+
+                var substitutions = Enumerable.Repeat(new Dictionary<string, string>
+                {
+                    {"{{print_url}}", pdfUrl}
+                }, batch.Count).ToList();
+
+                await _sendGridService.SendEmail(company.Id, batch, subjects, emailTemplate, emailTemplate, substitutions,
+                    jumpStart.DateTime);
+
+                foreach (var recipient in batch)
+                {
+                    recipient.Status = EmailStatus.Sent;
+                }
+
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
-        private Task<List<Recipient>> GetRecipients(JumpStart jumpStart)
+        private Task<List<EmailRecipient>> GetRecipients(int jumpStartId)
         {
-            var distributionGroups = jumpStart.DistributionGroups.Split(',');
-
-            return _dbContext.Recipients.Where(item => distributionGroups.Contains(item.DistributionGroup))
+            return _dbContext.EmailRecipients
+                .Where(item => item.JumpStartId == jumpStartId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
         }
     }

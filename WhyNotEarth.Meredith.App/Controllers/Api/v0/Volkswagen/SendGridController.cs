@@ -29,32 +29,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             {
                 foreach (var eventItem in eventList)
                 {
-                    if (eventItem.MemoId is null)
-                    {
-                        continue;
-                    }
-
-                    var memoRecipient = await _dbContext.MemoRecipients.FirstOrDefaultAsync(item =>
-                        item.MemoId == eventItem.MemoId.Value && item.Email == eventItem.Email);
-
-                    if (memoRecipient is null)
-                    {
-                        continue;
-                    }
-
-                    if (eventItem.Status == MemoStatus.Delivered)
-                    {
-                        memoRecipient.DeliverDateTime = eventItem.DateTime;
-                    }
-                    else if (eventItem.Status == MemoStatus.Opened)
-                    {
-                        memoRecipient.OpenDateTime = eventItem.DateTime;
-                    }
-
-                    if (memoRecipient.Status < eventItem.Status)
-                    {
-                        memoRecipient.Status = eventItem.Status;
-                    }
+                    await eventItem.Apply(_dbContext);
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -67,8 +42,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
 
-            [JsonProperty(nameof(MemoRecipient.MemoId))]
+            [JsonProperty(nameof(EmailRecipient.MemoId))]
             public int? MemoId { get; set; }
+
+            [JsonProperty(nameof(EmailRecipient.JumpStartId))]
+            public int? JumpStartId { get; set; }
 
             public int Timestamp { get; set; }
 
@@ -76,21 +54,56 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             public string Event { get; set; } = null!;
 
-            public MemoStatus Status
-            {
-                get
+            public EmailStatus Status =>
+                Event switch
                 {
-                    return Event switch
-                    {
-                        "delivered" => MemoStatus.Delivered,
-                        "open" => MemoStatus.Opened,
-                        "click" => MemoStatus.Clicked,
-                        _ => MemoStatus.None
-                    };
-                }
-            }
+                    "delivered" => EmailStatus.Delivered,
+                    "open" => EmailStatus.Opened,
+                    "click" => EmailStatus.Clicked,
+                    _ => EmailStatus.None
+                };
 
             public DateTime DateTime => DateTimeOffset.FromUnixTimeSeconds(Timestamp).UtcDateTime;
+
+            public async Task Apply(MeredithDbContext dbContext)
+            {
+                EmailRecipient? emailRecipient = null;
+
+                if (MemoId.HasValue)
+                {
+                    emailRecipient = await dbContext.EmailRecipients.FirstOrDefaultAsync(item =>
+                        item.MemoId == MemoId && item.Email == Email);
+                }
+                else if (JumpStartId.HasValue)
+                {
+                    emailRecipient = await dbContext.EmailRecipients.FirstOrDefaultAsync(item =>
+                        item.JumpStartId == JumpStartId && item.Email == Email);
+                }
+
+                if (emailRecipient is null)
+                {
+                    return;
+                }
+
+                Update(emailRecipient);
+            }
+
+            private void Update(EmailRecipient emailRecipient)
+            {
+                if (Status == EmailStatus.Delivered)
+                {
+                    emailRecipient.DeliverDateTime = DateTime;
+                }
+                else if (Status == EmailStatus.Opened)
+                {
+                    emailRecipient.OpenDateTime = DateTime;
+                }
+
+                if (emailRecipient.Status < Status)
+                {
+                    emailRecipient.Status = Status;
+                }
+            }
         }
     }
 }

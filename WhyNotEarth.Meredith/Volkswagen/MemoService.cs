@@ -16,16 +16,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
-        private readonly MemoRecipientService _memoRecipientService;
+        private readonly EmailRecipientService _emailRecipientService;
         private readonly SendGridService _sendGridService;
 
         public MemoService(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
-            SendGridService sendGridService, MemoRecipientService memoRecipientService)
+            SendGridService sendGridService, EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;
             _sendGridService = sendGridService;
-            _memoRecipientService = memoRecipientService;
+            _emailRecipientService = emailRecipientService;
         }
 
         public async Task CreateAsync(List<string> distributionGroups, string subject, string date, string to,
@@ -44,8 +44,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext.Memos.Add(memo);
             await _dbContext.SaveChangesAsync();
 
-            _backgroundJobClient.Enqueue<MemoRecipientService>(service =>
-                service.CreateMemoRecipients(memo.Id));
+            _backgroundJobClient.Enqueue<EmailRecipientService>(service =>
+                service.CreateForMemo(memo.Id));
         }
 
         public async Task<List<MemoInfo>> GetListAsync()
@@ -55,7 +55,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var result = new List<MemoInfo>();
             foreach (var memo in memos)
             {
-                var memoStat = await _memoRecipientService.GetMemoListStats(memo.Id);
+                var memoStat = await _emailRecipientService.GetMemoListStats(memo.Id);
 
                 result.Add(new MemoInfo(memo, memoStat));
             }
@@ -67,12 +67,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
 
-            var memoStat = await _memoRecipientService.GetMemoListStats(memo.Id);
+            var memoStat = await _emailRecipientService.GetMemoListStats(memo.Id);
 
-            return new MemoInfo(memo, memoStat);;
+            return new MemoInfo(memo, memoStat);
+            ;
         }
 
-        public async Task SendEmailAsync(int memoId)
+        public async Task SendAsync(int memoId)
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
@@ -87,22 +88,18 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {"description", Regex.Replace(HttpUtility.HtmlEncode(memo.Description), @"\r\n?|\n", "<br>")}
             };
 
-            var memoRecipients = await _dbContext.MemoRecipients
-                .Where(item => item.MemoId == memoId && item.Status == MemoStatus.ReadyToSend)
+            var recipients = await _dbContext.EmailRecipients
+                .Where(item => item.MemoId == memoId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
 
-            // SendGrid accepts a maximum recipients of 1000 per API call
-            // https://sendgrid.com/docs/for-developers/sending-email/v3-mail-send-faq/#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to
-            foreach (var batch in memoRecipients.Batch(900))
+            foreach (var batch in recipients.Batch(SendGridService.BatchSize))
             {
-                var cachedList = batch.ToList();
-                var recipients = cachedList.Select(item => Tuple.Create(item.Email, string.Empty)).ToList();
+                await _sendGridService.SendEmail(company.Id, recipients, templateData, nameof(EmailRecipient.MemoId),
+                    memo.Id.ToString());
 
-                await _sendGridService.SendEmail(company.Id, recipients, templateData, nameof(MemoRecipient.MemoId), memo.Id.ToString());
-
-                foreach (var memoRecipient in cachedList)
+                foreach (var recipient in batch)
                 {
-                    memoRecipient.Status = MemoStatus.Sent;
+                    recipient.Status = EmailStatus.Sent;
                 }
 
                 await _dbContext.SaveChangesAsync();

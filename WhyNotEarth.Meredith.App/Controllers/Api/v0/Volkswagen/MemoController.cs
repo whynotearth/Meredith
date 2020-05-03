@@ -19,13 +19,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class MemoController : ControllerBase
     {
-        private readonly MemoRecipientService _memoRecipientService;
+        private readonly EmailRecipientService _emailRecipientService;
         private readonly MemoService _memoService;
 
-        public MemoController(MemoService memoService, MemoRecipientService memoRecipientService)
+        public MemoController(MemoService memoService, EmailRecipientService emailRecipientService)
         {
             _memoService = memoService;
-            _memoRecipientService = memoRecipientService;
+            _emailRecipientService = emailRecipientService;
         }
 
         [Returns201]
@@ -54,11 +54,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             var memoInfo = await _memoService.Get(memoId);
             var result = new MemoDetailResult(memoInfo);
 
-            var memoStats = await _memoRecipientService.GetMemoDetailStats(memoId);
+            var memoStats = await _emailRecipientService.GetMemoDetailStats(memoId);
 
-            result.NotOpened.AddRange(memoStats.NotOpenedList.Select(item => new MemoRecipientResult(item)));
+            result.NotOpened.AddRange(memoStats.NotOpenedList.Select(item => new EmailRecipientResult(item)));
 
-            result.Opened.AddRange(memoStats.OpenedList.Select(item => new MemoRecipientResult(item)));
+            result.Opened.AddRange(memoStats.OpenedList.Select(item => new EmailRecipientResult(item)));
 
             return Ok(result);
         }

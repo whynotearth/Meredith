@@ -3,13 +3,13 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
-    public class MemoDetailStats
+    public class EmailDetailStats
     {
-        public List<MemoRecipient> NotOpenedList { get; }
+        public List<EmailRecipient> NotOpenedList { get; }
 
-        public List<MemoRecipient> OpenedList { get; }
+        public List<EmailRecipient> OpenedList { get; }
 
-        public MemoDetailStats(List<MemoRecipient> notOpenedList, List<MemoRecipient> openedList)
+        public EmailDetailStats(List<EmailRecipient> notOpenedList, List<EmailRecipient> openedList)
         {
             NotOpenedList = notOpenedList;
             OpenedList = openedList;

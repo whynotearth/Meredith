@@ -16,12 +16,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class RecipientService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly MemoRecipientService _memoRecipientService;
+        private readonly EmailRecipientService _emailRecipientService;
 
-        public RecipientService(MeredithDbContext dbContext, MemoRecipientService memoRecipientService)
+        public RecipientService(MeredithDbContext dbContext, EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
-            _memoRecipientService = memoRecipientService;
+            _emailRecipientService = emailRecipientService;
         }
 
         public async Task Import(Stream stream)
@@ -55,7 +55,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var group in distributionGroups)
             {
-                var stats = await _memoRecipientService.GetDistributionGroupStats(group.Name, group.RecipientCount);
+                var stats = await _emailRecipientService.GetDistributionGroupStats(group.Name, group.RecipientCount);
                 
                 result.Add(stats);
             }

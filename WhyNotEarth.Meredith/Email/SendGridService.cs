@@ -8,6 +8,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Email
@@ -15,6 +16,10 @@ namespace WhyNotEarth.Meredith.Email
     public class SendGridService
     {
         private readonly MeredithDbContext _dbContext;
+
+        // SendGrid accepts a maximum recipients of 1000 per API call
+        // https://sendgrid.com/docs/for-developers/sending-email/v3-mail-send-faq/#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to
+        public static int BatchSize { get; } = 900;
 
         public SendGridService(MeredithDbContext dbContext)
         {
@@ -28,28 +33,35 @@ namespace WhyNotEarth.Meredith.Email
 
         public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData)
         {
-            await SendEmailCore(companyId, recipients,
+            var emailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
+
+            await SendEmailCore(companyId, emailAddresses,
                 true, templateData,
                 null, null, null, null,
                 null, null,
                 null);
         }
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData,
+        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, object templateData,
             string uniqueArgument, string uniqueArgumentValue)
         {
-            await SendEmailCore(companyId, recipients, 
+            var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
+
+            await SendEmailCore(companyId, emailAddresses,
                 true, templateData,
                 null, null, null, null,
                 uniqueArgument, uniqueArgumentValue,
                 null);
         }
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, List<string> subjects,
-            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions, DateTime sendAt)
+        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, List<string> subjects,
+            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions,
+            DateTime sendAt)
         {
-            await SendEmailCore(companyId, recipients, 
-                false, null, 
+            var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
+
+            await SendEmailCore(companyId, emailAddresses,
+                false, null,
                 subjects, plainTextContent, htmlContent, substitutions,
                 null, null,
                 sendAt);
@@ -58,7 +70,7 @@ namespace WhyNotEarth.Meredith.Email
         public async Task SendAuthEmail(string companySlug, string email, string subject, string message)
         {
             var sendGridAccount = await GetAccount(companySlug);
-            
+
             var sendGridMessage = new SendGridMessage
             {
                 From = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName),
@@ -75,9 +87,10 @@ namespace WhyNotEarth.Meredith.Email
             await Send(sendGridAccount, sendGridMessage);
         }
 
-        private async Task SendEmailCore(int companyId, List<Tuple<string, string?>> recipients,
+        private async Task SendEmailCore(int companyId, List<EmailAddress> recipients,
             bool useTemplate, object? templateData,
-            List<string>? subjects, string? plainTextContent, string? htmlContent, List<Dictionary<string, string>>? substitutions,
+            List<string>? subjects, string? plainTextContent, string? htmlContent,
+            List<Dictionary<string, string>>? substitutions,
             string? uniqueArgument, string? uniqueArgumentValue,
             DateTime? sendAt)
         {
@@ -85,24 +98,23 @@ namespace WhyNotEarth.Meredith.Email
 
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
 
-            var recipientEmailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
-
             if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
             {
-                recipientEmailAddresses.Add(new EmailAddress(sendGridAccount.Bcc));
+                recipients.Add(new EmailAddress(sendGridAccount.Bcc));
             }
 
             SendGridMessage sendGridMessage;
 
             if (useTemplate)
             {
-                sendGridMessage = MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from,
-                    recipientEmailAddresses, sendGridAccount.TemplateId, templateData);
+                sendGridMessage =
+                    MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipients,
+                        sendGridAccount.TemplateId, templateData);
             }
             else
             {
-                sendGridMessage = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, recipientEmailAddresses,
-                    subjects, plainTextContent, htmlContent, substitutions);
+                sendGridMessage = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, recipients, subjects,
+                    plainTextContent, htmlContent, substitutions);
             }
 
             if (uniqueArgument != null && uniqueArgumentValue != null)
@@ -115,12 +127,12 @@ namespace WhyNotEarth.Meredith.Email
                     };
                 }
             }
-            
+
             if (sendAt != null)
             {
                 sendGridMessage.SendAt = new DateTimeOffset(sendAt.Value).ToUnixTimeSeconds();
             }
-            
+
             await Send(sendGridAccount, sendGridMessage);
         }
 
@@ -129,7 +141,7 @@ namespace WhyNotEarth.Meredith.Email
             var client = new SendGridClient(sendGridAccount.ApiKey);
 
             var response = await client.SendEmailAsync(sendGridMessage);
-            
+
             if (response.StatusCode >= HttpStatusCode.Ambiguous)
             {
                 var errorMessage = await GetErrorMessage(response);

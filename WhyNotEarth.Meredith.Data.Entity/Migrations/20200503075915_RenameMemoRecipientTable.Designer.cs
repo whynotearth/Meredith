@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200503075915_RenameMemoRecipientTable")]
+    partial class RenameMemoRecipientTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -783,43 +785,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.ToTable("Variations","ModuleShop");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.EmailRecipient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<DateTime?>("DeliverDateTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("DistributionGroup")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("JumpStartId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MemoId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("OpenDateTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JumpStartId");
-
-                    b.HasIndex("MemoId");
-
-                    b.ToTable("EmailRecipients","ModuleVolkswagen");
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", b =>
                 {
                     b.Property<int>("Id")
@@ -878,6 +843,38 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Memos","ModuleVolkswagen");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.MemoRecipient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<DateTime?>("DeliverDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DistributionGroup")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MemoId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("OpenDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemoId");
+
+                    b.ToTable("EmailRecipients","ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.Post", b =>
@@ -1710,15 +1707,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.EmailRecipient", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.MemoRecipient", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", "JumpStart")
-                        .WithMany()
-                        .HasForeignKey("JumpStartId");
-
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.Memo", "Memo")
                         .WithMany()
-                        .HasForeignKey("MemoId");
+                        .HasForeignKey("MemoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.Post", b =>
