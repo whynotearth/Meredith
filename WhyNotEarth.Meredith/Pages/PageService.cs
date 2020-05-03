@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,7 +62,7 @@ namespace WhyNotEarth.Meredith.Pages
                     throw new InvalidActionException("Category does not exist");
                 }
             }
-            
+
             var page = new Page
             {
                 CompanyId = companyId,
@@ -79,14 +78,15 @@ namespace WhyNotEarth.Meredith.Pages
                 //Description = description,
                 Custom = custom
             };
-            
+
             _dbContext.Pages.Add(page);
             await _dbContext.SaveChangesAsync();
 
             return page;
         }
 
-        public async Task<Page> UpdateAsync(int id, int companyId, int? categoryId, string slug, string name, string title,
+        public async Task<Page> UpdateAsync(int id, int companyId, int? categoryId, string slug, string name,
+            string title,
             string header, string featuredImage, string backgroundImage, string callToAction, string callToActionLink,
             string description, string custom)
         {
@@ -124,7 +124,7 @@ namespace WhyNotEarth.Meredith.Pages
             page.CallToActionLink = callToActionLink;
             //page.Description = description;
             page.Custom = custom;
-            
+
             _dbContext.Pages.Update(page);
             await _dbContext.SaveChangesAsync();
 
@@ -166,8 +166,7 @@ namespace WhyNotEarth.Meredith.Pages
         public async Task<Page> GetLandingPageAsync(string companySlug, string pageSlug)
         {
             var page = await _dbContext.Pages.FirstOrDefaultAsync(p =>
-                string.Equals(p.Company.Slug, companySlug, StringComparison.CurrentCultureIgnoreCase)
-                && string.Equals(p.Slug, pageSlug, StringComparison.CurrentCultureIgnoreCase));
+                p.Company.Slug.ToLower() == companySlug.ToLower() && p.Slug.ToLower() == pageSlug.ToLower());
 
             return page;
         }
