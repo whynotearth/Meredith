@@ -9,11 +9,11 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
         public int CategoryId { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(80)]
         public string Headline { get; set; } = null!;
 
         [Required]
-        [MaxLength(500)]
+        [MaxLength(750)]
         public string Description { get; set; } = null!;
 
         [Required]
