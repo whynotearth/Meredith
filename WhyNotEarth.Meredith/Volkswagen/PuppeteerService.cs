@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await using var page = await browser.NewPageAsync();
 
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(date, posts);
+            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(date, posts);
 
             await page.SetContentAsync(emailTemplate);
 
