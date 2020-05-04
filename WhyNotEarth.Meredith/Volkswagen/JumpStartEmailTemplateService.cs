@@ -113,7 +113,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             data.Add("general", new Dictionary<string, object>
             {
                 {"title", title},
-                {"date", date.InZone("Eastern Standard Time", "dddd | MMM. d, yyyy")}
+                {"date", date.InZone(VolkswagenCompany.TimeZoneId, "dddd | MMM. d, yyyy")}
             });
         }
 

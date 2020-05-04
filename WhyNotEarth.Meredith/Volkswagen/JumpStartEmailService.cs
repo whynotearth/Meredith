@@ -51,10 +51,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Posts);
 
             var recipients = await GetRecipients(jumpStart.Id);
+            var subject =
+                $"Project Blue Delta - {jumpStart.DateTime.InZone(VolkswagenCompany.TimeZoneId, "MMMM d, yyyy")}";
 
             foreach (var batch in recipients.Batch(SendGridService.BatchSize))
             {
-                var subjects = Enumerable.Repeat("Subject", batch.Count).ToList();
+                var subjects = Enumerable.Repeat(subject, batch.Count).ToList();
 
                 var substitutions = Enumerable.Repeat(new Dictionary<string, string>
                 {
