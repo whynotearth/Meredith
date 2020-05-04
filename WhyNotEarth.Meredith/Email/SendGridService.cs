@@ -101,6 +101,8 @@ namespace WhyNotEarth.Meredith.Email
             if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
             {
                 recipients.Add(new EmailAddress(sendGridAccount.Bcc));
+                subjects?.Add(subjects.Last());
+                substitutions?.Add(substitutions.Last());
             }
 
             SendGridMessage sendGridMessage;
