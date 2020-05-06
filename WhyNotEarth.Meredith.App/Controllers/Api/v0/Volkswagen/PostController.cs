@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [Returns200]
         [Returns404]
         [HttpPost("")]
-        public async Task<ActionResult<PostResult>> Create(PostModel model)
+        public async Task<IActionResult> Create(PostModel model)
         {
             await _postService.CreateAsync(model.CategoryId, model.Date!.Value, model.Headline, model.Description,
                 model.Price, model.EventDate, model.Image);
@@ -39,11 +39,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<PostResult>>> GetAvailable(DateTime date)
+        public async Task<ActionResult<List<JumpStartPreviewResult>>> GetAvailable(DateTime? date)
         {
             var availablePosts = await _postService.GetAvailablePosts(date);
 
-            var result = availablePosts.Select(item => new PostResult(item)).ToList();
+            var result = availablePosts.Select(item => new JumpStartPreviewResult(item.Key, item.Value)).ToList();
 
             return Ok(result);
         }

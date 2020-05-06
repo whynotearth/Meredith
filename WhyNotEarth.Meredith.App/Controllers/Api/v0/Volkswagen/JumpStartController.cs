@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<IActionResult> Create(JumpStartModel model)
         {
-            await _jumpStartService.CreateAsync(model.DateTime.Value, model.DistributionGroups, model.PostIds);
+            await _jumpStartService.CreateAsync(model.DateTime!.Value, model.DistributionGroups, model.PostIds);
 
             return Ok();
         }

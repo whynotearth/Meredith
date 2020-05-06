@@ -51,18 +51,49 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Post>> GetAvailablePosts(DateTime date)
+        public async Task<Dictionary<DateTime, List<Post>>> GetAvailablePosts(DateTime? date)
         {
-            var posts = await _dbContext.Posts
-                .Include(item => item.Category)
+            var query = _dbContext.Posts.Where(item => item.JumpStartId == null);
+
+            if (date != null)
+            {
+                query = query.Where(item => item.Date <= date);
+            }
+
+            var posts = await query.Include(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Include(item => item.Image)
-                .Where(item => item.Date <= date && item.JumpStartId == null)
                 .OrderBy(item => item.Date)
                 .ThenByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
-            return posts;
+            return GetPostsGrouped(posts);
+        }
+
+        private Dictionary<DateTime, List<Post>> GetPostsGrouped(List<Post> posts)
+        {
+            var postGroups = posts.GroupBy(item => item.Date);
+            
+            var today = DateTime.UtcNow.InZone(VolkswagenCompany.TimeZoneId);
+
+            var result = new Dictionary<DateTime, List<Post>>();
+            
+            foreach (var dailyPosts in postGroups)
+            {
+                // Any posts before today should be in today's JumpStart
+                var currentDate = dailyPosts.Key <= today ? today : dailyPosts.Key;
+
+                if (result.ContainsKey(currentDate))
+                {
+                    result[currentDate].AddRange(dailyPosts);
+                }
+                else
+                {
+                    result.Add(currentDate, dailyPosts.ToList());
+                }
+            }
+
+            return result;
         }
 
         public async Task<Post> EditAsync(int postId, int categoryId, DateTime date, string headline,
