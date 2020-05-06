@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<ActionResult<PostResult>> Create(PostModel model)
         {
-            await _postService.CreateAsync(model.CategoryId, model.Date.Value, model.Headline, model.Description,
+            await _postService.CreateAsync(model.CategoryId, model.Date!.Value, model.Headline, model.Description,
                 model.Price, model.EventDate, model.Image);
 
             return Ok();
@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("{postId}")]
         public async Task<NoContentResult> Edit(int postId, PostModel model)
         {
-            await _postService.EditAsync(postId, model.CategoryId, model.Date.Value, model.Headline,
+            await _postService.EditAsync(postId, model.CategoryId, model.Date!.Value, model.Headline,
                 model.Description, model.Price, model.EventDate);
 
             return NoContent();

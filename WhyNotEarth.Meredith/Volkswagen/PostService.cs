@@ -58,7 +58,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ThenInclude(item => item.Image)
                 .Include(item => item.Image)
                 .Where(item => item.Date <= date && item.JumpStartId == null)
-                .OrderByDescending(item => item.Category.Priority)
+                .OrderBy(item => item.Date)
+                .ThenByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
             return posts;
