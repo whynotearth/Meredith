@@ -17,23 +17,23 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Route("api/v0/volkswagen/categories")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
-    public class PostCategoryController : ControllerBase
+    public class ArticleCategoryController : ControllerBase
     {
         private readonly MeredithDbContext _dbContext;
 
-        public PostCategoryController(MeredithDbContext dbContext)
+        public ArticleCategoryController(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<PostCategoryResult>>> List()
+        public async Task<ActionResult<List<ArticleCategoryResult>>> List()
         {
-            var categories = await _dbContext.Categories.Include(item => item.Image).OfType<PostCategory>()
+            var categories = await _dbContext.Categories.Include(item => item.Image).OfType<ArticleCategory>()
                 .ToListAsync();
 
-            return Ok(categories.Select(item => new PostCategoryResult(item)));
+            return Ok(categories.Select(item => new ArticleCategoryResult(item)));
         }
     }
 }

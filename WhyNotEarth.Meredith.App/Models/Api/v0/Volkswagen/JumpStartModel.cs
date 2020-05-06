@@ -13,6 +13,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
         public List<string> DistributionGroups { get; set; } = null!;
 
         [Required]
-        public List<int> PostIds { get; set; } = null!;
+        public List<int> ArticleIds { get; set; } = null!;
     }
 }

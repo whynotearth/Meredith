@@ -14,24 +14,24 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Returns401]
     [Returns403]
     [ApiVersion("0")]
-    [Route("api/v0/volkswagen/posts")]
+    [Route("api/v0/volkswagen/articles")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
-    public class PostController : ControllerBase
+    public class ArticleController : ControllerBase
     {
-        private readonly PostService _postService;
+        private readonly ArticleService _articleService;
 
-        public PostController(PostService postService)
+        public ArticleController(ArticleService articleService)
         {
-            _postService = postService;
+            _articleService = articleService;
         }
 
         [Returns200]
         [Returns404]
         [HttpPost("")]
-        public async Task<IActionResult> Create(PostModel model)
+        public async Task<IActionResult> Create(ArticleModel model)
         {
-            await _postService.CreateAsync(model.CategoryId, model.Date!.Value, model.Headline, model.Description,
+            await _articleService.CreateAsync(model.CategoryId, model.Date!.Value, model.Headline, model.Description,
                 model.Price, model.EventDate, model.Image);
 
             return Ok();
@@ -41,19 +41,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("")]
         public async Task<ActionResult<List<JumpStartPreviewResult>>> GetAvailable(DateTime? date)
         {
-            var availablePosts = await _postService.GetAvailablePosts(date);
+            var availableArticles = await _articleService.GetAvailableArticles(date);
 
-            var result = availablePosts.Select(item => new JumpStartPreviewResult(item.Key, item.Value)).ToList();
+            var result = availableArticles.Select(item => new JumpStartPreviewResult(item.Key, item.Value)).ToList();
 
             return Ok(result);
         }
 
         [Returns204]
         [Returns404]
-        [HttpPut("{postId}")]
-        public async Task<NoContentResult> Edit(int postId, PostModel model)
+        [HttpPut("{articleId}")]
+        public async Task<NoContentResult> Edit(int articleId, ArticleModel model)
         {
-            await _postService.EditAsync(postId, model.CategoryId, model.Date!.Value, model.Headline,
+            await _articleService.EditAsync(articleId, model.CategoryId, model.Date!.Value, model.Headline,
                 model.Description, model.Price, model.EventDate);
 
             return NoContent();
@@ -61,10 +61,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns204]
         [Returns404]
-        [HttpDelete("{postId}")]
-        public async Task<NoContentResult> Delete(int postId)
+        [HttpDelete("{articleId}")]
+        public async Task<NoContentResult> Delete(int articleId)
         {
-            await _postService.DeleteAsync(postId);
+            await _articleService.DeleteAsync(articleId);
 
             return NoContent();
         }

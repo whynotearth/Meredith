@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
-    public class Post : IEntityTypeConfiguration<Post>
+    public class Article : IEntityTypeConfiguration<Article>
     {
         public int Id { get; set; }
 
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public int CategoryId { get; set; }
 
-        public PostCategory Category { get; set; }
+        public ArticleCategory Category { get; set; }
 
         public string Headline  { get; set; }
 
@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public int? ImageId { get; set; }
 
-        public PostImage Image { get; set; }
+        public ArticleImage Image { get; set; }
 
         public int? Order { get; set; }
 
@@ -32,25 +32,25 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         
         public JumpStart JumpStart { get; set; }
 
-        public void Configure(EntityTypeBuilder<Post> builder)
+        public void Configure(EntityTypeBuilder<Article> builder)
         {
-            builder.ToTable("Posts", "ModuleVolkswagen");
+            builder.ToTable("Articles", "ModuleVolkswagen");
             builder.Property(e => e.Date).HasColumnType("date");
             builder.Property(e => e.EventDate).HasColumnType("date");
         }
     }
 
-    public class PostImage : Image
+    public class ArticleImage : Image
     {
     }
 
-    public class PostCategory : Category, IEntityTypeConfiguration<PostCategory>
+    public class ArticleCategory : Category, IEntityTypeConfiguration<ArticleCategory>
     {
         public string Color { get; set; }
 
         public int Priority { get; set; }
 
-        public void Configure(EntityTypeBuilder<PostCategory> builder)
+        public void Configure(EntityTypeBuilder<ArticleCategory> builder)
         {
             builder.Property(b => b.Color).IsRequired();
         }

@@ -27,14 +27,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task SendAsync(int jumpStartId)
         {
             var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Posts)
+                .Include(item => item.Articles)
                 .ThenInclude(item => item.Image)
-                .Include(item => item.Posts)
+                .Include(item => item.Articles)
                 .ThenInclude(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.Status == JumpStartStatus.ReadyToSend);
 
-            jumpStart.Posts = jumpStart.Posts.OrderBy(item => item.Order).ToList();
+            jumpStart.Articles = jumpStart.Articles.OrderBy(item => item.Order).ToList();
 
             await SendEmailAsync(jumpStart);
 
@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
 
             var pdfUrl = await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart);
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Posts);
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime, jumpStart.Articles);
 
             var recipients = await GetRecipients(jumpStart.Id);
             var subject =

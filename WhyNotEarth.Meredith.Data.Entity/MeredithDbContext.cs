@@ -59,7 +59,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Space> Spaces { get; set; }
 
         // Volkswagen
-        public DbSet<Post> Posts { get; set; }
+        public DbSet<Article> Articles { get; set; }
 
         public DbSet<JumpStart> JumpStarts { get; set; }
 

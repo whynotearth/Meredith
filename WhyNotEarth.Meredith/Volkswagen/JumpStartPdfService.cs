@@ -26,7 +26,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task CreatePdfAsync(int jumpStartId)
         {
             var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Posts)
+                .Include(item => item.Articles)
                 .ThenInclude(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.HasPdf == false);
@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return;
             }
 
-            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, jumpStart.Posts);
+            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, jumpStart.Articles);
 
             await UploadPdfAsync(jumpStart, pdfData);
 

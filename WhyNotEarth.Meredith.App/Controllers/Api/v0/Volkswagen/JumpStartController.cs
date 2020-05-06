@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<IActionResult> Create(JumpStartModel model)
         {
-            await _jumpStartService.CreateAsync(model.DateTime!.Value, model.DistributionGroups, model.PostIds);
+            await _jumpStartService.CreateAsync(model.DateTime!.Value, model.DistributionGroups, model.ArticleIds);
 
             return Ok();
         }
@@ -39,9 +39,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         
         [Returns200]
         [HttpGet("preview")]
-        public async Task<FileContentResult> Preview([FromQuery]List<int> postIds)
+        public async Task<FileContentResult> Preview([FromQuery]List<int> articleIds)
         {
-            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(postIds);
+            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(articleIds);
 
             return File(previewData, "image/png", Guid.NewGuid() + ".png");
         }

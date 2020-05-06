@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
 
             // Volkswagen
             serviceCollection
-                .AddScoped<PostService>()
+                .AddScoped<ArticleService>()
                 .AddScoped<JumpStartService>()
                 .AddScoped<JumpStartEmailService>()
                 .AddScoped<JumpStartPdfService>()

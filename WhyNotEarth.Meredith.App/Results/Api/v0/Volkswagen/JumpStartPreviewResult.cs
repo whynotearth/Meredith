@@ -10,20 +10,20 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public DateTime Date { get; }
 
-        public List<PostResult> Posts { get; }
+        public List<ArticleResult> Article { get; }
 
-        public JumpStartPreviewResult(DateTime date, List<Post>? posts)
+        public JumpStartPreviewResult(DateTime date, List<Article>? articles)
         {
             Date = date;
-            Posts = posts.Select(item => new PostResult(item)).ToList() ?? new List<PostResult>();
+            Article = articles.Select(item => new ArticleResult(item)).ToList() ?? new List<ArticleResult>();
         }
     }
 
-    public class PostResult
+    public class ArticleResult
     {
         public int Id { get; }
 
-        public PostCategoryResult Category { get; }
+        public ArticleCategoryResult Category { get; }
 
         public string Headline { get; }
 
@@ -37,19 +37,19 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public ImageResult? Image { get; }
 
-        public PostResult(Post post)
+        public ArticleResult(Article article)
         {
-            Id = post.Id;
-            Category = new PostCategoryResult(post.Category);
-            Headline = post.Headline;
-            Description = post.Description;
-            Date = post.Date;
-            Price = post.Price;
-            EventDate = post.EventDate;
+            Id = article.Id;
+            Category = new ArticleCategoryResult(article.Category);
+            Headline = article.Headline;
+            Description = article.Description;
+            Date = article.Date;
+            Price = article.Price;
+            EventDate = article.EventDate;
 
-            if (post.Image != null)
+            if (article.Image != null)
             {
-                Image = new ImageResult(post.Image);
+                Image = new ImageResult(article.Image);
             }
         }
     }

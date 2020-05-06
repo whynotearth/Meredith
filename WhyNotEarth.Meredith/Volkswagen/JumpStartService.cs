@@ -20,9 +20,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public async Task CreateAsync(DateTime dateTime, List<string> distributionGroups, List<int> postIds)
+        public async Task CreateAsync(DateTime dateTime, List<string> distributionGroups, List<int> articleIds)
         {
-            var posts = await _dbContext.Posts.Where(item => postIds.Contains(item.Id))
+            var articles = await _dbContext.Articles.Where(item => articleIds.Contains(item.Id))
                 .ToListAsync();
 
             var jumpStart = new JumpStart
@@ -30,16 +30,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 DateTime = dateTime,
                 DistributionGroups = string.Join(',', distributionGroups),
                 Status = JumpStartStatus.ReadyToSend,
-                Posts = posts
+                Articles = articles
             };
 
-            foreach (var post in posts)
+            foreach (var article in articles)
             {
-                post.JumpStart = jumpStart;
-                post.Order = postIds.IndexOf(post.Id);
+                article.JumpStart = jumpStart;
+                article.Order = articleIds.IndexOf(article.Id);
             }
 
-            _dbContext.UpdateRange(posts);
+            _dbContext.UpdateRange(articles);
 
             await _dbContext.SaveChangesAsync();
 

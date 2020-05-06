@@ -16,17 +16,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
-        public string GetEmailHtml(DateTime date, List<Post> posts)
+        public string GetEmailHtml(DateTime date, List<Article> articles)
         {
-            return GetTemplate(date, posts, EmailTemplateFileName);
+            return GetTemplate(date, articles, EmailTemplateFileName);
         }
 
-        public string GetPdfHtml(DateTime date, List<Post> posts)
+        public string GetPdfHtml(DateTime date, List<Article> articles)
         {
-            return GetTemplate(date, posts, PdfTemplateFileName);
+            return GetTemplate(date, articles, PdfTemplateFileName);
         }
 
-        private string GetTemplate(DateTime date, List<Post> posts, string templateName)
+        private string GetTemplate(DateTime date, List<Article> articles, string templateName)
         {
             var assembly = typeof(JumpStartService).GetTypeInfo().Assembly;
 
@@ -42,10 +42,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var rawTemplate = reader.ReadToEnd();
 
-            return ReplacePosts(rawTemplate, "Project Blue Delta", date, posts);
+            return ReplaceArticles(rawTemplate, "Project Blue Delta", date, articles);
         }
 
-        private string ReplacePosts(string rawTemplate, string title, DateTime date, List<Post> posts)
+        private string ReplaceArticles(string rawTemplate, string title, DateTime date, List<Article> articles)
         {
             var data = new Dictionary<string, object>();
 
@@ -55,54 +55,54 @@ namespace WhyNotEarth.Meredith.Volkswagen
             
             AddGeneralData(data, title, date);
 
-            var answer = posts.Single(item => item.Category.Slug == AnswersCategorySlug);
-            AddPost("article0", data, answer);
+            var answer = articles.Single(item => item.Category.Slug == AnswersCategorySlug);
+            AddArticle("article0", data, answer);
 
-            var top = posts.Where(item => item.Category.Slug == PriorityCategorySlug);
-            AddPosts("articlesTop", data, top);
+            var top = articles.Where(item => item.Category.Slug == PriorityCategorySlug);
+            AddArticles("articlesTop", data, top);
 
-            var middle = posts.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Take(2);
-            AddPosts("articlesDouble", data, middle);
+            var middle = articles.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Take(2);
+            AddArticles("articlesDouble", data, middle);
 
-            var bottom = posts.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Skip(2);
-            AddPosts("articlesBottom", data, bottom);
+            var bottom = articles.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Skip(2);
+            AddArticles("articlesBottom", data, bottom);
 
             var result = template(data);
             return result;
         }
 
-        private void AddPosts(string key, Dictionary<string, object> data, IEnumerable<Post> posts)
+        private void AddArticles(string key, Dictionary<string, object> data, IEnumerable<Article> articles)
         {
-            var items = posts.Select(GetData).ToList();
+            var items = articles.Select(GetData).ToList();
 
             data.Add(key, items);
         }
 
-        private void AddPost(string key, Dictionary<string, object> data, Post post)
+        private void AddArticle(string key, Dictionary<string, object> data, Article article)
         {
-            data.Add(key, GetData(post));
+            data.Add(key, GetData(article));
         }
 
-        private Dictionary<string, object> GetData(Post post)
+        private Dictionary<string, object> GetData(Article article)
         {
             return new Dictionary<string, object>
             {
-                {"id", post.Id},
-                {"headline", post.Headline},
-                {"description", post.Description},
+                {"id", article.Id},
+                {"headline", article.Headline},
+                {"description", article.Description},
                 {
                     "image", new Dictionary<string, object>
                     {
-                        {"url", post.Image?.Url ?? string.Empty}
+                        {"url", article.Image?.Url ?? string.Empty}
                     }
                 },
                 {
                     "category", new Dictionary<string, object>
                     {
-                        {"slug", post.Category?.Slug ?? string.Empty},
-                        {"name", post.Category?.Name ?? string.Empty},
-                        {"color", post.Category?.Color ?? string.Empty},
-                        {"image", post.Category?.Image?.Url ?? string.Empty}
+                        {"slug", article.Category?.Slug ?? string.Empty},
+                        {"name", article.Category?.Name ?? string.Empty},
+                        {"color", article.Category?.Color ?? string.Empty},
+                        {"image", article.Category?.Image?.Url ?? string.Empty}
                     }
                 }
             };

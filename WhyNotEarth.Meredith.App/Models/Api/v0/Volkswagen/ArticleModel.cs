@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
-    public class PostModel
+    public class ArticleModel
     {
         [Required]
         public int CategoryId { get; set; }

@@ -9,11 +9,11 @@ using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
-    public class PostService
+    public class ArticleService
     {
         private readonly MeredithDbContext _dbContext;
 
-        public PostService(MeredithDbContext dbContext)
+        public ArticleService(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task CreateAsync(int categoryId, DateTime date, string headline, string description,
             decimal? price, DateTime? eventDate, string? imageUrl)
         {
-            var category = await _dbContext.Categories.OfType<PostCategory>()
+            var category = await _dbContext.Categories.OfType<ArticleCategory>()
                 .FirstOrDefaultAsync(item => item.Id == categoryId);
 
             if (category is null)
@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"Category {categoryId} not found");
             }
 
-            var post = new Post
+            var article = new Article
             {
                 CategoryId = categoryId,
                 Date = date,
@@ -41,105 +41,105 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             if (!string.IsNullOrEmpty(imageUrl))
             {
-                post.Image = new PostImage
+                article.Image = new ArticleImage
                 {
                     Url = imageUrl
                 };
             }
 
-            await _dbContext.Posts.AddAsync(post);
+            await _dbContext.Articles.AddAsync(article);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Dictionary<DateTime, List<Post>>> GetAvailablePosts(DateTime? date)
+        public async Task<Dictionary<DateTime, List<Article>>> GetAvailableArticles(DateTime? date)
         {
-            var query = _dbContext.Posts.Where(item => item.JumpStartId == null);
+            var query = _dbContext.Articles.Where(item => item.JumpStartId == null);
 
             if (date != null)
             {
                 query = query.Where(item => item.Date <= date);
             }
 
-            var posts = await query.Include(item => item.Category)
+            var articles = await query.Include(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Include(item => item.Image)
                 .OrderBy(item => item.Date)
                 .ThenByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
-            return GetPostsGrouped(posts);
+            return GetArticlesGrouped(articles);
         }
 
-        private Dictionary<DateTime, List<Post>> GetPostsGrouped(List<Post> posts)
+        private Dictionary<DateTime, List<Article>> GetArticlesGrouped(List<Article> articles)
         {
-            var postGroups = posts.GroupBy(item => item.Date);
+            var articleGroups = articles.GroupBy(item => item.Date);
             
             var today = DateTime.UtcNow.InZone(VolkswagenCompany.TimeZoneId);
 
-            var result = new Dictionary<DateTime, List<Post>>();
+            var result = new Dictionary<DateTime, List<Article>>();
             
-            foreach (var dailyPosts in postGroups)
+            foreach (var dailyArticles in articleGroups)
             {
                 // Any posts before today should be in today's JumpStart
-                var currentDate = dailyPosts.Key <= today ? today : dailyPosts.Key;
+                var currentDate = dailyArticles.Key <= today ? today : dailyArticles.Key;
 
                 if (result.ContainsKey(currentDate))
                 {
-                    result[currentDate].AddRange(dailyPosts);
+                    result[currentDate].AddRange(dailyArticles);
                 }
                 else
                 {
-                    result.Add(currentDate, dailyPosts.ToList());
+                    result.Add(currentDate, dailyArticles.ToList());
                 }
             }
 
             return result;
         }
 
-        public async Task<Post> EditAsync(int postId, int categoryId, DateTime date, string headline,
+        public async Task<Article> EditAsync(int articleId, int categoryId, DateTime date, string headline,
             string description, decimal? price, DateTime? eventDate)
         {
-            var post = await _dbContext.Posts.FirstOrDefaultAsync(item => item.Id == postId);
+            var article = await _dbContext.Articles.FirstOrDefaultAsync(item => item.Id == articleId);
 
-            if (post is null)
+            if (article is null)
             {
-                throw new RecordNotFoundException($"Post {postId} not found");
+                throw new RecordNotFoundException($"Post {articleId} not found");
             }
 
-            post.Date = date;
-            post.CategoryId = categoryId;
-            post.Headline = headline;
-            post.Description = description;
-            post.Price = price;
-            post.EventDate = eventDate;
+            article.Date = date;
+            article.CategoryId = categoryId;
+            article.Headline = headline;
+            article.Description = description;
+            article.Price = price;
+            article.EventDate = eventDate;
 
-            _dbContext.Posts.Update(post);
+            _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
 
-            return post;
+            return article;
         }
 
-        public async Task DeleteAsync(int postId)
+        public async Task DeleteAsync(int articleId)
         {
-            var post = await _dbContext.Posts.Include(item => item.Image)
-                .FirstOrDefaultAsync(item => item.Id == postId);
+            var article = await _dbContext.Articles.Include(item => item.Image)
+                .FirstOrDefaultAsync(item => item.Id == articleId);
 
-            if (post is null)
+            if (article is null)
             {
-                throw new RecordNotFoundException($"Post {postId} not found");
+                throw new RecordNotFoundException($"Post {articleId} not found");
             }
 
-            if (post.Image != null)
+            if (article.Image != null)
             {
                 // I'm not sure why but cascade doesn't work on this
-                var isUsedInAnyOtherPost = _dbContext.Posts.Any(item => item.ImageId == post.ImageId && item.Id != post.Id);
+                var isUsedInAnyOtherPost = _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
                 if (!isUsedInAnyOtherPost)
                 {
-                    _dbContext.Images.Remove(post.Image);
+                    _dbContext.Images.Remove(article.Image);
                 }
             }
 
-            _dbContext.Posts.Remove(post);
+            _dbContext.Articles.Remove(article);
 
             await _dbContext.SaveChangesAsync();
         }

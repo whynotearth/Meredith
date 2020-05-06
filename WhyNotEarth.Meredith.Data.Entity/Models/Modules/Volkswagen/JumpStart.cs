@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public bool HasPdf { get; set; }
 
-        public List<Post> Posts { get; set; }
+        public List<Article> Articles { get; set; }
 
         public void Configure(EntityTypeBuilder<JumpStart> builder)
         {
