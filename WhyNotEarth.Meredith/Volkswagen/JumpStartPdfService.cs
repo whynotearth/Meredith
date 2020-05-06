@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return;
             }
 
-            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, jumpStart.Articles);
+            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart);
 
             await UploadPdfAsync(jumpStart, pdfData);
 

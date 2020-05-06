@@ -17,10 +17,12 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
         public string Description { get; set; } = null!;
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime? Date { get; set; }
 
         public decimal? Price { get; set; }
 
+        [DataType(DataType.Date)]
         public DateTime? EventDate { get; set; }
 
         public string? Image { get; set; }

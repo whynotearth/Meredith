@@ -17,16 +17,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _puppeteerService = puppeteerService;
         }
 
-        public async Task<byte[]> CreatePreviewAsync(List<int> articleIds)
+        public async Task<byte[]> CreatePreviewAsync(int jumpStartId)
         {
-            var articles = await _dbContext.Articles
-                .Where(item => articleIds.Contains(item.Id))
-                .Include(item => item.Image)
-                .Include(item => item.Category)
+            var jumpStart = await _dbContext.JumpStarts
+                .Include(item => item.Articles)
                 .ThenInclude(item => item.Image)
-                .ToListAsync();
+                .Include(item => item.Articles)
+                .ThenInclude(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .FirstOrDefaultAsync(item => item.Id == jumpStartId);
 
-            return await _puppeteerService.BuildScreenshotAsync(articles);
+            return await _puppeteerService.BuildScreenshotAsync(jumpStart);
         }
     }
 }

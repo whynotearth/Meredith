@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -17,13 +22,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class JumpStartController : ControllerBase
     {
-        private readonly JumpStartService _jumpStartService;
         private readonly JumpStartPreviewService _jumpStartPreviewService;
+        private readonly MeredithDbContext _dbContext;
+        private readonly JumpStartService _jumpStartService;
 
-        public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService)
+        public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService, MeredithDbContext dbContext)
         {
             _jumpStartService = jumpStartService;
             _jumpStartPreviewService = jumpStartPreviewService;
+            _dbContext = dbContext;
         }
 
         [Returns200]
@@ -31,19 +38,33 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<IActionResult> Create(JumpStartModel model)
         {
-            await _jumpStartService.CreateAsync(model.DateTime!.Value, model.DistributionGroups, model.ArticleIds);
+            await _jumpStartService.Confirm(model.JumpStartId!.Value, model.DateTime!.Value, model.DistributionGroups,
+                model.ArticleIds);
 
             return Ok();
         }
 
-        
         [Returns200]
-        [HttpGet("preview")]
-        public async Task<FileContentResult> Preview([FromQuery]List<int> articleIds)
+        [HttpGet("{jumpStartId}/preview")]
+        public async Task<FileContentResult> Preview(int jumpStartId)
         {
-            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(articleIds);
+            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(jumpStartId);
 
             return File(previewData, "image/png", Guid.NewGuid() + ".png");
+        }
+
+        [Returns200]
+        [HttpGet("")]
+        public async Task<ActionResult<List<JumpStartResult>>> List()
+        {
+            var jumpStarts = await _dbContext.JumpStarts
+                .Include(item => item.Articles)
+                .ThenInclude(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Where(item => item.Status != JumpStartStatus.Sent)
+                .ToListAsync();
+
+            return Ok(jumpStarts.Select(item => new JumpStartResult(item)));
         }
     }
 }

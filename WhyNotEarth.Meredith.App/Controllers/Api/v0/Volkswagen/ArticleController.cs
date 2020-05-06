@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -35,17 +31,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                 model.Price, model.EventDate, model.Image);
 
             return Ok();
-        }
-
-        [Returns200]
-        [HttpGet("")]
-        public async Task<ActionResult<List<JumpStartPreviewResult>>> GetAvailable(DateTime? date)
-        {
-            var availableArticles = await _articleService.GetAvailableArticles(date);
-
-            var result = availableArticles.Select(item => new JumpStartPreviewResult(item.Key, item.Value)).ToList();
-
-            return Ok(result);
         }
 
         [Returns204]

@@ -26,9 +26,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         }
     }
 
-    public enum JumpStartStatus
+    public enum JumpStartStatus : byte
     {
-        ReadyToSend = 1,
-        Sent = 2
+        Preview = 1,
+        ReadyToSend = 2,
+        Sent = 3
     }
 }

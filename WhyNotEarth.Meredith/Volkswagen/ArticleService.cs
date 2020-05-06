@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
@@ -48,62 +48,22 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             await _dbContext.Articles.AddAsync(article);
+            await SetJumpStart(article);
+
             await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<Dictionary<DateTime, List<Article>>> GetAvailableArticles(DateTime? date)
-        {
-            var query = _dbContext.Articles.Where(item => item.JumpStartId == null);
-
-            if (date != null)
-            {
-                query = query.Where(item => item.Date <= date);
-            }
-
-            var articles = await query.Include(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Image)
-                .OrderBy(item => item.Date)
-                .ThenByDescending(item => item.Category.Priority)
-                .ToListAsync();
-
-            return GetArticlesGrouped(articles);
-        }
-
-        private Dictionary<DateTime, List<Article>> GetArticlesGrouped(List<Article> articles)
-        {
-            var articleGroups = articles.GroupBy(item => item.Date);
-            
-            var today = DateTime.UtcNow.InZone(VolkswagenCompany.TimeZoneId);
-
-            var result = new Dictionary<DateTime, List<Article>>();
-            
-            foreach (var dailyArticles in articleGroups)
-            {
-                // Any posts before today should be in today's JumpStart
-                var currentDate = dailyArticles.Key <= today ? today : dailyArticles.Key;
-
-                if (result.ContainsKey(currentDate))
-                {
-                    result[currentDate].AddRange(dailyArticles);
-                }
-                else
-                {
-                    result.Add(currentDate, dailyArticles.ToList());
-                }
-            }
-
-            return result;
         }
 
         public async Task<Article> EditAsync(int articleId, int categoryId, DateTime date, string headline,
             string description, decimal? price, DateTime? eventDate)
         {
-            var article = await _dbContext.Articles.FirstOrDefaultAsync(item => item.Id == articleId);
+            var article = await ValidateChange(articleId);
 
-            if (article is null)
+            // When the user changes the date of an article
+            // We move the article to a new JumpStart
+            if (article.Date != date)
             {
-                throw new RecordNotFoundException($"Post {articleId} not found");
+                article.Date = date;
+                await SetJumpStart(article);
             }
 
             article.Date = date;
@@ -121,27 +81,97 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task DeleteAsync(int articleId)
         {
-            var article = await _dbContext.Articles.Include(item => item.Image)
-                .FirstOrDefaultAsync(item => item.Id == articleId);
-
-            if (article is null)
-            {
-                throw new RecordNotFoundException($"Post {articleId} not found");
-            }
+            var article = await ValidateChange(articleId);
 
             if (article.Image != null)
             {
                 // I'm not sure why but cascade doesn't work on this
-                var isUsedInAnyOtherPost = _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
-                if (!isUsedInAnyOtherPost)
+                var isUsedInAnyOtherArticle = _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
+                if (!isUsedInAnyOtherArticle)
                 {
                     _dbContext.Images.Remove(article.Image);
                 }
             }
 
+            if (article.JumpStart != null)
+            {
+                RemoveOldJumpStart(article);
+            }
+
             _dbContext.Articles.Remove(article);
 
             await _dbContext.SaveChangesAsync();
+        }
+        
+        private async Task SetJumpStart(Article article)
+        {
+            if (article.JumpStartId != null)
+            {
+                RemoveOldJumpStart(article);
+            }
+
+            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item =>
+                item.Status != JumpStartStatus.Sent && item.DateTime.Date == article.Date);
+
+            if (jumpStart == null)
+            {
+                jumpStart = await CreateDefaultJumpStart(article.Date);
+            }
+            
+            article.JumpStart = jumpStart;
+        }
+
+        private void RemoveOldJumpStart(Article article)
+        {
+            var isUsedInAnyOtherArticle = _dbContext.Articles.Any(item => item.JumpStartId == article.JumpStartId && item.Id != article.Id);
+            if (!isUsedInAnyOtherArticle)
+            {
+                _dbContext.JumpStarts.Remove(article.JumpStart);
+            }
+        }
+
+        private async Task<JumpStart> CreateDefaultJumpStart(DateTime date)
+        {
+            // TODO: Get default distribution group
+            var emailRecipient = await _dbContext.Recipients.FirstOrDefaultAsync();
+            var distributionGroup = emailRecipient?.DistributionGroup;
+
+            if (distributionGroup is null)
+            {
+                throw new InvalidActionException("Cannot find any distribution group. Please import your recipients first.");
+            }
+
+            var jumpStart = new JumpStart
+            {
+                // TODO: Get default send time
+                DateTime = date.AddHours(10).AddMinutes(14),
+                Status = JumpStartStatus.Preview,
+                DistributionGroups = distributionGroup,
+                Articles = new List<Article>()
+            };
+
+            _dbContext.JumpStarts.Add(jumpStart);
+
+            return jumpStart;
+        }
+
+        private async Task<Article> ValidateChange(int articleId)
+        {
+            var article = await _dbContext.Articles
+                .Include(item => item.JumpStart)
+                .FirstOrDefaultAsync(item => item.Id == articleId);
+
+            if (article is null)
+            {
+                throw new RecordNotFoundException($"Article {articleId} not found");
+            }
+
+            if (article.JumpStart.Status == JumpStartStatus.Sent)
+            {
+                throw new InvalidActionException($"Article {articleId} had already sent");
+            }
+
+            return article;
         }
     }
 }

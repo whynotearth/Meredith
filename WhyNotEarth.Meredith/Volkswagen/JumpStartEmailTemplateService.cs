@@ -16,17 +16,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
-        public string GetEmailHtml(DateTime date, List<Article> articles)
+        public string GetEmailHtml(JumpStart jumpStart)
         {
-            return GetTemplate(date, articles, EmailTemplateFileName);
+            return GetTemplate(jumpStart, EmailTemplateFileName);
         }
 
-        public string GetPdfHtml(DateTime date, List<Article> articles)
+        public string GetPdfHtml(JumpStart jumpStart)
         {
-            return GetTemplate(date, articles, PdfTemplateFileName);
+            return GetTemplate(jumpStart, PdfTemplateFileName);
         }
 
-        private string GetTemplate(DateTime date, List<Article> articles, string templateName)
+        private string GetTemplate(JumpStart jumpStart, string templateName)
         {
             var assembly = typeof(JumpStartService).GetTypeInfo().Assembly;
 
@@ -42,10 +42,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var rawTemplate = reader.ReadToEnd();
 
-            return ReplaceArticles(rawTemplate, "Project Blue Delta", date, articles);
+            return ReplaceArticles(rawTemplate, "Project Blue Delta", jumpStart);
         }
 
-        private string ReplaceArticles(string rawTemplate, string title, DateTime date, List<Article> articles)
+        private string ReplaceArticles(string rawTemplate, string title, JumpStart jumpStart)
         {
             var data = new Dictionary<string, object>();
 
@@ -53,22 +53,66 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var template = Handlebars.Compile(rawTemplate);
             
-            AddGeneralData(data, title, date);
+            AddGeneralData(data, title, jumpStart.DateTime);
 
-            var answer = articles.Single(item => item.Category.Slug == AnswersCategorySlug);
+            var remainingArticles = jumpStart.Articles.ToList();
+
+            var (answer, remains) = PickArticle(remainingArticles, item => item.Category.Slug == AnswersCategorySlug);
+            remainingArticles = remains;
             AddArticle("article0", data, answer);
 
-            var top = articles.Where(item => item.Category.Slug == PriorityCategorySlug);
+            var (top, remaining) = PickArticles(remainingArticles, item => item.Category.Slug == PriorityCategorySlug);
+            remainingArticles = remaining;
             AddArticles("articlesTop", data, top);
 
-            var middle = articles.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Take(2);
+            var middle = remainingArticles.Take(2);
             AddArticles("articlesDouble", data, middle);
 
-            var bottom = articles.Where(item => item.Category.Slug != AnswersCategorySlug && item.Category.Slug != PriorityCategorySlug).Skip(2);
+            var bottom = remainingArticles.Skip(2);
             AddArticles("articlesBottom", data, bottom);
 
             var result = template(data);
             return result;
+        }
+
+        private (Article?, List<Article>) PickArticle(List<Article> articles, Func<Article, bool> selector)
+        {
+            var remainingArticles = new List<Article>();
+            Article? result = null;
+
+            foreach (var article in articles)
+            {
+                if (result == null && selector(article))
+                {
+                    result = article;
+                }
+                else
+                {
+                    remainingArticles.Add(article);
+                }
+            }
+
+            return (result, remainingArticles);
+        }
+
+        private (List<Article>, List<Article>) PickArticles(List<Article> articles, Func<Article, bool> selector)
+        {
+            var remainingArticles = new List<Article>();
+            var selectedArticles = new List<Article>();
+
+            foreach (var article in articles)
+            {
+                if (selector(article))
+                {
+                    selectedArticles.Add(article);
+                }
+                else
+                {
+                    remainingArticles.Add(article);
+                }
+            }
+
+            return (selectedArticles, remainingArticles);
         }
 
         private void AddArticles(string key, Dictionary<string, object> data, IEnumerable<Article> articles)
@@ -78,13 +122,18 @@ namespace WhyNotEarth.Meredith.Volkswagen
             data.Add(key, items);
         }
 
-        private void AddArticle(string key, Dictionary<string, object> data, Article article)
+        private void AddArticle(string key, Dictionary<string, object> data, Article? article)
         {
             data.Add(key, GetData(article));
         }
 
-        private Dictionary<string, object> GetData(Article article)
+        private Dictionary<string, object> GetData(Article? article)
         {
+            if (article is null)
+            {
+                return new Dictionary<string, object>();
+            }
+
             return new Dictionary<string, object>
             {
                 {"id", article.Id},

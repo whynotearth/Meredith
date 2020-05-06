@@ -15,13 +15,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
         }
 
-        public async Task<byte[]> BuildPdfAsync(DateTime date, List<Article> articles)
+        public async Task<byte[]> BuildPdfAsync(JumpStart jumpStart)
         {
             await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
 
-            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(date, articles);
+            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(jumpStart);
 
             await page.SetContentAsync(emailTemplate);
 
@@ -33,13 +33,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return pdfData;
         }
 
-        public async Task<byte[]> BuildScreenshotAsync(List<Article> articles)
+        public async Task<byte[]> BuildScreenshotAsync(JumpStart jumpStart)
         {
             await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
 
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(DateTime.UtcNow, articles);
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart);
 
             await page.SetContentAsync(emailTemplate);
 
