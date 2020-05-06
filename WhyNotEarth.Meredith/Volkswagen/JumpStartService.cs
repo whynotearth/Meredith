@@ -26,13 +26,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var posts = await _dbContext.Posts.Where(item => postIds.Contains(item.Id))
                 .ToListAsync();
 
-            var isValid = posts.All(item => item.Date.Date <= dateTime.Date && item.JumpStartId == null) &&
-                          posts.Count == postIds.Count;
-            if (!isValid)
-            {
-                throw new InvalidActionException("Invalid posts");
-            }
-
             var jumpStart = new JumpStart
             {
                 DateTime = dateTime,

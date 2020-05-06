@@ -74,14 +74,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"Post {postId} not found");
             }
 
-            post.CategoryId = categoryId;
             post.Date = date;
+            post.CategoryId = categoryId;
             post.Headline = headline;
             post.Description = description;
             post.Price = price;
             post.EventDate = eventDate;
 
-            await _dbContext.Posts.AddAsync(post);
+            _dbContext.Posts.Update(post);
             await _dbContext.SaveChangesAsync();
 
             return post;
@@ -97,7 +97,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"Post {postId} not found");
             }
 
-            _dbContext.Images.Remove(post.Image);
+            if (post.Image != null)
+            {
+                // I'm not sure why but cascade doesn't work on this
+                var isUsedInAnyOtherPost = _dbContext.Posts.Any(item => item.ImageId == post.ImageId && item.Id != post.Id);
+                if (!isUsedInAnyOtherPost)
+                {
+                    _dbContext.Images.Remove(post.Image);
+                }
+            }
+
             _dbContext.Posts.Remove(post);
 
             await _dbContext.SaveChangesAsync();

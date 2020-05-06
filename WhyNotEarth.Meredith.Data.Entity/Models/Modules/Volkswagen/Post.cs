@@ -8,26 +8,28 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
     {
         public int Id { get; set; }
 
+        public DateTime Date { get; set; }
+
         public int CategoryId { get; set; }
+
+        public PostCategory Category { get; set; }
 
         public string Headline  { get; set; }
 
         public string Description { get; set; }
 
-        public DateTime Date { get; set; }
-
         public decimal? Price { get; set; }
 
         public DateTime? EventDate { get; set; }
 
-        public int? JumpStartId { get; set; }
-
-        public int? Order { get; set; }
+        public int? ImageId { get; set; }
 
         public PostImage Image { get; set; }
 
-        public PostCategory Category { get; set; }
+        public int? Order { get; set; }
 
+        public int? JumpStartId { get; set; }
+        
         public JumpStart JumpStart { get; set; }
 
         public void Configure(EntityTypeBuilder<Post> builder)
