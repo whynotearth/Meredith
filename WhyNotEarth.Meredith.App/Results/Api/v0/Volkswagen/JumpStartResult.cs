@@ -44,11 +44,14 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public string Slug { get; }
 
+        public string Color { get; }
+
         public string? Image { get; }
 
         public JumpStartArticleCategoryResult(ArticleCategory category)
         {
             Slug = category.Slug;
+            Color = category.Color;
             Image = category.Image?.Url;
         }
     }
