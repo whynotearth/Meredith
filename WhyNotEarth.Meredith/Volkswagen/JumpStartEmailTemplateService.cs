@@ -180,22 +180,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 var value = Regex.Replace(url, "\\/upload\\/", $"/upload/{transform}/");
                 writer.Write(value);
             });
-
-            Handlebars.RegisterHelper("equals", (writer, context, parameters) =>
-            {
-                var arg1 = (string) parameters[0];
-                var arg2 = (string) parameters[1];
-
-                writer.Write(arg1 == arg2);
-            });
-
-            Handlebars.RegisterHelper("not_equals", (writer, context, parameters) =>
-            {
-                var arg1 = (string) parameters[0];
-                var arg2 = (string) parameters[1];
-
-                writer.Write(arg1 != arg2);
-            });
         }
 
         private string GetRawTemplate(string templateName)
