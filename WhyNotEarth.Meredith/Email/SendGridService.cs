@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Email
 
             await SendEmailCore(companyId, emailAddresses,
                 true, templateData,
-                null, null, null, null,
+                null, null, null,
                 null, null,
                 null);
         }
@@ -49,20 +49,19 @@ namespace WhyNotEarth.Meredith.Email
 
             await SendEmailCore(companyId, emailAddresses,
                 true, templateData,
-                null, null, null, null,
+                null, null, null,
                 uniqueArgument, uniqueArgumentValue,
                 null);
         }
 
-        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, List<string> subjects,
-            string plainTextContent, string htmlContent, List<Dictionary<string, string>> substitutions,
-            DateTime sendAt)
+        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, string subject,
+            string plainTextContent, string htmlContent, DateTime sendAt)
         {
             var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
 
             await SendEmailCore(companyId, emailAddresses,
                 false, null,
-                subjects, plainTextContent, htmlContent, substitutions,
+                subject, plainTextContent, htmlContent,
                 null, null,
                 sendAt);
         }
@@ -89,8 +88,7 @@ namespace WhyNotEarth.Meredith.Email
 
         private async Task SendEmailCore(int companyId, List<EmailAddress> recipients,
             bool useTemplate, object? templateData,
-            List<string>? subjects, string? plainTextContent, string? htmlContent,
-            List<Dictionary<string, string>>? substitutions,
+            string? subject, string? plainTextContent, string? htmlContent,
             string? uniqueArgument, string? uniqueArgumentValue,
             DateTime? sendAt)
         {
@@ -101,8 +99,6 @@ namespace WhyNotEarth.Meredith.Email
             if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
             {
                 recipients.Add(new EmailAddress(sendGridAccount.Bcc));
-                subjects?.Add(subjects.Last());
-                substitutions?.Add(substitutions.Last());
             }
 
             SendGridMessage sendGridMessage;
@@ -115,8 +111,9 @@ namespace WhyNotEarth.Meredith.Email
             }
             else
             {
-                sendGridMessage = MailHelper.CreateMultipleEmailsToMultipleRecipients(from, recipients, subjects,
-                    plainTextContent, htmlContent, substitutions);
+                sendGridMessage =
+                    MailHelper.CreateSingleEmailToMultipleRecipients(from, recipients, subject, plainTextContent,
+                        htmlContent);
             }
 
             if (uniqueArgument != null && uniqueArgumentValue != null)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using PuppeteerSharp;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
@@ -17,11 +15,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<byte[]> BuildPdfAsync(JumpStart jumpStart)
         {
+            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(jumpStart);
+
             await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
-
-            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(jumpStart);
 
             await page.SetContentAsync(emailTemplate);
 
@@ -35,11 +33,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<byte[]> BuildScreenshotAsync(JumpStart jumpStart)
         {
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart, null);
+
             await using var browser = await GetBrowser();
 
             await using var page = await browser.NewPageAsync();
-
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart);
 
             await page.SetContentAsync(emailTemplate);
 

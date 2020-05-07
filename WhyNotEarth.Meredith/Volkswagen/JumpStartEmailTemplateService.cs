@@ -16,62 +16,58 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
-        public string GetEmailHtml(JumpStart jumpStart)
+        public string GetEmailHtml(JumpStart jumpStart, string? pdfUrl)
         {
-            return GetTemplate(jumpStart, EmailTemplateFileName);
+            return GetTemplate(jumpStart, EmailTemplateFileName, pdfUrl);
         }
 
         public string GetPdfHtml(JumpStart jumpStart)
         {
-            return GetTemplate(jumpStart, PdfTemplateFileName);
+            return GetTemplate(jumpStart, PdfTemplateFileName, null);
         }
 
-        private string GetTemplate(JumpStart jumpStart, string templateName)
+        private string GetTemplate(JumpStart jumpStart, string templateName, string? pdfUrl)
         {
-            var assembly = typeof(JumpStartService).GetTypeInfo().Assembly;
+            var data = GetData(jumpStart, pdfUrl);
 
-            var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream is null)
-            {
-                throw new Exception($"Missing {templateName} resource.");
-            }
-
-            var reader = new StreamReader(stream);
-
-            var rawTemplate = reader.ReadToEnd();
-
-            return ReplaceArticles(rawTemplate, "Project Blue Delta", jumpStart);
+            return Compile(templateName, data);
         }
 
-        private string ReplaceArticles(string rawTemplate, string title, JumpStart jumpStart)
+        private string Compile(string templateName, Dictionary<string, object> data)
         {
-            var data = new Dictionary<string, object>();
-
             RegisterHelpers();
 
+            var rawTemplate = GetRawTemplate(templateName);
+
             var template = Handlebars.Compile(rawTemplate);
+
+            var result = template(data);
+
+            return result;
+        }
+
+        private Dictionary<string, object> GetData(JumpStart jumpStart, string? pdfUrl)
+        {
+            var result = new Dictionary<string, object>();
             
-            AddGeneralData(data, title, jumpStart.DateTime);
+            AddGeneralData(result, jumpStart.DateTime, pdfUrl);
 
             var remainingArticles = jumpStart.Articles.ToList();
 
             var (answer, remains) = PickArticle(remainingArticles, item => item.Category.Slug == AnswersCategorySlug);
             remainingArticles = remains;
-            AddArticle("article0", data, answer);
+            AddArticleToData("article0", result, answer);
 
             var (top, remaining) = PickArticles(remainingArticles, item => item.Category.Slug == PriorityCategorySlug);
             remainingArticles = remaining;
-            AddArticles("articlesTop", data, top);
+            AddArticlesToData("articlesTop", result, top);
 
             var middle = remainingArticles.Take(2);
-            AddArticles("articlesDouble", data, middle);
+            AddArticlesToData("articlesDouble", result, middle);
 
             var bottom = remainingArticles.Skip(2);
-            AddArticles("articlesBottom", data, bottom);
+            AddArticlesToData("articlesBottom", result, bottom);
 
-            var result = template(data);
             return result;
         }
 
@@ -115,14 +111,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return (selectedArticles, remainingArticles);
         }
 
-        private void AddArticles(string key, Dictionary<string, object> data, IEnumerable<Article> articles)
+        private void AddArticlesToData(string key, Dictionary<string, object> data, IEnumerable<Article> articles)
         {
             var items = articles.Select(GetData).ToList();
 
             data.Add(key, items);
         }
 
-        private void AddArticle(string key, Dictionary<string, object> data, Article? article)
+        private void AddArticleToData(string key, Dictionary<string, object> data, Article? article)
         {
             data.Add(key, GetData(article));
         }
@@ -157,12 +153,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
-        private void AddGeneralData(Dictionary<string, object> data, string title, DateTime date)
+        private void AddGeneralData(Dictionary<string, object> data, DateTime date, string? pdfUrl)
         {
             data.Add("general", new Dictionary<string, object>
             {
-                {"title", title},
-                {"date", date.InZone(VolkswagenCompany.TimeZoneId, "dddd | MMM. d, yyyy")}
+                {"title", "Project Blue Delta"},
+                {"date", date.InZone(VolkswagenCompany.TimeZoneId, "dddd | MMM. d, yyyy")},
+                {"print_url", pdfUrl ?? string.Empty}
             });
         }
 
@@ -199,6 +196,23 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
                 writer.Write(arg1 != arg2);
             });
+        }
+
+        private string GetRawTemplate(string templateName)
+        {
+            var assembly = typeof(JumpStartService).GetTypeInfo().Assembly;
+
+            var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
+            var stream = assembly.GetManifestResourceStream(name);
+
+            if (stream is null)
+            {
+                throw new Exception($"Missing {templateName} resource.");
+            }
+
+            var reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
         }
     }
 }

@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
 
             var pdfUrl = await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart);
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart);
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart, pdfUrl);
 
             var recipients = await GetRecipients(jumpStart.Id);
             var subject =
@@ -56,15 +56,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var batch in recipients.Batch(SendGridService.BatchSize))
             {
-                var subjects = Enumerable.Repeat(subject, batch.Count).ToList();
-
-                var substitutions = Enumerable.Repeat(new Dictionary<string, string>
-                {
-                    {"{{print_url}}", pdfUrl}
-                }, batch.Count).ToList();
-
-                await _sendGridService.SendEmail(company.Id, batch, subjects, emailTemplate, emailTemplate, substitutions,
-                    jumpStart.DateTime);
+                await _sendGridService.SendEmail(company.Id, batch, subject, emailTemplate, emailTemplate, jumpStart.DateTime);
 
                 foreach (var recipient in batch)
                 {
