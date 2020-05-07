@@ -28,15 +28,28 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public int Id { get; }
 
-        public string? CategoryImage { get; }
+        public JumpStartArticleCategoryResult Category { get; }
 
         public string Headline { get; }
 
         public ArticleResult(Article article)
         {
             Id = article.Id;
-            CategoryImage = article.Category.Image?.Url;
+            Category = new JumpStartArticleCategoryResult(article.Category);
             Headline = article.Headline;
+        }
+    }
+
+    public class JumpStartArticleCategoryResult
+    {
+        public string Slug { get; }
+
+        public string? Image { get; }
+
+        public JumpStartArticleCategoryResult(ArticleCategory category)
+        {
+            Slug = category.Slug;
+            Image = category.Image?.Url;
         }
     }
 }
