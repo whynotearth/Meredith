@@ -111,7 +111,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item =>
-                item.Status != JumpStartStatus.Sent && item.DateTime.Date == article.Date);
+                item.Status != JumpStartStatus.Sent && item.DateTime.Date == article.Date.Date);
 
             if (jumpStart == null)
             {

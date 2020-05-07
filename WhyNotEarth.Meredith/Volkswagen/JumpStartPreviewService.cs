@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -24,6 +25,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ThenInclude(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId);
+
+            if (jumpStart is null)
+            {
+                throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
+            }
 
             return await _puppeteerService.BuildScreenshotAsync(jumpStart);
         }
