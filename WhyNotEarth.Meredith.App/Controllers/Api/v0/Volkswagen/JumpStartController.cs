@@ -46,9 +46,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("{jumpStartId}/preview")]
-        public async Task<FileContentResult> Preview(int jumpStartId)
+        public async Task<FileContentResult> Preview(int jumpStartId, [FromQuery]List<int>? articleIds)
         {
-            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(jumpStartId);
+            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(jumpStartId, articleIds);
 
             return File(previewData, "image/png", Guid.NewGuid() + ".png");
         }

@@ -16,19 +16,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
-        public string GetEmailHtml(JumpStart jumpStart, string? pdfUrl)
+        public string GetEmailHtml(JumpStart jumpStart, List<Article> articles, string? pdfUrl)
         {
-            return GetTemplate(jumpStart, EmailTemplateFileName, pdfUrl);
+            return GetTemplate(jumpStart, articles, EmailTemplateFileName, pdfUrl);
         }
 
         public string GetPdfHtml(JumpStart jumpStart)
         {
-            return GetTemplate(jumpStart, PdfTemplateFileName, null);
+            return GetTemplate(jumpStart, jumpStart.Articles, PdfTemplateFileName, null);
         }
 
-        private string GetTemplate(JumpStart jumpStart, string templateName, string? pdfUrl)
+        private string GetTemplate(JumpStart jumpStart, List<Article> articles, string templateName, string? pdfUrl)
         {
-            var data = GetData(jumpStart, pdfUrl);
+            var data = GetData(jumpStart, articles, pdfUrl);
 
             return Compile(templateName, data);
         }
@@ -46,13 +46,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private Dictionary<string, object> GetData(JumpStart jumpStart, string? pdfUrl)
+        private Dictionary<string, object> GetData(JumpStart jumpStart, List<Article> articles, string? pdfUrl)
         {
             var result = new Dictionary<string, object>();
             
             AddGeneralData(result, jumpStart.DateTime, pdfUrl);
 
-            var remainingArticles = jumpStart.Articles.ToList();
+            var remainingArticles = articles.ToList();
 
             var (answer, remains) = PickArticle(remainingArticles, item => item.Category.Slug == AnswersCategorySlug);
             remainingArticles = remains;
