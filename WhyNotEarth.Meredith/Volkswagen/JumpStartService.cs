@@ -12,6 +12,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartService
     {
+        private const int MaximumArticlesPerDayCount = 5;
+
         private readonly ArticleService _articleService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
@@ -27,9 +29,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task Confirm(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
-            if (articleIds.Count > _articleService.MaximumArticlesPerDayCount)
+            if (articleIds.Count > MaximumArticlesPerDayCount)
             {
-                throw new InvalidActionException($"Maximum {_articleService.MaximumArticlesPerDayCount} articles are allowed per email");
+                throw new InvalidActionException($"Maximum {MaximumArticlesPerDayCount} articles are allowed per email");
             }
 
             var jumpStart = await _dbContext.JumpStarts
@@ -68,8 +70,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             foreach (var article in articles)
             {
                 await _articleService.EditAsync(article.Id, article.CategoryId, article.Date.AddDays(1),
-                    article.Headline,
-                    article.Description, article.Price, article.EventDate);
+                    article.Headline, article.Description, article.Price, article.EventDate);
             }
         }
     }

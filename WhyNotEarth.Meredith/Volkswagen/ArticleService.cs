@@ -13,8 +13,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         private readonly MeredithDbContext _dbContext;
 
-        public int MaximumArticlesPerDayCount { get; } = 5;
-
         public ArticleService(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -134,13 +132,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
                 // This one is finalized lets try tomorrow's
                 if (jumpStart.Status != JumpStartStatus.Preview)
-                {
-                    currentDate = currentDate.AddDays(1);
-                    continue;
-                }
-
-                // This one is full lets try tomorrow's
-                if (jumpStart.Articles.Count + 1 > MaximumArticlesPerDayCount)
                 {
                     currentDate = currentDate.AddDays(1);
                     continue;
