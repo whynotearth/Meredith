@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -35,6 +37,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok();
         }
 
+        [Returns200]
+        [HttpGet("")]
+        public async Task<ActionResult<List<ArticleResult>>> GetAvailable(DateTime date)
+        {
+            var availableArticles = await _articleService.GetAvailableArticles(date);
+
+            var result = availableArticles.Select(item => new ArticleResult(item)).ToList();
+
+            return Ok(result);
+        }
+
         [Returns204]
         [Returns404]
         [HttpPut("{articleId}")]
@@ -54,16 +67,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _articleService.DeleteAsync(articleId);
 
             return NoContent();
-        }
-
-        [Returns200]
-        [HttpGet("")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> List([FromServices] MeredithDbContext dbContext)
-        {
-            var articles = await dbContext.Articles.ToListAsync();
-
-            return Ok(articles);
         }
     }
 }

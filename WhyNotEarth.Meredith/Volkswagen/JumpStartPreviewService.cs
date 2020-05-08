@@ -19,30 +19,20 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _puppeteerService = puppeteerService;
         }
 
-        public async Task<byte[]> CreatePreviewAsync(int jumpStartId, List<int>? articleIds)
+        public async Task<byte[]> CreatePreviewAsync(int jumpStartId, List<int> articleIds)
         {
-            var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .FirstOrDefaultAsync(item => item.Id == jumpStartId);
+            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.Id == jumpStartId);
 
             if (jumpStart is null)
             {
                 throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
             }
 
-            List<Article> articles;
-            if (articleIds is null)
-            {
-                articles = jumpStart.Articles;
-            }
-            else
-            {
-                articles = jumpStart.Articles.Where(item => articleIds.Contains(item.Id)).ToList();
-            }
+            var articles = await _dbContext.Articles
+                .Include(item => item.Image)
+                .Include(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Where(item => articleIds.Contains(item.Id)).ToListAsync();
 
             return await _puppeteerService.BuildScreenshotAsync(jumpStart, articles);
         }

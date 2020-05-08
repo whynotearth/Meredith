@@ -21,6 +21,7 @@ using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
+using WhyNotEarth.Meredith.Volkswagen;
 
 [assembly: ApiController]
 namespace WhyNotEarth.Meredith.App
@@ -83,7 +84,8 @@ namespace WhyNotEarth.Meredith.App
                 }).AddNewtonsoftJson();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
+            IRecurringJobManager recurringJobManager, IServiceProvider serviceProvider)
         {
             app.UseForwardedHeaders();
 
@@ -129,6 +131,11 @@ namespace WhyNotEarth.Meredith.App
             });
 
             app.UseHangfireDashboard();
+
+            // Every 15 minutes
+            recurringJobManager.AddOrUpdate("JumpStartService_SendAsync",
+                () => serviceProvider.GetService<JumpStartService>().SendAsync(),
+                "*/15 * * * *", TimeZoneInfo.Utc);
         }
     }
 }
