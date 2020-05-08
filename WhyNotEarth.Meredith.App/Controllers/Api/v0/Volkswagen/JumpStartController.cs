@@ -33,15 +33,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _dbContext = dbContext;
         }
 
-        [Returns200]
-        [Returns400]
-        [HttpPost("")]
-        public async Task<IActionResult> Create(JumpStartModel model)
+        [Returns204]
+        [HttpPut("{jumpStartId}")]
+        public async Task<NoContentResult> Edit(JumpStartModel model)
         {
             await _jumpStartService.Confirm(model.JumpStartId!.Value, model.DateTime!.Value, model.DistributionGroups,
                 model.ArticleIds);
 
-            return Ok();
+            return NoContent();
         }
 
         [Returns200]

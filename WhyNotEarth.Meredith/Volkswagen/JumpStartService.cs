@@ -6,6 +6,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -26,6 +27,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task Confirm(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
+            if (articleIds.Count > _articleService.MaximumArticlesPerDayCount)
+            {
+                throw new InvalidActionException($"Maximum {_articleService.MaximumArticlesPerDayCount} articles are allowed per email");
+            }
+
             var jumpStart = await _dbContext.JumpStarts
                 .Include(item => item.Articles)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId);

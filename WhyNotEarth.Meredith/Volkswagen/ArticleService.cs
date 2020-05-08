@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
@@ -12,6 +12,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class ArticleService
     {
         private readonly MeredithDbContext _dbContext;
+
+        public int MaximumArticlesPerDayCount { get; } = 5;
 
         public ArticleService(MeredithDbContext dbContext)
         {
@@ -36,7 +38,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Headline = headline,
                 Description = description,
                 Price = price,
-                EventDate = eventDate,
+                EventDate = eventDate
             };
 
             if (!string.IsNullOrEmpty(imageUrl))
@@ -65,8 +67,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 article.Date = date;
                 await SetJumpStart(article);
             }
-
-            article.Date = date;
+            else
+            {
+                article.Date = date;
+            }
+            
             article.CategoryId = categoryId;
             article.Headline = headline;
             article.Description = description;
@@ -86,7 +91,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             if (article.Image != null)
             {
                 // I'm not sure why but cascade doesn't work on this
-                var isUsedInAnyOtherArticle = _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
+                var isUsedInAnyOtherArticle =
+                    _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
                 if (!isUsedInAnyOtherArticle)
                 {
                     _dbContext.Images.Remove(article.Image);
@@ -102,28 +108,55 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.SaveChangesAsync();
         }
-        
+
         private async Task SetJumpStart(Article article)
         {
             if (article.JumpStartId != null)
             {
                 RemoveOldJumpStart(article);
             }
-
-            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item =>
-                item.Status != JumpStartStatus.Sent && item.DateTime.Date == article.Date);
-
-            if (jumpStart == null)
-            {
-                jumpStart = await CreateDefaultJumpStart(article.Date);
-            }
             
+            var currentDate = article.Date;
+            JumpStart jumpStart;
+
+            // Searching for a free date
+            while (true)
+            {
+                jumpStart = await _dbContext.JumpStarts.Include(item => item.Articles)
+                    .FirstOrDefaultAsync(item => item.DateTime.Date == currentDate);
+
+                if (jumpStart is null)
+                {
+                    // This one is free lets create a new JumpStart here
+                    jumpStart = await CreateDefaultJumpStart(currentDate);
+                    break;
+                }
+
+                // This one is finalized lets try tomorrow's
+                if (jumpStart.Status != JumpStartStatus.Preview)
+                {
+                    currentDate = currentDate.AddDays(1);
+                    continue;
+                }
+
+                // This one is full lets try tomorrow's
+                if (jumpStart.Articles.Count + 1 > MaximumArticlesPerDayCount)
+                {
+                    currentDate = currentDate.AddDays(1);
+                    continue;
+                }
+
+                // Everything seems ok lets use this
+                break;
+            }
+
             article.JumpStart = jumpStart;
         }
 
         private void RemoveOldJumpStart(Article article)
         {
-            var isUsedInAnyOtherArticle = _dbContext.Articles.Any(item => item.JumpStartId == article.JumpStartId && item.Id != article.Id);
+            var isUsedInAnyOtherArticle =
+                _dbContext.Articles.Any(item => item.JumpStartId == article.JumpStartId && item.Id != article.Id);
             if (!isUsedInAnyOtherArticle)
             {
                 _dbContext.JumpStarts.Remove(article.JumpStart);
@@ -138,7 +171,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             if (distributionGroup is null)
             {
-                throw new InvalidActionException("Cannot find any distribution group. Please import your recipients first.");
+                throw new InvalidActionException(
+                    "Cannot find any distribution group. Please import your recipients first.");
             }
 
             var jumpStart = new JumpStart
