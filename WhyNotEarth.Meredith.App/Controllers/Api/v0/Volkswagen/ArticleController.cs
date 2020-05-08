@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -52,6 +54,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _articleService.DeleteAsync(articleId);
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> List([FromServices] MeredithDbContext dbContext)
+        {
+            var articles = await dbContext.Articles.ToListAsync();
+
+            return Ok(articles);
         }
     }
 }
