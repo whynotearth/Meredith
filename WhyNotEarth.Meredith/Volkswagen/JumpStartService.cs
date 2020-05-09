@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 if (!jumpStart.Articles.Any())
                 {
-                    jumpStart.Articles = await _articleService.GetDefaultArticlesAsync(jumpStart.DateTime.Date);
+                    jumpStart.Articles = await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
                 }
             }
 
@@ -84,7 +84,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 if (!jumpStart.Articles.Any())
                 {
-                    jumpStart.Articles = await _articleService.GetDefaultArticlesAsync(jumpStart.DateTime.Date);
+                    jumpStart.Articles = await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
                 }
 
                 jumpStart.Status = JumpStartStatus.ReadyToSend;
@@ -128,13 +128,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
             }
 
-            var query = _dbContext.Articles
-                .Include(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Image)
-                .Where(item => item.JumpStartId == null && item.Date <= jumpStart.DateTime.Date)
-                .OrderBy(item => item.Date)
-                .ThenByDescending(item => item.Category.Priority);
+            var query = _articleService.GetAvailableArticles(jumpStart.DateTime.Date);
 
             if (jumpStart.Articles.Any())
             {

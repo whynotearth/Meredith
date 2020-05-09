@@ -100,16 +100,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        internal async Task<List<Article>> GetDefaultArticlesAsync(DateTime date)
+        internal IQueryable<Article> GetDefaultArticles(DateTime date)
         {
-            return await _dbContext.Articles
+            return GetAvailableArticles(date).Take(MaximumArticlesPerDayCount);
+        }
+
+        internal IQueryable<Article> GetAvailableArticles(DateTime date)
+        {
+            return _dbContext.Articles
                 .Include(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Include(item => item.Image)
                 .Where(item => item.JumpStartId == null && item.Date <= date)
-                .OrderBy(item => item.Category.Priority)
-                .Take(MaximumArticlesPerDayCount)
-                .ToListAsync();
+                .OrderBy(item => item.Category.Priority);
         }
 
         private async Task RemoveOldJumpStartAsync(Article article)
