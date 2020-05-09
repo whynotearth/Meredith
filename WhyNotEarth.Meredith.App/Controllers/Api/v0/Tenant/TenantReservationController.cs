@@ -9,7 +9,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Tenant;
 
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Salon
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 {
     [ApiVersion("0")]
     [Route("api/v0/tenants/{tenantSlug}")]
