@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -33,6 +32,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .Include(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Where(item => articleIds.Contains(item.Id)).ToListAsync();
+
+            // Keep the order of the articles
+            articles = articles.OrderBy(item => articleIds.IndexOf(item.Id)).ToList();
 
             return await _puppeteerService.BuildScreenshotAsync(jumpStart, articles);
         }

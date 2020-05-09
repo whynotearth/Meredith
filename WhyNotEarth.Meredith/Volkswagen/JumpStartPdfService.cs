@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -30,6 +31,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ThenInclude(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.HasPdf == false);
+
+            jumpStart.Articles = jumpStart.Articles.OrderBy(item => item.Order).ToList();
 
             if (jumpStart is null)
             {
