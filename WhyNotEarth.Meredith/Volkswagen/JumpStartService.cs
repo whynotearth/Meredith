@@ -37,15 +37,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 if (!jumpStart.Articles.Any())
                 {
-                    // If the JumpStart doesn't have any articles assigned 
-                    // Use the default ones (Maximum number of possible articles order by priority)
-                    jumpStart.Articles = await _dbContext.Articles
-                        .Include(item => item.Category)
-                        .ThenInclude(item => item.Image)
-                        .Where(item => item.JumpStartId == null && item.Date == jumpStart.DateTime.Date)
-                        .OrderBy(item => item.Category.Priority)
-                        .Take(_articleService.MaximumArticlesPerDayCount)
-                        .ToListAsync();
+                    jumpStart.Articles = await _articleService.GetDefaultArticlesAsync(jumpStart.DateTime.Date);
                 }
             }
 
@@ -90,6 +82,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var jumpStart in jumpStarts)
             {
+                if (!jumpStart.Articles.Any())
+                {
+                    jumpStart.Articles = await _articleService.GetDefaultArticlesAsync(jumpStart.DateTime.Date);
+                }
+
                 jumpStart.Status = JumpStartStatus.ReadyToSend;
             }
 

@@ -114,6 +114,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return articles;
         }
 
+        internal async Task<List<Article>> GetDefaultArticlesAsync(DateTime date)
+        {
+            return await _dbContext.Articles
+                .Include(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Where(item => item.JumpStartId == null && item.Date == date)
+                .OrderBy(item => item.Category.Priority)
+                .Take(MaximumArticlesPerDayCount)
+                .ToListAsync();
+        }
+
         private async Task RemoveOldJumpStartAsync(Article article)
         {
             var isUsedInAnyOtherArticle = await _dbContext.Articles.AnyAsync(item =>
