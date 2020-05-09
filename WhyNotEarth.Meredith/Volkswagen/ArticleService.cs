@@ -20,14 +20,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext = dbContext;
         }
 
-        public async Task CreateAsync(int categoryId, DateTime date, string headline, string description,
+        public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
             decimal? price, DateTime? eventDate, string? imageUrl)
         {
-            await ValidateAsync(categoryId, date);
+            var category = await ValidateAsync(categorySlug, date);
 
             var article = new Article
             {
-                CategoryId = categoryId,
+                CategoryId = category.Id,
                 Date = date,
                 Headline = headline,
                 Description = description,
@@ -49,10 +49,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Article> EditAsync(int articleId, int categoryId, DateTime date, string headline,
+        public async Task<Article> EditAsync(int articleId, string categorySlug, DateTime date, string headline,
             string description, decimal? price, DateTime? eventDate)
         {
-            await ValidateAsync(categoryId, date);
+            var category = await ValidateAsync(categorySlug, date);
 
             var article = await GetAsync(articleId);
 
@@ -62,7 +62,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 await EnsureJumpStartExistAsync(article.Date);
             }
 
-            article.CategoryId = categoryId;
+            article.CategoryId = category.Id;
             article.Date = date;
             article.Headline = headline;
             article.Description = description;
@@ -174,14 +174,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return article;
         }
 
-        private async Task ValidateAsync(int categoryId, DateTime date)
+        private async Task<ArticleCategory> ValidateAsync(string categorySlug, DateTime date)
         {
             var category = await _dbContext.Categories.OfType<ArticleCategory>()
-                .FirstOrDefaultAsync(item => item.Id == categoryId);
+                .FirstOrDefaultAsync(item => item.Slug.ToLower() == categorySlug.ToLower());
 
             if (category is null)
             {
-                throw new RecordNotFoundException($"Category {categoryId} not found");
+                throw new RecordNotFoundException($"Category {categorySlug} not found");
             }
 
             var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.DateTime.Date == date);
@@ -189,6 +189,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 throw new InvalidActionException($"The email of {date.ToShortDateString()} had already sent");
             }
+
+            return category;
         }
     }
 }
