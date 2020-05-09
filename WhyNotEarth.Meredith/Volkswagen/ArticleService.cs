@@ -100,26 +100,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Article>> GetAvailableArticles(DateTime date)
-        {
-            var articles = await _dbContext.Articles
-                .Include(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Image)
-                .Where(item => item.JumpStartId == null && item.Date <= date)
-                .OrderBy(item => item.Date)
-                .ThenByDescending(item => item.Category.Priority)
-                .ToListAsync();
-
-            return articles;
-        }
-
         internal async Task<List<Article>> GetDefaultArticlesAsync(DateTime date)
         {
             return await _dbContext.Articles
                 .Include(item => item.Category)
                 .ThenInclude(item => item.Image)
-                .Where(item => item.JumpStartId == null && item.Date == date)
+                .Include(item => item.Image)
+                .Where(item => item.JumpStartId == null && item.Date <= date)
                 .OrderBy(item => item.Category.Priority)
                 .Take(MaximumArticlesPerDayCount)
                 .ToListAsync();

@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return jumpStarts;
         }
 
-        public async Task Edit(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
+        public async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
             if (articleIds.Count > _articleService.MaximumArticlesPerDayCount)
@@ -115,6 +115,35 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return jumpStart;
+        }
+
+        public async Task<List<Article>> GetAvailableArticlesAsync(int jumpStartId)
+        {
+            var jumpStart = await _dbContext.JumpStarts
+                .Include(item => item.Articles)
+                .FirstOrDefaultAsync(item => item.Id == jumpStartId);
+
+            if (jumpStart is null)
+            {
+                throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
+            }
+
+            var query = _dbContext.Articles
+                .Include(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Include(item => item.Image)
+                .Where(item => item.JumpStartId == null && item.Date <= jumpStart.DateTime.Date)
+                .OrderBy(item => item.Date)
+                .ThenByDescending(item => item.Category.Priority);
+
+            if (jumpStart.Articles.Any())
+            {
+                return await query.ToListAsync();
+            }
+
+            return await query
+                .Skip(_articleService.MaximumArticlesPerDayCount)
+                .ToListAsync();
         }
     }
 }

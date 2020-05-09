@@ -50,10 +50,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("{jumpStartId}")]
         public async Task<NoContentResult> Edit(int jumpStartId, JumpStartModel model)
         {
-            await _jumpStartService.Edit(jumpStartId, model.DateTime!.Value, model.DistributionGroups,
+            await _jumpStartService.EditAsync(jumpStartId, model.DateTime!.Value, model.DistributionGroups,
                 model.ArticleIds);
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("{jumpStartId}/availablearticles")]
+        public async Task<ActionResult<List<ArticleResult>>> AvailableArticles(int jumpStartId)
+        {
+            var availableArticles = await _jumpStartService.GetAvailableArticlesAsync(jumpStartId);
+
+            var result = availableArticles.Select(item => new ArticleResult(item)).ToList();
+
+            return Ok(result);
         }
     }
 }
