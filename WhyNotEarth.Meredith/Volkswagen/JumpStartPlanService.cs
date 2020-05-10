@@ -130,10 +130,20 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private DateTime GetLastDate(Dictionary<DateTime, List<Article>> dailyArticles, List<Article> articles)
         {
-            var jumpStartLastDate = dailyArticles.Max(item => item.Key);
-            var articlesLastDate = articles.Max(item => item.Date);
-            var lastDate = Max(jumpStartLastDate, articlesLastDate);
+            var lastDate = GetToday().Date;
 
+            if (dailyArticles.Any())
+            {
+                var jumpStartLastDate = dailyArticles.Max(item => item.Key);
+                lastDate = Max(lastDate, jumpStartLastDate);
+            }
+
+            if (articles.Any())
+            {
+                var articlesLastDate = articles.Max(item => item.Date);
+                lastDate = Max(lastDate, articlesLastDate);
+            }
+            
             return lastDate;
         }
 
