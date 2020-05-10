@@ -11,24 +11,31 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartEmailTemplateService
     {
-        private const string EmailTemplateFileName = "EmailTemplate.html";
-        private const string PdfTemplateFileName = "PdfTemplate.html";
+        private const string TwoColumnTemplateFileName = "two-column.html";
+        private const string TwoColumnPdfTemplateFileName = "two-column-pdf.html";
+        private const string ThreeColumnTemplateFileName = "three-column.html";
+        private const string ThreeColumnPdfTemplateFileName = "three-column-pdf.html";
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
         public string GetEmailHtml(JumpStart jumpStart, List<Article> articles, string? pdfUrl)
         {
-            return GetTemplate(jumpStart, articles, EmailTemplateFileName, pdfUrl);
+            var (templateName, maxMiddleCount) = GetTemplateName(articles, false);
+
+            return GetTemplate(jumpStart, articles, templateName, maxMiddleCount, pdfUrl);
         }
 
         public string GetPdfHtml(JumpStart jumpStart)
         {
-            return GetTemplate(jumpStart, jumpStart.Articles, PdfTemplateFileName, null);
+            var (templateName, maxMiddleCount) = GetTemplateName(jumpStart.Articles, true);
+
+            return GetTemplate(jumpStart, jumpStart.Articles, templateName, maxMiddleCount, null);
         }
 
-        private string GetTemplate(JumpStart jumpStart, List<Article> articles, string templateName, string? pdfUrl)
+        private string GetTemplate(JumpStart jumpStart, List<Article> articles, string templateName, int maxMiddleCount,
+            string? pdfUrl)
         {
-            var data = GetData(jumpStart, articles, pdfUrl);
+            var data = GetData(jumpStart, articles, pdfUrl, maxMiddleCount);
 
             return Compile(templateName, data);
         }
@@ -46,10 +53,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private Dictionary<string, object> GetData(JumpStart jumpStart, List<Article> articles, string? pdfUrl)
+        private Dictionary<string, object> GetData(JumpStart jumpStart, List<Article> articles, string? pdfUrl,
+            int maxMiddleCount)
         {
             var result = new Dictionary<string, object>();
-            
+
             AddGeneralData(result, jumpStart.DateTime, pdfUrl);
 
             var remainingArticles = articles.ToList();
@@ -62,10 +70,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             remainingArticles = remaining;
             AddArticlesToData("articlesTop", result, top);
 
-            var middle = remainingArticles.Take(2);
-            AddArticlesToData("articlesDouble", result, middle);
+            var middle = remainingArticles.Take(maxMiddleCount);
+            AddArticlesToData("articlesMiddle", result, middle);
 
-            var bottom = remainingArticles.Skip(2);
+            var bottom = remainingArticles.Skip(maxMiddleCount);
             AddArticlesToData("articlesBottom", result, bottom);
 
             return result;
@@ -197,6 +205,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
+        }
+
+        private (string, int) GetTemplateName(List<Article> articles, bool isPdf)
+        {
+            var hasAnswer = articles.Any(item => item.Category.Slug == AnswersCategorySlug);
+
+            return (hasAnswer, isPdf) switch
+            {
+                (true, true) => (TwoColumnPdfTemplateFileName, 2),
+                (true, false) => (TwoColumnTemplateFileName, 2),
+                (false, true) => (ThreeColumnPdfTemplateFileName, 3),
+                (false, false) => (ThreeColumnTemplateFileName, 3)
+            };
         }
     }
 }

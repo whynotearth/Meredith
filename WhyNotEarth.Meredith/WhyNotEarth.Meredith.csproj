@@ -6,8 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Volkswagen/EmailTemplate.html" />
-    <EmbeddedResource Include="Volkswagen/PdfTemplate.html" />
+    <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />
+    <EmbeddedResource Include="Volkswagen/Templates/three-column-pdf.html" />
+    <EmbeddedResource Include="Volkswagen/Templates/two-column.html" />
+    <EmbeddedResource Include="Volkswagen/Templates/two-column-pdf.html" />
   </ItemGroup>
 
   <ItemGroup>
