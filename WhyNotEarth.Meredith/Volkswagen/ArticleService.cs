@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             if (article.Date != date)
             {
                 await RemoveOldJumpStartAsync(article);
-                await EnsureJumpStartExistAsync(article.Date);
+                await EnsureJumpStartExistAsync(date);
             }
 
             article.CategoryId = category.Id;
