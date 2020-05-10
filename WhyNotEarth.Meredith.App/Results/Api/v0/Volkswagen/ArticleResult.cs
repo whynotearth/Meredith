@@ -13,12 +13,18 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string Headline { get; }
 
+        public string Description { get; }
+
+        public string? Image { get; }
+
         public ArticleResult(Article article)
         {
             Id = article.Id;
             Date = article.Date;
             Category = new ArticleCategoryResult(article.Category);
             Headline = article.Headline;
+            Description = article.Description;
+            Image = article.Image?.Url;
         }
     }
 }
