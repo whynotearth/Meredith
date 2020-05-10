@@ -11,12 +11,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class ArticleService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly JumpStartSendPlanService _jumpStartSendPlanService;
+        private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public ArticleService(MeredithDbContext dbContext, JumpStartSendPlanService jumpStartSendPlanService)
+        public ArticleService(MeredithDbContext dbContext, JumpStartPlanService jumpStartPlanService)
         {
             _dbContext = dbContext;
-            _jumpStartSendPlanService = jumpStartSendPlanService;
+            _jumpStartPlanService = jumpStartPlanService;
         }
 
         public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
@@ -101,7 +101,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         
         internal IQueryable<Article> GetDefaultArticles(DateTime date)
         {
-            return GetAvailableArticles(date).Take(_jumpStartSendPlanService.MaximumArticlesPerDayCount);
+            return GetAvailableArticles(date).Take(_jumpStartPlanService.MaximumArticlesPerDayCount);
         }
 
         internal IQueryable<Article> GetAvailableArticles(DateTime date)

@@ -19,12 +19,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class ArticleController : ControllerBase
     {
         private readonly ArticleService _articleService;
-        private readonly JumpStartSendPlanService _jumpStartSendPlanService;
+        private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public ArticleController(ArticleService articleService, JumpStartSendPlanService jumpStartSendPlanService)
+        public ArticleController(ArticleService articleService, JumpStartPlanService jumpStartPlanService)
         {
             _articleService = articleService;
-            _jumpStartSendPlanService = jumpStartSendPlanService;
+            _jumpStartPlanService = jumpStartPlanService;
         }
 
         [Returns200]
@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("dailyplan")]
         public async Task<ActionResult<List<ArticleDailyResult>>> DailyPlan()
         {
-            var dailyArticles = await _jumpStartSendPlanService.GetPlanAsync();
+            var dailyArticles = await _jumpStartPlanService.GetPlanAsync();
 
             return Ok(dailyArticles.OrderBy(item => item.Key)
                 .Select(item => new ArticleDailyResult(item.Key, item.Value)));

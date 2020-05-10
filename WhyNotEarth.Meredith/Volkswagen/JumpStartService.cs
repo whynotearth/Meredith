@@ -14,16 +14,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         private readonly ArticleService _articleService;
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly JumpStartSendPlanService _jumpStartSendPlanService;
+        private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly MeredithDbContext _dbContext;
 
         public JumpStartService(MeredithDbContext dbContext, ArticleService articleService,
-            IBackgroundJobClient backgroundJobClient, JumpStartSendPlanService jumpStartSendPlanService)
+            IBackgroundJobClient backgroundJobClient, JumpStartPlanService jumpStartPlanService)
         {
             _dbContext = dbContext;
             _articleService = articleService;
             _backgroundJobClient = backgroundJobClient;
-            _jumpStartSendPlanService = jumpStartSendPlanService;
+            _jumpStartPlanService = jumpStartPlanService;
         }
 
         public async Task<List<JumpStart>> ListAsync()
@@ -49,10 +49,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
-            if (articleIds.Count > _jumpStartSendPlanService.MaximumArticlesPerDayCount)
+            if (articleIds.Count > _jumpStartPlanService.MaximumArticlesPerDayCount)
             {
                 throw new InvalidActionException(
-                    $"Maximum {_jumpStartSendPlanService.MaximumArticlesPerDayCount} articles are allowed per email");
+                    $"Maximum {_jumpStartPlanService.MaximumArticlesPerDayCount} articles are allowed per email");
             }
 
             var jumpStart = await GetAsync(jumpStartId);
@@ -138,7 +138,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return await query
-                .Skip(_jumpStartSendPlanService.MaximumArticlesPerDayCount)
+                .Skip(_jumpStartPlanService.MaximumArticlesPerDayCount)
                 .ToListAsync();
         }
     }
