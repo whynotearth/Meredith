@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +11,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class ArticleService
     {
         private readonly MeredithDbContext _dbContext;
+        private readonly JumpStartSendPlanService _jumpStartSendPlanService;
 
-        public int MaximumArticlesPerDayCount { get; } = 5;
-
-        public ArticleService(MeredithDbContext dbContext)
+        public ArticleService(MeredithDbContext dbContext, JumpStartSendPlanService jumpStartSendPlanService)
         {
             _dbContext = dbContext;
+            _jumpStartSendPlanService = jumpStartSendPlanService;
         }
 
         public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
@@ -99,10 +98,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext.Articles.Remove(article);
             await _dbContext.SaveChangesAsync();
         }
-
+        
         internal IQueryable<Article> GetDefaultArticles(DateTime date)
         {
-            return GetAvailableArticles(date).Take(MaximumArticlesPerDayCount);
+            return GetAvailableArticles(date).Take(_jumpStartSendPlanService.MaximumArticlesPerDayCount);
         }
 
         internal IQueryable<Article> GetAvailableArticles(DateTime date)
@@ -193,5 +192,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             return category;
         }
+
+        
     }
 }

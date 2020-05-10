@@ -14,14 +14,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         private readonly ArticleService _articleService;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly JumpStartSendPlanService _jumpStartSendPlanService;
         private readonly MeredithDbContext _dbContext;
 
         public JumpStartService(MeredithDbContext dbContext, ArticleService articleService,
-            IBackgroundJobClient backgroundJobClient)
+            IBackgroundJobClient backgroundJobClient, JumpStartSendPlanService jumpStartSendPlanService)
         {
             _dbContext = dbContext;
             _articleService = articleService;
             _backgroundJobClient = backgroundJobClient;
+            _jumpStartSendPlanService = jumpStartSendPlanService;
         }
 
         public async Task<List<JumpStart>> ListAsync()
@@ -47,10 +49,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
-            if (articleIds.Count > _articleService.MaximumArticlesPerDayCount)
+            if (articleIds.Count > _jumpStartSendPlanService.MaximumArticlesPerDayCount)
             {
                 throw new InvalidActionException(
-                    $"Maximum {_articleService.MaximumArticlesPerDayCount} articles are allowed per email");
+                    $"Maximum {_jumpStartSendPlanService.MaximumArticlesPerDayCount} articles are allowed per email");
             }
 
             var jumpStart = await GetAsync(jumpStartId);
@@ -136,7 +138,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return await query
-                .Skip(_articleService.MaximumArticlesPerDayCount)
+                .Skip(_jumpStartSendPlanService.MaximumArticlesPerDayCount)
                 .ToListAsync();
         }
     }
