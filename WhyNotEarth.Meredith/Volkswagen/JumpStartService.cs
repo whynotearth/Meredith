@@ -14,8 +14,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         private readonly ArticleService _articleService;
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly MeredithDbContext _dbContext;
+        private readonly JumpStartPlanService _jumpStartPlanService;
 
         public JumpStartService(MeredithDbContext dbContext, ArticleService articleService,
             IBackgroundJobClient backgroundJobClient, JumpStartPlanService jumpStartPlanService)
@@ -39,7 +39,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 if (!jumpStart.Articles.Any())
                 {
-                    jumpStart.Articles = await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
+                    jumpStart.Articles =
+                        await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
                 }
             }
 
@@ -78,15 +79,17 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task SendAsync()
         {
-            var jumpStarts = await _dbContext.JumpStarts.Where(item =>
-                    item.Status == JumpStartStatus.Preview && item.DateTime < DateTime.UtcNow.AddMinutes(15))
+            var jumpStarts = await _dbContext.JumpStarts
+                .Include(item => item.Articles)
+                .Where(item => item.Status == JumpStartStatus.Preview && item.DateTime < DateTime.UtcNow.AddMinutes(15))
                 .ToListAsync();
 
             foreach (var jumpStart in jumpStarts)
             {
                 if (!jumpStart.Articles.Any())
                 {
-                    jumpStart.Articles = await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
+                    jumpStart.Articles =
+                        await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
                 }
 
                 jumpStart.Status = JumpStartStatus.ReadyToSend;
