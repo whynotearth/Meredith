@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<Dictionary<DateTime, List<Article>>> GetPlanAsync()
         {
-            var today = DateTime.UtcNow.Date;
+            var today = GetToday().Date;
             var result = new Dictionary<DateTime, List<Article>>();
 
             // First add and close all the dates with created JumpStarts
@@ -99,7 +99,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
             else
             {
-                firstDate = DateTime.UtcNow.Date;
+                firstDate = GetToday().Date;
             }
 
             foreach (var article in articles)
@@ -122,7 +122,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var lastDate = GetLastDate(dailyArticles, articles);
 
-            foreach (var date in GetRange(DateTime.UtcNow.Date, lastDate))
+            foreach (var date in GetRange(GetToday().Date, lastDate))
             {
                 EnsureDayExist(dailyArticles, date);
             }
@@ -162,6 +162,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return true;
+        }
+
+        private DateTime GetToday()
+        {
+            return DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified);
         }
 
         private DateTime Max(DateTime a, DateTime b)
