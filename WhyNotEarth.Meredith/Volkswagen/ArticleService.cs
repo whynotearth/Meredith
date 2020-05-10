@@ -192,7 +192,5 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             return category;
         }
-
-        
     }
 }

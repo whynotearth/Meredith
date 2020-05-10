@@ -42,7 +42,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<RecipientService>()
                 .AddScoped<EmailRecipientService>()
                 .AddScoped<JumpStartPreviewService>()
-                .AddScoped<PuppeteerService>();
+                .AddScoped<PuppeteerService>()
+                .AddScoped<JumpStartSendPlanService>();
 
             // Tenant
             serviceCollection
