@@ -12,43 +12,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartService
     {
-        private readonly ArticleService _articleService;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
         private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public JumpStartService(MeredithDbContext dbContext, ArticleService articleService,
+        public JumpStartService(MeredithDbContext dbContext, 
             IBackgroundJobClient backgroundJobClient, JumpStartPlanService jumpStartPlanService)
         {
             _dbContext = dbContext;
-            _articleService = articleService;
             _backgroundJobClient = backgroundJobClient;
             _jumpStartPlanService = jumpStartPlanService;
         }
 
-        public async Task<List<JumpStart>> ListAsync()
-        {
-            var jumpStarts = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Where(item => item.Status == JumpStartStatus.Preview)
-                .OrderBy(item => item.DateTime)
-                .ToListAsync();
-
-            foreach (var jumpStart in jumpStarts)
-            {
-                if (!jumpStart.Articles.Any())
-                {
-                    jumpStart.Articles =
-                        await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
-                }
-            }
-
-            return jumpStarts;
-        }
-
-        public async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
+        public async Task CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
             if (articleIds.Count > _jumpStartPlanService.MaximumArticlesPerDayCount)
@@ -57,43 +33,78 @@ namespace WhyNotEarth.Meredith.Volkswagen
                     $"Maximum {_jumpStartPlanService.MaximumArticlesPerDayCount} articles are allowed per email");
             }
 
-            var jumpStart = await GetAsync(jumpStartId);
+            if (!distributionGroups.Any())
+            {
+                throw new InvalidActionException("No distribution group selected");
+            }
 
-            var newArticles = await _dbContext.Articles.Where(item => articleIds.Contains(item.Id))
-                .ToListAsync();
+            if (jumpStartId.HasValue)
+            {
+                await EditAsync(jumpStartId.Value, dateTime, distributionGroups, articleIds);
+            }
+            else
+            {
+                await Create(dateTime, distributionGroups, articleIds);
+            }
+        }
+        
+        private async Task Create(DateTime dateTime, List<string> distributionGroups, List<int> articleIds)
+        {
+            var articles = await GetArticles(articleIds);
+
+            await Create(dateTime, distributionGroups, articles);
+        }
+
+        private async Task<JumpStart> Create(DateTime dateTime, List<string> distributionGroups, List<Article> articles)
+        {
+            var jumpStart = new JumpStart
+            {
+                DateTime = dateTime,
+                Status = JumpStartStatus.Preview,
+                DistributionGroups = string.Join(',', distributionGroups)
+            };
+
+            _dbContext.JumpStarts.Add(jumpStart);
+
+            Rearrange(articles);
+
+            await _dbContext.SaveChangesAsync();
+
+            return jumpStart;
+        }
+
+        private async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
+            List<int> articleIds)
+        {
+            var jumpStart = await GetAsync(jumpStartId);
 
             jumpStart.DateTime = dateTime;
             jumpStart.DistributionGroups = string.Join(',', distributionGroups);
-            jumpStart.Articles = newArticles;
             _dbContext.JumpStarts.Update(jumpStart);
 
-            foreach (var article in newArticles)
-            {
-                article.JumpStart = jumpStart;
-                article.Order = articleIds.IndexOf(article.Id);
-            }
-
-            _dbContext.UpdateRange(newArticles);
+            var articles = await GetArticles(articleIds);
+            Rearrange(articles);
 
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task SendAsync()
         {
-            var jumpStarts = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .Where(item => item.Status == JumpStartStatus.Preview && item.DateTime < DateTime.UtcNow.AddMinutes(15))
-                .ToListAsync();
+            var dailyPlans = await _jumpStartPlanService.GetAsync();
+            dailyPlans = dailyPlans.Where(item => item.DateTime < DateTime.UtcNow.AddMinutes(15)).ToList();
 
-            foreach (var jumpStart in jumpStarts)
+            var jumpStarts = new List<JumpStart>();
+
+            foreach (var dailyPlan in dailyPlans)
             {
-                if (!jumpStart.Articles.Any())
+                var jumpStart = dailyPlan.JumpStart;
+                if (jumpStart is null)
                 {
-                    jumpStart.Articles =
-                        await _articleService.GetDefaultArticles(jumpStart.DateTime.Date).ToListAsync();
+                    jumpStart = await Create(dailyPlan.DateTime, dailyPlan.DistributionGroups, dailyPlan.Articles);
                 }
 
-                jumpStart.Status = JumpStartStatus.ReadyToSend;
+                jumpStart.Status = JumpStartStatus.Sending;
+                jumpStarts.Add(jumpStart);
             }
 
             _dbContext.UpdateRange(jumpStarts);
@@ -101,7 +112,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var jumpStart in jumpStarts)
             {
-                _backgroundJobClient.Enqueue<JumpStartPdfService>(service =>
+                _backgroundJobClient.Enqueue<JumpStartPdfJob>(service =>
                     service.CreatePdfAsync(jumpStart.Id));
             }
         }
@@ -123,27 +134,23 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return jumpStart;
         }
 
-        public async Task<List<Article>> GetAvailableArticlesAsync(int jumpStartId)
+        private async Task<List<Article>> GetArticles(List<int> articleIds)
         {
-            var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .FirstOrDefaultAsync(item => item.Id == jumpStartId);
-
-            if (jumpStart is null)
-            {
-                throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
-            }
-
-            var query = _articleService.GetAvailableArticles(jumpStart.DateTime.Date);
-
-            if (jumpStart.Articles.Any())
-            {
-                return await query.ToListAsync();
-            }
-
-            return await query
-                .Skip(_jumpStartPlanService.MaximumArticlesPerDayCount)
+            var articles = await _dbContext.Articles.Where(item => articleIds.Contains(item.Id))
                 .ToListAsync();
+
+            return articles.OrderBy(item => articleIds.IndexOf(item.Id)).ToList();
+        }
+
+        private void Rearrange(List<Article> articles)
+        {
+            var i = 0;
+            foreach (var article in articles)
+            {
+                article.Order = i++;
+            }
+         
+            _dbContext.Articles.UpdateRange(articles);
         }
     }
 }

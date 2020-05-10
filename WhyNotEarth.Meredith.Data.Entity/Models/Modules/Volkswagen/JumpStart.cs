@@ -17,8 +17,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public bool HasPdf { get; set; }
 
-        public List<Article> Articles { get; set; }
-
         public void Configure(EntityTypeBuilder<JumpStart> builder)
         {
             builder.ToTable("JumpStarts", "ModuleVolkswagen");
@@ -29,7 +27,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
     public enum JumpStartStatus : byte
     {
         Preview = 1,
-        ReadyToSend = 2,
+        Sending = 2,
         Sent = 3
     }
 }

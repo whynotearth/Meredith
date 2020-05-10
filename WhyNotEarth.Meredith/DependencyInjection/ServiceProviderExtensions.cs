@@ -35,8 +35,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             serviceCollection
                 .AddScoped<ArticleService>()
                 .AddScoped<JumpStartService>()
-                .AddScoped<JumpStartEmailService>()
-                .AddScoped<JumpStartPdfService>()
+                .AddScoped<JumpStartEmailJob>()
+                .AddScoped<JumpStartPdfJob>()
                 .AddScoped<MemoService>()
                 .AddScoped<JumpStartEmailTemplateService>()
                 .AddScoped<RecipientService>()

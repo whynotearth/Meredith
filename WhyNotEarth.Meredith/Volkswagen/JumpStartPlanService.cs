@@ -19,169 +19,92 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _dbContext = dbContext;
         }
 
-        public async Task<Dictionary<DateTime, List<Article>>> GetPlanAsync()
+        public async Task<List<JumpStartPlan>> GetAsync()
         {
-            var today = GetToday().Date;
-            var result = new Dictionary<DateTime, List<Article>>();
+            var result = new List<JumpStartPlan>();
+            var defaultDistributionGroups = await GetDefaultDistributionGroupsAsync();
 
-            // First add and close all the dates with created JumpStarts
-            await AddJumpStarts(result);
+            var articles = await GetArticlesAsync();
+
+            var jumpStarts = await _dbContext.JumpStarts
+                .OrderBy(item => item.DateTime)
+                .Where(item => item.Status == JumpStartStatus.Preview)
+                .ToListAsync();
+
+            var dailyArticleGroups = articles.GroupBy(item => item.Date);
+            foreach (var dailyArticles in dailyArticleGroups)
+            {
+                var jumpStart = GetJumpStart(jumpStarts, dailyArticles.Key);
+                var sendDateTime = GetSendDateTime(jumpStart, dailyArticles.Key);
+                var distributionGroups = GetDistributionGroups(jumpStart, defaultDistributionGroups);
+
+                var jumpStartPlan = new JumpStartPlan(sendDateTime, dailyArticles.ToList(), distributionGroups, jumpStart);
+                result.Add(jumpStartPlan);
+            }
+
+            return result;
+        }
+
+        private List<string> GetDistributionGroups(JumpStart? jumpStart, List<string> defaultDistributionGroups)
+        {
+            if (jumpStart != null)
+            {
+                return jumpStart.DistributionGroups.Split(',').ToList();
+            }
+
+            return defaultDistributionGroups;
+        }
+
+        private DateTime GetSendDateTime(JumpStart? jumpStart, DateTime articlesDate)
+        {
+            if (jumpStart != null)
+            {
+                return jumpStart.DateTime;
+            }
+
+            var defaultTime = GetDefaultSendTime();
+
+            return articlesDate.Date.Add(defaultTime);
+        }
+
+        private JumpStart? GetJumpStart(List<JumpStart> jumpStarts, DateTime dateTime)
+        {
+            return jumpStarts.FirstOrDefault(item => item.DateTime.Date == dateTime.Date);
+        }
+
+        private async Task<List<Article>> GetArticlesAsync()
+        {
+            var lastSentJumpStart = await _dbContext.JumpStarts
+                .OrderBy(item => item.DateTime)
+                .Where(item => item.Status != JumpStartStatus.Preview)
+                .LastOrDefaultAsync();
+
+            var startDateTime = lastSentJumpStart?.DateTime ?? DateTime.MinValue;
 
             var articles = await _dbContext.Articles
                 .Include(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Include(item => item.Image)
-                .Where(item => item.JumpStartId == null)
+                .Where(item => item.Date > startDateTime)
                 .OrderBy(item => item.Date)
-                .ThenByDescending(item => item.Category.Priority)
+                .ThenByDescending(item => item.Order)
                 .ToListAsync();
 
-            EnsureAllDatesExist(result, articles);
-
-            var oldArticles = new List<Article>();
-            foreach (var article in articles)
-            {
-                if (article.Date >= today)
-                {
-                    AddToFirstOpenDateFrom(result, article.Date, article);
-                }
-                else
-                {
-                    oldArticles.Add(article);
-                }
-            }
-
-            AddToOpenDays(result, oldArticles);
-
-            return result;
+            return articles;
         }
 
-        private async Task AddJumpStarts(Dictionary<DateTime, List<Article>> result)
+        private TimeSpan GetDefaultSendTime()
         {
-            var jumpStarts = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Image)
-                .Where(item => item.Status == JumpStartStatus.Preview)
-                .ToListAsync();
-
-            foreach (var jumpStart in jumpStarts)
-            {
-                EnsureDayExist(result, jumpStart.DateTime);
-
-                result[jumpStart.DateTime.Date].AddRange(jumpStart.Articles);
-            }
+            // TODO: Get default send time
+            return new TimeSpan(10, 14, 0);
         }
 
-        private void AddToFirstOpenDateFrom(Dictionary<DateTime, List<Article>> dailyArticles, DateTime dateTime,
-            Article article)
+        private async Task<List<string>> GetDefaultDistributionGroupsAsync()
         {
-            EnsureDayExist(dailyArticles, dateTime);
+            var emailRecipient = await _dbContext.Recipients.FirstOrDefaultAsync();
+            var distributionGroup = emailRecipient?.DistributionGroup ?? string.Empty;
 
-            if (IsDateOpen(dailyArticles, dateTime))
-            {
-                dailyArticles[dateTime.Date].Add(article);
-            }
-            else
-            {
-                AddToFirstOpenDateFrom(dailyArticles, dateTime.AddDays(1), article);
-            }
-        }
-
-        private void AddToOpenDays(Dictionary<DateTime, List<Article>> dailyArticles, List<Article> articles)
-        {
-            DateTime firstDate;
-            if (dailyArticles.Any())
-            {
-                firstDate = dailyArticles.FirstOrDefault().Key;
-            }
-            else
-            {
-                firstDate = GetToday().Date;
-            }
-
-            foreach (var article in articles)
-            {
-                AddToFirstOpenDateFrom(dailyArticles, firstDate, article);
-            }
-        }
-
-        private void EnsureDayExist(Dictionary<DateTime, List<Article>> dailyArticles, DateTime dateTime)
-        {
-            if (dailyArticles.ContainsKey(dateTime.Date))
-            {
-                return;
-            }
-
-            dailyArticles.Add(dateTime.Date, new List<Article>());
-        }
-
-        private void EnsureAllDatesExist(Dictionary<DateTime, List<Article>> dailyArticles, List<Article> articles)
-        {
-            var lastDate = GetLastDate(dailyArticles, articles);
-
-            foreach (var date in GetRange(GetToday().Date, lastDate))
-            {
-                EnsureDayExist(dailyArticles, date);
-            }
-        }
-
-        private DateTime GetLastDate(Dictionary<DateTime, List<Article>> dailyArticles, List<Article> articles)
-        {
-            var lastDate = GetToday().Date;
-
-            if (dailyArticles.Any())
-            {
-                var jumpStartLastDate = dailyArticles.Max(item => item.Key);
-                lastDate = Max(lastDate, jumpStartLastDate);
-            }
-
-            if (articles.Any())
-            {
-                var articlesLastDate = articles.Max(item => item.Date);
-                lastDate = Max(lastDate, articlesLastDate);
-            }
-            
-            return lastDate;
-        }
-
-        private IEnumerable<DateTime> GetRange(DateTime startDate, DateTime endDate)
-        {
-            for (var date = startDate.Date; date.Date <= endDate.Date; date = date.AddDays(1))
-            {
-                yield return date;
-            }
-        }
-
-        private bool IsDateOpen(Dictionary<DateTime, List<Article>> dailyArticles, DateTime dateTime)
-        {
-            EnsureDayExist(dailyArticles, dateTime);
-
-            var articles = dailyArticles[dateTime.Date];
-
-            if (articles.Count >= MaximumArticlesPerDayCount)
-            {
-                return false;
-            }
-
-            if (articles.Any(item => item.JumpStart != null))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private DateTime GetToday()
-        {
-            return DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified);
-        }
-
-        private DateTime Max(DateTime a, DateTime b)
-        {
-            return a > b ? a : b;
+            return distributionGroup.Split(',').ToList();
         }
     }
 }

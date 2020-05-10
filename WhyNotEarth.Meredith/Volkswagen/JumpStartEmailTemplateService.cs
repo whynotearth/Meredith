@@ -18,24 +18,24 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
 
-        public string GetEmailHtml(JumpStart jumpStart, List<Article> articles, string? pdfUrl)
+        public string GetEmailHtml(DateTime date, List<Article> articles, string? pdfUrl)
         {
             var (templateName, maxMiddleCount) = GetTemplateName(articles, false);
 
-            return GetTemplate(jumpStart, articles, templateName, maxMiddleCount, pdfUrl);
+            return GetTemplate(date, articles, templateName, maxMiddleCount, pdfUrl);
         }
 
-        public string GetPdfHtml(JumpStart jumpStart)
+        public string GetPdfHtml(DateTime dateTime, List<Article> articles)
         {
-            var (templateName, maxMiddleCount) = GetTemplateName(jumpStart.Articles, true);
+            var (templateName, maxMiddleCount) = GetTemplateName(articles, true);
 
-            return GetTemplate(jumpStart, jumpStart.Articles, templateName, maxMiddleCount, null);
+            return GetTemplate(dateTime.Date, articles, templateName, maxMiddleCount, null);
         }
 
-        private string GetTemplate(JumpStart jumpStart, List<Article> articles, string templateName, int maxMiddleCount,
+        private string GetTemplate(DateTime date, List<Article> articles, string templateName, int maxMiddleCount,
             string? pdfUrl)
         {
-            var data = GetData(jumpStart, articles, pdfUrl, maxMiddleCount);
+            var data = GetData(date, articles, maxMiddleCount, pdfUrl);
 
             return Compile(templateName, data);
         }
@@ -53,12 +53,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private Dictionary<string, object> GetData(JumpStart jumpStart, List<Article> articles, string? pdfUrl,
-            int maxMiddleCount)
+        private Dictionary<string, object> GetData(DateTime date, List<Article> articles, int maxMiddleCount,
+            string? pdfUrl)
         {
             var result = new Dictionary<string, object>();
 
-            AddGeneralData(result, jumpStart.DateTime, pdfUrl);
+            AddGeneralData(result, date, pdfUrl);
 
             var remainingArticles = articles.ToList();
 
@@ -192,7 +192,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private string GetRawTemplate(string templateName)
         {
-            var assembly = typeof(JumpStartService).GetTypeInfo().Assembly;
+            var assembly = typeof(JumpStartEmailTemplateService).GetTypeInfo().Assembly;
 
             var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
             var stream = assembly.GetManifestResourceStream(name);

@@ -28,10 +28,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public int? Order { get; set; }
 
-        public int? JumpStartId { get; set; }
-        
-        public JumpStart JumpStart { get; set; }
-
         public void Configure(EntityTypeBuilder<Article> builder)
         {
             builder.ToTable("Articles", "ModuleVolkswagen");

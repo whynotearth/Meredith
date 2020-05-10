@@ -11,12 +11,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class ArticleService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public ArticleService(MeredithDbContext dbContext, JumpStartPlanService jumpStartPlanService)
+        public ArticleService(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
-            _jumpStartPlanService = jumpStartPlanService;
         }
 
         public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
@@ -42,8 +40,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 };
             }
 
-            article.JumpStart = await EnsureJumpStartExistAsync(article.Date);
-
             await _dbContext.Articles.AddAsync(article);
             await _dbContext.SaveChangesAsync();
         }
@@ -54,12 +50,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var category = await ValidateAsync(categorySlug, date);
 
             var article = await GetAsync(articleId);
-
-            if (article.Date != date)
-            {
-                await RemoveOldJumpStartAsync(article);
-                article.JumpStart = await EnsureJumpStartExistAsync(date);
-            }
 
             article.CategoryId = category.Id;
             article.Date = date;
@@ -90,87 +80,24 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 }
             }
 
-            if (article.JumpStart != null)
-            {
-                await RemoveOldJumpStartAsync(article);
-            }
-
             _dbContext.Articles.Remove(article);
             await _dbContext.SaveChangesAsync();
-        }
-        
-        internal IQueryable<Article> GetDefaultArticles(DateTime date)
-        {
-            return GetAvailableArticles(date).Take(_jumpStartPlanService.MaximumArticlesPerDayCount);
-        }
-
-        internal IQueryable<Article> GetAvailableArticles(DateTime date)
-        {
-            return _dbContext.Articles
-                .Include(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Image)
-                .Where(item => item.JumpStartId == null && item.Date <= date)
-                .OrderBy(item => item.Category.Priority);
-        }
-
-        private async Task RemoveOldJumpStartAsync(Article article)
-        {
-            var isUsedInAnyOtherArticle = await _dbContext.Articles.AnyAsync(item =>
-                item.JumpStartId == article.JumpStartId && item.Id != article.Id);
-
-            if (!isUsedInAnyOtherArticle)
-            {
-                _dbContext.JumpStarts.Remove(article.JumpStart);
-            }
-        }
-
-        private async Task<JumpStart> EnsureJumpStartExistAsync(DateTime date)
-        {
-            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item =>
-                item.DateTime.Date == date);
-
-            if (jumpStart != null)
-            {
-                if (jumpStart.Status != JumpStartStatus.Preview)
-                {
-                    // This should never happen
-                    throw new Exception();
-                }
-
-                return jumpStart;
-            }
-
-            // TODO: Get default distribution group
-            var emailRecipient = await _dbContext.Recipients.FirstOrDefaultAsync();
-            var distributionGroup = emailRecipient?.DistributionGroup;
-
-            if (distributionGroup is null)
-            {
-                throw new InvalidActionException(
-                    "Cannot find any distribution group. Please import your recipients first.");
-            }
-
-            jumpStart = new JumpStart
-            {
-                // TODO: Get default send time
-                DateTime = date.AddHours(10).AddMinutes(14),
-                Status = JumpStartStatus.Preview,
-                DistributionGroups = distributionGroup
-            };
-
-            _dbContext.JumpStarts.Add(jumpStart);
-
-            return jumpStart;
         }
 
         private async Task<Article> GetAsync(int articleId)
         {
-            var article = await _dbContext.Articles.FirstOrDefaultAsync(item => item.Id == articleId);
+            var article = await _dbContext.Articles
+                .FirstOrDefaultAsync(item => item.Id == articleId);
 
             if (article is null)
             {
                 throw new RecordNotFoundException($"Article {articleId} not found");
+            }
+
+            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.DateTime.Date == article.Date);
+            if (jumpStart != null && jumpStart.Status != JumpStartStatus.Preview)
+            {
+                throw new InvalidActionException($"The email of {article.Date.ToShortDateString()} had already sent");
             }
 
             return article;
@@ -179,14 +106,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private async Task<ArticleCategory> ValidateAsync(string categorySlug, DateTime date)
         {
             var category = await _dbContext.Categories.OfType<ArticleCategory>()
-                .FirstOrDefaultAsync(item => item.Slug.ToLower() == categorySlug.ToLower());
+                .FirstOrDefaultAsync(item => item.Slug == categorySlug.ToLower());
 
             if (category is null)
             {
                 throw new RecordNotFoundException($"Category {categorySlug} not found");
             }
 
-            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.DateTime.Date == date);
+            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.DateTime.Date == date.Date);
             if (jumpStart != null && jumpStart.Status != JumpStartStatus.Preview)
             {
                 throw new InvalidActionException($"The email of {date.ToShortDateString()} had already sent");

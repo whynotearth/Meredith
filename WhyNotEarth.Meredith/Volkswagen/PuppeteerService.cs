@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using PuppeteerSharp;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
@@ -14,9 +15,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
         }
 
-        public async Task<byte[]> BuildPdfAsync(JumpStart jumpStart)
+        public async Task<byte[]> BuildPdfAsync(DateTime dateTime, List<Article> articles)
         {
-            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(jumpStart);
+            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(dateTime, articles);
 
             await using var browser = await GetBrowser();
 
@@ -32,9 +33,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return pdfData;
         }
 
-        public async Task<byte[]> BuildScreenshotAsync(JumpStart jumpStart, List<Article> articles)
+        public async Task<byte[]> BuildScreenshotAsync(DateTime date, List<Article> articles)
         {
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart, articles, null);
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(date, articles, null);
 
             await using var browser = await GetBrowser();
 

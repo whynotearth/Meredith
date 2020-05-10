@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -18,15 +18,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _puppeteerService = puppeteerService;
         }
 
-        public async Task<byte[]> CreatePreviewAsync(int jumpStartId, List<int> articleIds)
+        public async Task<byte[]> CreatePreviewAsync(DateTime date, List<int> articleIds)
         {
-            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.Id == jumpStartId);
-
-            if (jumpStart is null)
-            {
-                throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
-            }
-
             var articles = await _dbContext.Articles
                 .Include(item => item.Image)
                 .Include(item => item.Category)
@@ -36,7 +29,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             // Keep the order of the articles
             articles = articles.OrderBy(item => articleIds.IndexOf(item.Id)).ToList();
 
-            return await _puppeteerService.BuildScreenshotAsync(jumpStart, articles);
+            return await _puppeteerService.BuildScreenshotAsync(date, articles);
         }
     }
 }

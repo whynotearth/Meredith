@@ -6,6 +6,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
     public class JumpStartModel
     {
+        public int? Id { get; set; }
+
         [Required]
         public DateTime? DateTime { get; set; }
 

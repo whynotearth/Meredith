@@ -19,52 +19,44 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class JumpStartController : ControllerBase
     {
+        private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly JumpStartPreviewService _jumpStartPreviewService;
         private readonly JumpStartService _jumpStartService;
 
-        public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService)
+        public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService,
+            JumpStartPlanService jumpStartPlanService)
         {
             _jumpStartService = jumpStartService;
             _jumpStartPreviewService = jumpStartPreviewService;
+            _jumpStartPlanService = jumpStartPlanService;
         }
 
         [Returns200]
-        [HttpGet("")]
-        public async Task<ActionResult<List<JumpStartResult>>> List()
+        [HttpGet("dailyplan")]
+        public async Task<ActionResult<List<JumpStartPlanResult>>> DailyPlan()
         {
-            var jumpStarts = await _jumpStartService.ListAsync();
+            var dailyPlan = await _jumpStartPlanService.GetAsync();
 
-            return Ok(jumpStarts.Select(item => new JumpStartResult(item)));
+            return Ok(dailyPlan.Select(item => new JumpStartPlanResult(item)));
         }
 
         [Returns200]
-        [HttpGet("{jumpStartId}/preview")]
-        public async Task<FileContentResult> Preview(int jumpStartId, [FromQuery] List<int> articleIds)
+        [HttpGet("{date}/preview")]
+        public async Task<FileContentResult> Preview(DateTime date, [FromQuery] List<int> articleIds)
         {
-            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(jumpStartId, articleIds);
+            var previewData = await _jumpStartPreviewService.CreatePreviewAsync(date.Date, articleIds);
 
             return File(previewData, "image/png", Guid.NewGuid() + ".png");
         }
 
         [Returns204]
-        [HttpPut("{jumpStartId}")]
-        public async Task<NoContentResult> Edit(int jumpStartId, JumpStartModel model)
+        [HttpPost("{jumpStartId}")]
+        public async Task<NoContentResult> CreateOrEdit(JumpStartModel model)
         {
-            await _jumpStartService.EditAsync(jumpStartId, model.DateTime!.Value, model.DistributionGroups,
+            await _jumpStartService.CreateOrEditAsync(model.Id, model.DateTime!.Value, model.DistributionGroups,
                 model.ArticleIds);
 
             return NoContent();
-        }
-
-        [Returns200]
-        [HttpGet("{jumpStartId}/availablearticles")]
-        public async Task<ActionResult<List<ArticleResult>>> AvailableArticles(int jumpStartId)
-        {
-            var availableArticles = await _jumpStartService.GetAvailableArticlesAsync(jumpStartId);
-
-            var result = availableArticles.Select(item => new ArticleResult(item)).ToList();
-
-            return Ok(result);
         }
     }
 }

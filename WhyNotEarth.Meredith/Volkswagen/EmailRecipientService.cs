@@ -50,7 +50,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return item;
             });
 
-            _backgroundJobClient.Enqueue<JumpStartEmailService>(service =>
+            _backgroundJobClient.Enqueue<JumpStartEmailJob>(service =>
                 service.SendAsync(jumpStartId));
         }
 

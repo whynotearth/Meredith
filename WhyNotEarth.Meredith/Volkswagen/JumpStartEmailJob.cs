@@ -8,47 +8,47 @@ using WhyNotEarth.Meredith.Email;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
-    public class JumpStartEmailService
+    public class JumpStartEmailJob
     {
         private readonly MeredithDbContext _dbContext;
         private readonly JumpStartEmailTemplateService _jumpStartEmailTemplateService;
-        private readonly JumpStartPdfService _jumpStartPdfService;
+        private readonly JumpStartPdfJob _jumpStartPdfJob;
         private readonly SendGridService _sendGridService;
 
-        public JumpStartEmailService(MeredithDbContext dbContext, SendGridService sendGridService,
-            JumpStartEmailTemplateService jumpStartEmailTemplateService, JumpStartPdfService jumpStartPdfService)
+        public JumpStartEmailJob(MeredithDbContext dbContext, SendGridService sendGridService,
+            JumpStartEmailTemplateService jumpStartEmailTemplateService, JumpStartPdfJob jumpStartPdfJob)
         {
             _dbContext = dbContext;
             _sendGridService = sendGridService;
             _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
-            _jumpStartPdfService = jumpStartPdfService;
+            _jumpStartPdfJob = jumpStartPdfJob;
         }
 
         public async Task SendAsync(int jumpStartId)
         {
             var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Image)
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Category)
-                .ThenInclude(item => item.Image)
-                .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.Status == JumpStartStatus.ReadyToSend);
+                .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.Status == JumpStartStatus.Sending);
 
-            jumpStart.Articles = jumpStart.Articles.OrderBy(item => item.Order).ToList();
+            var articles = await _dbContext.Articles
+                .Include(item => item.Image)
+                .Include(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Where(item => item.Date == jumpStart.DateTime.Date)
+                .OrderBy(item => item.Order).ToListAsync();
 
-            await SendEmailAsync(jumpStart);
+            await SendEmailAsync(jumpStart, articles);
 
             jumpStart.Status = JumpStartStatus.Sent;
             _dbContext.JumpStarts.Update(jumpStart);
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task SendEmailAsync(JumpStart jumpStart)
+        private async Task SendEmailAsync(JumpStart jumpStart, List<Article> articles)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
 
-            var pdfUrl = await _jumpStartPdfService.CreatePdfUrlAsync(jumpStart);
-            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart, jumpStart.Articles, pdfUrl);
+            var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
+            var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
             var recipients = await GetRecipients(jumpStart.Id);
             var subject =

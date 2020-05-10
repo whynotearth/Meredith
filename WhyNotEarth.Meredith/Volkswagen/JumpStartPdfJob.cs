@@ -8,14 +8,14 @@ using WhyNotEarth.Meredith.GoogleCloud;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
-    public class JumpStartPdfService
+    public class JumpStartPdfJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
         private readonly PuppeteerService _puppeteerService;
 
-        public JumpStartPdfService(MeredithDbContext dbContext, GoogleStorageService googleStorageService,
+        public JumpStartPdfJob(MeredithDbContext dbContext, GoogleStorageService googleStorageService,
             IBackgroundJobClient backgroundJobClient, PuppeteerService puppeteerService)
         {
             _dbContext = dbContext;
@@ -27,12 +27,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task CreatePdfAsync(int jumpStartId)
         {
             var jumpStart = await _dbContext.JumpStarts
-                .Include(item => item.Articles)
-                .ThenInclude(item => item.Category)
-                .ThenInclude(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == jumpStartId && item.HasPdf == false);
-
-            jumpStart.Articles = jumpStart.Articles.OrderBy(item => item.Order).ToList();
 
             if (jumpStart is null)
             {
@@ -40,7 +35,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return;
             }
 
-            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart);
+            var articles = await _dbContext.Articles
+                    .Include(item => item.Category)
+                    .ThenInclude(item => item.Image)
+                    .Where(item => item.Date == jumpStart.DateTime.Date)
+                    .OrderBy(item => item.Order).ToListAsync();
+
+            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, articles);
 
             await UploadPdfAsync(jumpStart, pdfData);
 
