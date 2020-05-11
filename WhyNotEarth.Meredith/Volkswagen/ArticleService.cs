@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 };
             }
 
-            await EnsureJumpStartExistAsync(article.Date);
+            article.JumpStart = await EnsureJumpStartExistAsync(article.Date);
 
             await _dbContext.Articles.AddAsync(article);
             await _dbContext.SaveChangesAsync();
@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             if (article.Date != date)
             {
                 await RemoveOldJumpStartAsync(article);
-                await EnsureJumpStartExistAsync(date);
+                article.JumpStart = await EnsureJumpStartExistAsync(date);
             }
 
             article.CategoryId = category.Id;
@@ -125,7 +125,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
         }
 
-        private async Task EnsureJumpStartExistAsync(DateTime date)
+        private async Task<JumpStart> EnsureJumpStartExistAsync(DateTime date)
         {
             var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item =>
                 item.DateTime.Date == date);
@@ -138,7 +138,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                     throw new Exception();
                 }
 
-                return;
+                return jumpStart;
             }
 
             // TODO: Get default distribution group
@@ -160,6 +160,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
 
             _dbContext.JumpStarts.Add(jumpStart);
+
+            return jumpStart;
         }
 
         private async Task<Article> GetAsync(int articleId)
