@@ -31,6 +31,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Keyword> Keywords { get; set; }
 
+        public DbSet<Setting> Settings { get; set; }
+
         // Shop
         public DbSet<Reservation> Reservations { get; set; }
 
