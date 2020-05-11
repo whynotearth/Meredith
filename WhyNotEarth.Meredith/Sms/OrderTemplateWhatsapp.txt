@@ -1,0 +1,29 @@
+﻿*What's coming* 
+
+{orders} 
+
+Sub-Total:  ${subTotal}
+Tax:  ${tax}
+Delivery Fee:  ${deliveryFee}
+
+*Total*:  *${amount}*
+
+*Customer Details* 
+
+Delivery Address:  {deliveryAddress}
+Customer name:  {name}
+Phone Number:  {phone}
+Email:  {email}
+Payment Method:  {paymentMethod}
+Estimated Delivery Time:  {deliveryTime}
+
+*Special Requests* 
+{message}
+
+*Thank You!*
+Thank you for ordering! Your food is being prepared. Please be prepared to pay ${amount} upon arrival.
+
+*{tenantName}*
+{tenantGooglemaps}
+{tenantPhone}
+{tenantEmail}

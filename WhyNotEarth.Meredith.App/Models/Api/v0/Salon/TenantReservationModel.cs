@@ -24,6 +24,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
         public string PaymentMethod { get; set; } = null!;
 
         public string? Message { get; set; }
+
+        public bool? WhatsappNotification { get; set; }
     }
 
     public class Order

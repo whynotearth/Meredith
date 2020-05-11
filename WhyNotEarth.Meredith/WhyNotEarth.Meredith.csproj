@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Sms/OrderTemplateWhatsapp.txt" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column-pdf.html" />
     <EmbeddedResource Include="Volkswagen/Templates/two-column.html" />
@@ -26,6 +27,7 @@
     <PackageReference Include="PuppeteerSharp" Version="2.0.3" />
     <PackageReference Include="SendGrid" Version="9.14.1" />
     <PackageReference Include="Stripe.net" Version="36.8.0" />
+    <PackageReference Include="Twilio" Version="5.40.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Data.Entity.csproj" />

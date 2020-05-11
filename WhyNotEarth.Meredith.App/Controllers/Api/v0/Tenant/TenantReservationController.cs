@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             _reservationService.Reserve(tenant.Id, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
                 model.DeliveryFee, model.Amount, model.Tax, model.DeliveryDateTime, model.UserTimeZoneOffset,
-                model.PaymentMethod, model.Message, userId);
+                model.PaymentMethod, model.Message, userId, model.WhatsappNotification);
 
             return Ok();
         }

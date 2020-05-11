@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200513115036_AddContactInfoToUser")]
+    partial class AddContactInfoToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -808,6 +810,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<int?>("ImageId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("JumpStartId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("Order")
                         .HasColumnType("integer");
 
@@ -819,6 +824,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ImageId");
+
+                    b.HasIndex("JumpStartId");
 
                     b.ToTable("Articles","ModuleVolkswagen");
                 });
@@ -1122,26 +1129,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("SendGridAccounts");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Setting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.StripeAccount", b =>
@@ -1745,6 +1732,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.ArticleImage", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", "JumpStart")
+                        .WithMany("Articles")
+                        .HasForeignKey("JumpStartId");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.EmailRecipient", b =>
@@ -1806,15 +1797,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.SendGridAccount", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Setting", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
                         .WithMany()
