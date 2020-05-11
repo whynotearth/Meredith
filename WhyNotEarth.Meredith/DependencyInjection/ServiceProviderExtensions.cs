@@ -49,7 +49,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
 
             // Tenant
             serviceCollection
-                .AddScoped<Tenant.ReservationService>();
+                .AddScoped<Tenant.ReservationService>()
+                .AddScoped<Sms.TwilioService>();
 
             return serviceCollection;
         }

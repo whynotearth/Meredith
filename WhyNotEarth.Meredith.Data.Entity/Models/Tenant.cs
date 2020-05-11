@@ -27,7 +27,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public TimeSpan DeliveryTime { get; set; }
 
-        public decimal DeliveryFee { get; set; }
+        public decimal DeliveryFee { get; set; }        
 
         public ICollection<Page> Pages { get; set; }
 
