@@ -33,6 +33,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ThenInclude(item => item.Category)
                 .ThenInclude(item => item.Image)
                 .Where(item => item.Status == JumpStartStatus.Preview)
+                .OrderBy(item => item.DateTime)
                 .ToListAsync();
 
             foreach (var jumpStart in jumpStarts)
