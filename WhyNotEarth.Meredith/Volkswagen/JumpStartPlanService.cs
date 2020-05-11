@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .Include(item => item.Image)
                 .Where(item => item.JumpStartId == null)
                 .OrderBy(item => item.Date)
-                .ThenBy(item => item.Category.Priority)
+                .ThenByDescending(item => item.Category.Priority)
                 .ToListAsync();
 
             EnsureAllDatesExist(result, articles);
