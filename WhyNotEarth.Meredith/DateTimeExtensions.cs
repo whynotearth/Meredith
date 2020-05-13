@@ -19,10 +19,5 @@ namespace WhyNotEarth.Meredith
 
             return localDateTime.ToString(format);
         }
-
-        public static DateTime InZone(this DateTime datetime, string timeZoneId)
-        {
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(datetime, timeZoneId);
-        }
     }
 }
