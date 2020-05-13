@@ -1,18 +1,16 @@
-﻿namespace WhyNotEarth.Meredith.Public
-{
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Data.Entity.Models;
-    using WhyNotEarth.Meredith.Exceptions;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Exceptions;
 
+namespace WhyNotEarth.Meredith.Public
+{
     public class CompanyService
     {
         protected MeredithDbContext Context { get; }
 
-        public CompanyService(
-            MeredithDbContext meredithDbContext)
+        public CompanyService(MeredithDbContext meredithDbContext)
         {
             Context = meredithDbContext;
         }
@@ -35,8 +33,8 @@
             {
                 throw new InvalidActionException("Company with that name already exists");
             }
-            
-            var company = new Company()
+
+            var company = new Company
             {
                 Name = name,
                 Slug = slug
@@ -44,6 +42,7 @@
 
             Context.Companies.Add(company);
             await Context.SaveChangesAsync();
+
             return company;
         }
     }
