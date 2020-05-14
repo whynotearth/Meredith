@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Foodouken;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
@@ -25,7 +26,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IUserManager, UserManager>()
                 .AddScoped<GoogleStorageService>()
                 .AddScoped<SettingsService>()
-                .AddScoped<ProductService>();
+                .AddScoped<ProductService>()
+                .AddScoped<ProductsService>();
 
             // Hotel
             serviceCollection

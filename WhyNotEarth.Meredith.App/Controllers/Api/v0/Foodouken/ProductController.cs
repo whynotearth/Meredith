@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Auth;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Public;
+using WhyNotEarth.Meredith.App.Models.Api.v0.Foodouken;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Products;
 using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Foodouken;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
-    [Route("api/v0/foodouken")]
+    [Route("api/v0/foodouken/products")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageFoodouken)]
     public class ProductController : ControllerBase
@@ -23,7 +23,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _productService = productService;
         }
 
-        [HttpGet("products/{productId}")]
+        [HttpGet("{productId}")]
         public async Task<ActionResult<ProductResult>> Products(int productId)
         {
             var product = await _productService.GetProductAsync(productId);
@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [Returns204]
         [Returns404]
-        [HttpPut("products/{productId}")]
+        [HttpPut("{productId}")]
         public async Task<NoContentResult> Edit(int productId, ProductModel model)
         {
             await _productService.EditAsync(productId, model.TenantId, model.CategoryId, model.Name, model.Description,

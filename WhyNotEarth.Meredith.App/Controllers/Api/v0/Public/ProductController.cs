@@ -13,9 +13,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductService _productService;
+        private readonly ProductsService _productService;
 
-        public ProductsController(ProductService productService)
+        public ProductsController(ProductsService productService)
         {
             _productService = productService;
         }

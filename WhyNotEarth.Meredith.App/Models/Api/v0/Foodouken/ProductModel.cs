@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 
-namespace WhyNotEarth.Meredith.App.Models.Api.v0.Public
+namespace WhyNotEarth.Meredith.App.Models.Api.v0.Foodouken
 {
     public class ProductModel
     {

@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Exceptions;
 
-namespace WhyNotEarth.Meredith.Public
+namespace WhyNotEarth.Meredith.Foodouken
 {
     public class ProductService
     {
@@ -16,35 +16,13 @@ namespace WhyNotEarth.Meredith.Public
         {
             _dbContext = meredithDbContext;
         }
-
-        public async Task<List<Product>> GetProductListAsync(string tenantSlug, string categorySlug)
-        {
-            return await _dbContext.Products
-                .Include(item => item.Tenant)
-                .Include(item => item.Category)
-                .Include(item => item.Images)
-                .Where(item =>
-                    item.Tenant.Slug.ToLower() == tenantSlug.ToLower() &&
-                    item.Category.Slug.ToLower() == categorySlug.ToLower())
-                .ToListAsync();
-        }
-
-        public async Task<List<ProductCategory>> GetCategoryListAsync(string tenantSlug)
-        {
-            return await _dbContext.Categories.OfType<ProductCategory>()
-                .Include(item => item.Tenant)
-                .Include(item => item.Image)
-                .Where(item => item.Tenant.Slug.ToLower() == tenantSlug.ToLower())
-                .ToListAsync();
-        }
-
         public async Task<Product> GetProductAsync(int productId)
         {
             var product = await _dbContext.Products
                 .Include(item => item.Images)
                 .SingleOrDefaultAsync(item => item.Id == productId);
-            
-            if(product == null)
+
+            if (product == null)
             {
                 throw new RecordNotFoundException("Product not found.");
             }
@@ -54,17 +32,17 @@ namespace WhyNotEarth.Meredith.Public
         public async Task EditAsync(int productId, int tenantId, int categoryId, string name, string description, decimal price,
             string currency, ICollection<ProductImage> images)
         {
-            if(tenantId <= 0)
+            if (tenantId <= 0)
             {
                 throw new InvalidActionException($"Invalid TenantId.");
             }
 
-            if(categoryId <= 0)
+            if (categoryId <= 0)
             {
                 throw new InvalidActionException($"Invalid CategoryId.");
             }
 
-            if(string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
                 throw new InvalidActionException($"Name cannot be empty.");
             }
@@ -80,7 +58,7 @@ namespace WhyNotEarth.Meredith.Public
                 .Include(item => item.Images)
                 .SingleOrDefaultAsync(item => item.Id == productId);
 
-            if(product == null)
+            if (product == null)
             {
                 throw new RecordNotFoundException("Product does not exist.");
             }
@@ -100,7 +78,7 @@ namespace WhyNotEarth.Meredith.Public
             updatedImages.ForEach(item =>
             {
                 var updatedImage = images.SingleOrDefault(x => x.Id == item.Id);
-                if(updatedImage != null)
+                if (updatedImage != null)
                 {
                     item.Order = updatedImage.Order;
                     item.Title = updatedImage.Title;
