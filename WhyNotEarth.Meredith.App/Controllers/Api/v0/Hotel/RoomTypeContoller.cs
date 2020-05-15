@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 {
@@ -25,6 +26,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         public async Task<ActionResult<List<PricesResult>>> Prices(int roomTypeId, DateTime startDate, DateTime endDate)
         {
             var prices = await _meredithDbContext.Prices
+                .OfType<HotelPrice>()
                 .Where(p => p.RoomTypeId == roomTypeId &&
                             startDate <= p.Date && p.Date <= endDate &&
                             p.RoomType.Rooms.Count(room => !room.Reservations.Any(

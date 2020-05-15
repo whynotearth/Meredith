@@ -5,6 +5,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using Product = WhyNotEarth.Meredith.Data.Entity.Models.Product;
+using ShoppingProduct = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Product;
 
 namespace WhyNotEarth.Meredith.Data.Entity
 {
@@ -36,9 +37,17 @@ namespace WhyNotEarth.Meredith.Data.Entity
         // Shop
         public DbSet<Reservation> Reservations { get; set; }
 
-        public DbSet<HotelPrice> Prices { get; set; }
+        public DbSet<Price> Prices { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+
+        public DbSet<ShoppingProduct> ShoppingProducts { get; set; }
+
+        public DbSet<Variation> Variations { get; set; }
+
+        public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
+
+        public DbSet<Location> Locations { get; set; }
         
         // Remove in next steps
         public DbSet<Product> Products { get; set; }
