@@ -12,7 +12,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         public string? DistributionGroups { get; set; }
 
-        public TimeSpan SendTime { get; set; } = new TimeSpan(10, 14, 0);
+        public bool EnableAutoSend { get; set; } = true;
+
+        public TimeSpan? SendTime { get; set; } = new TimeSpan(10, 14, 0);
 
         public async Task<List<string>> GetDistributionGroupAsync(MeredithDbContext dbContext)
         {

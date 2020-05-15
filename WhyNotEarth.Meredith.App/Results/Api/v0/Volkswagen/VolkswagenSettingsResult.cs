@@ -7,11 +7,14 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public List<string> DistributionGroups { get; }
 
-        public TimeSpan SendTime { get; }
+        public bool EnableAutoSend { get; }
 
-        public VolkswagenSettingsResult(List<string> distributionGroups, TimeSpan sendTime)
+        public TimeSpan? SendTime { get; }
+
+        public VolkswagenSettingsResult(List<string> distributionGroups, bool enableAutoSend, TimeSpan? sendTime)
         {
             DistributionGroups = distributionGroups;
+            EnableAutoSend = enableAutoSend;
             SendTime = sendTime;
         }
     }

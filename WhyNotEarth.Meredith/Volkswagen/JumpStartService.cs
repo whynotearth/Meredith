@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
@@ -12,22 +11,27 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartService
     {
-        private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
         private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public JumpStartService(MeredithDbContext dbContext, 
-            IBackgroundJobClient backgroundJobClient, JumpStartPlanService jumpStartPlanService)
+        public JumpStartService(MeredithDbContext dbContext, JumpStartPlanService jumpStartPlanService)
         {
             _dbContext = dbContext;
-            _backgroundJobClient = backgroundJobClient;
             _jumpStartPlanService = jumpStartPlanService;
         }
 
-        public async Task CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
+        public async Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<int> articleIds)
         {
-            if (articleIds.Count > _jumpStartPlanService.MaximumArticlesPerDayCount)
+            var articles = await GetArticles(articleIds);
+
+            return await CreateOrEditAsync(jumpStartId, dateTime, distributionGroups, articles);
+        }
+
+        public Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
+            List<Article> articles)
+        {
+            if (articles.Count > _jumpStartPlanService.MaximumArticlesPerDayCount)
             {
                 throw new InvalidActionException(
                     $"Maximum {_jumpStartPlanService.MaximumArticlesPerDayCount} articles are allowed per email");
@@ -40,22 +44,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             if (jumpStartId.HasValue)
             {
-                await EditAsync(jumpStartId.Value, dateTime, distributionGroups, articleIds);
+                return EditAsync(jumpStartId.Value, dateTime, distributionGroups, articles);
             }
-            else
-            {
-                await Create(dateTime, distributionGroups, articleIds);
-            }
+            
+            return CreateAsync(dateTime, distributionGroups, articles);
         }
         
-        private async Task Create(DateTime dateTime, List<string> distributionGroups, List<int> articleIds)
-        {
-            var articles = await GetArticles(articleIds);
-
-            await Create(dateTime, distributionGroups, articles);
-        }
-
-        private async Task<JumpStart> Create(DateTime dateTime, List<string> distributionGroups, List<Article> articles)
+        private async Task<JumpStart> CreateAsync(DateTime dateTime, List<string> distributionGroups, List<Article> articles)
         {
             var jumpStart = new JumpStart
             {
@@ -73,8 +68,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return jumpStart;
         }
 
-        private async Task EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
-            List<int> articleIds)
+        private async Task<JumpStart> EditAsync(int jumpStartId, DateTime dateTime, List<string> distributionGroups,
+            List<Article> articles)
         {
             var jumpStart = await GetAsync(jumpStartId);
 
@@ -82,39 +77,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             jumpStart.DistributionGroups = string.Join(',', distributionGroups);
             _dbContext.JumpStarts.Update(jumpStart);
 
-            var articles = await GetArticles(articleIds);
             Rearrange(articles);
 
             await _dbContext.SaveChangesAsync();
-        }
 
-        public async Task SendAsync()
-        {
-            var dailyPlans = await _jumpStartPlanService.GetAsync();
-            dailyPlans = dailyPlans.Where(item => item.DateTime < DateTime.UtcNow.AddMinutes(15)).ToList();
-
-            var jumpStarts = new List<JumpStart>();
-
-            foreach (var dailyPlan in dailyPlans)
-            {
-                var jumpStart = dailyPlan.JumpStart;
-                if (jumpStart is null)
-                {
-                    jumpStart = await Create(dailyPlan.DateTime, dailyPlan.DistributionGroups, dailyPlan.Articles);
-                }
-
-                jumpStart.Status = JumpStartStatus.Sending;
-                jumpStarts.Add(jumpStart);
-            }
-
-            _dbContext.UpdateRange(jumpStarts);
-            await _dbContext.SaveChangesAsync();
-
-            foreach (var jumpStart in jumpStarts)
-            {
-                _backgroundJobClient.Enqueue<JumpStartPdfJob>(service =>
-                    service.CreatePdfAsync(jumpStart.Id));
-            }
+            return jumpStart;
         }
 
         private async Task<JumpStart> GetAsync(int jumpStartId)

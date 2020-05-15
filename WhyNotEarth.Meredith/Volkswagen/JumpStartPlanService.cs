@@ -65,8 +65,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 return jumpStart.DateTime;
             }
-            
-            return articlesDate.Date.Add(settings.SendTime);
+
+            if (settings.EnableAutoSend)
+            {
+                return articlesDate.Date.Add(settings.SendTime!.Value);
+            }
+
+            return articlesDate;
         }
 
         private JumpStart? GetJumpStart(List<JumpStart> jumpStarts, DateTime dateTime)

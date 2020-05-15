@@ -10,6 +10,8 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
         public List<string> DistributionGroups { get; set; } = null!;
 
         [Required]
+        public bool? EnableAutoSend { get; set; } = null!;
+
         public TimeSpan? SendTime { get; set; }
     }
 }

@@ -22,6 +22,7 @@ using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 [assembly: ApiController]
 namespace WhyNotEarth.Meredith.App
@@ -85,7 +86,7 @@ namespace WhyNotEarth.Meredith.App
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
-            IRecurringJobManager recurringJobManager, IServiceProvider serviceProvider)
+            IRecurringJobManager recurringJobManager, MeredithDbContext dbContext)
         {
             app.UseForwardedHeaders();
 
@@ -98,11 +99,7 @@ namespace WhyNotEarth.Meredith.App
                 loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
             }
 
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                using var context = serviceScope.ServiceProvider.GetService<MeredithDbContext>();
-                context.Database.Migrate();
-            }
+            dbContext.Database.Migrate();
 
             app.UseCustomLocalization();
 
@@ -132,10 +129,9 @@ namespace WhyNotEarth.Meredith.App
 
             app.UseHangfireDashboard();
 
-            // Every 15 minutes
-            recurringJobManager.AddOrUpdate("JumpStartService_SendAsync",
-                () => serviceProvider.GetService<JumpStartService>().SendAsync(),
-                "*/15 * * * *", TimeZoneInfo.Utc);
+            recurringJobManager.AddOrUpdate<JumpStartJob>(JumpStartJob.Id,
+                service => service.SendAsync(),
+                JumpStartJob.CronExpression, TimeZoneInfo.Utc);
         }
     }
 }

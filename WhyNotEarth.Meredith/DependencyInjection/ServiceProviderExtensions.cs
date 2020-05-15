@@ -8,6 +8,7 @@ using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 namespace WhyNotEarth.Meredith.DependencyInjection
 {

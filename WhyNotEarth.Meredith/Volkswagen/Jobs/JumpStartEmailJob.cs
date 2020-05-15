@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 
-namespace WhyNotEarth.Meredith.Volkswagen
+namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
     public class JumpStartEmailJob
     {
