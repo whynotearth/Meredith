@@ -51,8 +51,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return Unauthorized(new {error = "You have entered an invalid username or password"});
             }
 
-            var appUser = await _userManager.Users.SingleOrDefaultAsync(r => r.Email == model.Email);
-            return Ok(await GenerateJwtTokenAsync(model.Email, appUser));
+            var user = await _userManager.FindByNameAsync(model.Email);
+
+            return Ok(await GenerateJwtTokenAsync(model.Email, user));
         }
 
         [HttpPost("logout")]
@@ -266,6 +267,31 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+            return Ok();
+        }
+
+        [Authorize]
+        [Returns400]
+        [HttpPost("changepassword")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            IdentityResult identityResult;
+            if (model.OldPassword is null)
+            {
+                identityResult = await _userManager.AddPasswordAsync(user, model.NewPassword);
+            }
+            else
+            {
+                identityResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            }
+
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
 
             return Ok();
         }
