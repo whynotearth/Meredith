@@ -6,6 +6,7 @@ using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Pages;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
+using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
@@ -25,8 +26,9 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<SendGridService>()
                 .AddScoped<IUserManager, UserManager>()
                 .AddScoped<GoogleStorageService>()
-                .AddScoped<SettingsService>();
-            
+                .AddScoped<SettingsService>()
+                .AddScoped<ProductService>();
+
             // Hotel
             serviceCollection
                 .AddScoped<ReservationService>()

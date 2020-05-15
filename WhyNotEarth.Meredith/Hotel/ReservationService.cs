@@ -63,6 +63,7 @@ namespace WhyNotEarth.Meredith.Hotel
             }
 
             var dailyPrices = await _meredithDbContext.Prices
+                .OfType<HotelPrice>()
                 .Where(p => p.Date >= startDate && p.Date < endDate).ToListAsync();
             
             var paidDays = dailyPrices.Count;

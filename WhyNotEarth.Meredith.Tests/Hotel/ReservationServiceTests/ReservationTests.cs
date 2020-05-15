@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -107,7 +108,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             var (dbContext, reservationService) = GetServices(nameof(ThrowsNotAllPricesAvailable));
 
             var roomType = await CreateRoomType(dbContext, 10);
-            dbContext.Prices.Remove(await dbContext.Prices.FirstOrDefaultAsync(p =>
+            dbContext.Prices.Remove(await dbContext.Prices.OfType<HotelPrice>().FirstOrDefaultAsync(p =>
                 p.Date == Start.AddDays(1) && p.RoomTypeId == roomType.Id));
             await dbContext.SaveChangesAsync();
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
