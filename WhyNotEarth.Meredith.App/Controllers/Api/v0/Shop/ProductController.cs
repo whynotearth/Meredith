@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Shop;
 
@@ -25,30 +27,24 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Shop
         [Returns200]
         [Returns404]
         [HttpPost("")]
-        public async Task<IActionResult> Create(ProductModel model)
+        public async Task<ActionResult<ShopProductResult>> Create(ProductModel model)
         {
-            await _productService.CreateAsync(model.PageId, model.PriceId,
+            var product = await _productService.CreateAsync(model.PageId, model.PriceId,
                 model
                 .Variations
-                .Select(item =>
-                    new Variation
-                    {
-                        Id = item.Id,
-                        Name = item.Name
-                    })
+                .Select(item => new Variation { Name = item.Name })
                 .ToList(),
                 model
                 .ProductLocationInventories
                 .Select(item =>
                     new ProductLocationInventory
                     {
-                        Id = item.Id,
                         LocationId = item.LocationId,
                         Count = item.Count
                     })
                 .ToList());
 
-            return Ok();
+            return Ok(new ShopProductResult(product));
         }
 
         [Returns204]
@@ -80,7 +76,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Shop
                     })
                 .ToList());
 
-            return Ok();
+            return NoContent();
         }
 
         [Returns204]
@@ -96,11 +92,21 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Shop
         [Returns200]
         [Returns404]
         [HttpGet("{productId}")]
-        public async Task<IActionResult> Get(int productId)
+        public async Task<ActionResult<ShopProductResult>> Get(int productId)
         {
             var product = await _productService.GetAsync(productId);
 
-            return Ok(new ProductModel(product));
+            return Ok(new ShopProductResult(product));
+        }
+
+        [Returns200]
+        [Returns404]
+        [HttpGet("")]
+        public async Task<ActionResult<List<ShopProductResult>>> List()
+        {
+            var products = await _productService.ListAsync(null, null);
+
+            return Ok(products.Select(item => new ShopProductResult(item)).ToList());
         }
     }
 }

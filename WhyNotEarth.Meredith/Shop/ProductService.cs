@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +15,26 @@ namespace WhyNotEarth.Meredith.Shop
         public ProductService(MeredithDbContext meredithDbContext)
         {
             _dbContext = meredithDbContext;
+        }
+
+        public async Task<List<Product>> ListAsync(int? priceId, int? pageId)
+        {
+            var products = _dbContext.ShoppingProducts
+                .Include(item => item.Variations)
+                .Include(item => item.ProductLocationInventories)
+                .Where(item => true);
+
+            if (!(priceId is null))
+            {
+                products = products.Where(item => item.PriceId == priceId);
+            }
+
+            if (!(pageId is null))
+            {
+                products = products.Where(item => item.PageId == pageId);
+            }
+
+            return await products.ToListAsync();
         }
 
         public async Task<Product> GetAsync(int productId)
@@ -39,10 +58,10 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task CreateAsync(int pageId, int priceId, List<Variation> variations,
+        public async Task<Product> CreateAsync(int pageId, int priceId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
-            await ValidatePageAndPriceInputs(pageId, priceId);
+            await Validate(pageId, priceId, variations, productLocationInventories);
 
             var product = new Product
             {
@@ -52,23 +71,36 @@ namespace WhyNotEarth.Meredith.Shop
                 Variations = new List<Variation>()
             };
 
-            UpdateProductLocationInventories(default,
-                product.ProductLocationInventories,
-                !(productLocationInventories is null) ? productLocationInventories
-                        : new List<ProductLocationInventory>());
-            UpdateVariations(default,
-                product.Variations,
-                !(variations is null) ? variations
-                        : new List<Variation>());
+            variations.ForEach(item =>
+            {
+                if (string.IsNullOrEmpty(item.Name))
+                {
+                    throw new InvalidActionException("Invalid Variation name.");
+                }
+            });
+
+            productLocationInventories.ForEach(item =>
+            {
+                if (item.LocationId <= 0 ||
+                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
+                {
+                    throw new InvalidActionException("Invalid LocationId.");
+                }
+            });
+
+            product.Variations = variations;
+            product.ProductLocationInventories = productLocationInventories;
 
             await _dbContext.ShoppingProducts.AddAsync(product);
             await _dbContext.SaveChangesAsync();
+
+            return product;
         }
 
-        public async Task<Product> EditAsync(int productId, int pageId, int priceId, ICollection<Variation> variations,
-            ICollection<ProductLocationInventory> productLocationInventories)
+        public async Task<Product> EditAsync(int productId, int pageId, int priceId, List<Variation> variations,
+            List<ProductLocationInventory> productLocationInventories)
         {
-            await ValidatePageAndPriceInputs(pageId, priceId);
+            await Validate(pageId, priceId, variations, productLocationInventories);
 
             var product = await _dbContext.ShoppingProducts
                 .Include(item => item.Variations)
@@ -83,8 +115,25 @@ namespace WhyNotEarth.Meredith.Shop
             product.PageId = pageId;
             product.PriceId = priceId;
 
-            UpdateVariations(productId, product.Variations, variations);
-            UpdateProductLocationInventories(productId, product.ProductLocationInventories, productLocationInventories);
+            variations.ForEach(item =>
+            {
+                if (string.IsNullOrEmpty(item.Name))
+                {
+                    throw new InvalidActionException("Invalid Variation name.");
+                }
+            });
+
+            productLocationInventories.ForEach(item =>
+            {
+                if (item.LocationId <= 0 ||
+                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
+                {
+                    throw new InvalidActionException("Invalid LocationId.");
+                }
+            });
+
+            product.Variations = variations;
+            product.ProductLocationInventories = productLocationInventories;
 
             _dbContext.ShoppingProducts.Update(product);
             await _dbContext.SaveChangesAsync();
@@ -92,7 +141,8 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        private async Task ValidatePageAndPriceInputs(int pageId, int priceId)
+        private async Task Validate(int pageId, int priceId, List<Variation> variations,
+            List<ProductLocationInventory> productLocationInventories)
         {
             if (pageId <= 0 || !(await _dbContext.Pages.AnyAsync(item => item.Id == pageId)))
             {
@@ -103,72 +153,21 @@ namespace WhyNotEarth.Meredith.Shop
             {
                 throw new InvalidActionException($"Invalid PriceId.");
             }
-        }
 
-        private void UpdateVariations(int productId, ICollection<Variation> savedCollection, ICollection<Variation> newCollection)
-        {
-            var updatedRecords = savedCollection.Where(item => newCollection.Any(i => i.Id == item.Id)).ToList();
-            var deletedRecords = savedCollection.Where(item => !updatedRecords.Any(x => x.Id == item.Id)).ToList();
-            var addedRecords = newCollection.Where(item => !updatedRecords.Any(x => x.Id == item.Id)).ToList();
-
-            Action<Variation> validate = item =>
+            variations.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Name))
                 {
-                    throw new InvalidActionException("The name of variation should not be empty.");
-                }
-            };
-
-            addedRecords.ForEach(item =>
-            {
-                validate(item);
-                savedCollection.Add(item);
-            });
-            deletedRecords.ForEach(item => _dbContext.Variations.Remove(item));
-            updatedRecords.ForEach(item =>
-            {
-                var changedRecord = newCollection.FirstOrDefault(x => x.Id == item.Id);
-                if (!(changedRecord is null))
-                {
-                    validate(item);
-                    item.Name = changedRecord.Name;
-                    item.ProductId = productId;
+                    throw new InvalidActionException("Invalid Variation name.");
                 }
             });
-        }
 
-        private void UpdateProductLocationInventories(int productId, ICollection<ProductLocationInventory> savedCollection,
-            ICollection<ProductLocationInventory> newCollection)
-        {
-            var updatedRecords = savedCollection.Where(item => newCollection.Any(i => i.Id == item.Id)).ToList();
-            var deletedRecords = savedCollection.Where(item => !updatedRecords.Any(x => x.Id == item.Id)).ToList();
-            var addedRecords = newCollection.Where(item => !updatedRecords.Any(x => x.Id == item.Id)).ToList();
-
-            Action<ProductLocationInventory> validate = item =>
+            productLocationInventories.ForEach(item =>
             {
-                // TODO: Validate changedRecord.Count
                 if (item.LocationId <= 0 ||
-                    ! _dbContext.Locations.Any(location => location.Id == item.LocationId))
+                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
                 {
-                    throw new InvalidActionException($"Invalid LocationId.");
-                }
-            };
-
-            addedRecords.ForEach(item =>
-            {
-                validate(item);
-                savedCollection.Add(item);
-            });
-            deletedRecords.ForEach(item => _dbContext.ProductLocationInventories.Remove(item));
-            updatedRecords.ForEach(async item =>
-            {
-                var changedRecord = newCollection.FirstOrDefault(x => x.Id == item.Id);
-                if (!(changedRecord is null))
-                {
-                    validate(item);
-                    item.LocationId = changedRecord.LocationId;
-                    item.ProductId = productId;
-                    item.Count = changedRecord.Count;
+                    throw new InvalidActionException("Invalid LocationId.");
                 }
             });
         }
