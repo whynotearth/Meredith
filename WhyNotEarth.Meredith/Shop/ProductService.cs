@@ -68,6 +68,13 @@ namespace WhyNotEarth.Meredith.Shop
         public async Task<Product> EditAsync(int productId, int pageId, int priceId, ICollection<Variation> variations,
             ICollection<ProductLocationInventory> productLocationInventories)
         {
+            Func<RecordNotFoundException> productNotFound = () => new RecordNotFoundException("Product does not exist.");
+
+            if (productId <= 0)
+            {
+                throw productNotFound();
+            }
+
             await ValidatePageAndPriceInputs(pageId, priceId);
 
             var product = await _dbContext.ShoppingProducts
@@ -77,11 +84,12 @@ namespace WhyNotEarth.Meredith.Shop
 
             if (product is null)
             {
-                throw new RecordNotFoundException("Product does not exist.");
+                throw productNotFound();
             }
 
             product.PageId = pageId;
             product.PriceId = priceId;
+
 
             UpdateVariations(productId, product.Variations, variations);
             UpdateProductLocationInventories(productId, product.ProductLocationInventories, productLocationInventories);
@@ -146,9 +154,9 @@ namespace WhyNotEarth.Meredith.Shop
 
             Action<ProductLocationInventory> validate = item =>
             {
-          // TODO: Validate changedRecord.Count
-          if (item.LocationId <= 0 ||
-              !_dbContext.Locations.Any(location => location.Id == item.LocationId))
+                // TODO: Validate changedRecord.Count
+                if (item.LocationId <= 0 ||
+                    ! _dbContext.Locations.Any(location => location.Id == item.LocationId))
                 {
                     throw new InvalidActionException($"Invalid LocationId.");
                 }
