@@ -102,45 +102,5 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Shop
 
             return Ok(new ProductModel(product));
         }
-
-        [Returns200]
-        [Returns404]
-        [HttpGet("")]
-        public async Task<IActionResult> List()
-        {
-            var products = await _productService.ListAsync(null, null);
-
-            return Ok(products);
-        }
-
-        [Returns200]
-        [Returns404]
-        [HttpGet("page/{pageId}")]
-        public async Task<IActionResult> FilterByPageId(int pageId)
-        {
-            var products = await _productService.ListAsync(null, pageId);
-
-            return Ok(products.Select(item => new ProductModel(item)));
-        }
-
-        [Returns200]
-        [Returns404]
-        [HttpGet("price/{priceId}")]
-        public async Task<IActionResult> FilterByPriceId(int priceId)
-        {
-            var products = await _productService.ListAsync(priceId, null);
-
-            return Ok(products.Select(item => new ProductModel(item)));
-        }
-
-        [Returns200]
-        [Returns404]
-        [HttpGet("page/{pageId}/price/{priceId}")]
-        public async Task<IActionResult> Filter(int pageId, int priceId)
-        {
-            var products = await _productService.ListAsync(priceId, pageId);
-
-            return Ok(products.Select(item => new ProductModel(item)));
-        }
     }
 }

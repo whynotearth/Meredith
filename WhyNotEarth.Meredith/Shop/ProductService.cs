@@ -18,26 +18,6 @@ namespace WhyNotEarth.Meredith.Shop
             _dbContext = meredithDbContext;
         }
 
-        public async Task<List<Product>> ListAsync(int? priceId, int? pageId)
-        {
-            var products = _dbContext.ShoppingProducts
-                .Include(item => item.Variations)
-                .Include(item => item.ProductLocationInventories)
-                .Where(item => true);
-
-            if (!(priceId is null))
-            {
-                products = products.Where(item => item.PriceId == priceId);
-            }
-
-            if (!(pageId is null))
-            {
-                products = products.Where(item => item.PageId == pageId);
-            }
-
-            return await products.ToListAsync();
-        }
-
         public async Task<Product> GetAsync(int productId)
         {
             var product = await _dbContext.ShoppingProducts
