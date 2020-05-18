@@ -53,8 +53,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<NoContentResult> CreateOrEdit(JumpStartModel model)
         {
-            await _jumpStartService.CreateOrEditAsync(model.Id, model.DateTime!.Value, model.DistributionGroups,
-                model.ArticleIds);
+            await _jumpStartService.CreateOrEditAsync(model.Id, model.DateTime!.Value, model.DistributionGroups!,
+                model.ArticleIds!);
 
             return NoContent();
         }

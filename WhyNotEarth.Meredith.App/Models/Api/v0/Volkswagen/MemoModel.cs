@@ -1,23 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using WhyNotEarth.Meredith.App.Validation;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
     public class MemoModel
     {
-        [Required]
-        public List<string> DistributionGroups { get; set; } = null!;
+        [Mandatory]
+        public List<string>? DistributionGroups { get; set; }
 
-        [Required]
-        public string Subject { get; set; } = null!;
+        [Mandatory]
+        public string? Subject { get; set; }
 
-        [Required]
-        public string Date { get; set; } = null!;
+        [Mandatory]
+        public string? Date { get; set; }
 
-        [Required]
-        public string To { get; set; } = null!;
+        [Mandatory]
+        public string? To { get; set; }
 
-        [Required]
-        public string Description { get; set; } = null!;
+        [Mandatory]
+        public string? Description { get; set; }
     }
 }

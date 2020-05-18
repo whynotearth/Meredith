@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using WhyNotEarth.Meredith.App.Validation;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
@@ -8,13 +8,13 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
     {
         public int? Id { get; set; }
 
-        [Required]
+        [Mandatory]
         public DateTime? DateTime { get; set; }
 
-        [Required]
-        public List<string> DistributionGroups { get; set; } = null!;
+        [Mandatory]
+        public List<string>? DistributionGroups { get; set; }
 
-        [Required]
-        public List<int> ArticleIds { get; set; } = null!;
+        [Mandatory]
+        public List<int>? ArticleIds { get; set; }
     }
 }
