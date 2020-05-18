@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<NoContentResult> Edit(int articleId, ArticleModel model)
         {
             await _articleService.EditAsync(articleId, model.CategorySlug, model.Date!.Value.Date, model.Headline,
-                model.Description, model.Price, model.EventDate);
+                model.Description, model.Price, model.EventDate, model.Image);
 
             return NoContent();
         }

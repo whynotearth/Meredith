@@ -32,20 +32,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 EventDate = eventDate
             };
 
-            if (!string.IsNullOrEmpty(imageUrl))
-            {
-                article.Image = new ArticleImage
-                {
-                    Url = imageUrl
-                };
-            }
+            await SetImageAsync(article, imageUrl);
 
             await _dbContext.Articles.AddAsync(article);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<Article> EditAsync(int articleId, string categorySlug, DateTime date, string headline,
-            string description, decimal? price, DateTime? eventDate)
+            string description, decimal? price, DateTime? eventDate, string? imageUrl)
         {
             var category = await ValidateAsync(categorySlug, date);
 
@@ -58,6 +52,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             article.Price = price;
             article.EventDate = eventDate;
 
+            await SetImageAsync(article, imageUrl);
+
             _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
 
@@ -68,17 +64,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var article = await GetAsync(articleId);
 
-            if (article.Image != null)
-            {
-                // I'm not sure why but cascade doesn't work on this
-                var isUsedInAnyOtherArticle =
-                    _dbContext.Articles.Any(item => item.ImageId == article.ImageId && item.Id != article.Id);
-
-                if (!isUsedInAnyOtherArticle)
-                {
-                    _dbContext.Images.Remove(article.Image);
-                }
-            }
+            await DeleteImageAsync(article);
 
             _dbContext.Articles.Remove(article);
             await _dbContext.SaveChangesAsync();
@@ -87,6 +73,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private async Task<Article> GetAsync(int articleId)
         {
             var article = await _dbContext.Articles
+                .Include(item => item.Image)
                 .FirstOrDefaultAsync(item => item.Id == articleId);
 
             if (article is null)
@@ -120,6 +107,36 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return category;
+        }
+
+        private async Task SetImageAsync(Article article, string? imageUrl)
+        {
+            await DeleteImageAsync(article);
+            
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                article.Image = new ArticleImage
+                {
+                    Url = imageUrl
+                };
+            }
+        }
+
+        private async Task DeleteImageAsync(Article article)
+        {
+            if (article.ImageId is null)
+            {
+                return;
+            }
+
+            var isUsedInAnyOtherArticle =
+                await _dbContext.Articles.AnyAsync(item =>
+                    item.ImageId == article.ImageId && item.Id != article.Id);
+
+            if (!isUsedInAnyOtherArticle)
+            {
+                _dbContext.Images.Remove(article.Image);
+            }
         }
     }
 }
