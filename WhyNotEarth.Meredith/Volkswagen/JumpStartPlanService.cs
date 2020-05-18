@@ -42,7 +42,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 var sendDateTime = GetSendDateTime(jumpStart, dailyArticles.Key, settings);
                 var distributionGroups = GetDistributionGroups(jumpStart, defaultDistributionGroups);
 
-                var jumpStartPlan = new JumpStartPlan(sendDateTime, dailyArticles.ToList(), distributionGroups, jumpStart);
+                var jumpStartPlan = new JumpStartPlan(sendDateTime, dailyArticles.OrderBy(item => item.Order).ToList(),
+                    distributionGroups, jumpStart);
+                
                 result.Add(jumpStartPlan);
             }
 
@@ -98,12 +100,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .ToListAsync();
 
             return articles;
-        }
-
-        private TimeSpan GetDefaultSendTime()
-        {
-            // TODO: Get default send time
-            return new TimeSpan(10, 14, 0);
         }
     }
 }
