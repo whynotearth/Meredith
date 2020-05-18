@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
@@ -17,22 +17,12 @@ namespace WhyNotEarth.Meredith.Shop
             _dbContext = meredithDbContext;
         }
 
-        public async Task<List<Product>> ListAsync(int? priceId, int? pageId)
+        public async Task<List<Product>> ListAsync()
         {
             var products = _dbContext.ShoppingProducts
                 .Include(item => item.Variations)
                 .Include(item => item.ProductLocationInventories)
                 .Where(item => true);
-
-            if (!(priceId is null))
-            {
-                products = products.Where(item => item.PriceId == priceId);
-            }
-
-            if (!(pageId is null))
-            {
-                products = products.Where(item => item.PageId == pageId);
-            }
 
             return await products.ToListAsync();
         }
@@ -46,15 +36,18 @@ namespace WhyNotEarth.Meredith.Shop
 
             if (product == null)
             {
-                throw new RecordNotFoundException("Product not found.");
+                throw new RecordNotFoundException($"Product {productId} not found");
             }
+
             return product;
         }
 
         public async Task DeleteAsync(int productId)
         {
             var product = await GetAsync(productId);
+
             _dbContext.ShoppingProducts.Remove(product);
+
             await _dbContext.SaveChangesAsync();
         }
 
@@ -71,27 +64,10 @@ namespace WhyNotEarth.Meredith.Shop
                 Variations = new List<Variation>()
             };
 
-            variations.ForEach(item =>
-            {
-                if (string.IsNullOrEmpty(item.Name))
-                {
-                    throw new InvalidActionException("Invalid Variation name.");
-                }
-            });
-
-            productLocationInventories.ForEach(item =>
-            {
-                if (item.LocationId <= 0 ||
-                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
-                {
-                    throw new InvalidActionException("Invalid LocationId.");
-                }
-            });
-
             product.Variations = variations;
             product.ProductLocationInventories = productLocationInventories;
 
-            await _dbContext.ShoppingProducts.AddAsync(product);
+            _dbContext.ShoppingProducts.Add(product);
             await _dbContext.SaveChangesAsync();
 
             return product;
@@ -107,31 +83,8 @@ namespace WhyNotEarth.Meredith.Shop
                 .Include(item => item.ProductLocationInventories)
                 .FirstOrDefaultAsync(item => item.Id == productId);
 
-            if (product is null)
-            {
-                throw new RecordNotFoundException("Product does not exist.");
-            }
-
             product.PageId = pageId;
             product.PriceId = priceId;
-
-            variations.ForEach(item =>
-            {
-                if (string.IsNullOrEmpty(item.Name))
-                {
-                    throw new InvalidActionException("Invalid Variation name.");
-                }
-            });
-
-            productLocationInventories.ForEach(item =>
-            {
-                if (item.LocationId <= 0 ||
-                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
-                {
-                    throw new InvalidActionException("Invalid LocationId.");
-                }
-            });
-
             product.Variations = variations;
             product.ProductLocationInventories = productLocationInventories;
 
@@ -144,32 +97,31 @@ namespace WhyNotEarth.Meredith.Shop
         private async Task Validate(int pageId, int priceId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
-            if (pageId <= 0 || !(await _dbContext.Pages.AnyAsync(item => item.Id == pageId)))
+            if (!await _dbContext.Pages.AnyAsync(item => item.Id == pageId))
             {
-                throw new InvalidActionException($"Invalid PageId.");
+                throw new RecordNotFoundException($"Page {pageId} not found");
             }
 
-            if (priceId <= 0 || !(await _dbContext.Prices.AnyAsync(item => item.Id == priceId)))
+            if (!await _dbContext.Prices.AnyAsync(item => item.Id == priceId))
             {
-                throw new InvalidActionException($"Invalid PriceId.");
+                throw new RecordNotFoundException($"Price {priceId} not found");
             }
 
             variations.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Name))
                 {
-                    throw new InvalidActionException("Invalid Variation name.");
+                    throw new InvalidActionException("Variation name cannot be empty");
                 }
             });
 
-            productLocationInventories.ForEach(item =>
+            foreach (var productLocationInventory in productLocationInventories)
             {
-                if (item.LocationId <= 0 ||
-                    !_dbContext.Locations.Any(location => location.Id == item.LocationId))
+                if (!await _dbContext.Locations.AnyAsync(location => location.Id == productLocationInventory.LocationId))
                 {
-                    throw new InvalidActionException("Invalid LocationId.");
+                    throw new RecordNotFoundException($"Company {productLocationInventory.LocationId} not found");
                 }
-            });
+            }
         }
     }
 }

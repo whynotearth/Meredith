@@ -68,7 +68,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("{distributionGroupName}/recipients")]
         public async Task<NoContentResult> Add(string distributionGroupName, RecipientModel model)
         {
-            await _recipientService.AddAsync(distributionGroupName, model.Email);
+            await _recipientService.AddAsync(distributionGroupName, model.Email!);
 
             return NoContent();
         }
@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("{distributionGroupName}/recipients/{recipientId}")]
         public async Task<NoContentResult> Edit(int recipientId, RecipientModel model)
         {
-            await _recipientService.EditAsync(recipientId, model.Email);
+            await _recipientService.EditAsync(recipientId, model.Email!);
 
             return NoContent();
         }

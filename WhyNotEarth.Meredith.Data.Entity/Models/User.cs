@@ -12,6 +12,12 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string GoogleLocation { get; set; }
 
+        public bool WhatsappNotification { get; set; }
+
+        public string FacebookUrl { get; set; }
+
+        public string InstagramUrl { get; set; }
+
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");

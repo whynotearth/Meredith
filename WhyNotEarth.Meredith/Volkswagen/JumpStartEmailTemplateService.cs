@@ -166,7 +166,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             data.Add("general", new Dictionary<string, object>
             {
                 {"title", "Project Blue Delta"},
-                {"date", date.InZone(VolkswagenCompany.TimeZoneId, "dddd | MMM. d, yyyy")},
+                {"date", date.ToString("dddd | MMM. d, yyyy")},
                 {"print_url", pdfUrl ?? string.Empty}
             });
         }

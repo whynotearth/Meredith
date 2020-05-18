@@ -1,22 +1,23 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using WhyNotEarth.Meredith.App.Validation;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
     public class ArticleModel
     {
-        [Required]
-        public string CategorySlug { get; set; } = null!;
+        [Mandatory]
+        public string? CategorySlug { get; set; }
 
-        [Required]
+        [Mandatory]
         [MaxLength(80)]
-        public string Headline { get; set; } = null!;
+        public string? Headline { get; set; }
 
-        [Required]
+        [Mandatory]
         [MaxLength(750)]
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; }
 
-        [Required]
+        [Mandatory]
         public DateTime? Date { get; set; }
 
         public decimal? Price { get; set; }

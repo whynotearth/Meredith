@@ -4,25 +4,17 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 {
-    /* I coudln't use ProductResult as the name of the class 
-     * because there is another one in Public module and 
-     * swagger can not document them both.
-     */
     public class ShopProductResult
     {
-        public int Id { get; set; }
+        public int Id { get; }
 
-        public int PageId { get; set; }
+        public int PageId { get; }
 
-        public int PriceId { get; set; }
+        public int PriceId { get; }
 
-        public List<ProductLocationInventoryResult> ProductLocationInventories { get; set; } = null!;
+        public List<ProductLocationInventoryResult> ProductLocationInventories { get; }
 
-        public List<VariationResult> Variations { get; set; } = null!;
-
-        public ShopProductResult()
-        {
-        }
+        public List<VariationResult> Variations { get; }
 
         public ShopProductResult(Product product)
         {
@@ -40,11 +32,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
     public class ProductLocationInventoryResult
     {
-        public int Id { get; set; }
+        public int Id { get; }
 
-        public int LocationId { get; set; }
+        public int LocationId { get; }
 
-        public int Count { get; set; }
+        public int Count { get; }
 
         public ProductLocationInventoryResult(ProductLocationInventory productLocationInventory)
         {
@@ -56,9 +48,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
     public class VariationResult
     {
-        public int Id { get; set; }
+        public int Id { get; }
 
-        public string Name { get; set; } = null!;
+        public string Name { get; }
 
         public VariationResult(Variation variation)
         {

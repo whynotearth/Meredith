@@ -7,6 +7,7 @@ using WhyNotEarth.Meredith.Pages;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Shop;
+using WhyNotEarth.Meredith.Sms;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
@@ -35,6 +36,10 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<PriceService>()
                 .AddScoped<IEmailService, EmailService>();
 
+            // Shop
+            serviceCollection
+                .AddScoped<ProductService>();
+
             // Volkswagen
             serviceCollection
                 .AddScoped<ArticleService>()
@@ -51,7 +56,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
 
             // Tenant
             serviceCollection
-                .AddScoped<Tenant.ReservationService>();
+                .AddScoped<Tenant.ReservationService>()
+                .AddScoped<TwilioService>();
 
             return serviceCollection;
         }

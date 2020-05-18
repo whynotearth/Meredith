@@ -40,6 +40,14 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Price> Prices { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+
+        public DbSet<ShoppingProduct> ShoppingProducts { get; set; }
+
+        public DbSet<Variation> Variations { get; set; }
+
+        public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
+
+        public DbSet<Location> Locations { get; set; }
         
         // Remove in next steps
         public DbSet<Product> Products { get; set; }

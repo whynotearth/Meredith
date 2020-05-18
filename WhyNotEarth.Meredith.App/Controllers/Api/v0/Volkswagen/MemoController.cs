@@ -32,8 +32,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<StatusCodeResult> Create(MemoModel model)
         {
-            await _memoService.CreateAsync(model.DistributionGroups, model.Subject, model.Date, model.To,
-                model.Description);
+            await _memoService.CreateAsync(model.DistributionGroups!, model.Subject!, model.Date!, model.To!,
+                model.Description!);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
         }

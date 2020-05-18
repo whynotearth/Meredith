@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Hangfire;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
@@ -9,7 +7,6 @@ using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
-using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
@@ -22,15 +19,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class SettingsController : ControllerBase
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly IRecurringJobManager _recurringJobManager;
         private readonly SettingsService _settingsService;
 
-        public SettingsController(SettingsService settingsService, MeredithDbContext dbContext,
-            IRecurringJobManager recurringJobManager)
+        public SettingsController(SettingsService settingsService, MeredithDbContext dbContext)
         {
             _settingsService = settingsService;
             _dbContext = dbContext;
-            _recurringJobManager = recurringJobManager;
         }
 
         [Returns200]
@@ -51,7 +45,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var settings = new VolkswagenSettings
             {
-                DistributionGroups = string.Join(',', model.DistributionGroups),
+                DistributionGroups = string.Join(',', model.DistributionGroups!),
                 EnableAutoSend = model.EnableAutoSend!.Value,
                 SendTime = model.SendTime
             };
