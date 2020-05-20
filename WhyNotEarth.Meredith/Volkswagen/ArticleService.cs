@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
-            decimal? price, DateTime? eventDate, string? imageUrl)
+            decimal? price, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             var category = await ValidateAsync(categorySlug, date);
 
@@ -32,14 +32,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 EventDate = eventDate
             };
 
-            await SetImageAsync(article, imageUrl);
+            await SetImageAsync(article, imageUrl, imageWidth, imageHeight);
 
             await _dbContext.Articles.AddAsync(article);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<Article> EditAsync(int articleId, string categorySlug, DateTime date, string headline,
-            string description, decimal? price, DateTime? eventDate, string? imageUrl)
+            string description, decimal? price, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             var category = await ValidateAsync(categorySlug, date);
 
@@ -52,7 +52,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             article.Price = price;
             article.EventDate = eventDate;
 
-            await SetImageAsync(article, imageUrl);
+            await SetImageAsync(article, imageUrl, imageWidth, imageHeight);
 
             _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
@@ -109,7 +109,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return category;
         }
 
-        private async Task SetImageAsync(Article article, string? imageUrl)
+        private async Task SetImageAsync(Article article, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             await DeleteImageAsync(article);
             
@@ -117,7 +117,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 article.Image = new ArticleImage
                 {
-                    Url = imageUrl
+                    Url = imageUrl,
+                    Width = imageWidth,
+                    Height = imageHeight
                 };
             }
         }

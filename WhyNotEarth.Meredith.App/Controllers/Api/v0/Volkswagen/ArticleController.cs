@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<IActionResult> Create(ArticleModel model)
         {
             await _articleService.CreateAsync(model.CategorySlug!, model.Date!.Value.Date, model.Headline!,
-                model.Description!, model.Price, model.EventDate, model.Image);
+                model.Description!, model.Price, model.EventDate, model.Image?.Url, model.Image?.Width, model.Image?.Height);
 
             return Ok();
         }
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<NoContentResult> Edit(int articleId, ArticleModel model)
         {
             await _articleService.EditAsync(articleId, model.CategorySlug!, model.Date!.Value.Date, model.Headline!,
-                model.Description!, model.Price, model.EventDate, model.Image);
+                model.Description!, model.Price, model.EventDate, model.Image?.Url, model.Image?.Width, model.Image?.Height);
 
             return NoContent();
         }

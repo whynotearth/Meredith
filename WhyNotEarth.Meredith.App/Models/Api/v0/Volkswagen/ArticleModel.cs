@@ -24,6 +24,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 
         public DateTime? EventDate { get; set; }
 
-        public string? Image { get; set; }
+        public ImageModel? Image { get; set; }
     }
 }
