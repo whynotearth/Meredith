@@ -43,12 +43,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<NoContentResult> Set(VolkswagenSettingsModel model)
         {
-            var settings = new VolkswagenSettings
+            var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Name);
+
+            settings.EnableAutoSend = model.EnableAutoSend!.Value;
+
+            if (model.DistributionGroups != null)
             {
-                DistributionGroups = string.Join(',', model.DistributionGroups!),
-                EnableAutoSend = model.EnableAutoSend!.Value,
-                SendTime = model.SendTime
-            };
+                settings.DistributionGroups = string.Join(',', model.DistributionGroups!);
+            }
+
+            if (model.SendTime != null)
+            {
+                settings.SendTime = model.SendTime;
+            }
 
             await _settingsService.SetValueAsync(VolkswagenCompany.Name, settings);
 
