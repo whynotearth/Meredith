@@ -27,8 +27,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<SendGridService>()
                 .AddScoped<IUserManager, UserManager>()
                 .AddScoped<GoogleStorageService>()
-                .AddScoped<SettingsService>()
-                .AddScoped<ProductService>();
+                .AddScoped<SettingsService>();
 
             // Hotel
             serviceCollection

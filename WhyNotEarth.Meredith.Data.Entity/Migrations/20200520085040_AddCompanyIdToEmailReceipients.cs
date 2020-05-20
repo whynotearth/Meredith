@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 
             migrationBuilder.Sql(
                 "UPDATE \"ModuleVolkswagen\".\"EmailRecipients\"" +
-                "SET \"CompanyId\" = (SELECT \"Id\" FROM public.\"Companies\" WHERE \"Slug\" = 'Volkswagen' limit 1)"
+                "SET \"CompanyId\" = (SELECT \"Id\" FROM public.\"Companies\" WHERE \"Slug\" = 'volkswagen' limit 1)"
             );
 
             migrationBuilder.CreateIndex(
