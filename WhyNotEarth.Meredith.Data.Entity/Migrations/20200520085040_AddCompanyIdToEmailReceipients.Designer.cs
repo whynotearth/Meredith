@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200520085040_AddCompanyIdToEmailReceipients")]
+    partial class AddCompanyIdToEmailReceipients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -207,48 +209,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.EmailRecipient", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("DeliverDateTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("DistributionGroup")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("JumpStartId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("MemoId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("OpenDateTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("JumpStartId");
-
-                    b.HasIndex("MemoId");
-
-                    b.ToTable("EmailRecipients","public");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Image", b =>
@@ -863,6 +823,48 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("ImageId");
 
                     b.ToTable("Articles","ModuleVolkswagen");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.EmailRecipient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeliverDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DistributionGroup")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("JumpStartId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MemoId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("OpenDateTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("JumpStartId");
+
+                    b.HasIndex("MemoId");
+
+                    b.ToTable("EmailRecipients","ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", b =>
@@ -1516,23 +1518,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .HasForeignKey("ImageId");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.EmailRecipient", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", "JumpStart")
-                        .WithMany()
-                        .HasForeignKey("JumpStartId");
-
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.Memo", "Memo")
-                        .WithMany()
-                        .HasForeignKey("MemoId");
-                });
-
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Keyword", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Page", "Page")
@@ -1767,6 +1752,23 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.ArticleImage", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.EmailRecipient", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.JumpStart", "JumpStart")
+                        .WithMany()
+                        .HasForeignKey("JumpStartId");
+
+                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen.Memo", "Memo")
+                        .WithMany()
+                        .HasForeignKey("MemoId");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Page", b =>

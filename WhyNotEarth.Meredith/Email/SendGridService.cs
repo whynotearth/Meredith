@@ -1,14 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Email
@@ -122,7 +121,8 @@ namespace WhyNotEarth.Meredith.Email
                 {
                     personalization.CustomArgs = new Dictionary<string, string>
                     {
-                        {uniqueArgument, uniqueArgumentValue}
+                        {uniqueArgument, uniqueArgumentValue},
+                        {nameof(SendGridAccount.CompanyId), sendGridAccount.CompanyId.ToString() }
                     };
                 }
             }
