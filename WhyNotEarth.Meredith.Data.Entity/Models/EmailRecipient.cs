@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
+namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class EmailRecipient : IEntityTypeConfiguration<EmailRecipient>
     {
@@ -16,6 +17,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public JumpStart JumpStart { get; set; }
 
+        public int CompanyId { get; set; }
+
+        public Company Company { get; set; }
+
         public string Email { get; set; }
 
         public string DistributionGroup { get; set; }
@@ -28,7 +33,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public void Configure(EntityTypeBuilder<EmailRecipient> builder)
         {
-            builder.ToTable("EmailRecipients", "ModuleVolkswagen");
+            builder.ToTable("EmailRecipients", "public");
         }
     }
 

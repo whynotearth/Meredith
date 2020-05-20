@@ -52,14 +52,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
         // Remove in next steps
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<ShoppingProduct> ShoppingProducts { get; set; }
-
-        public DbSet<Variation> Variations { get; set; }
-
-        public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
-
-        public DbSet<Location> Locations { get; set; }
-
         // Hotel
         public DbSet<Amenity> Amenities { get; set; }
 

@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WhyNotEarth.Meredith.App.Results.Api.v0.Public.SendGrid;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 
-namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
+namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
-    [Route("api/v0/volkswagen/memo/sendgrid/webhook")]
+    [Route("api/v0/sendgrid")]
     [ProducesErrorResponseType(typeof(void))]
-    [ApiExplorerSettings(IgnoreApi = true)]
     public class SendGridController : ControllerBase
     {
         private readonly MeredithDbContext _dbContext;
@@ -22,7 +23,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _dbContext = dbContext;
         }
 
-        [HttpPost("")]
+        [HttpPost("webhook")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<OkResult> Create(List<EventItem> events)
         {
             foreach (var eventList in events.Batch(100))
@@ -38,6 +40,29 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok();
         }
 
+        [HttpGet("{companySlug}/emailstats")]
+        public async Task<ActionResult<StatResult>> EmailStats(string companySlug)
+        {
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == companySlug);
+            if(company is null)
+            {
+                return NotFound($"Company '{companySlug}' not found.");
+            }
+            var lastMonth = DateTime.Now.AddMonths(-1);
+            var monthlySentEmails = await _dbContext.EmailRecipients.Where(item =>
+                item.CompanyId == company.Id).CountAsync();
+
+            var monthlyActiveUsers = await _dbContext.EmailRecipients
+                .Where(item =>
+                    item.Status == EmailStatus.Opened &&
+                    item.DeliverDateTime >= lastMonth)
+                .Select(item => item.Email)
+                .Distinct()
+                .CountAsync();
+
+            return Ok(new StatResult { MonthlyActiveUsers = monthlyActiveUsers, MonthlySentEmails = monthlySentEmails });
+        }
+
         public class EventItem
         {
             // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
@@ -47,6 +72,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             [JsonProperty(nameof(EmailRecipient.JumpStartId))]
             public int? JumpStartId { get; set; }
+
+            [JsonProperty(nameof(EmailRecipient.CompanyId))]
+            public int CompanyId { get; set; }
 
             public int Timestamp { get; set; }
 
