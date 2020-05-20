@@ -42,11 +42,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("{date}/preview")]
-        public async Task<FileContentResult> Preview(DateTime date, [FromQuery] List<int> articleIds)
+        public async Task<string> Preview(DateTime date, [FromQuery] List<int> articleIds)
         {
             var previewData = await _jumpStartPreviewService.CreatePreviewAsync(date.Date, articleIds);
 
-            return File(previewData, "image/png", Guid.NewGuid() + ".png");
+            return "data:image/png;base64," + Convert.ToBase64String(previewData);
         }
 
         [Returns204]
