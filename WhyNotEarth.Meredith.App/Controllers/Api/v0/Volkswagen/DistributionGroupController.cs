@@ -30,7 +30,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("")]
         public async Task<ActionResult<List<string>>> List()
         {
-            var result = await _recipientService.GetDistributionGroups();
+            var result = await _recipientService.GetDistributionGroupsAsync();
             
             return Ok(result);
         }
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("stats")]
         public async Task<ActionResult<DistributionGroupStatResult>> Stats()
         {
-            var stats = await _recipientService.GetDistributionGroupStats();
+            var stats = await _recipientService.GetDistributionGroupStatsAsync();
 
             return Ok(stats.Select(item => new DistributionGroupStatResult(item)));
         }
@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("")]
         public async Task<IActionResult> Import(IFormFile file)
         {
-            await _recipientService.Import(file.OpenReadStream());
+            await _recipientService.ImportAsync(file.OpenReadStream());
 
             return NoContent();
         }
@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("{distributionGroupName}/recipients")]
         public async Task<ActionResult<List<RecipientResult>>> ListRecipients(string distributionGroupName)
         {
-            var recipients = await _recipientService.GetRecipients(distributionGroupName);
+            var recipients = await _recipientService.GetRecipientsAsync(distributionGroupName);
 
             var result = recipients.Select(item => new RecipientResult(item)).ToList();
 

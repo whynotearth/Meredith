@@ -24,24 +24,38 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _emailRecipientService = emailRecipientService;
         }
 
-        public async Task Import(Stream stream)
+        public async Task ImportAsync(Stream stream)
         {
-            await DeleteOldRecords();
+            var hasToCleanOldRecords = true;
 
-            using var csv = new CsvReader(new StreamReader(stream), CultureInfo.InvariantCulture);
-
-            foreach (var batch in csv.GetRecords<RecipientCsvModel>().Batch(1000))
+            try
             {
-                await InsertRecords(batch);
+                using var csv = new CsvReader(new StreamReader(stream), CultureInfo.InvariantCulture);
+
+                foreach (var batch in csv.GetRecords<RecipientCsvModel>().Batch(1000))
+                {
+                    // We are doing this here so we can be sure we are able to import the new file before deleting the old records
+                    if (hasToCleanOldRecords)
+                    {
+                        await DeleteOldRecordsAsync();
+                        hasToCleanOldRecords = false;
+                    }
+
+                    await InsertRecordsAsync(batch);
+                }
+            }
+            catch (HeaderValidationException)
+            {
+                throw new InvalidActionException("Invalid CSV file structure");
             }
         }
 
-        public async Task<List<string>> GetDistributionGroups()
+        public async Task<List<string>> GetDistributionGroupsAsync()
         {
             return await _dbContext.Recipients.Select(item => item.DistributionGroup).Distinct().ToListAsync();
         }
 
-        public async Task<List<DistributionGroupStats>> GetDistributionGroupStats()
+        public async Task<List<DistributionGroupStats>> GetDistributionGroupStatsAsync()
         {
             var distributionGroups = await _dbContext.Recipients.GroupBy(item => item.DistributionGroup)
                 .Select(g => new
@@ -56,14 +70,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             foreach (var group in distributionGroups)
             {
                 var stats = await _emailRecipientService.GetDistributionGroupStats(group.Name, group.RecipientCount);
-                
+
                 result.Add(stats);
             }
 
             return result;
         }
 
-        public async Task<List<Recipient>> GetRecipients(string distributionGroup)
+        public async Task<List<Recipient>> GetRecipientsAsync(string distributionGroup)
         {
             return await _dbContext.Recipients.Where(item => item.DistributionGroup == distributionGroup).ToListAsync();
         }
@@ -125,7 +139,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task InsertRecords(IEnumerable<RecipientCsvModel> records)
+        private async Task InsertRecordsAsync(IEnumerable<RecipientCsvModel> records)
         {
             var recipients = records.Select(Convert).ToList();
 
@@ -134,10 +148,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task DeleteOldRecords()
+        private async Task DeleteOldRecordsAsync()
         {
             await _dbContext.Database.ExecuteSqlRawAsync(
-                $"TRUNCATE \"{Recipient.ModuleName}\".\"{Recipient.TableName}\" RESTART IDENTITY;");
+                $"TRUNCATE \"{Recipient.ModuleName}\".\"{Recipient.TableName}\";");
         }
 
         private Recipient Convert(RecipientCsvModel csvModel)
@@ -152,9 +166,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private class RecipientCsvModel
         {
-            [Name("Email Address")] public string EmailAddress { get; set; } = null!;
+            [Name("Email Address")]
+            public string EmailAddress { get; } = null!;
 
-            [Name("Distribution Group")] public string DistributionGroup { get; set; } = null!;
+            [Name("Distribution Group")]
+            public string DistributionGroup { get; } = null!;
         }
     }
 }
