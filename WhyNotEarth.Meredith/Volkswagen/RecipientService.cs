@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
             catch (HeaderValidationException)
             {
-                throw new InvalidActionException("Invalid CSV file structure");
+                throw new InvalidActionException(
+                    "Invalid CSV file structure. The CSV file should contain two columns `Email Address` and `Distribution Group`");
             }
         }
 
@@ -140,13 +142,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
+        [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]
         private class RecipientCsvModel
         {
             [Name("Email Address")]
-            public string EmailAddress { get; } = null!;
+            public string EmailAddress { get; set; } = null!;
 
             [Name("Distribution Group")]
-            public string DistributionGroup { get; } = null!;
+            public string DistributionGroup { get; set; } = null!;
         }
     }
 }
