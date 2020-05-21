@@ -26,6 +26,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _recipientService = recipientService;
         }
 
+        [Returns200]
+        [HttpGet("stats")]
+        public async Task<ActionResult<DistributionGroupStatResult>> Stats()
+        {
+            var stats = await _recipientService.GetDistributionGroupStatsAsync();
+
+            return Ok(stats.Select(item => new DistributionGroupStatResult(item)));
+        }
+
         [Returns204]
         [HttpPut("")]
         public async Task<IActionResult> Import(IFormFile file)

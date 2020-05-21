@@ -37,6 +37,25 @@ namespace WhyNotEarth.Meredith.Email
         {
             return GetMemoDetailStatsAsync(item => item.JumpStartId == jumpStartId);
         }
+        
+        public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup, int currentRecipientCount)
+        {
+            var stats = await _dbContext.EmailRecipients
+                .Where(item => item.DistributionGroup == distributionGroup)
+                .GroupBy(item => item.Status)
+                .Select(g => new
+                {
+                    Status = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var receiversCount = stats.Sum(item => item.Count);
+            var openCount = stats.Where(item => item.Status >= EmailStatus.Opened).Sum(item => item.Count);
+            var clickCount = stats.Where(item => item.Status >= EmailStatus.Clicked).Sum(item => item.Count);
+
+            return new DistributionGroupStats(distributionGroup, currentRecipientCount, receiversCount, openCount, clickCount);
+        }
 
         private async Task<ListStats> GetStatsAsync(Expression<Func<EmailRecipient, bool>> condition)
         {
