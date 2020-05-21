@@ -6,8 +6,9 @@ using Hangfire;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Volkswagen.Jobs
+namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 {
     public class JumpStartJob
     {
@@ -38,7 +39,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         public async Task SendAsync()
         {
             var jumpStarts = new List<JumpStart>();
-            var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Name);
+            var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Slug);
 
             var dailyPlans = await _jumpStartPlanService.GetAsync();
             dailyPlans = dailyPlans.Where(item => item.DateTime < DateTime.UtcNow.AddMinutes(15)).ToList();

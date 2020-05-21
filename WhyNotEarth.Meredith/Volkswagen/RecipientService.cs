@@ -16,12 +16,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class RecipientService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly EmailRecipientService _emailRecipientService;
 
-        public RecipientService(MeredithDbContext dbContext, EmailRecipientService emailRecipientService)
+        public RecipientService(MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
-            _emailRecipientService = emailRecipientService;
         }
 
         public async Task ImportAsync(Stream stream)
@@ -53,28 +51,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task<List<string>> GetDistributionGroupsAsync()
         {
             return await _dbContext.Recipients.Select(item => item.DistributionGroup).Distinct().ToListAsync();
-        }
-
-        public async Task<List<DistributionGroupStats>> GetDistributionGroupStatsAsync()
-        {
-            var distributionGroups = await _dbContext.Recipients.GroupBy(item => item.DistributionGroup)
-                .Select(g => new
-                {
-                    Name = g.Key,
-                    RecipientCount = g.Count()
-                })
-                .ToListAsync();
-
-            var result = new List<DistributionGroupStats>();
-
-            foreach (var group in distributionGroups)
-            {
-                var stats = await _emailRecipientService.GetDistributionGroupStats(group.Name, group.RecipientCount);
-
-                result.Add(stats);
-            }
-
-            return result;
         }
 
         public async Task<List<Recipient>> GetRecipientsAsync(string distributionGroup)

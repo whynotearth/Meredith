@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -39,26 +40,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
-        [HttpGet("")]
-        public async Task<ActionResult<List<MemoListResult>>> List()
+        [HttpGet("stats")]
+        public async Task<ActionResult<List<MemoStatResult>>> Stats()
         {
-            var memoInfos = await _memoService.GetListAsync();
+            var stats = await _memoService.GetStatsAsync();
 
-            return Ok(memoInfos.Select(item => new MemoListResult(item)).ToList());
+            return Ok(stats.Select(item => new MemoStatResult(item)));
         }
 
         [Returns200]
+        [Returns404]
         [HttpGet("{memoId}/stats")]
-        public async Task<ActionResult<List<MemoDetailResult>>> Details(int memoId)
+        public async Task<ActionResult<List<MemoStatDetailResult>>> DetailStats(int memoId)
         {
-            var memoInfo = await _memoService.Get(memoId);
-            var result = new MemoDetailResult(memoInfo);
+            var memoInfo = await _memoService.GetStatsAsync(memoId);
+            var result = new MemoStatDetailResult(memoInfo);
 
-            var memoStats = await _emailRecipientService.GetMemoDetailStats(memoId);
+            var detailStats = await _emailRecipientService.GetMemoDetailStatsAsync(memoId);
 
-            result.NotOpened.AddRange(memoStats.NotOpenedList.Select(item => new EmailRecipientResult(item)));
+            result.NotOpened.AddRange(detailStats.NotOpenedList.Select(item => new EmailRecipientResult(item)));
 
-            result.Opened.AddRange(memoStats.OpenedList.Select(item => new EmailRecipientResult(item)));
+            result.Opened.AddRange(detailStats.OpenedList.Select(item => new EmailRecipientResult(item)));
 
             return Ok(result);
         }

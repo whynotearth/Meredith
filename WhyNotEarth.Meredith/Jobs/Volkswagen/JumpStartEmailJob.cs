@@ -6,8 +6,9 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Volkswagen.Jobs
+namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 {
     public class JumpStartEmailJob
     {
@@ -46,18 +47,18 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 
         private async Task SendEmailAsync(JumpStart jumpStart, List<Article> articles)
         {
-            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Name);
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
             var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
             var recipients = await GetRecipients(jumpStart.Id);
-            var subject =
-                $"Project Blue Delta - {jumpStart.DateTime.InZone(VolkswagenCompany.TimeZoneId, "MMMM d, yyyy")}";
+            var subject = $"Project Blue Delta - {jumpStart.DateTime:MMMM d, yyyy}";
 
             foreach (var batch in recipients.Batch(SendGridService.BatchSize))
             {
-                await _sendGridService.SendEmail(company.Id, batch, subject, emailTemplate, emailTemplate, jumpStart.DateTime);
+                await _sendGridService.SendEmail(company.Id, batch, subject, emailTemplate, emailTemplate,
+                    nameof(EmailRecipient.MemoId), jumpStart.Id.ToString(), jumpStart.DateTime);
 
                 foreach (var recipient in batch)
                 {

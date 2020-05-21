@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task<List<JumpStartPlan>> GetAsync()
         {
             var result = new List<JumpStartPlan>();
-            var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Name);
+            var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Slug);
             var defaultDistributionGroups = await settings.GetDistributionGroupAsync(_dbContext);
 
             var articles = await GetArticlesAsync();

@@ -6,9 +6,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         public Memo Memo { get; }
 
-        public MemoListStats ListStats { get; }
+        public ListStats ListStats { get; }
 
-        public MemoInfo(Memo memo, MemoListStats listStats)
+        public MemoInfo(Memo memo, ListStats listStats)
         {
             Memo = memo;
             ListStats = listStats;

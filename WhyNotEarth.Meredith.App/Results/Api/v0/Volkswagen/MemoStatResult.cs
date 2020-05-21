@@ -5,7 +5,7 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
-    public class MemoListResult
+    public class MemoStatResult
     {
         public int Id { get; }
 
@@ -19,13 +19,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string Description { get; }
 
-        public int SentCount { get; }
-
-        public int OpenCount { get; }
-
         public int OpenPercentage { get; }
         
-        public MemoListResult(MemoInfo memoInfo)
+        public MemoStatResult(MemoInfo memoInfo)
         {
             Id = memoInfo.Memo.Id;
             DistributionGroups = memoInfo.Memo.DistributionGroups.Split(',').ToList();
@@ -33,8 +29,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             CreationDateTime = memoInfo.Memo.CreationDateTime;
             To = memoInfo.Memo.To;
             Description = memoInfo.Memo.Description;
-            SentCount = memoInfo.ListStats.TotalCount;
-            OpenCount = memoInfo.ListStats.SentCount;
             OpenPercentage = memoInfo.ListStats.OpenPercentage;
         }
     }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -12,15 +13,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class JumpStartService
     {
         private readonly MeredithDbContext _dbContext;
+        private readonly EmailRecipientService _emailRecipientService;
         private readonly JumpStartPlanService _jumpStartPlanService;
 
-        public JumpStartService(MeredithDbContext dbContext, JumpStartPlanService jumpStartPlanService)
+        public JumpStartService(MeredithDbContext dbContext, JumpStartPlanService jumpStartPlanService,
+            EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
             _jumpStartPlanService = jumpStartPlanService;
+            _emailRecipientService = emailRecipientService;
         }
 
-        public async Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
+        public async Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime,
+            List<string> distributionGroups,
             List<int> articleIds)
         {
             var articles = await GetArticles(articleIds);
@@ -46,11 +51,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 return EditAsync(jumpStartId.Value, dateTime, distributionGroups, articles);
             }
-            
+
             return CreateAsync(dateTime, distributionGroups, articles);
         }
-        
-        private async Task<JumpStart> CreateAsync(DateTime dateTime, List<string> distributionGroups, List<Article> articles)
+
+        private async Task<JumpStart> CreateAsync(DateTime dateTime, List<string> distributionGroups,
+            List<Article> articles)
         {
             var jumpStart = new JumpStart
             {
@@ -116,8 +122,44 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 article.Order = i++;
             }
-         
+
             _dbContext.Articles.UpdateRange(articles);
+        }
+
+        public async Task<List<JumpStartInfo>> GetStatsAsync()
+        {
+            var jumpStarts = await _dbContext.JumpStarts.OrderByDescending(item => item.DateTime).ToListAsync();
+
+            var result = new List<JumpStartInfo>();
+
+            foreach (var jumpStart in jumpStarts)
+            {
+                var articles = await _dbContext.Articles.Where(item => item.Date == jumpStart.DateTime.Date)
+                    .Select(item => item.Headline).ToListAsync();
+
+                var memoStat = await _emailRecipientService.GetMemoListStatsAsync(jumpStart.Id);
+
+                result.Add(new JumpStartInfo(jumpStart, articles, memoStat));
+            }
+
+            return result;
+        }
+
+        public async Task<JumpStartInfo> GetStatsAsync(int jumpStartId)
+        {
+            var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.Id == jumpStartId);
+
+            if (jumpStart is null)
+            {
+                throw new RecordNotFoundException($"JumpStart {jumpStartId} not found");
+            }
+
+            var articles = await _dbContext.Articles.Where(item => item.Date == jumpStart.DateTime.Date)
+                .Select(item => item.Headline).ToListAsync();
+
+            var jumpStartStat = await _emailRecipientService.GetJumpStartListStatsAsync(jumpStart.Id);
+
+            return new JumpStartInfo(jumpStart, articles, jumpStartStat);
         }
     }
 }

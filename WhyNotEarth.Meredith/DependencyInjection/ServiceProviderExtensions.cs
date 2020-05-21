@@ -3,6 +3,8 @@ using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Jobs.Public;
+using WhyNotEarth.Meredith.Jobs.Volkswagen;
 using WhyNotEarth.Meredith.Pages;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
@@ -10,7 +12,6 @@ using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Sms;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Volkswagen;
-using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 namespace WhyNotEarth.Meredith.DependencyInjection
 {
@@ -27,7 +28,9 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<SendGridService>()
                 .AddScoped<IUserManager, UserManager>()
                 .AddScoped<GoogleStorageService>()
-                .AddScoped<SettingsService>();
+                .AddScoped<SettingsService>()
+                .AddScoped<EmailRecipientService>()
+                .AddScoped<EmailRecipientJob>();
 
             // Hotel
             serviceCollection
@@ -48,7 +51,6 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<MemoService>()
                 .AddScoped<JumpStartEmailTemplateService>()
                 .AddScoped<RecipientService>()
-                .AddScoped<EmailRecipientService>()
                 .AddScoped<JumpStartPreviewService>()
                 .AddScoped<PuppeteerService>()
                 .AddScoped<JumpStartPlanService>();

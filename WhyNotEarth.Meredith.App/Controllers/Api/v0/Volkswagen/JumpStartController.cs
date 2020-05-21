@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
@@ -20,15 +21,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class JumpStartController : ControllerBase
     {
         private readonly JumpStartPlanService _jumpStartPlanService;
+        private readonly EmailRecipientService _emailRecipientService;
         private readonly JumpStartPreviewService _jumpStartPreviewService;
         private readonly JumpStartService _jumpStartService;
 
         public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService,
-            JumpStartPlanService jumpStartPlanService)
+            JumpStartPlanService jumpStartPlanService, EmailRecipientService emailRecipientService)
         {
             _jumpStartService = jumpStartService;
             _jumpStartPreviewService = jumpStartPreviewService;
             _jumpStartPlanService = jumpStartPlanService;
+            _emailRecipientService = emailRecipientService;
         }
 
         [Returns200]
@@ -57,6 +60,32 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                 model.ArticleIds!);
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("stats")]
+        public async Task<ActionResult<List<JumpStartStatResult>>> Stats()
+        {
+            var stats = await _jumpStartService.GetStatsAsync();
+
+            return Ok(stats.Select(item => new JumpStartStatResult(item)));
+        }
+
+        [Returns200]
+        [Returns404]
+        [HttpGet("{jumpStartId}/stats")]
+        public async Task<ActionResult<List<JumpStartStatDetailResult>>> DetailStats(int jumpStartId)
+        {
+            var memoInfo = await _jumpStartService.GetStatsAsync(jumpStartId);
+            var result = new JumpStartStatDetailResult(memoInfo);
+
+            var detailStats = await _emailRecipientService.GetJumpStartDetailStatsAsync(jumpStartId);
+
+            result.NotOpened.AddRange(detailStats.NotOpenedList.Select(item => new EmailRecipientResult(item)));
+
+            result.Opened.AddRange(detailStats.OpenedList.Select(item => new EmailRecipientResult(item)));
+
+            return Ok(result);
         }
     }
 }

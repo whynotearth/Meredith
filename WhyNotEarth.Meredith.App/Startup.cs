@@ -21,8 +21,7 @@ using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
-using WhyNotEarth.Meredith.Volkswagen;
-using WhyNotEarth.Meredith.Volkswagen.Jobs;
+using WhyNotEarth.Meredith.Jobs.Volkswagen;
 
 [assembly: ApiController]
 namespace WhyNotEarth.Meredith.App
@@ -130,7 +129,7 @@ namespace WhyNotEarth.Meredith.App
             app.UseHangfireDashboard();
 
             recurringJobManager.AddOrUpdate<JumpStartJob>(JumpStartJob.Id,
-                service => service.SendAsync(),
+                job => job.SendAsync(),
                 JumpStartJob.CronExpression, TimeZoneInfo.Utc);
         }
     }

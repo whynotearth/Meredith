@@ -26,24 +26,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _recipientService = recipientService;
         }
 
-        [Returns200]
-        [HttpGet("")]
-        public async Task<ActionResult<List<string>>> List()
-        {
-            var result = await _recipientService.GetDistributionGroupsAsync();
-            
-            return Ok(result);
-        }
-
-        [Returns200]
-        [HttpGet("stats")]
-        public async Task<ActionResult<DistributionGroupStatResult>> Stats()
-        {
-            var stats = await _recipientService.GetDistributionGroupStatsAsync();
-
-            return Ok(stats.Select(item => new DistributionGroupStatResult(item)));
-        }
-
         [Returns204]
         [HttpPut("")]
         public async Task<IActionResult> Import(IFormFile file)
@@ -51,6 +33,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _recipientService.ImportAsync(file.OpenReadStream());
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("")]
+        public async Task<ActionResult<List<string>>> List()
+        {
+            var result = await _recipientService.GetDistributionGroupsAsync();
+            
+            return Ok(result);
         }
 
         [Returns200]

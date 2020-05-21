@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Exceptions;
@@ -54,14 +54,15 @@ namespace WhyNotEarth.Meredith.Email
         }
 
         public async Task SendEmail(int companyId, List<EmailRecipient> recipients, string subject,
-            string plainTextContent, string htmlContent, DateTime sendAt)
+            string plainTextContent, string htmlContent, string uniqueArgument, string uniqueArgumentValue,
+            DateTime sendAt)
         {
             var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
 
             await SendEmailCore(companyId, emailAddresses,
                 false, null,
                 subject, plainTextContent, htmlContent,
-                null, null,
+                uniqueArgument, uniqueArgumentValue,
                 sendAt);
         }
 
@@ -122,7 +123,7 @@ namespace WhyNotEarth.Meredith.Email
                     personalization.CustomArgs = new Dictionary<string, string>
                     {
                         {uniqueArgument, uniqueArgumentValue},
-                        {nameof(SendGridAccount.CompanyId), sendGridAccount.CompanyId.ToString() }
+                        {nameof(SendGridAccount.CompanyId), sendGridAccount.CompanyId.ToString()}
                     };
                 }
             }

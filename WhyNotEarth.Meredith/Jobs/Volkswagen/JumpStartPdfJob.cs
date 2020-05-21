@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.GoogleCloud;
+using WhyNotEarth.Meredith.Jobs.Public;
+using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Volkswagen
+namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 {
     public class JumpStartPdfJob
     {
@@ -50,8 +52,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             await _dbContext.SaveChangesAsync();
 
-            _backgroundJobClient.Enqueue<EmailRecipientService>(service =>
-                service.CreateForJumpStart(jumpStart.Id));
+            _backgroundJobClient.Enqueue<EmailRecipientJob>(job =>
+                job.CreateForJumpStart(jumpStart.Id));
         }
 
         public Task<string> CreatePdfUrlAsync(JumpStart jumpStart)

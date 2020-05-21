@@ -9,6 +9,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     {
         public int Id { get; set; }
 
+        public int CompanyId { get; set; }
+
+        public Company Company { get; set; }
+
         public int? MemoId { get; set; }
 
         public Memo Memo { get; set; }
@@ -17,15 +21,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public JumpStart JumpStart { get; set; }
 
-        public int CompanyId { get; set; }
-
-        public Company Company { get; set; }
-
         public string Email { get; set; }
 
         public string DistributionGroup { get; set; }
 
         public EmailStatus Status { get; set; }
+
+        public DateTime CreationDateTime { get; set; }
 
         public DateTime? DeliverDateTime { get; set; }
 
