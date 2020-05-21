@@ -25,15 +25,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime,
-            List<string> distributionGroups,
-            List<int> articleIds)
+            List<string> distributionGroups, List<int> articleIds)
         {
-            var articles = await GetArticles(articleIds);
+            var articles = await GetArticles(dateTime, articleIds);
 
             return await CreateOrEditAsync(jumpStartId, dateTime, distributionGroups, articles);
         }
 
-        public Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
+        internal Task<JumpStart> CreateOrEditAsync(int? jumpStartId, DateTime dateTime, List<string> distributionGroups,
             List<Article> articles)
         {
             if (articles.Count > _jumpStartPlanService.MaximumArticlesPerDayCount)
@@ -107,10 +106,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return jumpStart;
         }
 
-        private async Task<List<Article>> GetArticles(List<int> articleIds)
+        private async Task<List<Article>> GetArticles(DateTime dateTime, List<int> articleIds)
         {
-            var articles = await _dbContext.Articles.Where(item => articleIds.Contains(item.Id))
+            var articles = await _dbContext.Articles.Where(item => item.Date == dateTime.Date)
                 .ToListAsync();
+
+            if (!IsEqual(articles.Select(item => item.Id).ToList(), articleIds))
+            {
+                // User missed an article from that day
+                throw new InvalidActionException("Not all of the articles of the day are selected");
+            }
 
             return articles.OrderBy(item => articleIds.IndexOf(item.Id)).ToList();
         }
@@ -160,6 +165,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var jumpStartStat = await _emailRecipientService.GetJumpStartListStatsAsync(jumpStart.Id);
 
             return new JumpStartInfo(jumpStart, articles, jumpStartStat);
+        }
+
+        private bool IsEqual(List<int> left, List<int> right)
+        {
+            var firstNotSecond = left.Except(right).ToList();
+            var secondNotFirst = right.Except(left).ToList();
+
+            return !firstNotSecond.Any() && !secondNotFirst.Any();
         }
     }
 }
