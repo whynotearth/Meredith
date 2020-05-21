@@ -5,7 +5,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class MemoStatDetailResult
     {
-        public MemoStatResult MemoStat { get; }
+        // TODO: Rename to Memo
+        public MemoStatResult MemoList { get; }
 
         public List<EmailRecipientResult> NotOpened { get; } = new List<EmailRecipientResult>();
 
@@ -13,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public MemoStatDetailResult(MemoInfo memoInfo)
         {
-            MemoStat = new MemoStatResult(memoInfo);
+            MemoList = new MemoStatResult(memoInfo);
         }
     }
 }

@@ -19,6 +19,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string Description { get; }
 
+        // TODO: Remove these
+        public int SentCount { get; }
+
+        public int OpenCount { get; }
+
         public int OpenPercentage { get; }
         
         public MemoStatResult(MemoInfo memoInfo)

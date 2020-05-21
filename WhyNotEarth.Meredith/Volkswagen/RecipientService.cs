@@ -162,6 +162,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new Recipient
             {
                 Email = csvModel.EmailAddress.ToLower(),
+                FirstName = csvModel.FirstName,
+                LastName = csvModel.LastName,
                 DistributionGroup = csvModel.DistributionGroup,
                 CreationDateTime = DateTime.UtcNow
             };
@@ -172,6 +174,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             [Name("Email Address")]
             public string EmailAddress { get; set; } = null!;
+
+            [Name("First Name")]
+            public string FirstName { get; set; } = null!;
+
+            [Name("Last Name")]
+            public string LastName { get; set; } = null!;
 
             [Name("Distribution Group")]
             public string DistributionGroup { get; set; } = null!;

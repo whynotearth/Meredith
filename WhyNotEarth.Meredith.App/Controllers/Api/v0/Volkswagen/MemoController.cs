@@ -40,7 +40,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
-        [HttpGet("stats")]
+        // TODO: Add stats to route
+        [HttpGet("")]
         public async Task<ActionResult<List<MemoStatResult>>> Stats()
         {
             var stats = await _memoService.GetStatsAsync();
