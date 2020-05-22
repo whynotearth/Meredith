@@ -14,9 +14,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public string Email { get; set; }
         
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; }
         
-        public string? LastName { get; set; }
+        public string LastName { get; set; }
 
         public string DistributionGroup { get; set; }
 

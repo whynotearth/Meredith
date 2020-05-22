@@ -28,10 +28,10 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             // In case something went wrong and this is a retry
             await CleanForMemo(memoId);
 
-            var companyId = _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == VolkswagenCompany.Slug).Id;
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == VolkswagenCompany.Slug);
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
 
-            await Create(companyId, memo.DistributionGroups, item =>
+            await Create(company.Id, memo.DistributionGroups, item =>
             {
                 item.MemoId = memoId;
                 return item;
