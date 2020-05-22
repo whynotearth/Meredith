@@ -48,8 +48,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
             catch (HeaderValidationException)
             {
-                throw new InvalidActionException(
-                    "Invalid CSV file structure. The CSV file should contain two columns `Email Address` and `Distribution Group`");
+                throw new InvalidActionException("Invalid CSV file structure");
             }
         }
 

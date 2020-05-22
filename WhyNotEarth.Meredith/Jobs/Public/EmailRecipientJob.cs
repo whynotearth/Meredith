@@ -43,19 +43,18 @@ namespace WhyNotEarth.Meredith.Jobs.Public
         public async Task CreateForJumpStart(int jumpStartId)
         {
             // In case something went wrong and this is a retry
-            await CleanForJumpStart(jumpStartId);
+            await CleanForJumpStartAsync(jumpStartId);
 
-            var companyId = _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == VolkswagenCompany.Slug).Id;
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == VolkswagenCompany.Slug);
             var jumpStart = await _dbContext.JumpStarts.FirstOrDefaultAsync(item => item.Id == jumpStartId);
 
-            await Create(companyId, jumpStart.DistributionGroups, item =>
+            await Create(company.Id, jumpStart.DistributionGroups, item =>
             {
                 item.JumpStartId = jumpStartId;
                 return item;
             });
 
-            _backgroundJobClient.Enqueue<JumpStartEmailJob>(service =>
-                service.SendAsync(jumpStartId));
+            _backgroundJobClient.Enqueue<JumpStartEmailJob>(job => job.SendAsync(jumpStartId));
         }
 
         private async Task Create(int companyId, string distributionGroups, Func<EmailRecipient, EmailRecipient> keySetter)
@@ -96,7 +95,7 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task CleanForJumpStart(int jumpStartId)
+        private async Task CleanForJumpStartAsync(int jumpStartId)
         {
             var oldRecords = await _dbContext.EmailRecipients.Where(item => item.JumpStartId == jumpStartId)
                 .ToListAsync();
