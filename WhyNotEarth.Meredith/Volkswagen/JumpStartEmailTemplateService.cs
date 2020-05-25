@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
+using Markdig;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
@@ -147,7 +148,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 {"id", article.Id},
                 {"headline", article.Headline},
-                {"description", article.Description},
+                {"description", RenderMarkdown(article.Description)},
                 {"imageCaption", article.ImageCaption},
                 {
                     "image", new Dictionary<string, object>
@@ -255,6 +256,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var height = (int) ((double) width / image.Width.Value * image.Height.Value);
 
             return (width, height, maxWidth);
+        }
+
+        private string RenderMarkdown(string value)
+        {
+            return Markdown.ToHtml(value);
         }
     }
 }
