@@ -20,8 +20,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
         [Mandatory]
         public DateTime? Date { get; set; }
 
-        public decimal? Price { get; set; }
-
         public DateTime? EventDate { get; set; }
 
         public ImageModel? Image { get; set; }

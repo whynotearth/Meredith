@@ -16,7 +16,6 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         private readonly MeredithDbContext _dbContext;
         private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly JumpStartService _jumpStartService;
-        private readonly IRecurringJobManager _recurringJobManager;
         private readonly SettingsService _settingsService;
 
         public static string Id { get; } = "JumpStartService_SendAsync";
@@ -26,14 +25,13 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 
         public JumpStartJob(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
             JumpStartPlanService jumpStartPlanService, JumpStartService jumpStartService,
-            SettingsService settingsService, IRecurringJobManager recurringJobManager)
+            SettingsService settingsService)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;
             _jumpStartPlanService = jumpStartPlanService;
             _jumpStartService = jumpStartService;
             _settingsService = settingsService;
-            _recurringJobManager = recurringJobManager;
         }
 
         public async Task SendAsync()

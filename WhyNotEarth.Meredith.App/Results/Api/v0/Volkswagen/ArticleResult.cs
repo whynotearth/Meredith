@@ -19,8 +19,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime? EventDate { get; }
 
-        public decimal? Price { get; }
-
         public ArticleResult(Article article)
         {
             Id = article.Id;
@@ -30,7 +28,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Description = article.Description;
             Image = article.Image?.Url;
             EventDate = article.EventDate;
-            Price = article.Price;
         }
     }
 }
