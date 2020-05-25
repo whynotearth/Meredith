@@ -240,7 +240,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             const int twoColumnWideMaximumWidth = 200;
             const int twoColumnMiddleMaximumWidth = 185;
             const int threeColumnWideMaximumWidth = 280;
-            const int threeColumnMiddleMaximumWidth = 163;
+            const int threeColumnMiddleMaximumWidth = 161;
 
             const int retinaRatio = 2;
 
