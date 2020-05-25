@@ -142,9 +142,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 var articles = await _dbContext.Articles.Where(item => item.Date == jumpStart.DateTime.Date)
                     .Select(item => item.Headline).ToListAsync();
 
-                var memoStat = await _emailRecipientService.GetMemoListStatsAsync(jumpStart.Id);
+                var jumpStartListStats = await _emailRecipientService.GetJumpStartListStatsAsync(jumpStart.Id);
 
-                result.Add(new JumpStartInfo(jumpStart, articles, memoStat));
+                result.Add(new JumpStartInfo(jumpStart, articles, jumpStartListStats));
             }
 
             return result;

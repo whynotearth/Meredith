@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.Email
 
         public Task<EmailDetailStats> GetMemoDetailStatsAsync(int memoId)
         {
-            return GetMemoDetailStatsAsync(item => item.MemoId == memoId);
+            return GetDetailStatsAsync(item => item.MemoId == memoId, item => item.Memo);
         }
 
         public Task<ListStats> GetJumpStartListStatsAsync(int jumpStartId)
@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.Email
 
         public Task<EmailDetailStats> GetJumpStartDetailStatsAsync(int jumpStartId)
         {
-            return GetMemoDetailStatsAsync(item => item.JumpStartId == jumpStartId);
+            return GetDetailStatsAsync(item => item.JumpStartId == jumpStartId, item => item.JumpStart);
         }
         
         public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup, int currentRecipientCount)
@@ -75,13 +75,14 @@ namespace WhyNotEarth.Meredith.Email
             return new ListStats(sentCount, openCount);
         }
 
-        private async Task<EmailDetailStats> GetMemoDetailStatsAsync(Expression<Func<EmailRecipient, bool>> condition)
+        private async Task<EmailDetailStats> GetDetailStatsAsync<TProperty>(Expression<Func<EmailRecipient, bool>> condition, Expression<Func<EmailRecipient, TProperty>> include)
         {
-            var memoRecipients = await _dbContext.EmailRecipients.Include(item => item.Memo)
+            var emailRecipients = await _dbContext.EmailRecipients
+                .Include(include)
                 .Where(condition).ToListAsync();
 
-            var notOpenedList = memoRecipients.Where(item => item.Status < EmailStatus.Opened).ToList();
-            var openedList = memoRecipients.Where(item => item.Status >= EmailStatus.Opened).ToList();
+            var notOpenedList = emailRecipients.Where(item => item.Status < EmailStatus.Opened).ToList();
+            var openedList = emailRecipients.Where(item => item.Status >= EmailStatus.Opened).ToList();
 
             return new EmailDetailStats(notOpenedList, openedList);
         }
