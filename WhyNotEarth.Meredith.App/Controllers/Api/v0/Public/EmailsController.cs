@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,27 +100,22 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         public async Task Apply(MeredithDbContext dbContext)
         {
-            Expression<Func<EmailRecipient, bool>> baseCondition = item =>
-                item.CompanyId == CompanyId && item.Email == Email;
+            var query = dbContext.EmailRecipients.Where(item => item.CompanyId == CompanyId && item.Email == Email);
 
-            Expression<Func<EmailRecipient, bool>> secondaryCondition;
             if (MemoId.HasValue)
             {
-                secondaryCondition = item => item.MemoId == MemoId;
+                query = query.Where(item => item.MemoId == MemoId);
             }
             else if (JumpStartId.HasValue)
             {
-                secondaryCondition = item => item.JumpStartId == MemoId;
+                query = query.Where(item => item.JumpStartId == JumpStartId);
             }
             else
             {
                 return;
             }
 
-            var condition =
-                Expression.Lambda<Func<EmailRecipient, bool>>(Expression.AndAlso(baseCondition, secondaryCondition));
-
-            var emailRecipient = await dbContext.EmailRecipients.FirstOrDefaultAsync(condition);
+            var emailRecipient = await query.FirstOrDefaultAsync();
 
             if (emailRecipient is null)
             {
