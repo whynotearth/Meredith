@@ -133,7 +133,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<List<JumpStartInfo>> GetStatsAsync()
         {
-            var jumpStarts = await _dbContext.JumpStarts.OrderByDescending(item => item.DateTime).ToListAsync();
+            var jumpStarts = await _dbContext.JumpStarts
+                .Where(item => item.Status == JumpStartStatus.Sent)
+                .OrderByDescending(item => item.DateTime).ToListAsync();
 
             var result = new List<JumpStartInfo>();
 
