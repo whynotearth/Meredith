@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -20,22 +21,22 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public string GetEmailHtml(DateTime date, List<Article> articles, string? pdfUrl)
         {
-            var (templateName, maxMiddleCount) = GetTemplateName(articles, false);
+            var (templateName, isTwoColumn) = GetTemplateName(articles, false);
 
-            return GetTemplate(date, articles, templateName, maxMiddleCount, pdfUrl);
+            return GetTemplate(date, articles, templateName, isTwoColumn, pdfUrl);
         }
 
         public string GetPdfHtml(DateTime dateTime, List<Article> articles)
         {
-            var (templateName, maxMiddleCount) = GetTemplateName(articles, true);
+            var (templateName, isTwoColumn) = GetTemplateName(articles, true);
 
-            return GetTemplate(dateTime.Date, articles, templateName, maxMiddleCount, null);
+            return GetTemplate(dateTime.Date, articles, templateName, isTwoColumn, null);
         }
 
-        private string GetTemplate(DateTime date, List<Article> articles, string templateName, int maxMiddleCount,
+        private string GetTemplate(DateTime date, List<Article> articles, string templateName, bool isTwoColumn,
             string? pdfUrl)
         {
-            var data = GetData(date, articles, maxMiddleCount, pdfUrl);
+            var data = GetData(date, articles, isTwoColumn, pdfUrl);
 
             return Compile(templateName, data);
         }
@@ -53,10 +54,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private Dictionary<string, object> GetData(DateTime date, List<Article> articles, int maxMiddleCount,
+        private Dictionary<string, object> GetData(DateTime date, List<Article> articles, bool isTwoColumn,
             string? pdfUrl)
         {
             var result = new Dictionary<string, object>();
+            var maxMiddleCount = isTwoColumn ? 2 : 3;
 
             AddGeneralData(result, date, pdfUrl);
 
@@ -68,13 +70,13 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var (top, remaining) = PickArticles(remainingArticles, item => item.Category.Slug == PriorityCategorySlug);
             remainingArticles = remaining;
-            AddArticlesToData("articlesTop", result, top);
+            AddArticlesToData("articlesTop", result, top, isTwoColumn, true);
 
-            var middle = remainingArticles.Take(maxMiddleCount);
-            AddArticlesToData("articlesMiddle", result, middle);
+            var middle = remainingArticles.Take(maxMiddleCount).ToList();
+            AddArticlesToData("articlesMiddle", result, middle, isTwoColumn, false);
 
             var bottom = remainingArticles.Skip(maxMiddleCount);
-            AddArticlesToData("articlesBottom", result, bottom);
+            AddArticlesToData("articlesBottom", result, bottom, isTwoColumn, true);
 
             return result;
         }
@@ -119,34 +121,41 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return (selectedArticles, remainingArticles);
         }
 
-        private void AddArticlesToData(string key, Dictionary<string, object> data, IEnumerable<Article> articles)
+        private void AddArticlesToData(string key, Dictionary<string, object> data, IEnumerable<Article> articles,
+            bool isTwoColumn, bool isWide)
         {
-            var items = articles.Select(GetData).ToList();
+            var items = articles.Select(item => GetData(item, isTwoColumn, isWide)).ToList();
 
             data.Add(key, items);
         }
 
         private void AddArticleToData(string key, Dictionary<string, object> data, Article? article)
         {
-            data.Add(key, GetData(article));
+            data.Add(key, GetData(article, false, false));
         }
 
-        private Dictionary<string, object> GetData(Article? article)
+        private Dictionary<string, object> GetData(Article? article, bool isTwoColumn, bool isWide)
         {
             if (article is null)
             {
                 return new Dictionary<string, object>();
             }
 
+            var (width, height, wrapperWidth) = GetImageSize(article.Image, isTwoColumn, isWide);
+
             return new Dictionary<string, object>
             {
                 {"id", article.Id},
                 {"headline", article.Headline},
                 {"description", article.Description},
+                {"imageCaption", article.ImageCaption},
                 {
                     "image", new Dictionary<string, object>
                     {
-                        {"url", article.Image?.Url ?? string.Empty}
+                        {"url", article.Image?.Url ?? string.Empty},
+                        {"width", width},
+                        {"height", height},
+                        {"wrapperWidth", wrapperWidth}
                     }
                 },
                 {
@@ -207,17 +216,45 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return reader.ReadToEnd();
         }
 
-        private (string, int) GetTemplateName(List<Article> articles, bool isPdf)
+        private (string templateName, bool isTwoColumn) GetTemplateName(List<Article> articles, bool isPdf)
         {
             var hasAnswer = articles.Any(item => item.Category.Slug == AnswersCategorySlug);
 
             return (hasAnswer, isPdf) switch
             {
-                (true, true) => (TwoColumnPdfTemplateFileName, 2),
-                (true, false) => (TwoColumnTemplateFileName, 2),
-                (false, true) => (ThreeColumnPdfTemplateFileName, 3),
-                (false, false) => (ThreeColumnTemplateFileName, 3)
+                (true, true) => (TwoColumnPdfTemplateFileName, true),
+                (true, false) => (TwoColumnTemplateFileName, true),
+                (false, true) => (ThreeColumnPdfTemplateFileName, false),
+                (false, false) => (ThreeColumnTemplateFileName, false)
             };
+        }
+
+        private (int? width, int? height, int wrapperWidth) GetImageSize(Image image, bool isTwoColumn, bool isWide)
+        {
+            if (image?.Width is null || image.Height is null)
+            {
+                return default;
+            }
+
+            const int twoColumnWideMaximumWidth = 200;
+            const int twoColumnMiddleMaximumWidth = 185;
+            const int threeColumnWideMaximumWidth = 280;
+            const int threeColumnMiddleMaximumWidth = 163;
+
+            const int retinaRatio = 2;
+
+            var maxWidth = (isTwoColumn, isWide) switch
+            {
+                (true, true) => twoColumnWideMaximumWidth,
+                (true, false) => twoColumnMiddleMaximumWidth,
+                (false, true) => threeColumnWideMaximumWidth,
+                (false, false) => threeColumnMiddleMaximumWidth
+            };
+
+            var width = Math.Min(image.Width.Value / retinaRatio, maxWidth);
+            var height = (int) ((double) width / image.Width.Value * image.Height.Value);
+
+            return (width, height, maxWidth);
         }
     }
 }

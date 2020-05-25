@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
@@ -22,16 +24,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     {
         private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly EmailRecipientService _emailRecipientService;
+        private readonly IWebHostEnvironment _env;
         private readonly JumpStartPreviewService _jumpStartPreviewService;
         private readonly JumpStartService _jumpStartService;
 
         public JumpStartController(JumpStartService jumpStartService, JumpStartPreviewService jumpStartPreviewService,
-            JumpStartPlanService jumpStartPlanService, EmailRecipientService emailRecipientService)
+            JumpStartPlanService jumpStartPlanService, EmailRecipientService emailRecipientService, IWebHostEnvironment env)
         {
             _jumpStartService = jumpStartService;
             _jumpStartPreviewService = jumpStartPreviewService;
             _jumpStartPlanService = jumpStartPlanService;
             _emailRecipientService = emailRecipientService;
+            _env = env;
         }
 
         [Returns200]
@@ -45,11 +49,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("{date}/preview")]
-        public async Task<string> Preview(DateTime date, [FromQuery] List<int> articleIds)
+        public async Task<IActionResult> Preview(DateTime date, [FromQuery] List<int> articleIds)
         {
             var previewData = await _jumpStartPreviewService.CreatePreviewAsync(date.Date, articleIds);
 
-            return "data:image/png;base64," + Convert.ToBase64String(previewData);
+            if (_env.IsDevelopment())
+            {
+                return File(previewData, "image/png", Guid.NewGuid() + ".png");
+            }
+
+            return Ok("data:image/png;base64," + Convert.ToBase64String(previewData));
         }
 
         [Returns204]

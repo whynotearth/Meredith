@@ -27,8 +27,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<IActionResult> Create(ArticleModel model)
         {
-            await _articleService.CreateAsync(model.CategorySlug!, model.Date!.Value.Date, model.Headline!,
-                model.Description!, model.EventDate, model.Image?.Url, model.Image?.Width, model.Image?.Height);
+            await _articleService.CreateAsync(model.CategorySlug, model.Date!.Value.Date, model.Headline,
+                model.Description, model.ImageCaption, model.EventDate, model.Image?.Url, model.Image?.Width,
+                model.Image?.Height);
 
             return Ok();
         }
@@ -38,8 +39,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("{articleId}")]
         public async Task<NoContentResult> Edit(int articleId, ArticleModel model)
         {
-            await _articleService.EditAsync(articleId, model.CategorySlug!, model.Date!.Value.Date, model.Headline!,
-                model.Description!, model.EventDate, model.Image?.Url, model.Image?.Width, model.Image?.Height);
+            await _articleService.EditAsync(articleId, model.CategorySlug, model.Date!.Value.Date, model.Headline,
+                model.Description, model.ImageCaption, model.EventDate, model.Image?.Url, model.Image?.Width,
+                model.Image?.Height);
 
             return NoContent();
         }
