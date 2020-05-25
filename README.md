@@ -8,8 +8,8 @@
 
 Environment | branch | Status
 --- | --- | ---
-[Staging](https://stagingapi.whynot.earth/index.html) | `release/0.10.0` | [![Build Status](https://dev.azure.com/whynotearth/meredith-core/_apis/build/status/ci?branchName=release%2F0.10.0)](https://dev.azure.com/whynotearth/meredith-core/_build/latest?definitionId=5&branchName=release%2F0.10.0)
-[Production](https://api.whynot.earth/index.html) | `master` | [![Build Status](https://dev.azure.com/whynotearth/meredith-core/_apis/build/status/cd?branchName=master)](https://dev.azure.com/whynotearth/meredith-core/_build/latest?definitionId=6&branchName=master)
+[Staging](https://stagingapi.whynot.earth/index.html) | `release/0.10.0` | [![Build Status](https://dev.azure.com/whynotearth/meredith-core/_apis/build/status/cd?branchName=release%2F0.10.0)](https://dev.azure.com/whynotearth/meredith-core/_build/latest?definitionId=6&branchName=release%2F0.10.0)
+[Production](https://api.whynot.earth/index.html)     | `master`          | [![Build Status](https://dev.azure.com/whynotearth/meredith-core/_apis/build/status/cd?branchName=master)](https://dev.azure.com/whynotearth/meredith-core/_build/latest?definitionId=6&branchName=master)
 
 Meredith is a way to build web pages that render with reliable and fast performance in a seamless experience. Built for developing countries, it streamlines the creation of basic yet performant websites.
 
