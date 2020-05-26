@@ -62,15 +62,21 @@ namespace WhyNotEarth.Meredith.App.Localization
             var value = valueProviderResult.FirstValue;
             var culture = valueProviderResult.Culture;
 
-            object? model;
+            bool succeed;
+            object? model = null;
             if (string.IsNullOrWhiteSpace(value))
             {
                 model = null;
+                succeed = true;
             }
             else if (type == typeof(DateTime))
             {
                 // You could put custom logic here to sniff the raw value and call other DateTime.Parse overloads, e.g. forcing UTC
-                model = DateTime.Parse(value, culture, _supportedStyles);
+                succeed = DateTime.TryParse(value, culture, _supportedStyles, out var result);
+                if (succeed)
+                {
+                    model = result;
+                }
             }
             else
             {
@@ -81,7 +87,7 @@ namespace WhyNotEarth.Meredith.App.Localization
             // When converting value, a null model may indicate a failed conversion for an otherwise required
             // model (can't set a ValueType to null). This detects if a null model value is acceptable given the
             // current bindingContext. If not, an error is logged.
-            if (model == null && !metadata.IsReferenceOrNullableType)
+            if (!succeed || (model == null && !metadata.IsReferenceOrNullableType))
             {
                 modelState.TryAddModelError(
                     modelName,
