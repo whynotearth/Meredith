@@ -18,8 +18,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Company> Companies { get; set; }
 
-        public DbSet<Tenant> Tenants { get; set; }
-
         public DbSet<Image> Images { get; set; }
 
         public DbSet<Page> Pages { get; set; }
@@ -35,6 +33,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Setting> Settings { get; set; }
 
         // Shop
+        public DbSet<Tenant> Tenants { get; set; }
+
         public DbSet<Reservation> Reservations { get; set; }
 
         public DbSet<Price> Prices { get; set; }
@@ -48,6 +48,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
 
         public DbSet<Location> Locations { get; set; }
+
+        public DbSet<BusinessHour> BusinessHours { get; set; }
 
         // Remove in next steps
         public DbSet<Product> Products { get; set; }

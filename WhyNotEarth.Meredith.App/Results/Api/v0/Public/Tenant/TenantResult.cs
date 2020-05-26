@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public decimal DeliveryFee { get; set; }
 
-        public TenantResult(Data.Entity.Models.Tenant tenant)
+        public TenantResult(Data.Entity.Models.Modules.Shop.Tenant tenant)
         {
             Slug = tenant.Slug;
             Name = tenant.Name;

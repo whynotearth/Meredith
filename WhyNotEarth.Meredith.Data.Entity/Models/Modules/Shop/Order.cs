@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public int PaymentMethodId { get; set; }
 
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethodType PaymentMethodType { get; set; }
 
         public List<OrderLine> OrderLines { get; set; }
 
