@@ -149,7 +149,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {"id", article.Id},
                 {"headline", article.Headline},
                 {"description", RenderMarkdown(article.Description)},
-                {"imageCaption", article.ImageCaption},
+                {"imageCaption", article.Excerpt},
                 {
                     "image", new Dictionary<string, object>
                     {

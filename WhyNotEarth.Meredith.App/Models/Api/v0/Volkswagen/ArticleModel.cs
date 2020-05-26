@@ -29,6 +29,6 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 
         public ImageModel? Image { get; set; }
 
-        public string? ImageCaption { get; set; }
+        public string? Excerpt { get; set; }
     }
 }

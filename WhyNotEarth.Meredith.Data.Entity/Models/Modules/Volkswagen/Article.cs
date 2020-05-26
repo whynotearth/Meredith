@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public string Description { get; set; }
 
-        public string ImageCaption { get; set; }
+        public string Excerpt { get; set; }
 
         public DateTime? EventDate { get; set; }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using WhyNotEarth.Meredith.Data.Entity.Migrations;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
@@ -18,7 +17,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string? Image { get; }
 
-        public string? ImageCaption { get; }
+        public string? Excerpt { get; }
 
         public DateTime? EventDate { get; }
 
@@ -30,7 +29,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Headline = article.Headline;
             Description = article.Description;
             Image = article.Image?.Url;
-            ImageCaption = article.ImageCaption;
+            Excerpt = article.Excerpt;
             EventDate = article.EventDate;
         }
     }

@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task CreateAsync(string categorySlug, DateTime date, string headline, string description,
-            string? imageCaption, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
+            string? excerpt, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             var category = await ValidateAsync(categorySlug, date);
 
@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Date = date,
                 Headline = headline,
                 Description = description,
-                ImageCaption = imageCaption,
+                Excerpt = excerpt,
                 EventDate = eventDate
             };
 
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         public async Task<Article> EditAsync(int articleId, string categorySlug, DateTime date, string headline,
-            string description, string? imageCaption, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
+            string description, string? excerpt, DateTime? eventDate, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             var category = await ValidateAsync(categorySlug, date);
 
@@ -49,7 +49,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             article.Date = date;
             article.Headline = headline;
             article.Description = description;
-            article.ImageCaption = imageCaption;
+            article.Excerpt = excerpt;
             article.EventDate = eventDate;
 
             await SetImageAsync(article, imageUrl, imageWidth, imageHeight);
