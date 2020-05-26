@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
 
         public DbSet<Location> Locations { get; set; }
-        
+
         // Remove in next steps
         public DbSet<Product> Products { get; set; }
 

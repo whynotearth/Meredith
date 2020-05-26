@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
 
-namespace WhyNotEarth.Meredith.App.Validation
+namespace WhyNotEarth.Meredith.Validation
 {
     public class MandatoryAttribute : ValidationAttribute
     {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using WhyNotEarth.Meredith.App.Validation;
+using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen
 {
