@@ -139,7 +139,7 @@ namespace WhyNotEarth.Meredith.Hotel
 
             var payment = new Payment
             {
-                Amount = paymentIntent.Amount ?? 0,
+                Amount = paymentIntent.Amount,
                 Created = DateTime.UtcNow,
                 ReservationId = int.Parse(paymentIntent.Metadata[MetadataReservationIdKey]),
                 Status = PaymentStatus.Fulfilled,
