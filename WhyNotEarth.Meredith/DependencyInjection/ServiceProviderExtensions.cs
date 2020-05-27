@@ -11,7 +11,9 @@ using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Sms;
 using WhyNotEarth.Meredith.Stripe;
+using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Volkswagen;
+using ReservationService = WhyNotEarth.Meredith.Hotel.ReservationService;
 
 namespace WhyNotEarth.Meredith.DependencyInjection
 {
@@ -30,7 +32,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<GoogleStorageService>()
                 .AddScoped<SettingsService>()
                 .AddScoped<EmailRecipientService>()
-                .AddScoped<EmailRecipientJob>();
+                .AddScoped<EmailRecipientJob>()
+                .AddScoped<SlugService>();
 
             // Hotel
             serviceCollection
@@ -40,6 +43,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
 
             // Shop
             serviceCollection
+                .AddScoped<TenantService>()
                 .AddScoped<ProductService>();
 
             // Volkswagen
