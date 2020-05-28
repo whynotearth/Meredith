@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +17,14 @@ using RollbarDotNet.Core;
 using RollbarDotNet.Logger;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Configuration;
+using WhyNotEarth.Meredith.App.DbContext;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.DependencyInjection;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
 
 [assembly: ApiController]
@@ -85,7 +89,7 @@ namespace WhyNotEarth.Meredith.App
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
-            IRecurringJobManager recurringJobManager, MeredithDbContext dbContext)
+            IRecurringJobManager recurringJobManager, MeredithDbContext dbContext, UserManager<User> userManager)
         {
             app.UseForwardedHeaders();
 
@@ -98,8 +102,8 @@ namespace WhyNotEarth.Meredith.App
                 loggerFactory.AddRollbarDotNetLogger(app.ApplicationServices);
             }
 
-            dbContext.Database.Migrate();
-
+            app.UseDbContext(env, dbContext, userManager);
+            
             app.UseCustomLocalization();
 
             app.UseCustomSwagger();
