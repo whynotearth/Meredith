@@ -73,11 +73,18 @@ namespace WhyNotEarth.Meredith.Volkswagen
             remainingArticles = remaining;
             AddArticlesToData("articlesTop", result, top, isTwoColumn, true);
 
-            var middle = remainingArticles.Take(maxMiddleCount).ToList();
-            AddArticlesToData("articlesMiddle", result, middle, isTwoColumn, false);
+            if (remainingArticles.Count == 1)
+            {
+                AddArticlesToData("articlesBottom", result, remainingArticles, isTwoColumn, true);
+            }
+            else
+            {
+                var middle = remainingArticles.Take(maxMiddleCount).ToList();
+                AddArticlesToData("articlesMiddle", result, middle, isTwoColumn, false);
 
-            var bottom = remainingArticles.Skip(maxMiddleCount);
-            AddArticlesToData("articlesBottom", result, bottom, isTwoColumn, true);
+                var bottom = remainingArticles.Skip(maxMiddleCount);
+                AddArticlesToData("articlesBottom", result, bottom, isTwoColumn, true);
+            }
 
             return result;
         }
