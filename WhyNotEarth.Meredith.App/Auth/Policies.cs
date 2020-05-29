@@ -5,6 +5,8 @@
         public const string Developer = "Developer";
 
         public const string ManageVolkswagen = "ManageVolkswagen";
+
+        public const string ManageTenant = "ManageTenant";
     }
 }
 

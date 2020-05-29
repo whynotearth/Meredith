@@ -17,14 +17,12 @@ namespace WhyNotEarth.Meredith.Shop
             _dbContext = meredithDbContext;
         }
 
-        public async Task<List<Product>> ListAsync()
+        public Task<List<Product>> ListAsync()
         {
-            var products = _dbContext.ShoppingProducts
+            return _dbContext.ShoppingProducts
                 .Include(item => item.Variations)
                 .Include(item => item.ProductLocationInventories)
-                .Where(item => true);
-
-            return await products.ToListAsync();
+                .ToListAsync();
         }
 
         public async Task<Product> GetAsync(int productId)

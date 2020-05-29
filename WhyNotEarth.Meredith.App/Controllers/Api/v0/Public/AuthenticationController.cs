@@ -17,6 +17,8 @@ using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
@@ -27,15 +29,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     {
         private readonly JwtOptions _jwtOptions;
         private readonly SendGridService _sendGridService;
+        private readonly UserService _userService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService)
+            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService, UserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _sendGridService = sendGridService;
+            _userService = userService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -167,54 +171,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpPost("register")]
         public async Task<ActionResult<string>> Register(RegisterModel model)
         {
-            var newUser = new User
+            var userCreateResult = await _userService.CreateAsync(model);
+
+            if (!userCreateResult.IdentityResult.Succeeded)
             {
-                UserName = model.Email,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                Name = model.Email,
-                Address = model.Address,
-                GoogleLocation = model.GoogleLocation
-            };
-
-            IdentityResult identityResult;
-            if (model.Password is null)
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                if (user is null)
-                {
-                    identityResult = await _userManager.CreateAsync(newUser);
-                }
-                else
-                {
-                    // We only let users that registered without password and
-                    // also don't have any other provider linked to login this way
-                    if (user.PasswordHash is null)
-                    {
-                        var logins = await _userManager.GetLoginsAsync(user);
-                        if (!logins.Any())
-                        {
-                            await UpdateUser(user, model);
-
-                            return await SignIn(user);
-                        }
-                    }
-
-                    identityResult = IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email));
-                }
-            }
-            else
-            {
-                identityResult = await _userManager.CreateAsync(newUser, model.Password);
+                return BadRequest(userCreateResult.IdentityResult.Errors);
             }
 
-            if (!identityResult.Succeeded)
-            {
-                return BadRequest(identityResult.Errors);
-            }
-
-            return await SignIn(newUser);
+            return await SignIn(userCreateResult.User!);
         }
 
         [Authorize]
@@ -258,7 +222,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpPost("forgotpasswordreset")]
         public async Task<ActionResult> ForgotPasswordReset(ForgotPasswordResetModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -300,31 +264,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             await _signInManager.SignInAsync(user, true);
 
             return Ok(await GenerateJwtTokenAsync(user.Email, user));
-        }
-
-        private Task UpdateUser(User user, RegisterModel model)
-        {
-            if (!string.IsNullOrEmpty(model.Name))
-            {
-                user.Name = model.Name;
-            }
-
-            if (!string.IsNullOrEmpty(model.PhoneNumber))
-            {
-                user.PhoneNumber = model.PhoneNumber;
-            }
-
-            if (!string.IsNullOrEmpty(model.Address))
-            {
-                user.Address = model.Address;
-            }
-
-            if (!string.IsNullOrEmpty(model.GoogleLocation))
-            {
-                user.GoogleLocation = model.GoogleLocation;
-            }
-
-            return _userManager.UpdateAsync(user);
         }
 
         private async Task<string> GenerateJwtTokenAsync(string email, User user)

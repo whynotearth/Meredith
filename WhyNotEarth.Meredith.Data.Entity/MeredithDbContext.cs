@@ -51,6 +51,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<BusinessHour> BusinessHours { get; set; }
 
+        public DbSet<Client> Clients { get; set; }
+
         // Remove in next steps
         public DbSet<Product> Products { get; set; }
 

@@ -42,6 +42,11 @@ namespace WhyNotEarth.Meredith.Tenant
                 .ToListAsync();
         }
 
+        public Task<Data.Entity.Models.Modules.Shop.Tenant?> GetTenant(User user)
+        {
+            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.UserId == user.Id);
+        }
+
         private async Task<Company> ValidateAsync(TenantModel model, string slug)
         {
             var company =

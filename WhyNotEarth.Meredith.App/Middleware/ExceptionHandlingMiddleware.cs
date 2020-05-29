@@ -12,11 +12,12 @@ namespace WhyNotEarth.Meredith.App.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
-        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
         private readonly IWebHostEnvironment _env;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
         private readonly RequestDelegate _next;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IWebHostEnvironment env)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger,
+            IWebHostEnvironment env)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _logger = logger;
@@ -31,12 +32,13 @@ namespace WhyNotEarth.Meredith.App.Middleware
             }
             catch (Exception exception)
             {
+                var response = GetResponse(exception);
+
                 context.Response.Clear();
                 context.Response.ContentType = "application/json";
 
-                var response = PopulateResponse(exception, context.Response);
-                
-                var json = JsonConvert.SerializeObject(response, new JsonSerializerSettings
+                context.Response.StatusCode = response.StatusCode;
+                var json = JsonConvert.SerializeObject(response.Result, new JsonSerializerSettings
                 {
                     ContractResolver = new DefaultContractResolver
                     {
@@ -49,26 +51,24 @@ namespace WhyNotEarth.Meredith.App.Middleware
             }
         }
 
-        private object PopulateResponse(Exception exception, HttpResponse httpResponse)
+        private Response GetResponse(Exception exception)
         {
-            httpResponse.StatusCode = exception switch
+            var statusCode = exception switch
             {
                 InvalidActionException _ => StatusCodes.Status400BadRequest,
                 DuplicateRecordException _ => StatusCodes.Status400BadRequest,
+                ForbiddenException _ => StatusCodes.Status403Forbidden,
                 RecordNotFoundException _ => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
 
-            if (httpResponse.StatusCode == StatusCodes.Status500InternalServerError)
+            if (statusCode == StatusCodes.Status500InternalServerError)
             {
                 _logger.LogError(exception, "Unhandled exception");
 
                 if (!_env.IsDevelopment())
                 {
-                    return new
-                    {
-                        Message = "Unexpected error :("
-                    };
+                    return new Response(statusCode, "Unexpected error :(");
                 }
 
                 while (exception.InnerException != null)
@@ -77,10 +77,42 @@ namespace WhyNotEarth.Meredith.App.Middleware
                 }
             }
 
-            return new
+            return new Response(statusCode, exception);
+        }
+
+        private class Response
+        {
+            public int StatusCode { get; }
+
+            public object Result { get; }
+
+            public Response(int statusCode, string message)
             {
-                exception.Message
-            };
+                StatusCode = statusCode;
+                Result = GetResult(message);
+            }
+
+            public Response(int statusCode, Exception exception)
+            {
+                StatusCode = statusCode;
+
+                if (exception is InvalidActionException invalidActionException && invalidActionException.Error != null)
+                {
+                    Result = invalidActionException.Error;
+                }
+                else
+                {
+                    Result = GetResult(exception.Message);
+                }
+            }
+
+            private object GetResult(string message)
+            {
+                return new
+                {
+                    Message = message
+                };
+            }
         }
     }
 }

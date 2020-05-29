@@ -1,11 +1,13 @@
-using System.ComponentModel.DataAnnotations;
+using Hangfire.Annotations;
+using WhyNotEarth.Meredith.Validation;
 
-namespace WhyNotEarth.Meredith.App.Models.Api.v0.Authentication
+namespace WhyNotEarth.Meredith.Models
 {
     public class RegisterModel
     {
-        [Required]
-        public string Email { get; set; } = null!;
+        [NotNull]
+        [Mandatory]
+        public string Email { get; set; }
 
         public string? Password { get; set; }
 

@@ -33,7 +33,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<SettingsService>()
                 .AddScoped<EmailRecipientService>()
                 .AddScoped<EmailRecipientJob>()
-                .AddScoped<SlugService>();
+                .AddScoped<SlugService>()
+                .AddScoped<UserService>();
 
             // Hotel
             serviceCollection
@@ -44,7 +45,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             // Shop
             serviceCollection
                 .AddScoped<TenantService>()
-                .AddScoped<ProductService>();
+                .AddScoped<ProductService>()
+                .AddScoped<ClientService>();
 
             // Volkswagen
             serviceCollection
