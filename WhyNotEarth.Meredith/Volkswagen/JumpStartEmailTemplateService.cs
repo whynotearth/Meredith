@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
-using Markdig;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
@@ -13,12 +12,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartEmailTemplateService
     {
+        private readonly JumpStartMarkdownService _markdownService;
+
         private const string TwoColumnTemplateFileName = "two-column.html";
         private const string TwoColumnPdfTemplateFileName = "two-column-pdf.html";
         private const string ThreeColumnTemplateFileName = "three-column.html";
         private const string ThreeColumnPdfTemplateFileName = "three-column-pdf.html";
         private const string AnswersCategorySlug = "answers-at-a-glance";
         private const string PriorityCategorySlug = "priority";
+
+        public JumpStartEmailTemplateService(JumpStartMarkdownService markdownService)
+        {
+            _markdownService = markdownService;
+        }
 
         public string GetEmailHtml(DateTime date, List<Article> articles, string? pdfUrl)
         {
@@ -267,7 +273,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private string RenderMarkdown(string value)
         {
-            return Markdown.ToHtml(value);
+            return _markdownService.Render(value);
         }
     }
 }
