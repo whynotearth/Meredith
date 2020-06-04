@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Validation;
+using DayOfWeek = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.DayOfWeek;
 
 namespace WhyNotEarth.Meredith.Models
 {

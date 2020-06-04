@@ -58,6 +58,8 @@ namespace WhyNotEarth.Meredith.App.Swagger
 
                 c.OperationFilter<LocalizationHeaderParameter>();
             });
+
+            services.AddSwaggerGenNewtonsoftSupport();
         }
 
         public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)

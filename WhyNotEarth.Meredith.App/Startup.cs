@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Converters;
 using RollbarDotNet.Core;
 using RollbarDotNet.Logger;
 using WhyNotEarth.Meredith.App.Auth;
@@ -85,7 +86,9 @@ namespace WhyNotEarth.Meredith.App
                 {
                     // https://github.com/dotnet/aspnetcore/issues/11584
                     options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
-                }).AddNewtonsoftJson();
+                }).AddNewtonsoftJson(c =>
+                    c.SerializerSettings.Converters.Add(new StringEnumConverter())
+                );
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,5 +24,29 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         public void Configure(EntityTypeBuilder<BusinessHour> builder)
         {
         }
+    }
+
+    public enum DayOfWeek : byte
+    {
+        [EnumMember(Value = "sunday")]
+        Sunday = 1,
+
+        [EnumMember(Value = "monday")]
+        Monday = 2,
+
+        [EnumMember(Value = "tuesday")]
+        Tuesday = 3,
+
+        [EnumMember(Value = "wednesday")]
+        Wednesday = 4,
+
+        [EnumMember(Value = "thursday")]
+        Thursday = 5,
+
+        [EnumMember(Value = "friday")]
+        Friday = 6,
+        
+        [EnumMember(Value = "saturday")]
+        Saturday = 7
     }
 }
