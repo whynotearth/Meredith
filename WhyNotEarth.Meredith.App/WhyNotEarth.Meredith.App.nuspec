@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>WhyNotEarth.Meredith.App</id>
-        <version>1.0.0</version>
+        <version>$version$</version>
         <authors>Why Not Earth</authors>
         <description>Meredith</description>
     </metadata>
