@@ -65,7 +65,6 @@ namespace WhyNotEarth.Meredith.Shop
             {
                 Description = model.Description,
                 Name = model.Name,
-                Slug = model.Slug,
                 TenantId = tenant.Id
             };
 
@@ -94,7 +93,6 @@ namespace WhyNotEarth.Meredith.Shop
             }
 
             category.Name = model.Name;
-            category.Slug = model.Slug;
             category.Description = model.Description;
             category.TenantId = tenant.Id;
 

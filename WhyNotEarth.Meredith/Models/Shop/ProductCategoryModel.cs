@@ -8,9 +8,6 @@ namespace WhyNotEarth.Meredith.Models.Shop
         public string? TenantSlug { get; set; }
 
         [Mandatory]
-        public string? Slug { get; set; }
-
-        [Mandatory]
         public string? Name { get; set; }
 
         public string? Description { get; set; }

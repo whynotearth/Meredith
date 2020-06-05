@@ -6,8 +6,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
     {
         public int Id { get; }
 
-        public string? Slug { get; }
-
         public string? Name { get; }
 
         public string? Image { get; }
@@ -21,7 +19,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             this.Description = productCategory.Description;
             this.Id = productCategory.Id;
             this.Name = productCategory.Name;
-            this.Slug = productCategory.Slug;
             this.Image = productCategory.Image?.Url;
             this.TenantSlug = productCategory.Tenant.Slug;
         }
