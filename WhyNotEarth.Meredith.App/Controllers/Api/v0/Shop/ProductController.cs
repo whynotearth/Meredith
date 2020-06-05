@@ -20,19 +20,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
-        private readonly IUserManager _userManager;
+        private readonly IUserService _userService;
 
-        public ProductController(ProductService productService, IUserManager userManager)
+        public ProductController(ProductService productService, IUserService userService)
         {
             _productService = productService;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         [Returns200]
         [HttpPost("")]
         public async Task<ActionResult<ShopProductResult>> Create(int categoryId, ProductModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             var product = await _productService.CreateAsync(categoryId, model, user);
 
@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [HttpPut("{productId}")]
         public async Task<IActionResult> Edit(int productId, int categoryId, ProductModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             await _productService.EditAsync(productId, categoryId, model, user);
 
@@ -56,7 +56,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [HttpDelete("{productId}")]
         public async Task<IActionResult> Delete(int productId)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             await _productService.DeleteAsync(productId, user);
 

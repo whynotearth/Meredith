@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class Tenant : IEntityTypeConfiguration<Tenant>
     {
@@ -15,9 +16,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public string Slug { get; set; }
 
-        public int UserId { get; set; }
+        public int OwnerId { get; set; }
 
-        public User User { get; set; }
+        public User Owner { get; set; }
 
         public string Name { get; set; }
 
@@ -41,6 +42,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public void Configure(EntityTypeBuilder<Tenant> builder)
         {
+            builder.HasOne(b => b.Owner)
+                .WithOne(i => i.Tenant)
+                .HasForeignKey<Tenant>(b => b.OwnerId);
         }
     }
 

@@ -13,25 +13,25 @@ namespace WhyNotEarth.Meredith.App.Auth
     public class ManageTenantHandler : AuthorizationHandler<ManageTenantRequirement>
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly IUserManager _userManager;
+        private readonly IUserService _userService;
 
-        public ManageTenantHandler(MeredithDbContext dbContext, IUserManager userManager)
+        public ManageTenantHandler(MeredithDbContext dbContext, IUserService userService)
         {
             _dbContext = dbContext;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             ManageTenantRequirement requirement)
         {
-            var user = await _userManager.GetUserAsync(context.User);
+            var user = await _userService.GetUserAsync(context.User);
 
             if (user is null)
             {
                 return;
             }
 
-            var hasAnyTenants = await _dbContext.Tenants.AnyAsync(item => item.UserId == user.Id);
+            var hasAnyTenants = await _dbContext.Tenants.AnyAsync(item => item.OwnerId == user.Id);
 
             if (hasAnyTenants)
             {

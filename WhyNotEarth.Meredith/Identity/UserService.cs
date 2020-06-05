@@ -1,18 +1,36 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Models;
 
 namespace WhyNotEarth.Meredith.Identity
 {
-    public class UserService
+    internal class UserService : IUserService
     {
         private readonly UserManager _userManager;
+        private readonly MeredithDbContext _dbContext;
 
-        public UserService(UserManager userManager)
+        public UserService(UserManager userManager, MeredithDbContext dbContext)
         {
             _userManager = userManager;
+            _dbContext = dbContext;
+        }
+
+        public Task<User> GetUserAsync(ClaimsPrincipal principal)
+        {
+            return _userManager.GetUserAsync(principal);
+        }
+
+        public Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant)
+        {
+            return _dbContext.Users
+                .Where(item => item.TenantId == tenant.Id)
+                .ToListAsync();
         }
 
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
@@ -21,15 +39,7 @@ namespace WhyNotEarth.Meredith.Identity
 
             if (user is null)
             {
-                user = new User
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber,
-                    Name = model.Email,
-                    Address = model.Address,
-                    GoogleLocation = model.GoogleLocation
-                };
+                user = await MapUserAsync(model);   
 
                 return await CreateAsync(user, model.Password);
             }
@@ -93,22 +103,27 @@ namespace WhyNotEarth.Meredith.Identity
 
             return new UserCreateResult(identityResult, user);
         }
-    }
 
-    public class UserCreateResult
-    {
-        public IdentityResult IdentityResult { get; }
-
-        public User? User { get; }
-
-        public UserCreateResult(IdentityResult identityResult, User? user)
+        private async Task<User> MapUserAsync(RegisterModel model)
         {
-            IdentityResult = identityResult;
+            int? tenantId = null;
 
-            if (identityResult.Succeeded)
+            if (!string.IsNullOrWhiteSpace(model.TenantSlug))
             {
-                User = user;
+                var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == model.TenantSlug.ToLower());
+                tenantId = tenant?.Id;
             }
+
+            return new User
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Name = model.Email,
+                Address = model.Address,
+                GoogleLocation = model.GoogleLocation,
+                TenantId = tenantId
+            };
         }
     }
 }

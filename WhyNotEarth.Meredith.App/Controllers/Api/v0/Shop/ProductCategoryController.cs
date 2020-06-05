@@ -17,12 +17,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     public class ProductCategoryController : ControllerBase
     {
         private readonly ProductCategoryService _productCategoryService;
-        private readonly IUserManager _userManager;
+        private readonly IUserService _userService;
 
-        public ProductCategoryController(ProductCategoryService productCategoryService, IUserManager userManager)
+        public ProductCategoryController(ProductCategoryService productCategoryService, IUserService userService)
         {
             _productCategoryService = productCategoryService;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         [Returns200]
@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<ProductCategoryResult>> Create(ProductCategoryModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             var category = await _productCategoryService.CreateAsync(model, user);
 
@@ -68,7 +68,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult> Delete(int categoryId)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             await _productCategoryService.DeleteAsync(categoryId, user);
 
@@ -83,7 +83,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult> Edit(int categoryId, ProductCategoryModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userService.GetUserAsync(User);
 
             await _productCategoryService.EditAsync(categoryId, model, user);
 

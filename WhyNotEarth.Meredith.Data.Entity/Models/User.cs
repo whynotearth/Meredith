@@ -18,9 +18,17 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string InstagramUrl { get; set; }
 
+        public int? TenantId { get; set; }
+
+        public Tenant Tenant { get; set; }
+
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");
+            
+            builder.HasOne(b => b.Tenant)
+                .WithOne(i => i.Owner)
+                .HasForeignKey<User>(b => b.TenantId);
         }
     }
 }

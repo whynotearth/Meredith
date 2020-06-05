@@ -69,12 +69,11 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
 
             var meredithDbContext = new MeredithDbContext(options);
 
-            var userManagerMock = new Mock<IUserManager>();
-            userManagerMock.Setup(u => u.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(Mock.Of<User>());
+            var userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(u => u.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(Mock.Of<User>());
 
             return (meredithDbContext, new ReservationService(meredithDbContext, Mock.Of<ClaimsPrincipal>(),
-                userManagerMock.Object,
-                Mock.Of<IStripeService>(), Mock.Of<IEmailService>()));
+                userServiceMock.Object, Mock.Of<IStripeService>(), Mock.Of<IEmailService>()));
         }
 
         [Fact]

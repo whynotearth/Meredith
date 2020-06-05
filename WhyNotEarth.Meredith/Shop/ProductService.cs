@@ -194,7 +194,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         private async Task CheckPermissionAsync(User user, int tenantId)
         {
-            var ownsTenant = await _dbContext.Tenants.AnyAsync(item => item.Id == tenantId && item.UserId == user.Id);
+            var ownsTenant = await _dbContext.Tenants.AnyAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
 
             if (!ownsTenant)
             {

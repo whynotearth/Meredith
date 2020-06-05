@@ -54,14 +54,14 @@ namespace WhyNotEarth.Meredith.Tenant
             var user = await _userManager.FindByIdAsync(userId);
 
             var tenant = await _meredithDbContext.Tenants
-                .Include(item => item.User)
+                .Include(item => item.Owner)
                 .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
 
             var recipients = new List<Tuple<string, string?>>
             {
                 Tuple.Create(user.Email, user.Name),
-                Tuple.Create(tenant.User.Email, tenant.User.Name)
+                Tuple.Create(tenant.Owner.Email, tenant.Owner.Name)
             };
 
             var templateData = new
@@ -70,8 +70,8 @@ namespace WhyNotEarth.Meredith.Tenant
                 tenant = new
                 {
                     h2 = tenant.Name,
-                    phone = tenant.User.PhoneNumber,
-                    email = tenant.User.Email
+                    phone = tenant.Owner.PhoneNumber,
+                    email = tenant.Owner.Email
                 },
                 orderProducts = string.Join("<br />", orders),
                 subTotal =  subTotal,
@@ -97,13 +97,13 @@ namespace WhyNotEarth.Meredith.Tenant
             var user = await _userManager.FindByIdAsync(userId);
 
             var tenant = await _meredithDbContext.Tenants
-                .Include(item => item.User)
+                .Include(item => item.Owner)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
 
             var recepients = new List<string>()
             {
                 user.PhoneNumber,
-                tenant.User.PhoneNumber
+                tenant.Owner.PhoneNumber
             };
 
             StringBuilder formatReader = new StringBuilder(_twilioService.GetWhatsappSmsTemplate());
@@ -121,9 +121,9 @@ namespace WhyNotEarth.Meredith.Tenant
             formatReader.Replace("{deliveryTime}", deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm"));
             formatReader.Replace("{message}", !string.IsNullOrEmpty(message) ? message : "N/A");
             formatReader.Replace("{tenantName}", tenant.Name.ToUpper());
-            formatReader.Replace("{tenantGooglemaps}", tenant.User.GoogleLocation);
-            formatReader.Replace("{tenantPhone}", tenant.User.PhoneNumber);
-            formatReader.Replace("{tenantEmail}", tenant.User.Email);
+            formatReader.Replace("{tenantGooglemaps}", tenant.Owner.GoogleLocation);
+            formatReader.Replace("{tenantPhone}", tenant.Owner.PhoneNumber);
+            formatReader.Replace("{tenantEmail}", tenant.Owner.Email);
 
             await _twilioService.SendWhatsapp(formatReader.ToString(), recepients);
         }

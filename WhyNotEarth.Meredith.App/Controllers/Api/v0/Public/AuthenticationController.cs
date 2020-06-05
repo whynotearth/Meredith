@@ -29,12 +29,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     {
         private readonly JwtOptions _jwtOptions;
         private readonly SendGridService _sendGridService;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService, UserService userService)
+            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService, IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -7,7 +7,7 @@ namespace WhyNotEarth.Meredith.Models
     {
         [NotNull]
         [Mandatory]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
 
         public string? Password { get; set; }
 
@@ -18,5 +18,7 @@ namespace WhyNotEarth.Meredith.Models
         public string? Address { get; set; }
 
         public string? GoogleLocation { get; set; }
+
+        public string? TenantSlug { get; set; }
     }
 }

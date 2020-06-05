@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {

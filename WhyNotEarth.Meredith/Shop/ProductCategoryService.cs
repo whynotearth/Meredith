@@ -103,7 +103,7 @@ namespace WhyNotEarth.Meredith.Shop
             return category;
         }
 
-        private async Task<Data.Entity.Models.Modules.Shop.Tenant> GetTenant(string tenantSlug)
+        private async Task<Data.Entity.Models.Tenant> GetTenant(string tenantSlug)
         {
             return await _dbContext.Tenants.FirstOrDefaultAsync(item =>
                 item.Slug == tenantSlug);
@@ -111,7 +111,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         private async Task CheckPermissionAsync(User user, int tenantId)
         {
-            var ownsTenant = await _dbContext.Tenants.AnyAsync(item => item.Id == tenantId && item.UserId == user.Id);
+            var ownsTenant = await _dbContext.Tenants.AnyAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
 
             if (!ownsTenant)
             {

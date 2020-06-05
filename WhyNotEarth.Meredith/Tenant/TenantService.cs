@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +35,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return slug;
         }
 
-        public Task<List<Data.Entity.Models.Modules.Shop.Tenant>> ListAsync(string companySlug)
+        public Task<List<Data.Entity.Models.Tenant>> ListAsync(string companySlug)
         {
             return _dbContext.Tenants
                 .Include(item => item.Company)
@@ -45,9 +44,9 @@ namespace WhyNotEarth.Meredith.Tenant
                 .ToListAsync();
         }
 
-        public Task<Data.Entity.Models.Modules.Shop.Tenant?> GetTenant(User user)
+        public Task<Data.Entity.Models.Tenant?> GetTenant(User user)
         {
-            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.UserId == user.Id);
+            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id);
         }
 
         private async Task<Company> ValidateAsync(string companySlug, string slug)
@@ -70,16 +69,16 @@ namespace WhyNotEarth.Meredith.Tenant
             return company;
         }
 
-        private Data.Entity.Models.Modules.Shop.Tenant GetTenant(TenantModel model, Company company, User user, string slug)
+        private Data.Entity.Models.Tenant GetTenant(TenantModel model, Company company, User user, string slug)
         {
             var notificationType = model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
             var paymentMethodType = model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
 
-            return new Data.Entity.Models.Modules.Shop.Tenant
+            return new Data.Entity.Models.Tenant
             {
                 CompanyId = company.Id,
                 Slug = slug,
-                UserId = user.Id,
+                OwnerId = user.Id,
                 Name = model.Name,
                 BusinessHours = GetBusinessHours(model.BusinessHours),
                 PaymentMethodType = paymentMethodType,

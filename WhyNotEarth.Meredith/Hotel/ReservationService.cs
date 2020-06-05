@@ -21,16 +21,16 @@ namespace WhyNotEarth.Meredith.Hotel
 
         private readonly MeredithDbContext _meredithDbContext;
         private readonly ClaimsPrincipal _user;
-        private readonly IUserManager _userManager;
+        private readonly IUserService _userService;
         private readonly IStripeService _stripeService;
         private readonly IEmailService _emailService;
 
-        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, IUserManager userManager,
+        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, IUserService userService,
             IStripeService stripeService, IEmailService emailService)
         {
             _meredithDbContext = meredithDbContext;
             _user = user;
-            _userManager = userManager;
+            _userService = userService;
             _stripeService = stripeService;
             _emailService = emailService;
         }
@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.Hotel
             var vat = totalAmount / 10;
             totalAmount += vat;
 
-            var user = await _userManager.GetUserAsync(_user);
+            var user = await _userService.GetUserAsync(_user);
             var reservation = new HotelReservation
             {
                 Amount = totalAmount,
@@ -153,7 +153,7 @@ namespace WhyNotEarth.Meredith.Hotel
 
         private async Task<(HotelReservation, Company, User)> GetReservation(int reservationId)
         {
-            var user = await _userManager.GetUserAsync(_user);
+            var user = await _userService.GetUserAsync(_user);
             var results = await _meredithDbContext.Reservations.OfType<HotelReservation>()
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .Select(r => new
