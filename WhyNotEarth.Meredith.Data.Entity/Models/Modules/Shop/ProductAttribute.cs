@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
-    public class Variation : IEntityTypeConfiguration<Variation>
+    public class ProductAttribute : IEntityTypeConfiguration<ProductAttribute>
     {
         public int Id { get; set; }
 
@@ -17,9 +17,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public string Name { get; set; }
 
-        public void Configure(EntityTypeBuilder<Variation> builder)
+        public void Configure(EntityTypeBuilder<ProductAttribute> builder)
         {
-            builder.ToTable("Variations", "ModuleShop");
+            builder.ToTable("ProductAttributes", "ModuleShop");
             builder.Property(b => b.Name).IsRequired();
         }
     }

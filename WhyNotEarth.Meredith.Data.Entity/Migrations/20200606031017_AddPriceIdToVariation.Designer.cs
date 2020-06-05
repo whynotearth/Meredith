@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200606031017_AddPriceIdToVariation")]
+    partial class AddPriceIdToVariation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -765,32 +767,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("PriceId");
 
                     b.ToTable("Products","ModuleShop");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.ProductAttribute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("PriceId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PriceId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductAttributes","ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.ProductLocationInventory", b =>
@@ -1839,21 +1815,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Price", "Price")
                         .WithMany()
                         .HasForeignKey("PriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.ProductAttribute", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Price", "Price")
-                        .WithMany()
-                        .HasForeignKey("PriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Product", "Product")
-                        .WithMany("ProductAttributes")
-                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

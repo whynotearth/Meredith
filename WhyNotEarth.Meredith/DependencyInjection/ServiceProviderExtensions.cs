@@ -34,7 +34,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<EmailRecipientService>()
                 .AddScoped<EmailRecipientJob>()
                 .AddScoped<SlugService>()
-                .AddScoped<UserService>();
+                .AddScoped<UserService>()
+                .AddScoped<ProductCategoryService>();
 
             // Hotel
             serviceCollection
