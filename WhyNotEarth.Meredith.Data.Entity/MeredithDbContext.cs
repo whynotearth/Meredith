@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<PageCategory> PageCategories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
 
         public DbSet<Company> Companies { get; set; }
 
