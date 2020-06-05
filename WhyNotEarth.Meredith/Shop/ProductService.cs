@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -49,13 +48,14 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Product> CreateAsync(int pageId, int priceId, List<Variation> variations,
+        public async Task<Product> CreateAsync(int pageId, int priceId, int categoryId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
-            await Validate(pageId, priceId, variations, productLocationInventories);
+            await Validate(pageId, priceId, categoryId, variations, productLocationInventories);
 
             var product = new Product
             {
+                CategoryId = categoryId,
                 PageId = pageId,
                 PriceId = priceId,
                 ProductLocationInventories = new List<ProductLocationInventory>(),
@@ -71,16 +71,17 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        public async Task<Product> EditAsync(int productId, int pageId, int priceId, List<Variation> variations,
+        public async Task<Product> EditAsync(int productId, int pageId, int priceId, int categoryId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
-            await Validate(pageId, priceId, variations, productLocationInventories);
+            await Validate(pageId, priceId, categoryId, variations, productLocationInventories);
 
             var product = await _dbContext.ShoppingProducts
                 .Include(item => item.Variations)
                 .Include(item => item.ProductLocationInventories)
                 .FirstOrDefaultAsync(item => item.Id == productId);
 
+            product.CategoryId = categoryId;
             product.PageId = pageId;
             product.PriceId = priceId;
             product.Variations = variations;
@@ -92,12 +93,17 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        private async Task Validate(int pageId, int priceId, List<Variation> variations,
+        private async Task Validate(int pageId, int priceId, int categoryId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
             if (!await _dbContext.Pages.AnyAsync(item => item.Id == pageId))
             {
                 throw new RecordNotFoundException($"Page {pageId} not found");
+            }
+
+            if (!await _dbContext.ProductCategories.AnyAsync(item => item.Id == categoryId))
+            {
+                throw new RecordNotFoundException($"Category {pageId} not found");
             }
 
             if (!await _dbContext.Prices.AnyAsync(item => item.Id == priceId))

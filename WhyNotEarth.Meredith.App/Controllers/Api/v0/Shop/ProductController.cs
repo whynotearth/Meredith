@@ -38,7 +38,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
                 Count = item.Count
             }).ToList();
 
-            var product = await _productService.CreateAsync(model.PageId, model.PriceId, variations, productLocationInventories);
+            var product = await _productService.CreateAsync(model.PageId, model.PriceId, model.CategoryId, 
+                variations, productLocationInventories);
 
             return Ok(new ShopProductResult(product));
         }
@@ -63,7 +64,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
                     Count = item.Count
                 }).ToList();
 
-            await _productService.EditAsync(productId, model.PageId, model.PriceId, variations, productLocationInventories);
+            await _productService.EditAsync(productId, model.PageId, model.PriceId, model.CategoryId, 
+                variations, productLocationInventories);
 
             return NoContent();
         }

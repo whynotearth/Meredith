@@ -11,6 +11,9 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Shop
         [Required]
         public int PriceId { get; set; }
 
+        [Required]
+        public int CategoryId { get; set; }
+
         public List<ProductLocationInventoryModel> ProductLocationInventories { get; set; } = null!;
 
         public List<VariationModel> Variations { get; set; } = null!;
