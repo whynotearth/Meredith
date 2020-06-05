@@ -27,7 +27,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             var categories = await _pageCategoryService.ListAsync(tenantSlug);
 
             var result = categories
-                .Select(x => new PageCategoryResult(x.Id, x.Slug, x.Name, x.Image.Url, x.Description))
+                .Select(x => new PageCategoryResult(x.Id, x.Slug, x.Name, x.Image?.Url!, x.Description))
                 .ToList();
 
             return Ok(result);
