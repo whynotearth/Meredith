@@ -6,9 +6,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
     [Flags]
     public enum NotificationType : byte
     {
-        [EnumMember(Value = "none")]
-        None = 0,
-        
         [EnumMember(Value = "email")]
         Email = 1,
 

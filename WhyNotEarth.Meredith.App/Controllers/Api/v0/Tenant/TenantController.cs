@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant;
@@ -24,16 +25,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             _tenantService = tenantService;
         }
 
+        [Authorize]
         [Returns201]
+        [Returns401]
         [Returns404]
         [HttpPost("")]
-        public async Task<CreateResult> Create(TenantModel model)
+        public async Task<CreateObjectResult> Create(string companySlug, TenantModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            await _tenantService.CreateAsync(model, user);
+            var tenantSlug = await _tenantService.CreateAsync(companySlug, model, user);
 
-            return Created();
+            return Created(tenantSlug);
         }
 
         [HttpGet("")]

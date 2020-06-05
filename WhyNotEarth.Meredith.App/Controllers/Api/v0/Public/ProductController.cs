@@ -12,6 +12,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [ApiVersion("0")]
     [Route("api/v0/tenants/{tenantSlug}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [ProducesErrorResponseType(typeof(void))]
     public class ProductsController : ControllerBase
     {
