@@ -34,11 +34,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Returns200]
-        [HttpPost("categories/{categoryId}")]
-        public async Task<ActionResult<PageCategoryResult>> Create(int categoryId)
+        [HttpGet("categories/{categoryId}")]
+        public async Task<ActionResult<PageCategoryResult>> Get(int categoryId)
         {
             var category = await _pageCategoryService.GetAsync(categoryId);
-            return Ok(new PageCategoryResult(category.Id, category.Slug, category.Name, category.Image.Url, category.Description));
+            return Ok(new PageCategoryResult(category.Id, category.Slug, category.Name, category.Image?.Url!, category.Description));
         }
 
         [Returns200]
