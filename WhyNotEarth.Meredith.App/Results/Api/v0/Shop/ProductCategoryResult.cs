@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public string? Description { get; }
 
-        public string? TenantSlug { get; }
+        public string TenantSlug { get; }
 
         public ProductCategoryResult(ProductCategory productCategory)
         {

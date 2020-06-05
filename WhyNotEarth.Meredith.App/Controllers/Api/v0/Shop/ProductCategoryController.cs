@@ -11,7 +11,7 @@ using WhyNotEarth.Meredith.Shop;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 {
     [ApiVersion("0")]
-    [Route("api/v0")]
+    [Route("api/v0/tenant/{tenantSlug}/categories")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.Developer)]
     public class ProductCategoryController : ControllerBase
@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
-        [HttpGet("tenant/{tenantSlug}/categories")]
+        [HttpGet("")]
         public async Task<ActionResult<List<ProductCategoryResult>>> List(string tenantSlug)
         {
             var categories = await _productCategoryService.ListAsync(tenantSlug);
@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
-        [HttpGet("categories/{categoryId}")]
+        [HttpGet("{categoryId}")]
         public async Task<ActionResult<ProductCategoryResult>> Get(int categoryId)
         {
             var category = await _productCategoryService.GetAsync(categoryId);
@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
-        [HttpPost("categories")]
+        [HttpPost("")]
         public async Task<ActionResult<ProductCategoryResult>> Create(ProductCategoryModel model)
         {
             var category = await _productCategoryService.CreateAsync(model);
@@ -54,7 +54,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 
         [Returns200]
         [Returns404]
-        [HttpDelete("categories/{categoryId}")]
+        [HttpDelete("{categoryId}")]
         public async Task<ActionResult> Delete(int categoryId)
         {
             await _productCategoryService.DeleteAsync(categoryId);
@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 
         [Returns204]
         [Returns404]
-        [HttpPut("categories/{categoryId}")]
+        [HttpPut("{categoryId}")]
         public async Task<ActionResult> Edit(int categoryId, ProductCategoryModel model)
         {
             await _productCategoryService.EditAsync(categoryId, model);

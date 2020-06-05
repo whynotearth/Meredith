@@ -53,8 +53,6 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task<ProductCategory> CreateAsync(ProductCategoryModel model)
         {
-            await ValidateAsync(model);
-
             var tenant = await GetTenant(model.TenantSlug!);
             if(tenant is null)
             {
@@ -76,8 +74,6 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task<ProductCategory> EditAsync(int categoryId, ProductCategoryModel model)
         {
-            await ValidateAsync(model);
-
             var tenant = await GetTenant(model.TenantSlug!);
             if (tenant is null)
             {
@@ -100,20 +96,6 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
 
             return category;
-        }
-
-        private async Task ValidateAsync(ProductCategoryModel model)
-        {
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                throw new InvalidActionException($"Empty name is not allowed.");
-            }
-            var duplicatedName = await _dbContext.ProductCategories.AnyAsync(x => x.Name == model.Name);
-
-            if (duplicatedName)
-            {
-                throw new DuplicateRecordException($"Name '{model}' is already exist.");
-            }
         }
 
         private async Task<Data.Entity.Models.Modules.Shop.Tenant> GetTenant(string tenantSlug)
