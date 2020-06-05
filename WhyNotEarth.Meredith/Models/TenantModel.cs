@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Validation;
@@ -13,19 +14,15 @@ namespace WhyNotEarth.Meredith.Models
         [Mandatory]
         public string? Name { get; set; }
         
-        [NotNull]
-        [Mandatory]
-        public string? CompanySlug { get; set; }
-
         public string? Description { get; set; }
 
         [NotNull]
         [Mandatory]
-        public PaymentMethodType? PaymentMethodType  { get; set; }
+        public List<PaymentMethodType>? PaymentMethodTypes  { get; set; }
 
         [NotNull]
         [Mandatory]
-        public NotificationType? NotificationType  { get; set; }
+        public List<NotificationType>? NotificationTypes  { get; set; }
 
         [NotNull]
         [Mandatory]
@@ -43,8 +40,10 @@ namespace WhyNotEarth.Meredith.Models
         [Mandatory]
         public bool? IsClosed { get; set; }
 
-        public TimeSpan? OpeningTime { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime? OpeningTime { get; set; }
 
-        public TimeSpan? ClosingTime { get; set; }
+        [DataType(DataType.Time)]
+        public DateTime? ClosingTime { get; set; }
     }
 }

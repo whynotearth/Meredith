@@ -9,4 +9,12 @@ namespace WhyNotEarth.Meredith.App.Mvc
         {
         }
     }
+
+    public class CreateObjectResult : ObjectResult
+    {
+        public CreateObjectResult(object value) : base(value)
+        {
+            StatusCode = (int) HttpStatusCode.Created;
+        }
+    }
 }

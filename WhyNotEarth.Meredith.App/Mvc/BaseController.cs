@@ -9,5 +9,11 @@ namespace WhyNotEarth.Meredith.App.Mvc
         {
             return new CreateResult();
         }
+
+        [NonAction]
+        public CreateObjectResult Created(object value)
+        {
+            return new CreateObjectResult(value);
+        }
     }
 }

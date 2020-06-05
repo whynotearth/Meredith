@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +23,17 @@ namespace WhyNotEarth.Meredith.Tenant
             _slugService = slugService;
         }
 
-        public async Task CreateAsync(TenantModel model, User user)
+        public async Task<string> CreateAsync(string companySlug, TenantModel model, User user)
         {
             var slug = _slugService.GetSlug(model.Name);
-            var company = await ValidateAsync(model, slug);
+            var company = await ValidateAsync(companySlug, slug);
 
             var tenant = GetTenant(model, company, user, slug);
 
             _dbContext.Tenants.Add(tenant);
             await _dbContext.SaveChangesAsync();
+
+            return slug;
         }
 
         public Task<List<Data.Entity.Models.Modules.Shop.Tenant>> ListAsync(string companySlug)
@@ -47,14 +50,14 @@ namespace WhyNotEarth.Meredith.Tenant
             return _dbContext.Tenants.FirstOrDefaultAsync(item => item.UserId == user.Id);
         }
 
-        private async Task<Company> ValidateAsync(TenantModel model, string slug)
+        private async Task<Company> ValidateAsync(string companySlug, string slug)
         {
             var company =
-                await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == model.CompanySlug.ToLower());
+                await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == companySlug.ToLower());
 
             if (company is null)
             {
-                throw new RecordNotFoundException($"Company {model.CompanySlug} not found");
+                throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
             var isSlugDuplicate =
@@ -69,6 +72,9 @@ namespace WhyNotEarth.Meredith.Tenant
 
         private Data.Entity.Models.Modules.Shop.Tenant GetTenant(TenantModel model, Company company, User user, string slug)
         {
+            var notificationType = model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
+            var paymentMethodType = model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
+
             return new Data.Entity.Models.Modules.Shop.Tenant
             {
                 CompanyId = company.Id,
@@ -76,8 +82,8 @@ namespace WhyNotEarth.Meredith.Tenant
                 UserId = user.Id,
                 Name = model.Name,
                 BusinessHours = GetBusinessHours(model.BusinessHours),
-                PaymentMethodType = model.PaymentMethodType!.Value,
-                NotificationType = model.NotificationType!.Value,
+                PaymentMethodType = paymentMethodType,
+                NotificationType = notificationType,
                 Description = model.Description
             };
         }
@@ -88,8 +94,8 @@ namespace WhyNotEarth.Meredith.Tenant
             {
                 DayOfWeek = item.DayOfWeek!.Value,
                 IsClosed = item.IsClosed!.Value,
-                OpeningTime = item.OpeningTime,
-                ClosingTime = item.ClosingTime
+                OpeningTime = item.OpeningTime?.TimeOfDay,
+                ClosingTime = item.ClosingTime?.TimeOfDay
             }).ToList();
         }
     }
