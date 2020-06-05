@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
 using WhyNotEarth.Meredith.Models.Shop;
 using WhyNotEarth.Meredith.Shop;
@@ -11,6 +13,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     [ApiVersion("0")]
     [Route("api/v0")]
     [ProducesErrorResponseType(typeof(void))]
+    [Authorize(Policy = Policies.Developer)]
     public class ProductCategoryController : ControllerBase
     {
         private readonly ProductCategoryService _productCategoryService;
