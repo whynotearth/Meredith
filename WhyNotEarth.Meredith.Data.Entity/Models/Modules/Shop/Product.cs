@@ -26,6 +26,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public List<ProductLocationInventory> ProductLocationInventories { get; set; }
 
+        public List<ProductAttribute> ProductAttributes { get; set; }
+
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("Products", "ModuleShop");

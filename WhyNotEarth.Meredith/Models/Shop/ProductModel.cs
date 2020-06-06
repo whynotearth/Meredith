@@ -43,4 +43,15 @@ namespace WhyNotEarth.Meredith.Models.Shop
         [Required]
         public decimal Price { get; set; }
     }
+
+    public class ProductAttributeModel
+    {
+        [Required]
+        [NotNull]
+        [Mandatory]
+        public string Name { get; set; } = null!;
+
+        [Required]
+        public decimal Price { get; set; }
+    }
 }
