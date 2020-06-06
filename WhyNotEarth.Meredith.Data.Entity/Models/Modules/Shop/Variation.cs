@@ -11,6 +11,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public Product Product { get; set; }
 
+        public int PriceId { get; set; }
+
+        public Price Price { get; set; }
+
         public string Name { get; set; }
 
         public void Configure(EntityTypeBuilder<Variation> builder)

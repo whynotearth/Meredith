@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Models.Shop;
 
 namespace WhyNotEarth.Meredith.Shop
 {
@@ -16,20 +18,25 @@ namespace WhyNotEarth.Meredith.Shop
             _dbContext = meredithDbContext;
         }
 
-        public Task<List<Product>> ListAsync()
+        public Task<List<Product>> ListAsync(int categoryId)
         {
             return _dbContext.ShoppingProducts
+                .Include(item => item.Price)
                 .Include(item => item.Variations)
+                    .ThenInclude(item => item.Price)
                 .Include(item => item.ProductLocationInventories)
+                .Where(item => item.CategoryId == categoryId)
                 .ToListAsync();
         }
 
-        public async Task<Product> GetAsync(int productId)
+        public async Task<Product> GetAsync(int categoryId, int productId)
         {
             var product = await _dbContext.ShoppingProducts
+                .Include(item => item.Price)
                 .Include(item => item.ProductLocationInventories)
                 .Include(item => item.Variations)
-                .FirstOrDefaultAsync(item => item.Id == productId);
+                    .ThenInclude(item => item.Price)
+                .FirstOrDefaultAsync(item => item.CategoryId == categoryId && item.Id == productId);
 
             if (product == null)
             {
@@ -39,31 +46,45 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        public async Task DeleteAsync(int productId)
+        public async Task DeleteAsync(int categoryId, int productId)
         {
-            var product = await GetAsync(productId);
+            var product = await GetAsync(categoryId, productId);
 
             _dbContext.ShoppingProducts.Remove(product);
 
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Product> CreateAsync(int pageId, int priceId, int categoryId, List<Variation> variations,
-            List<ProductLocationInventory> productLocationInventories)
+        public async Task<Product> CreateAsync(ProductCreateModel model)
         {
-            await Validate(pageId, priceId, categoryId, variations, productLocationInventories);
+            var variations = model.Variations.Select(item =>
+                new Variation
+                {
+                    Price = new Price
+                    {
+                        Amount = item.Price
+                    },
+                    Name = item.Name
+                }).ToList();
+
+            var productLocationInventories = model.ProductLocationInventories.Select(item =>
+                new ProductLocationInventory
+                {
+                    Count = item.Count,
+                    Location = new Location { Name = model.Name }, // What is the desired value for the field?
+                }).ToList();
+
+            await Validate(model.PageId, model.CategoryId, variations, productLocationInventories);
 
             var product = new Product
             {
-                CategoryId = categoryId,
-                PageId = pageId,
-                PriceId = priceId,
-                ProductLocationInventories = new List<ProductLocationInventory>(),
-                Variations = new List<Variation>()
+                Name = model.Name,
+                CategoryId = model.CategoryId,
+                PageId = model.PageId,
+                Price = new Price { Amount = model.Price },
+                ProductLocationInventories = productLocationInventories,
+                Variations = variations
             };
-
-            product.Variations = variations;
-            product.ProductLocationInventories = productLocationInventories;
 
             _dbContext.ShoppingProducts.Add(product);
             await _dbContext.SaveChangesAsync();
@@ -71,19 +92,40 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        public async Task<Product> EditAsync(int productId, int pageId, int priceId, int categoryId, List<Variation> variations,
-            List<ProductLocationInventory> productLocationInventories)
+        public async Task<Product> EditAsync(ProductEditModel model)
         {
-            await Validate(pageId, priceId, categoryId, variations, productLocationInventories);
+            var variations = model.Variations.Select(item =>
+                new Variation
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    PriceId = item.PriceId,
+                    Price = new Price
+                    {
+                        Amount = item.Price,
+                        Id = item.PriceId
+                    },
+                }).ToList();
+
+            var productLocationInventories = model.ProductLocationInventories.Select(item =>
+                new ProductLocationInventory
+                {
+                    Id = item.Id,
+                    Count = item.Count,
+                    LocationId = item.LocationId
+                }).ToList();
+            await Validate(model.PageId, model.CategoryId, variations, productLocationInventories);
 
             var product = await _dbContext.ShoppingProducts
+                .Include(item => item.Price)
                 .Include(item => item.Variations)
                 .Include(item => item.ProductLocationInventories)
-                .FirstOrDefaultAsync(item => item.Id == productId);
+                .FirstOrDefaultAsync(item => item.Id == model.Id);
 
-            product.CategoryId = categoryId;
-            product.PageId = pageId;
-            product.PriceId = priceId;
+            product.Price.Amount = model.Price;
+            product.Name = model.Name;
+            product.CategoryId = model.CategoryId;
+            product.PageId = model.PageId;
             product.Variations = variations;
             product.ProductLocationInventories = productLocationInventories;
 
@@ -93,7 +135,7 @@ namespace WhyNotEarth.Meredith.Shop
             return product;
         }
 
-        private async Task Validate(int pageId, int priceId, int categoryId, List<Variation> variations,
+        private async Task Validate(int pageId, int categoryId, List<Variation> variations,
             List<ProductLocationInventory> productLocationInventories)
         {
             if (!await _dbContext.Pages.AnyAsync(item => item.Id == pageId))
@@ -106,11 +148,6 @@ namespace WhyNotEarth.Meredith.Shop
                 throw new RecordNotFoundException($"Category {pageId} not found");
             }
 
-            if (!await _dbContext.Prices.AnyAsync(item => item.Id == priceId))
-            {
-                throw new RecordNotFoundException($"Price {priceId} not found");
-            }
-
             variations.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Name))
@@ -119,7 +156,7 @@ namespace WhyNotEarth.Meredith.Shop
                 }
             });
 
-            foreach (var productLocationInventory in productLocationInventories)
+            foreach (var productLocationInventory in productLocationInventories.Where(item => item.Id > 0))
             {
                 if (!await _dbContext.Locations.AnyAsync(location => location.Id == productLocationInventory.LocationId))
                 {

@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public Category Category { get; set; }
 
+        public string Name { get; set; }
+
         public List<Variation> Variations { get; set; }
 
         public List<ProductLocationInventory> ProductLocationInventories { get; set; }
