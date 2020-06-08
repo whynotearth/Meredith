@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using WhyNotEarth.Meredith.Validation;
 
-namespace WhyNotEarth.Meredith.Models.Shop
+namespace WhyNotEarth.Meredith.Models
 {
     public class ProductCategoryModel
     {

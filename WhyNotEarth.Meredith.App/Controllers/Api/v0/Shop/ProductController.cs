@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
-using WhyNotEarth.Meredith.Models.Shop;
+using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
@@ -13,59 +14,67 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     [Returns401]
     [Returns403]
     [ApiVersion("0")]
-    [Route("api/v0/shop/products")]
+    [Route("api/v0/shop/categories/{categoryId}/products")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.Developer)]
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
+        private readonly IUserManager _userManager;
 
-        public ProductController(ProductService productService)
+        public ProductController(ProductService productService, IUserManager userManager)
         {
             _productService = productService;
+            _userManager = userManager;
         }
 
         [Returns200]
         [HttpPost("")]
-        public async Task<ActionResult<ShopProductResult>> Create(ProductCreateModel model)
+        public async Task<ActionResult<ShopProductResult>> Create(int categoryId, ProductModel model)
         {
-            var product = await _productService.CreateAsync(model);
+            var user = await _userManager.GetUserAsync(User);
+
+            var product = await _productService.CreateAsync(categoryId, model, user);
 
             return Ok(new ShopProductResult(product));
         }
 
         [Returns204]
         [Returns404]
-        [HttpPut("")]
-        public async Task<IActionResult> Edit(ProductEditModel model)
+        [HttpPut("{productId}")]
+        public async Task<IActionResult> Edit(int productId, int categoryId, ProductModel model)
         {
-            await _productService.EditAsync(model);
+            var user = await _userManager.GetUserAsync(User);
+
+            await _productService.EditAsync(productId, categoryId, model, user);
 
             return NoContent();
         }
 
         [Returns204]
         [Returns404]
-        [HttpDelete("{categoryId}/{productId}")]
-        public async Task<IActionResult> Delete(int categoryId, int productId)
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> Delete(int productId)
         {
-            await _productService.DeleteAsync(categoryId, productId);
+            var user = await _userManager.GetUserAsync(User);
+
+            await _productService.DeleteAsync(productId, user);
 
             return NoContent();
         }
 
         [Returns200]
         [Returns404]
-        [HttpGet("{categoryId}/{productId}")]
-        public async Task<ActionResult<ShopProductResult>> Get(int categoryId, int productId)
+        [HttpGet("{productId}")]
+        public async Task<ActionResult<ShopProductResult>> Get(int productId)
         {
-            var product = await _productService.GetAsync(categoryId, productId);
+            var product = await _productService.GetAsync(productId);
 
             return Ok(new ShopProductResult(product));
         }
 
         [Returns200]
-        [HttpGet("{categoryId}")]
+        [HttpGet("")]
         public async Task<ActionResult<List<ShopProductResult>>> List(int categoryId)
         {
             var products = await _productService.ListAsync(categoryId);

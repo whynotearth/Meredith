@@ -5,22 +5,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
-using WhyNotEarth.Meredith.Models.Shop;
+using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 {
     [ApiVersion("0")]
-    [Route("api/v0/tenant/{tenantSlug}/categories")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.Developer)]
+    [Route("api/v0/shop/tenant/{tenantSlug}/categories")]
     public class ProductCategoryController : ControllerBase
     {
         private readonly ProductCategoryService _productCategoryService;
+        private readonly IUserManager _userManager;
 
-        public ProductCategoryController(ProductCategoryService productCategoryService)
+        public ProductCategoryController(ProductCategoryService productCategoryService, IUserManager userManager)
         {
             _productCategoryService = productCategoryService;
+            _userManager = userManager;
         }
 
         [Returns200]
@@ -45,29 +47,45 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
+        [Returns401]
+        [Returns403]
         [HttpPost("")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<ProductCategoryResult>> Create(ProductCategoryModel model)
         {
-            var category = await _productCategoryService.CreateAsync(model);
+            var user = await _userManager.GetUserAsync(User);
+
+            var category = await _productCategoryService.CreateAsync(model, user);
+
             return Ok(new ProductCategoryResult(category));
         }
 
         [Returns200]
+        [Returns401]
+        [Returns403]
         [Returns404]
         [HttpDelete("{categoryId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult> Delete(int categoryId)
         {
-            await _productCategoryService.DeleteAsync(categoryId);
+            var user = await _userManager.GetUserAsync(User);
+
+            await _productCategoryService.DeleteAsync(categoryId, user);
 
             return NoContent();
         }
 
         [Returns204]
+        [Returns401]
+        [Returns403]
         [Returns404]
         [HttpPut("{categoryId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult> Edit(int categoryId, ProductCategoryModel model)
         {
-            await _productCategoryService.EditAsync(categoryId, model);
+            var user = await _userManager.GetUserAsync(User);
+
+            await _productCategoryService.EditAsync(categoryId, model, user);
 
             return NoContent();
         }

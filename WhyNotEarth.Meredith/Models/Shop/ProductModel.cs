@@ -1,57 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using WhyNotEarth.Meredith.Validation;
 
-namespace WhyNotEarth.Meredith.Models.Shop
+namespace WhyNotEarth.Meredith.Models
 {
     public abstract class ProductModel
     {
-        [Required]
-        public int PageId { get; set; }
-
-        [Required]
-        public decimal Price { get; set; }
-
-        [Required]
-        public int CategoryId { get; set; }
-
-        [Required]
         [NotNull]
         [Mandatory]
-        public string Name { get; set; } = null!;
+        public int? PageId { get; set; }
+
+        [NotNull]
+        [Mandatory]
+        public decimal? Price { get; set; }
+
+        [NotNull]
+        [Mandatory]
+        public string? Name { get; set; }
+
+        public List<ProductLocationInventoryModel>? LocationInventories { get; set; }
+
+        public List<VariationModel>? Variations { get; set; }
+
+        public List<ProductAttributeModel>? Attributes { get; set; }
     }
 
     public class ProductLocationInventoryModel
     {
-        [Required]
-        public int LocationId { get; set; }
+        [NotNull]
+        [Mandatory]
+        public int? LocationId { get; set; }
 
-        [Required]
-        public int Count { get; set; }
+        [NotNull]
+        [Mandatory]
+        public int? Count { get; set; }
     }
 
     public class VariationModel
     {
-        [Required]
         [NotNull]
         [Mandatory]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
-        [Required]
-        public decimal Price { get; set; }
+        [NotNull]
+        [Mandatory]
+        public decimal? Price { get; set; }
     }
 
     public class ProductAttributeModel
     {
-        [Required]
         [NotNull]
         [Mandatory]
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
 
-        [Required]
-        public decimal Price { get; set; }
+        [NotNull]
+        [Mandatory]
+        public decimal? Price { get; set; }
     }
 }

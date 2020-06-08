@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public ProductCategory Category { get; set; }
 
         public string Name { get; set; }
 
