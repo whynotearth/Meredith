@@ -11,12 +11,9 @@ using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 {
-    [Returns401]
-    [Returns403]
     [ApiVersion("0")]
-    [Route("api/v0/shop/categories/{categoryId}/products")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.Developer)]
+    [Route("api/v0/shop/categories/{categoryId}/products")]
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
@@ -29,7 +26,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
+        [Returns401]
+        [Returns403]
         [HttpPost("")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<ShopProductResult>> Create(int categoryId, ProductModel model)
         {
             var user = await _userService.GetUserAsync(User);
@@ -40,8 +40,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns204]
+        [Returns401]
+        [Returns403]
         [Returns404]
         [HttpPut("{productId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<IActionResult> Edit(int productId, int categoryId, ProductModel model)
         {
             var user = await _userService.GetUserAsync(User);
@@ -52,8 +55,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns204]
+        [Returns401]
+        [Returns403]
         [Returns404]
         [HttpDelete("{productId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<IActionResult> Delete(int productId)
         {
             var user = await _userService.GetUserAsync(User);
