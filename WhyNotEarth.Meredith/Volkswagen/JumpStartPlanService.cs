@@ -40,7 +40,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 var jumpStart = GetJumpStart(jumpStarts, dailyArticles.Key);
                 var sendDateTime = GetSendDateTime(jumpStart, dailyArticles.Key, settings);
-                var distributionGroups = GetDistributionGroups(jumpStart, defaultDistributionGroups);
+                var distributionGroups = jumpStart?.DistributionGroups ?? defaultDistributionGroups;
 
                 var jumpStartPlan = new JumpStartPlan(sendDateTime, dailyArticles.OrderBy(item => item.Order).ToList(),
                     distributionGroups, jumpStart);
@@ -49,16 +49,6 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return result;
-        }
-
-        private List<string> GetDistributionGroups(JumpStart? jumpStart, List<string> defaultDistributionGroups)
-        {
-            if (jumpStart != null)
-            {
-                return jumpStart.DistributionGroups.Split(',').ToList();
-            }
-
-            return defaultDistributionGroups;
         }
 
         private DateTime GetSendDateTime(JumpStart? jumpStart, DateTime articlesDate, VolkswagenSettings settings)

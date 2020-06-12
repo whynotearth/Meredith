@@ -75,9 +75,13 @@ namespace WhyNotEarth.Meredith.Email
                 roomDescriptionHTML = GetRoomDescription(hotel)
             };
 
-            var to = Tuple.Create(hotelReservation.User.Email, hotelReservation.User.UserName);
+            var to = Tuple.Create<string, string?>(hotelReservation.User.Email, hotelReservation.User.UserName);
 
-            await _sendGridService.SendEmail(hotel.CompanyId.Value, to, templateData);
+            var emailInfo = new EmailInfo(hotel.CompanyId.Value, to)
+            {
+                TemplateData = templateData
+            };
+            await _sendGridService.SendEmailAsync(emailInfo);
         }
 
         private string GetRoomDescription(Data.Entity.Models.Modules.Hotel.Hotel hotel)

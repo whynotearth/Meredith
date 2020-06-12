@@ -9,6 +9,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 namespace WhyNotEarth.Meredith.Jobs.Public
 {
@@ -57,7 +58,24 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             _backgroundJobClient.Enqueue<JumpStartEmailJob>(job => job.SendAsync(jumpStartId));
         }
 
-        private async Task Create(int companyId, string distributionGroups, Func<EmailRecipient, EmailRecipient> keySetter)
+        public async Task CreateForNewJumpStart(int newJumpStartId)
+        {
+            // In case something went wrong and this is a retry
+            await CleanForNewJumpStartAsync(newJumpStartId);
+
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == VolkswagenCompany.Slug);
+            var jumpStart = await _dbContext.NewJumpStarts.FirstOrDefaultAsync(item => item.Id == newJumpStartId);
+
+            await Create(company.Id, jumpStart.DistributionGroups, item =>
+            {
+                item.NewJumpStartId = newJumpStartId;
+                return item;
+            });
+
+            _backgroundJobClient.Enqueue<NewJumpStartEmailJob>(job => job.SendAsync(newJumpStartId));
+        }
+
+        private async Task Create(int companyId, List<string> distributionGroups, Func<EmailRecipient, EmailRecipient> keySetter)
         {
             var dateTime = DateTime.UtcNow;
             var recipients = await GetRecipients(distributionGroups);
@@ -78,12 +96,10 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             }
         }
 
-        private async Task<List<Recipient>> GetRecipients(string distributionGroups)
+        private async Task<List<Recipient>> GetRecipients(List<string> distributionGroups)
         {
-            var distributionGroupList = distributionGroups.ToLower().Split(',');
-
             return await _dbContext.Recipients
-                .Where(item => distributionGroupList.Contains(item.DistributionGroup.ToLower())).ToListAsync();
+                .Where(item => distributionGroups.Contains(item.DistributionGroup)).ToListAsync();
         }
 
         private async Task CleanForMemo(int memoId)
@@ -98,6 +114,17 @@ namespace WhyNotEarth.Meredith.Jobs.Public
         private async Task CleanForJumpStartAsync(int jumpStartId)
         {
             var oldRecords = await _dbContext.EmailRecipients.Where(item => item.JumpStartId == jumpStartId)
+                .ToListAsync();
+
+            _dbContext.EmailRecipients.RemoveRange(oldRecords);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+                
+        private async Task CleanForNewJumpStartAsync(int newJumpStartId)
+        {
+            var oldRecords = await _dbContext.EmailRecipients.Where(item => item.NewJumpStartId == newJumpStartId)
                 .ToListAsync();
 
             _dbContext.EmailRecipients.RemoveRange(oldRecords);

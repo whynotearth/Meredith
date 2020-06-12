@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public MemoStatResult(MemoInfo memoInfo)
         {
             Id = memoInfo.Memo.Id;
-            DistributionGroups = memoInfo.Memo.DistributionGroups.Split(',').ToList();
+            DistributionGroups = memoInfo.Memo.DistributionGroups;
             Subject = memoInfo.Memo.Subject;
             CreationDateTime = memoInfo.Memo.CreationDateTime;
             To = memoInfo.Memo.To;

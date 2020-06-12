@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,7 +18,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         
         public string Description { get; set; }
 
-        public string DistributionGroups { get; set; }
+        public List<string> DistributionGroups { get; set; }
 
         public DateTime CreationDateTime { get; set; }
         
@@ -28,6 +30,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
             builder.Property(b => b.To).IsRequired();
             builder.Property(b => b.Description).IsRequired();
             builder.Property(b => b.DistributionGroups).IsRequired();
+            builder.Property(e => e.DistributionGroups)
+                .HasConversion(
+                    v => string.Join(",", v),
+                    v => v.Split(",", StringSplitOptions.None).ToList());
         }
     }
 }

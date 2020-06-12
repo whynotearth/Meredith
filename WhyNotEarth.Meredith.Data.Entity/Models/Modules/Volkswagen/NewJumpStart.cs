@@ -6,30 +6,40 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
-    public class JumpStart : IEntityTypeConfiguration<JumpStart>
+    public class NewJumpStart : IEntityTypeConfiguration<NewJumpStart>
     {
         public int Id { get; set; }
 
         public DateTime DateTime { get; set; }
 
+        public string Subject { get; set; }
+
         public List<string> DistributionGroups { get; set; }
 
-        public JumpStartStatus Status { get; set; }
+        public List<string> Tags { get; set; }
 
-        public bool HasPdf { get; set; }
+        public string Body { get; set; }
 
-        public void Configure(EntityTypeBuilder<JumpStart> builder)
+        public NewJumpStartStatus Status { get; set; }
+
+        public void Configure(EntityTypeBuilder<NewJumpStart> builder)
         {
-            builder.ToTable("JumpStarts", "ModuleVolkswagen");
+            builder.ToTable("NewJumpStarts", "ModuleVolkswagen");
+            builder.Property(b => b.Subject).IsRequired();
             builder.Property(b => b.DistributionGroups).IsRequired();
+            builder.Property(b => b.Body).IsRequired();
             builder.Property(e => e.DistributionGroups)
+                .HasConversion(
+                    v => string.Join(",", v),
+                    v => v.Split(",", StringSplitOptions.None).ToList());
+            builder.Property(e => e.Tags)
                 .HasConversion(
                     v => string.Join(",", v),
                     v => v.Split(",", StringSplitOptions.None).ToList());
         }
     }
 
-    public enum JumpStartStatus : byte
+    public enum NewJumpStartStatus : byte
     {
         Preview = 1,
         Sending = 2,

@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public JumpStartStatResult(JumpStartInfo jumpStartInfo)
         {
             Id = jumpStartInfo.JumpStart.Id;
-            DistributionGroups = jumpStartInfo.JumpStart.DistributionGroups.Split(',').ToList();
+            DistributionGroups = jumpStartInfo.JumpStart.DistributionGroups;
             DateTime = jumpStartInfo.JumpStart.DateTime;
             Articles = jumpStartInfo.Articles;
             OpenPercentage = jumpStartInfo.ListStats.OpenPercentage;

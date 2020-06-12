@@ -17,11 +17,18 @@ namespace WhyNotEarth.Meredith.GoogleCloud
             _options = options.Value;
         }
 
-        public async Task UploadPdfAsync(string objectName, byte[] content)
+        public async Task UploadFileAsync(string objectName, string contentType, Stream stream)
         {
             using var storageClient = await StorageClient.CreateAsync(GetCredential());
 
-            await storageClient.UploadObjectAsync(_options.StorageBucket, objectName, "application/pdf", new MemoryStream(content));
+            await storageClient.UploadObjectAsync(_options.StorageBucket, objectName, contentType, stream);
+        }
+
+        public async Task DownloadFileAsync(string objectName, Stream stream)
+        {
+            using var storageClient = await StorageClient.CreateAsync(GetCredential());
+
+            await storageClient.DownloadObjectAsync(_options.StorageBucket, objectName, stream);
         }
 
         public Task<string> CreateSignedUrlAsync(string objectName, int hours)

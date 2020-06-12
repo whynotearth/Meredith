@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    // Merge this with Company entity?
     public class SendGridAccount : IEntityTypeConfiguration<SendGridAccount>
     {
         public int Id { get; set; }
@@ -11,6 +10,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public int CompanyId { get; set; }
 
         public Company Company { get; set; }
+
+        public string Key { get; set; }
 
         public string ApiKey { get; set; }
 
@@ -25,6 +26,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public void Configure(EntityTypeBuilder<SendGridAccount> builder)
         {
             builder.Property(b => b.ApiKey).IsRequired();
+            builder.Property(b => b.Key).IsRequired(false);
         }
     }
 }

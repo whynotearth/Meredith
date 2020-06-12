@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +64,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 
         private async Task UploadPdfAsync(JumpStart jumpStart, byte[] pdfData)
         {
-            await _googleStorageService.UploadPdfAsync(GetName(jumpStart), pdfData);
+            await _googleStorageService.UploadFileAsync(GetName(jumpStart), "application/pdf", new MemoryStream(pdfData));
         }
 
         private string GetName(JumpStart jumpStart)

@@ -13,6 +13,7 @@ using WhyNotEarth.Meredith.Sms;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Jobs;
 using ReservationService = WhyNotEarth.Meredith.Hotel.ReservationService;
 
 namespace WhyNotEarth.Meredith.DependencyInjection
@@ -34,7 +35,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<EmailRecipientService>()
                 .AddScoped<EmailRecipientJob>()
                 .AddScoped<SlugService>()
-                .AddScoped<IUserService, UserService>();
+                .AddScoped<IUserService, UserService>()
+                .AddScoped<IFileService, FileService>();
 
             // Hotel
             serviceCollection
@@ -60,7 +62,10 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<JumpStartPreviewService>()
                 .AddScoped<PuppeteerService>()
                 .AddScoped<JumpStartPlanService>()
-                .AddScoped<JumpStartMarkdownService>();
+                .AddScoped<JumpStartMarkdownService>()
+                .AddScoped<NewJumpStartService>()
+                .AddScoped<NewJumpStartJob>()
+                .AddScoped<NewJumpStartEmailJob>();
 
             // Tenant
             serviceCollection

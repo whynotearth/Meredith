@@ -38,7 +38,8 @@ namespace WhyNotEarth.Meredith.Email
             return GetDetailStatsAsync(item => item.JumpStartId == jumpStartId, item => item.JumpStart);
         }
         
-        public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup, int currentRecipientCount)
+        public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup,
+            int currentRecipientCount)
         {
             var stats = await _dbContext.EmailRecipients
                 .Where(item => item.DistributionGroup == distributionGroup)
@@ -54,7 +55,8 @@ namespace WhyNotEarth.Meredith.Email
             var openCount = stats.Where(item => item.Status >= EmailStatus.Opened).Sum(item => item.Count);
             var clickCount = stats.Where(item => item.Status >= EmailStatus.Clicked).Sum(item => item.Count);
 
-            return new DistributionGroupStats(distributionGroup, currentRecipientCount, receiversCount, openCount, clickCount);
+            return new DistributionGroupStats(distributionGroup, currentRecipientCount, receiversCount, openCount,
+                clickCount);
         }
 
         private async Task<ListStats> GetStatsAsync(Expression<Func<EmailRecipient, bool>> condition)
@@ -75,7 +77,8 @@ namespace WhyNotEarth.Meredith.Email
             return new ListStats(sentCount, openCount);
         }
 
-        private async Task<EmailDetailStats> GetDetailStatsAsync<TProperty>(Expression<Func<EmailRecipient, bool>> condition, Expression<Func<EmailRecipient, TProperty>> include)
+        private async Task<EmailDetailStats> GetDetailStatsAsync<TProperty>(
+            Expression<Func<EmailRecipient, bool>> condition, Expression<Func<EmailRecipient, TProperty>> include)
         {
             var emailRecipients = await _dbContext.EmailRecipients
                 .Include(include)
@@ -85,6 +88,18 @@ namespace WhyNotEarth.Meredith.Email
             var openedList = emailRecipients.Where(item => item.Status >= EmailStatus.Opened).ToList();
 
             return new EmailDetailStats(notOpenedList, openedList);
+        }
+
+        public Task<int> GetJumpStartOpenCountAsync(DateTime date)
+        {
+            return _dbContext.EmailRecipients.CountAsync(item =>
+                item.JumpStartId != null && item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
+        }
+
+        public Task<int> GetJumpStartClickCountAsync(DateTime date)
+        {
+            return _dbContext.EmailRecipients.CountAsync(item =>
+                item.JumpStartId != null && item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
         }
     }
 }

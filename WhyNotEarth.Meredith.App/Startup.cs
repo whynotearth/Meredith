@@ -27,6 +27,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 [assembly: ApiController]
 namespace WhyNotEarth.Meredith.App
@@ -138,6 +139,10 @@ namespace WhyNotEarth.Meredith.App
             recurringJobManager.AddOrUpdate<JumpStartJob>(JumpStartJob.Id,
                 job => job.SendAsync(),
                 JumpStartJob.CronExpression, TimeZoneInfo.Utc);
+
+            recurringJobManager.AddOrUpdate<NewJumpStartJob>(NewJumpStartJob.Id,
+                job => job.SendAsync(),
+                NewJumpStartJob.CronExpression, TimeZoneInfo.Utc);
         }
     }
 }

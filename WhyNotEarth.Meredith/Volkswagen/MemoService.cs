@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var memo = new Memo
             {
-                DistributionGroups = string.Join(',', distributionGroups),
+                DistributionGroups = distributionGroups,
                 Subject = subject,
                 Date = date,
                 To = to,

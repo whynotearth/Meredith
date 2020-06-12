@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -47,29 +48,40 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 
         private async Task SendEmailAsync(JumpStart jumpStart, List<Article> articles)
         {
+            var emailRecipients = await GetRecipientsAsync(jumpStart.Id);
+            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
+
+            var emailInfo = await GetEmailInfoAsync(jumpStart, recipients, articles);
+
+            await _sendGridService.SendEmailAsync(emailInfo);
+
+            foreach (var emailRecipient in emailRecipients)
+            {
+                emailRecipient.Status = EmailStatus.Sent;
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task<EmailInfo> GetEmailInfoAsync(JumpStart jumpStart, List<Tuple<string, string?>> recipients, List<Article> articles)
+        {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
             var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
-            var recipients = await GetRecipients(jumpStart.Id);
-            var subject = $"Project Blue Delta - {jumpStart.DateTime:MMMM d, yyyy}";
-
-            foreach (var batch in recipients.Batch(SendGridService.BatchSize))
+            return new EmailInfo(company.Id, recipients)
             {
-                await _sendGridService.SendEmail(company.Id, batch, subject, emailTemplate, emailTemplate,
-                    nameof(EmailRecipient.MemoId), jumpStart.Id.ToString(), jumpStart.DateTime);
-
-                foreach (var recipient in batch)
-                {
-                    recipient.Status = EmailStatus.Sent;
-                }
-
-                await _dbContext.SaveChangesAsync();
-            }
+                Subject = $"Project Blue Delta - {jumpStart.DateTime:MMMM d, yyyy}",
+                HtmlContent = emailTemplate,
+                PlainTextContent = emailTemplate,
+                UniqueArgument = nameof(EmailRecipient.JumpStartId),
+                UniqueArgumentValue = jumpStart.Id.ToString(),
+                SendAt = jumpStart.DateTime
+            };
         }
 
-        private Task<List<EmailRecipient>> GetRecipients(int jumpStartId)
+        private Task<List<EmailRecipient>> GetRecipientsAsync(int jumpStartId)
         {
             return _dbContext.EmailRecipients
                 .Where(item => item.JumpStartId == jumpStartId && item.Status == EmailStatus.ReadyToSend)

@@ -80,8 +80,8 @@ namespace WhyNotEarth.Meredith.Tenant
 
             var recipients = new List<Tuple<string, string?>>
             {
-                Tuple.Create(user.Email, user.Name),
-                Tuple.Create(tenant.Owner.Email, tenant.Owner.Name)
+                Tuple.Create<string, string?>(user.Email, user.Name),
+                Tuple.Create<string, string?>(tenant.Owner.Email, tenant.Owner.Name)
             };
 
             var templateData = new
@@ -108,7 +108,12 @@ namespace WhyNotEarth.Meredith.Tenant
                 googleMaps = user.GoogleLocation
             };
 
-            await _sendGridService.SendEmail(tenant.Company.Id, recipients, templateData);
+            var emailInfo = new EmailInfo(tenant.Company.Id, recipients)
+            {
+                TemplateData = templateData
+            };
+
+            await _sendGridService.SendEmailAsync(emailInfo);
         }
         public async Task SendWhatsappSms(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee,
             decimal amount, decimal tax, DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod,

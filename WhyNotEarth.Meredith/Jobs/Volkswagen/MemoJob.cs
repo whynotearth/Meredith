@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -41,18 +42,22 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
                 .Where(item => item.MemoId == memoId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
 
-            foreach (var batch in recipients.Batch(SendGridService.BatchSize))
+            var emailInfo = new EmailInfo(company.Id,
+                recipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList())
             {
-                await _sendGridService.SendEmail(company.Id, recipients, templateData, nameof(EmailRecipient.MemoId),
-                    memo.Id.ToString());
+                TemplateKey = "Memo",
+                TemplateData = templateData,
+                UniqueArgument = nameof(EmailRecipient.MemoId),
+                UniqueArgumentValue = memo.Id.ToString()
+            };
+            await _sendGridService.SendEmailAsync(emailInfo);
 
-                foreach (var recipient in batch)
-                {
-                    recipient.Status = EmailStatus.Sent;
-                }
-
-                await _dbContext.SaveChangesAsync();
+            foreach (var recipient in recipients)
+            {
+                recipient.Status = EmailStatus.Sent;
             }
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

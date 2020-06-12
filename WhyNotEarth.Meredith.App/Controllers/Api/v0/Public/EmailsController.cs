@@ -71,6 +71,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class SendGridEventItem
     {
         // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
+        [JsonProperty(nameof(EmailRecipient.CompanyId))]
+        public int CompanyId { get; set; }
 
         [JsonProperty(nameof(EmailRecipient.MemoId))]
         public int? MemoId { get; set; }
@@ -78,8 +80,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [JsonProperty(nameof(EmailRecipient.JumpStartId))]
         public int? JumpStartId { get; set; }
 
-        [JsonProperty(nameof(EmailRecipient.CompanyId))]
-        public int CompanyId { get; set; }
+        [JsonProperty(nameof(EmailRecipient.NewJumpStartId))]
+        public int? NewJumpStartId { get; set; }
 
         public int Timestamp { get; set; }
 
@@ -110,6 +112,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 query = query.Where(item => item.JumpStartId == JumpStartId);
             }
+            else if (NewJumpStartId.HasValue)
+            {
+                query = query.Where(item => item.NewJumpStartId == NewJumpStartId);
+            }
             else
             {
                 return;
@@ -134,6 +140,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             else if (Status == EmailStatus.Opened)
             {
                 emailRecipient.OpenDateTime = DateTime;
+            }
+            else if (Status == EmailStatus.Clicked)
+            {
+                emailRecipient.ClickDateTime = DateTime;
             }
 
             if (emailRecipient.Status < Status)

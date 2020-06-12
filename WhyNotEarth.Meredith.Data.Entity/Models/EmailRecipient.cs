@@ -21,6 +21,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public JumpStart JumpStart { get; set; }
 
+        public int? NewJumpStartId { get; set; }
+
+        public NewJumpStart NewJumpStart { get; set; }
+
         public string Email { get; set; }
 
         public string DistributionGroup { get; set; }
@@ -32,6 +36,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public DateTime? DeliverDateTime { get; set; }
 
         public DateTime? OpenDateTime { get; set; }
+
+        public DateTime? ClickDateTime { get; set; }
 
         public void Configure(EntityTypeBuilder<EmailRecipient> builder)
         {

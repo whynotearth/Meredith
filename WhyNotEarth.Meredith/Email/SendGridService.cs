@@ -25,45 +25,23 @@ namespace WhyNotEarth.Meredith.Email
             _dbContext = dbContext;
         }
 
-        public async Task SendEmail(int companyId, Tuple<string, string?> recipient, object templateData)
+        public async Task SendEmailAsync(EmailInfo emailInfo)
         {
-            await SendEmail(companyId, new List<Tuple<string, string?>> {recipient}, templateData);
-        }
+            var sendGridAccount = await GetAccount(emailInfo.CompanyId, emailInfo.TemplateKey);
 
-        public async Task SendEmail(int companyId, List<Tuple<string, string?>> recipients, object templateData)
-        {
-            var emailAddresses = recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
+            if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
+            {
+                emailInfo.Recipients.Add(Tuple.Create<string, string?>(sendGridAccount.Bcc, null));
+            }
 
-            await SendEmailCore(companyId, emailAddresses,
-                true, templateData,
-                null, null, null,
-                null, null,
-                null);
-        }
+            var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
 
-        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, object templateData,
-            string uniqueArgument, string uniqueArgumentValue)
-        {
-            var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
+            foreach (var batch in emailInfo.Recipients.Batch(BatchSize))
+            {
+                var sendGridMessage = GetSendGridMessage(batch, from, sendGridAccount, emailInfo);
 
-            await SendEmailCore(companyId, emailAddresses,
-                true, templateData,
-                null, null, null,
-                uniqueArgument, uniqueArgumentValue,
-                null);
-        }
-
-        public async Task SendEmail(int companyId, List<EmailRecipient> recipients, string subject,
-            string plainTextContent, string htmlContent, string uniqueArgument, string uniqueArgumentValue,
-            DateTime sendAt)
-        {
-            var emailAddresses = recipients.Select(item => new EmailAddress(item.Email)).ToList();
-
-            await SendEmailCore(companyId, emailAddresses,
-                false, null,
-                subject, plainTextContent, htmlContent,
-                uniqueArgument, uniqueArgumentValue,
-                sendAt);
+                await Send(sendGridAccount, sendGridMessage);
+            }
         }
 
         public async Task SendAuthEmail(string companySlug, string email, string subject, string message)
@@ -86,54 +64,45 @@ namespace WhyNotEarth.Meredith.Email
             await Send(sendGridAccount, sendGridMessage);
         }
 
-        private async Task SendEmailCore(int companyId, List<EmailAddress> recipients,
-            bool useTemplate, object? templateData,
-            string? subject, string? plainTextContent, string? htmlContent,
-            string? uniqueArgument, string? uniqueArgumentValue,
-            DateTime? sendAt)
+        private SendGridMessage GetSendGridMessage(List<Tuple<string, string?>> batch, EmailAddress from,
+            SendGridAccount sendGridAccount, EmailInfo emailInfo)
         {
-            var sendGridAccount = await GetAccount(companyId);
-
-            var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
-
-            if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
-            {
-                recipients.Add(new EmailAddress(sendGridAccount.Bcc));
-            }
-
             SendGridMessage sendGridMessage;
 
-            if (useTemplate)
+            if (emailInfo.TemplateData != null)
             {
-                sendGridMessage =
-                    MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from, recipients,
-                        sendGridAccount.TemplateId, templateData);
+                sendGridMessage = MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from,
+                    GetEmailAddresses(batch), sendGridAccount.TemplateId, emailInfo.TemplateData);
             }
             else
             {
-                sendGridMessage =
-                    MailHelper.CreateSingleEmailToMultipleRecipients(from, recipients, subject, plainTextContent,
-                        htmlContent);
+                sendGridMessage = MailHelper.CreateSingleEmailToMultipleRecipients(from, GetEmailAddresses(batch),
+                    emailInfo.Subject, emailInfo.PlainTextContent, emailInfo.HtmlContent);
             }
 
-            if (uniqueArgument != null && uniqueArgumentValue != null)
+            if (emailInfo.UniqueArgument != null)
             {
                 foreach (var personalization in sendGridMessage.Personalizations)
                 {
                     personalization.CustomArgs = new Dictionary<string, string>
                     {
-                        {uniqueArgument, uniqueArgumentValue},
-                        {nameof(SendGridAccount.CompanyId), sendGridAccount.CompanyId.ToString()}
+                        {emailInfo.UniqueArgument, emailInfo.UniqueArgumentValue ?? string.Empty},
+                        {nameof(SendGridAccount.CompanyId), emailInfo.CompanyId.ToString()}
                     };
                 }
             }
 
-            if (sendAt != null)
+            if (emailInfo.SendAt != null)
             {
-                sendGridMessage.SendAt = new DateTimeOffset(sendAt.Value).ToUnixTimeSeconds();
+                sendGridMessage.SendAt = new DateTimeOffset(emailInfo.SendAt.Value).ToUnixTimeSeconds();
             }
 
-            await Send(sendGridAccount, sendGridMessage);
+            if (emailInfo.AttachmentName != null)
+            {
+                sendGridMessage.AddAttachment(emailInfo.AttachmentName, emailInfo.AttachmentBase64Content);
+            }
+
+            return sendGridMessage;
         }
 
         private async Task Send(SendGridAccount sendGridAccount, SendGridMessage sendGridMessage)
@@ -149,11 +118,17 @@ namespace WhyNotEarth.Meredith.Email
             }
         }
 
-        private async Task<SendGridAccount> GetAccount(int companyId)
+        private async Task<SendGridAccount> GetAccount(int companyId, string? key)
         {
-            var sendGridAccount = await _dbContext.SendGridAccounts
-                .Where(s => s.CompanyId == companyId)
-                .FirstOrDefaultAsync();
+            var query = _dbContext.SendGridAccounts
+                .Where(s => s.CompanyId == companyId);
+
+            if (key != null)
+            {
+                query = query.Where(item => item.Key == key);
+            }
+
+            var sendGridAccount = await query.FirstOrDefaultAsync();
 
             if (sendGridAccount is null)
             {
@@ -170,22 +145,11 @@ namespace WhyNotEarth.Meredith.Email
 
         private async Task<SendGridAccount> GetAccount(string companySlug)
         {
-            var sendGridAccount = await _dbContext.SendGridAccounts
-                .Include(item => item.Company)
-                .Where(s => s.Company.Slug.ToLower() == companySlug.ToLower())
+            var company = await _dbContext.Companies
+                .Where(s => s.Slug == companySlug.ToLower())
                 .FirstOrDefaultAsync();
 
-            if (sendGridAccount is null)
-            {
-                if (await _dbContext.Companies.AnyAsync(c => c.Slug.ToLower() == companySlug.ToLower()))
-                {
-                    throw new RecordNotFoundException($"Company {companySlug} does not have SendGrid configured");
-                }
-
-                throw new RecordNotFoundException($"Company {companySlug} not found");
-            }
-
-            return sendGridAccount;
+            return await GetAccount(company.Id, null);
         }
 
         private async Task<string> GetErrorMessage(Response response)
@@ -193,6 +157,50 @@ namespace WhyNotEarth.Meredith.Email
             var body = await response.DeserializeResponseBodyAsync(response.Body);
 
             return string.Join(", ", body.Select(item => item.Key + ":" + item.Value).ToArray());
+        }
+
+        private List<EmailAddress> GetEmailAddresses(List<Tuple<string, string?>> recipients)
+        {
+            return recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
+        }
+    }
+
+    public class EmailInfo
+    {
+        public int CompanyId { get; }
+
+        public string TemplateKey { get; set; }
+
+        public List<Tuple<string, string?>> Recipients { get; }
+
+        public object? TemplateData { get; set; }
+
+        public string? Subject { get; set; }
+
+        public string? PlainTextContent { get; set; }
+
+        public string? HtmlContent { get; set; }
+
+        public string? UniqueArgument { get; set; }
+
+        public string? UniqueArgumentValue { get; set; }
+
+        public DateTime? SendAt { get; set; }
+
+        public string? AttachmentName { get; set; }
+
+        public string? AttachmentBase64Content { get; set; }
+
+        public EmailInfo(int companyId, Tuple<string, string?> recipient)
+        {
+            CompanyId = companyId;
+            Recipients = new List<Tuple<string, string?>> {recipient};
+        }
+
+        public EmailInfo(int companyId, List<Tuple<string, string?>> recipients)
+        {
+            CompanyId = companyId;
+            Recipients = recipients;
         }
     }
 }

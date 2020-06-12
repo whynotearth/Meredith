@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             {
                 DateTime = dateTime,
                 Status = JumpStartStatus.Preview,
-                DistributionGroups = string.Join(',', distributionGroups)
+                DistributionGroups = distributionGroups
             };
 
             _dbContext.JumpStarts.Add(jumpStart);
@@ -79,7 +79,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var jumpStart = await GetAsync(jumpStartId);
 
             jumpStart.DateTime = dateTime;
-            jumpStart.DistributionGroups = string.Join(',', distributionGroups);
+            jumpStart.DistributionGroups = distributionGroups;
             _dbContext.JumpStarts.Update(jumpStart);
 
             Rearrange(articles);
