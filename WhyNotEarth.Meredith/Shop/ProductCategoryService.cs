@@ -67,7 +67,8 @@ namespace WhyNotEarth.Meredith.Shop
             {
                 Description = model.Description,
                 Name = model.Name,
-                TenantId = tenant.Id
+                TenantId = tenant.Id,
+                ImageURL = model.ImageURL
             };
 
             _dbContext.ProductCategories.Add(category);
@@ -96,6 +97,7 @@ namespace WhyNotEarth.Meredith.Shop
 
             category.Name = model.Name;
             category.Description = model.Description;
+            category.ImageURL = model.ImageURL;
 
             _dbContext.ProductCategories.Update(category);
             await _dbContext.SaveChangesAsync();

@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public string TenantSlug { get; }
 
+        public string? ImageURL { get; }
+
         public ProductCategoryResult(ProductCategory productCategory)
         {
             this.Description = productCategory.Description;
@@ -21,6 +23,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             this.Name = productCategory.Name;
             this.Image = productCategory.Image?.Url;
             this.TenantSlug = productCategory.Tenant.Slug;
+            this.ImageURL = productCategory.ImageURL;
         }
     }
 }

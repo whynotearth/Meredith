@@ -28,6 +28,7 @@ namespace WhyNotEarth.Meredith.Models
         [Mandatory]
         public List<BusinessHourModel>? BusinessHours { get; set; }
 
+        public string? ImageURL { get; set; }
     }
 
     public class BusinessHourModel

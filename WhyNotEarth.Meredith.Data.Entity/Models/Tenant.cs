@@ -46,6 +46,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
                 .WithOne(i => i.Tenant)
                 .HasForeignKey<Tenant>(b => b.OwnerId);
         }
+
+        public string ImageURL { get; set; }
     }
 
     public class TenantImage : Image

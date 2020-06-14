@@ -108,7 +108,8 @@ namespace WhyNotEarth.Meredith.Shop
                 Price = new Price { Amount = model.Price!.Value },
                 ProductLocationInventories = productLocationInventories,
                 Variations = variations,
-                ProductAttributes = productAttributes
+                ProductAttributes = productAttributes,
+                ImageURL = model.ImageURL
             };
 
             _dbContext.ShoppingProducts.Add(product);
@@ -164,6 +165,7 @@ namespace WhyNotEarth.Meredith.Shop
             product.Variations = variations;
             product.ProductLocationInventories = productLocationInventories;
             product.ProductAttributes = productAttributes;
+            product.ImageURL = model.ImageURL;
 
             _dbContext.ShoppingProducts.Update(product);
             await _dbContext.SaveChangesAsync();

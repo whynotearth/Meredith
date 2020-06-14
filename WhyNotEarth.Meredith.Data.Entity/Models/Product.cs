@@ -36,6 +36,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public int TenantId { get; set; }
 
         public Tenant Tenant { get; set; }
+
+        public string ImageURL { get; set; }
     }
 
     public class ProductImage : Image

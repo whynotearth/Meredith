@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Data.Entity;
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200608084604_UpdateTenantEntity")]
+    partial class UpdateTenantEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1317,9 +1319,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.Property<string>("Tags")
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageURL")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -1450,10 +1449,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                     b.HasIndex("TenantId");
 
                     b.HasDiscriminator().HasValue("ProductCategory");
-
-                    b.Property<string>("ImageURL")
-                        .HasColumnType("text");
-
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.CategoryImage", b =>
@@ -1929,10 +1924,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Property<string>("ImageURL")
-                        .HasColumnType("text");
-
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Data.Entity.Models.SendGridAccount", b =>

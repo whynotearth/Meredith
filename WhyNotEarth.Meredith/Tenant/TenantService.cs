@@ -83,7 +83,8 @@ namespace WhyNotEarth.Meredith.Tenant
                 BusinessHours = GetBusinessHours(model.BusinessHours),
                 PaymentMethodType = paymentMethodType,
                 NotificationType = notificationType,
-                Description = model.Description
+                Description = model.Description,
+                ImageURL = model.ImageURL
             };
         }
 
