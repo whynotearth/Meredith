@@ -53,10 +53,30 @@ namespace WhyNotEarth.Meredith.Tenant
         {
             var user = await _userManager.FindByIdAsync(userId);
 
+            if (user is null)
+            {
+                throw new Exception($"Cannot find the user: {userId}");
+            }
+
             var tenant = await _meredithDbContext.Tenants
                 .Include(item => item.Owner)
                 .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
+
+            if (tenant is null)
+            {
+                throw new Exception($"Cannot find the tenant: {tenantId}");
+            }
+
+            if (tenant.Company is null)
+            {
+                throw new Exception($"Tenant: {tenantId} is not connected to any company");
+            }
+
+            if (tenant.Owner is null)
+            {
+                throw new Exception($"Tenant: {tenantId} does not have an owner");
+            }
 
             var recipients = new List<Tuple<string, string?>>
             {
