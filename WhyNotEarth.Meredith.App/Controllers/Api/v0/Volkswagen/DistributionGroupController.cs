@@ -8,6 +8,7 @@ using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
@@ -68,7 +69,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("{distributionGroupName}/recipients")]
         public async Task<NoContentResult> Add(string distributionGroupName, RecipientModel model)
         {
-            await _recipientService.AddAsync(distributionGroupName, model.Email!);
+            await _recipientService.AddAsync(distributionGroupName, model);
 
             return NoContent();
         }
@@ -78,7 +79,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPut("{distributionGroupName}/recipients/{recipientId}")]
         public async Task<NoContentResult> Edit(int recipientId, RecipientModel model)
         {
-            await _recipientService.EditAsync(recipientId, model.Email!);
+            await _recipientService.EditAsync(recipientId, model);
 
             return NoContent();
         }

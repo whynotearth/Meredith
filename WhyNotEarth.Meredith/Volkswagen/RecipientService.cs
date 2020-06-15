@@ -12,6 +12,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -84,27 +85,29 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return await _dbContext.Recipients.Where(item => item.DistributionGroup == distributionGroup).ToListAsync();
         }
 
-        public Task AddAsync(string distributionGroup, string email)
+        public Task AddAsync(string distributionGroup, RecipientModel model)
         {
             var hasDuplicate = _dbContext.Recipients.Any(item =>
-                item.DistributionGroup == distributionGroup && item.Email == email);
+                item.DistributionGroup == distributionGroup && item.Email == model.Email);
 
             if (hasDuplicate)
             {
-                throw new DuplicateRecordException($"The email {email} already exist in {distributionGroup}");
+                throw new DuplicateRecordException($"The email {model.Email} already exist in {distributionGroup}");
             }
 
             _dbContext.Recipients.Add(new Recipient
             {
                 DistributionGroup = distributionGroup,
-                Email = email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 CreationDateTime = DateTime.UtcNow
             });
 
             return _dbContext.SaveChangesAsync();
         }
 
-        public async Task EditAsync(int recipientId, string email)
+        public async Task EditAsync(int recipientId, RecipientModel model)
         {
             var recipient = await _dbContext.Recipients.FirstOrDefaultAsync(item => item.Id == recipientId);
 
@@ -115,14 +118,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var hasDuplicate = _dbContext.Recipients.Any(item =>
                 item.Id != recipient.Id && item.DistributionGroup == recipient.DistributionGroup &&
-                item.Email == email);
+                item.Email == model.Email);
 
             if (hasDuplicate)
             {
-                throw new DuplicateRecordException($"The email {email} already exist in {recipient.DistributionGroup}");
+                throw new DuplicateRecordException($"The email {model.Email} already exist in {recipient.DistributionGroup}");
             }
 
-            recipient.Email = email;
+            recipient.Email = model.Email;
+            recipient.FirstName = model.FirstName;
+            recipient.LastName = model.LastName;
 
             _dbContext.Update(recipient);
             await _dbContext.SaveChangesAsync();
