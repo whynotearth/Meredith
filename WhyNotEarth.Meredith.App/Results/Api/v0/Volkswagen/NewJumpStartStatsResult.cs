@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
-    public class JumpStartStatsResult
+    public class NewJumpStartStatsResult
     {
         public int UserCount { get; }
 
@@ -30,12 +30,12 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         //public List<JumpStartHeatMapResult> HeatMap { get; set; } = new List<JumpStartHeatMapResult>();
 
-        public JumpStartStatsResult(JumpStartStats jumpStartStats)
+        public NewJumpStartStatsResult(NewJumpStartStats newJumpStartStats)
         {
-            Users = jumpStartStats.Users.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Opens = jumpStartStats.Opens.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Clicks = jumpStartStats.Clicks.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Tags = jumpStartStats.Tags.Select(item => new JumpStartDailyTagStatsResult(item)).ToList();
+            Users = newJumpStartStats.Users.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Opens = newJumpStartStats.Opens.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Clicks = newJumpStartStats.Clicks.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Tags = newJumpStartStats.Tags.Select(item => new JumpStartDailyTagStatsResult(item)).ToList();
             
             UserCount = Users.LastOrDefault()?.Count ?? 0;
             OpenCount = Opens.LastOrDefault()?.Count ?? 0;

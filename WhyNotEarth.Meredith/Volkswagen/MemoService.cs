@@ -17,13 +17,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly MeredithDbContext _dbContext;
         private readonly EmailRecipientService _emailRecipientService;
+        private readonly RecipientService _recipientService;
 
         public MemoService(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
-            EmailRecipientService emailRecipientService)
+            EmailRecipientService emailRecipientService, RecipientService recipientService)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;
             _emailRecipientService = emailRecipientService;
+            _recipientService = recipientService;
         }
 
         public async Task CreateAsync(List<string> distributionGroups, string subject, string date, string to,
@@ -74,6 +76,53 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var memoStat = await _emailRecipientService.GetMemoListStatsAsync(memo.Id);
 
             return new MemoInfo(memo, memoStat);
+        }
+
+        public async Task<MemoOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
+        {
+            var userStats = await GetUserStatsAsync(fromDate, toDate);
+            
+            var openStats = await GetOpenStatsAsync(fromDate, toDate);
+            
+            var clickStats = await GetClickStatsAsync(fromDate, toDate);
+
+            return new MemoOverAllStats(userStats, openStats, clickStats);
+        }
+
+        private async Task<List<MemoDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        {
+            var result = new List<MemoDailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new MemoDailyStats(date, await _recipientService.GetCountAsync(date)));
+            }
+
+            return result;
+        }
+
+        private async Task<List<MemoDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        {
+            var result = new List<MemoDailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new MemoDailyStats(date, await _emailRecipientService.GetMemoOpenCountAsync(date)));
+            }
+
+            return result;
+        }
+
+        private async Task<List<MemoDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        {
+            var result = new List<MemoDailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new MemoDailyStats(date, await _emailRecipientService.GetMemoClickCountAsync(date)));
+            }
+
+            return result;
         }
     }
 }

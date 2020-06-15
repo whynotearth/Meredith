@@ -58,12 +58,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("stats")]
-        public async Task<ActionResult<JumpStartStatsResult>> Stats([FromQuery] DateTime fromDate,
+        public async Task<ActionResult<NewJumpStartStatsResult>> Stats([FromQuery] DateTime fromDate,
             [FromQuery] DateTime toDate)
         {
             var stats = await _newJumpStartService.GetStatsAsync(fromDate.Date, toDate.Date);
 
-            return Ok(new JumpStartStatsResult(stats));
+            return Ok(new NewJumpStartStatsResult(stats));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             var stats = await _memoService.GetStatsAsync();
 
             return Ok(stats.Select(item => new MemoStatResult(item)));
+        }
+
+        [Returns200]
+        [HttpGet("overallstats")]
+        public async Task<ActionResult<List<MemoStatResult>>> OverallStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
+
+            return Ok(new MemoOverAllStatsResult(stats));
         }
 
         [Returns200]

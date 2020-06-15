@@ -55,7 +55,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return $"{VolkswagenCompany.Slug}/JumpStartAttachments/{dateTime.Date:yyyy_MM_dd}.pdf";
         }
 
-        public async Task<JumpStartStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<NewJumpStartStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
             
@@ -65,7 +65,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
 
-            return new JumpStartStats(userStats, openStats, clickStats, tagStats);
+            return new NewJumpStartStats(userStats, openStats, clickStats, tagStats);
         }
 
         private async Task<List<JumpStartDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
@@ -86,7 +86,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetJumpStartOpenCountAsync(date)));
+                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetNewJumpStartOpenCountAsync(date)));
             }
 
             return result;
@@ -98,7 +98,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetJumpStartClickCountAsync(date)));
+                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetNewJumpStartClickCountAsync(date)));
             }
 
             return result;

@@ -90,16 +90,28 @@ namespace WhyNotEarth.Meredith.Email
             return new EmailDetailStats(notOpenedList, openedList);
         }
 
-        public Task<int> GetJumpStartOpenCountAsync(DateTime date)
+        public Task<int> GetNewJumpStartOpenCountAsync(DateTime date)
         {
             return _dbContext.EmailRecipients.CountAsync(item =>
                 item.JumpStartId != null && item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
         }
 
-        public Task<int> GetJumpStartClickCountAsync(DateTime date)
+        public Task<int> GetNewJumpStartClickCountAsync(DateTime date)
         {
             return _dbContext.EmailRecipients.CountAsync(item =>
                 item.JumpStartId != null && item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
+        }
+
+        public Task<int> GetMemoOpenCountAsync(DateTime date)
+        {
+            return _dbContext.EmailRecipients.CountAsync(item =>
+                item.MemoId != null && item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
+        }
+
+        public Task<int> GetMemoClickCountAsync(DateTime date)
+        {
+            return _dbContext.EmailRecipients.CountAsync(item =>
+                item.MemoId != null && item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
         }
     }
 }

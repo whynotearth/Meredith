@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
-    public class JumpStartStats
+    public class NewJumpStartStats
     {
         public List<JumpStartDailyStats> Users { get; }
 
@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public List<JumpStartDailyTagStats> Tags { get; }
 
-        public JumpStartStats(List<JumpStartDailyStats> users, List<JumpStartDailyStats> opens,
+        public NewJumpStartStats(List<JumpStartDailyStats> users, List<JumpStartDailyStats> opens,
             List<JumpStartDailyStats> clicks, List<JumpStartDailyTagStats> tags)
         {
             Users = users;
