@@ -21,8 +21,6 @@ namespace WhyNotEarth.Meredith.Volkswagen.Models
 
         public List<string>? Tags { get; set; }
 
-        [NotNull]
-        [Mandatory]
         public string? Body { get; set; }
 
         public string? PdfUrl { get; set; }

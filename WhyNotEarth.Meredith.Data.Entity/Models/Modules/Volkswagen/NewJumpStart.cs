@@ -29,7 +29,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
             builder.ToTable("NewJumpStarts", "ModuleVolkswagen");
             builder.Property(b => b.Subject).IsRequired();
             builder.Property(b => b.DistributionGroups).IsRequired();
-            builder.Property(b => b.Body).IsRequired();
             builder.Property(e => e.DistributionGroups)
                 .HasConversion(
                     v => string.Join(",", v),
