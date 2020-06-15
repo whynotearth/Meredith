@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
     public class NewJumpStartEmailJob
     {
+        private const string TemplateKey = "NewJumpStart";
+
         private readonly MeredithDbContext _dbContext;
         private readonly IFileService _fileService;
         private readonly NewJumpStartService _newJumpStartService;
@@ -65,7 +67,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 
             return new EmailInfo(company.Id, recipients)
             {
-                TemplateKey = "NewJumpStart",
+                TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(newJumpStart),
                 AttachmentName = $"{newJumpStart.DateTime.Date:yyyy_MM_dd}.pdf",
                 AttachmentBase64Content = attachmentContent

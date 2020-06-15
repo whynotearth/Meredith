@@ -141,9 +141,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<int> GetCountAsync(DateTime dateTime)
+        public Task<int> GetCountAsync(DateTime date)
         {
-            return _dbContext.Recipients.CountAsync(item => item.CreationDateTime <= dateTime);
+            return _dbContext.Recipients.CountAsync(item => item.CreationDateTime.Date <= date);
         }
 
         private async Task InsertRecordsAsync(IEnumerable<RecipientCsvModel> records)

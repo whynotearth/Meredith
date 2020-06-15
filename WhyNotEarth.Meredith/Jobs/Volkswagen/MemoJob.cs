@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 {
     public class MemoJob
     {
+        private const string TemplateKey = "Memo";
+
         private readonly MeredithDbContext _dbContext;
         private readonly SendGridService _sendGridService;
 
@@ -45,7 +47,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             var emailInfo = new EmailInfo(company.Id,
                 recipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList())
             {
-                TemplateKey = "Memo",
+                TemplateKey = TemplateKey,
                 TemplateData = templateData,
                 UniqueArgument = nameof(EmailRecipient.MemoId),
                 UniqueArgumentValue = memo.Id.ToString()

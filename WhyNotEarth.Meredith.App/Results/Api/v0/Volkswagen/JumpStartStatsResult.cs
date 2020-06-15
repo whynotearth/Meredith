@@ -10,15 +10,15 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
     {
         public int UserCount { get; }
 
-        public int UserGrowthPercent { get; }
+        public int UserGrowthPercent { get; } = 100;
 
         public int OpenCount { get; }
 
-        public int OpenGrowthPercent { get; }
+        public int OpenGrowthPercent { get; } = 100;
 
         public int ClickCount { get; }
 
-        public int ClickGrowthPercent { get; }
+        public int ClickGrowthPercent { get; } = 100;
 
         public List<JumpStartDailyStatsResult> Users { get; }
 
@@ -38,13 +38,32 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Tags = jumpStartStats.Tags.Select(item => new JumpStartDailyTagStatsResult(item)).ToList();
             
             UserCount = Users.LastOrDefault()?.Count ?? 0;
-            UserGrowthPercent =  (Users.LastOrDefault()?.Count ?? 0 / Users.FirstOrDefault()?.Count ?? 1) * 100;
-
             OpenCount = Opens.LastOrDefault()?.Count ?? 0;
-            OpenGrowthPercent = (Opens.LastOrDefault()?.Count ?? 0 / Opens.FirstOrDefault()?.Count ?? 1) * 100;
-
             ClickCount = Clicks.LastOrDefault()?.Count ?? 0;
-            ClickGrowthPercent = (Clicks.LastOrDefault()?.Count ?? 0 / Clicks.FirstOrDefault()?.Count ?? 1) * 100;
+
+            var firstUserCount = Users.FirstOrDefault()?.Count ?? 0;
+            if (firstUserCount != 0)
+            {
+                UserGrowthPercent =  GetPercent(Users.LastOrDefault()?.Count ?? 0, firstUserCount);
+            }
+
+            var firstOpenCount = Opens.FirstOrDefault()?.Count ?? 0;
+            if (firstOpenCount != 0)
+            {
+                OpenGrowthPercent = GetPercent(Opens.LastOrDefault()?.Count ?? 0, firstOpenCount);
+            }
+
+            var firstClickCount = Clicks.FirstOrDefault()?.Count ?? 0;
+            if (firstClickCount != 0)
+            {
+                ClickGrowthPercent = GetPercent(Clicks.LastOrDefault()?.Count ?? 0, firstClickCount);
+            }
+        }
+
+        private int GetPercent(double first, int last)
+        {
+            var difference = last - first;
+            return (int) (difference / first * 100);
         }
     }
 
