@@ -49,6 +49,20 @@ namespace WhyNotEarth.Meredith.Tenant
             return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id);
         }
 
+        public async Task<List<string?>> GetAllTenantByUser(User user, string companySlug, string? tenantSlug)
+        {
+            var tenants = _dbContext.Tenants
+                                       .Include(item => item.Company)
+                                       .Where(item => item.Company.Slug == companySlug.ToLower() && item.OwnerId == user.Id);
+
+            if (!string.IsNullOrEmpty(tenantSlug))
+            {
+                tenants = tenants.Where(item => item.Slug == tenantSlug.ToLower());
+            }
+
+            return await tenants.Select(t => t.Slug).ToListAsync();
+        }
+
         private async Task<Company> ValidateAsync(string companySlug, string slug)
         {
             var company =

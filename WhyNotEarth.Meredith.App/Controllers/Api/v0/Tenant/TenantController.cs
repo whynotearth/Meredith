@@ -46,5 +46,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             return Ok(tenants.Select(item => new TenantResult(item)).ToList());
         }
+
+        [Authorize]
+        [HttpGet("mytenants")]
+        public async Task<ActionResult<List<string>>> GetAllTenantsByUser(string companySlug, string? tenantSlug)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var tenants = await _tenantService.GetAllTenantByUser(user, companySlug, tenantSlug);
+
+            return Ok(tenants);
+        }
     }
 }
