@@ -24,5 +24,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Models
         [NotNull]
         [Mandatory]
         public string? Body { get; set; }
+
+        public string? PdfUrl { get; set; }
     }
 }

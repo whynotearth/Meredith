@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
-using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -15,14 +14,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class NewJumpStartService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly IFileService _fileService;
         private readonly RecipientService _recipientService;
         private readonly EmailRecipientService _emailRecipientService;
 
-        public NewJumpStartService(MeredithDbContext dbContext, IFileService fileService, RecipientService recipientService, EmailRecipientService emailRecipientService)
+        public NewJumpStartService(MeredithDbContext dbContext, RecipientService recipientService, EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
-            _fileService = fileService;
             _recipientService = recipientService;
             _emailRecipientService = emailRecipientService;
         }
@@ -36,23 +33,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 DistributionGroups = model.DistributionGroups,
                 Tags = model.Tags,
                 Body = model.Body,
+                PdfUrl = model.PdfUrl,
                 Status = NewJumpStartStatus.Preview
             };
 
             _dbContext.NewJumpStarts.Add(jumpStart);
             await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task SaveAttachmentAsync(DateTime date, Stream stream)
-        {
-            var path = GetPdfPath(date);
-
-            await _fileService.SaveAsync(path, "application/pdf", stream);
-        }
-
-        public string GetPdfPath(DateTime dateTime)
-        {
-            return $"{VolkswagenCompany.Slug}/JumpStartAttachments/{dateTime.Date:yyyy_MM_dd}.pdf";
         }
 
         public async Task<NewJumpStartStats> GetStatsAsync(DateTime fromDate, DateTime toDate)

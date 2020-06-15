@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public string Body { get; set; }
 
+        public string PdfUrl { get; set; }
+
         public NewJumpStartStatus Status { get; set; }
 
         public void Configure(EntityTypeBuilder<NewJumpStart> builder)

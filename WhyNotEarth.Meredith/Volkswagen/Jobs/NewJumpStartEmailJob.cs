@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
-using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
@@ -17,17 +16,12 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         private const string TemplateKey = "NewJumpStart";
 
         private readonly MeredithDbContext _dbContext;
-        private readonly IFileService _fileService;
-        private readonly NewJumpStartService _newJumpStartService;
         private readonly SendGridService _sendGridService;
 
-        public NewJumpStartEmailJob(MeredithDbContext dbContext, SendGridService sendGridService,
-            NewJumpStartService newJumpStartService, IFileService fileService)
+        public NewJumpStartEmailJob(MeredithDbContext dbContext, SendGridService sendGridService)
         {
             _dbContext = dbContext;
             _sendGridService = sendGridService;
-            _newJumpStartService = newJumpStartService;
-            _fileService = fileService;
         }
 
         public async Task SendAsync(int newJmpStartId)
@@ -63,7 +57,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             List<Tuple<string, string?>> recipients)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
-            var attachmentContent = await GetPdfContentAsync(newJumpStart.DateTime);
+            var attachmentContent = await GetPdfContentAsync(newJumpStart.PdfUrl);
 
             return new EmailInfo(company.Id, recipients)
             {
@@ -85,14 +79,10 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             };
         }
 
-        private async Task<string> GetPdfContentAsync(DateTime dateTime)
+        private async Task<string> GetPdfContentAsync(string pdfUrl)
         {
-            var path = _newJumpStartService.GetPdfPath(dateTime);
-
-            await using var stream = new MemoryStream();
-
-            await _fileService.GetAsync(path, stream);
-            var bytes = stream.ToArray();
+            using var client = new HttpClient();
+            var bytes = await client.GetByteArrayAsync(pdfUrl);
 
             return Convert.ToBase64String(bytes);
         }
