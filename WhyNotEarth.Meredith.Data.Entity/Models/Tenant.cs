@@ -42,9 +42,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public void Configure(EntityTypeBuilder<Tenant> builder)
         {
-            builder.HasOne(b => b.Owner)
-                .WithOne(i => i.Tenant)
-                .HasForeignKey<Tenant>(b => b.OwnerId);
+            builder.HasOne(tenant => tenant.Owner)
+                .WithMany()
+                .HasForeignKey(tenant => tenant.OwnerId);
+            
         }
     }
 

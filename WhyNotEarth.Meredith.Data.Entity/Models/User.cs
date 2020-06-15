@@ -26,9 +26,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         {
             builder.ToTable("Users");
             
-            builder.HasOne(b => b.Tenant)
-                .WithOne(i => i.Owner)
-                .HasForeignKey<User>(b => b.TenantId);
+            builder.HasOne(user => user.Tenant)
+                .WithMany()
+                .HasForeignKey(user => user.TenantId);
         }
     }
 }
