@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -14,10 +14,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class NewJumpStartService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly RecipientService _recipientService;
         private readonly EmailRecipientService _emailRecipientService;
+        private readonly RecipientService _recipientService;
 
-        public NewJumpStartService(MeredithDbContext dbContext, RecipientService recipientService, EmailRecipientService emailRecipientService)
+        public NewJumpStartService(MeredithDbContext dbContext, RecipientService recipientService,
+            EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
             _recipientService = recipientService;
@@ -26,16 +27,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task CreateAsync(NewJumpStartModel model)
         {
-            var jumpStart = new NewJumpStart
-            {
-                DateTime = model.DateTime!.Value,
-                Subject = model.Subject,
-                DistributionGroups = model.DistributionGroups,
-                Tags = model.Tags,
-                Body = model.Body,
-                PdfUrl = model.PdfUrl,
-                Status = NewJumpStartStatus.Preview
-            };
+            var jumpStart = Map(new NewJumpStart(), model);
+
+            jumpStart.Status = NewJumpStartStatus.Preview;
 
             _dbContext.NewJumpStarts.Add(jumpStart);
             await _dbContext.SaveChangesAsync();
@@ -44,9 +38,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task<NewJumpStartStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
-            
+
             var openStats = await GetOpenStatsAsync(fromDate, toDate);
-            
+
             var clickStats = await GetClickStatsAsync(fromDate, toDate);
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
@@ -72,7 +66,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetNewJumpStartOpenCountAsync(date)));
+                result.Add(new JumpStartDailyStats(date,
+                    await _emailRecipientService.GetNewJumpStartOpenCountAsync(date)));
             }
 
             return result;
@@ -84,7 +79,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _emailRecipientService.GetNewJumpStartClickCountAsync(date)));
+                result.Add(new JumpStartDailyStats(date,
+                    await _emailRecipientService.GetNewJumpStartClickCountAsync(date)));
             }
 
             return result;
@@ -94,11 +90,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var result = new List<JumpStartDailyTagStats>();
 
-            var newJumpStarts = await _dbContext.NewJumpStarts.Where(item => fromDate <= item.DateTime.Date && item.DateTime.Date <= toDate)
+            var newJumpStarts = await _dbContext.NewJumpStarts
+                .Where(item => fromDate <= item.DateTime.Date && item.DateTime.Date <= toDate)
                 .ToListAsync();
 
             var tags = newJumpStarts.SelectMany(item => item.Tags).Distinct().ToList();
-            
+
             foreach (var tag in tags)
             {
                 var tagStats = new List<JumpStartDailyStats>();
@@ -129,6 +126,38 @@ namespace WhyNotEarth.Meredith.Volkswagen
             }
 
             return 1;
+        }
+
+        public Task<List<NewJumpStart>> ListAsync()
+        {
+            return _dbContext.NewJumpStarts.Where(item => item.Status == NewJumpStartStatus.Preview).ToListAsync();
+        }
+
+        public async Task EditAsync(int id, NewJumpStartModel model)
+        {
+            var newJumpStart = await _dbContext.NewJumpStarts.FirstOrDefaultAsync(item => item.Id == id);
+
+            if (newJumpStart is null)
+            {
+                throw new RecordNotFoundException($"NewJumpStart {id} not found");
+            }
+
+            newJumpStart = Map(newJumpStart, model);
+
+            _dbContext.NewJumpStarts.Update(newJumpStart);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private NewJumpStart Map(NewJumpStart newJumpStart, NewJumpStartModel model)
+        {
+            newJumpStart.DateTime = model.DateTime!.Value;
+            newJumpStart.Subject = model.Subject;
+            newJumpStart.DistributionGroups = model.DistributionGroups;
+            newJumpStart.Tags = model.Tags;
+            newJumpStart.Body = model.Body;
+            newJumpStart.PdfUrl = model.PdfUrl;
+
+            return newJumpStart;
         }
     }
 }

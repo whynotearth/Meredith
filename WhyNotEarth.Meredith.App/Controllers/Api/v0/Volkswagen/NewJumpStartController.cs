@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +44,24 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             var stats = await _newJumpStartService.GetStatsAsync(fromDate.Date, toDate.Date);
 
             return Ok(new NewJumpStartStatsResult(stats));
+        }
+
+        [Returns200]
+        [HttpGet("")]
+        public async Task<ActionResult<List<NewJumpStartResult>>> List()
+        {
+            var newJumpStarts = await _newJumpStartService.ListAsync();
+
+            return Ok(newJumpStarts.Select(item => new NewJumpStartResult(item)));
+        }
+
+        [Returns204]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<NewJumpStartResult>> Edit(int id, NewJumpStartModel model)
+        {
+            await _newJumpStartService.EditAsync(id, model);
+
+            return NoContent();
         }
     }
 }

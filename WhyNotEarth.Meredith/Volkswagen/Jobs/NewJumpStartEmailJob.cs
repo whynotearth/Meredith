@@ -74,7 +74,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             {
                 {"subject", $"Project Blue Delta - {newJumpStart.DateTime:MMMM d, yyyy}"},
                 {"date", newJumpStart.DateTime.ToString("dddd | MMM. d, yyyy")},
-                {"to", newJumpStart.Status},
+                //{"to", newJumpStart.Status},
                 {"description", newJumpStart.Body}
             };
         }
