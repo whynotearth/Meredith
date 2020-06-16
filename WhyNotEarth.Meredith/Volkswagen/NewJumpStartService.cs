@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new NewJumpStartStats(userStats, openStats, clickStats, tagStats);
         }
 
-        private async Task<List<JumpStartDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<JumpStartDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<JumpStartDailyStats>();
 
@@ -60,7 +60,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<JumpStartDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<JumpStartDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<JumpStartDailyStats>();
 
@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<JumpStartDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<JumpStartDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<JumpStartDailyStats>();
 

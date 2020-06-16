@@ -89,7 +89,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new MemoOverAllStats(userStats, openStats, clickStats);
         }
 
-        private async Task<List<MemoDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<MemoDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<MemoDailyStats>();
 
@@ -101,7 +101,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<MemoDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<MemoDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<MemoDailyStats>();
 
@@ -113,7 +113,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<MemoDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<MemoDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<MemoDailyStats>();
 

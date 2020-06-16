@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Volkswagen;
@@ -19,12 +21,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Route("api/v0/volkswagen/memos")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
-    public class MemoController : ControllerBase
+    public class MemoController : BaseController
     {
         private readonly EmailRecipientService _emailRecipientService;
         private readonly MemoService _memoService;
 
-        public MemoController(MemoService memoService, EmailRecipientService emailRecipientService)
+        public MemoController(MemoService memoService, EmailRecipientService emailRecipientService,
+            IWebHostEnvironment environment) : base(environment)
         {
             _memoService = memoService;
             _emailRecipientService = emailRecipientService;
@@ -50,15 +53,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
-        [HttpGet("overallstats")]
-        public async Task<ActionResult<List<MemoStatResult>>> OverallStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
-        {
-            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
-
-            return Ok(new MemoOverAllStatsResult(stats));
-        }
-
-        [Returns200]
         [Returns404]
         [HttpGet("{memoId}/stats")]
         public async Task<ActionResult<List<MemoStatDetailResult>>> DetailStats(int memoId)
@@ -73,6 +67,46 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             result.Opened.AddRange(detailStats.OpenedList.Select(item => new EmailRecipientResult(item)));
 
             return Ok(result);
+        }
+
+        [Returns200]
+        [HttpGet("overallstats")]
+        public async Task<ActionResult<List<MemoStatResult>>> OverallStats([FromQuery] DateTime fromDate,
+            [FromQuery] DateTime toDate)
+        {
+            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
+
+            return Ok(new MemoOverAllStatsResult(stats));
+        }
+
+        [Returns200]
+        [HttpGet("exportuserstats")]
+        public async Task<IActionResult> ExportOverallUserStats([FromQuery] DateTime fromDate,
+            [FromQuery] DateTime toDate)
+        {
+            var stats = await _memoService.GetUserStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
+        }
+
+        [Returns200]
+        [HttpGet("exportopenstats")]
+        public async Task<IActionResult> ExportOverallOpenStats([FromQuery] DateTime fromDate,
+            [FromQuery] DateTime toDate)
+        {
+            var stats = await _memoService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
+        }
+
+        [Returns200]
+        [HttpGet("exportclickstats")]
+        public async Task<IActionResult> ExportOverallClickStats([FromQuery] DateTime fromDate,
+            [FromQuery] DateTime toDate)
+        {
+            var stats = await _memoService.GetClickStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
         }
     }
 }

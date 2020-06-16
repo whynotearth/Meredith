@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
@@ -22,7 +23,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     {
         private readonly NewJumpStartService _newJumpStartService;
 
-        public NewJumpStartController(NewJumpStartService newJumpStartService)
+        public NewJumpStartController(NewJumpStartService newJumpStartService, IWebHostEnvironment environment) :
+            base(environment)
         {
             _newJumpStartService = newJumpStartService;
         }
@@ -62,6 +64,33 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _newJumpStartService.EditAsync(id, model);
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("exportuserstats")]
+        public async Task<IActionResult> ExportUserStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var stats = await _newJumpStartService.GetUserStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
+        }
+
+        [Returns200]
+        [HttpGet("exportopenstats")]
+        public async Task<IActionResult> ExportOpenStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var stats = await _newJumpStartService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
+        }
+
+        [Returns200]
+        [HttpGet("exportclickstats")]
+        public async Task<IActionResult> ExportClickStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var stats = await _newJumpStartService.GetClickStatsAsync(fromDate.Date, toDate.Date);
+
+            return await Csv(stats);
         }
     }
 }
