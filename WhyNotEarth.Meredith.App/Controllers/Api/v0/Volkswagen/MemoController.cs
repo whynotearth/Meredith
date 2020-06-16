@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Mvc;
@@ -24,13 +25,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class MemoController : BaseController
     {
         private readonly EmailRecipientService _emailRecipientService;
+        private readonly IWebHostEnvironment _environment;
         private readonly MemoService _memoService;
 
         public MemoController(MemoService memoService, EmailRecipientService emailRecipientService,
-            IWebHostEnvironment environment) : base(environment)
+            IWebHostEnvironment environment)
         {
             _memoService = memoService;
             _emailRecipientService = emailRecipientService;
+            _environment = environment;
         }
 
         [Returns201]
@@ -86,7 +89,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _memoService.GetUserStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
 
         [Returns200]
@@ -96,7 +99,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _memoService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
 
         [Returns200]
@@ -106,7 +109,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _memoService.GetClickStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
     }
 }

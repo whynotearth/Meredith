@@ -4,21 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using CsvHelper;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 
 namespace WhyNotEarth.Meredith.App.Mvc
 {
     public class BaseController : ControllerBase
     {
-        private readonly IWebHostEnvironment _environment;
-
-        public BaseController(IWebHostEnvironment environment)
-        {
-            _environment = environment;
-        }
-
         [NonAction]
         protected CreateResult Created()
         {
@@ -32,11 +23,11 @@ namespace WhyNotEarth.Meredith.App.Mvc
         }
 
         [NonAction]
-        protected async Task<IActionResult> Csv<T>(IEnumerable<T> records)
+        protected async Task<IActionResult> Csv<T>(IEnumerable<T> records, bool isDevelopment)
         {
             var csvData = await GetCsvData(records);
 
-            if (_environment.IsDevelopment())
+            if (isDevelopment)
             {
                 return File(csvData, "text/csv", Guid.NewGuid() + ".csv");
             }

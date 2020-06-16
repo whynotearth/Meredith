@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
@@ -22,11 +23,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     public class NewJumpStartController : BaseController
     {
         private readonly NewJumpStartService _newJumpStartService;
+        private readonly IWebHostEnvironment _environment;
 
-        public NewJumpStartController(NewJumpStartService newJumpStartService, IWebHostEnvironment environment) :
-            base(environment)
+        public NewJumpStartController(NewJumpStartService newJumpStartService, IWebHostEnvironment environment)
         {
             _newJumpStartService = newJumpStartService;
+            _environment = environment;
         }
 
         [Returns201]
@@ -72,7 +74,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _newJumpStartService.GetUserStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
 
         [Returns200]
@@ -81,7 +83,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _newJumpStartService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
 
         [Returns200]
@@ -90,7 +92,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var stats = await _newJumpStartService.GetClickStatsAsync(fromDate.Date, toDate.Date);
 
-            return await Csv(stats);
+            return await Csv(stats, _environment.IsDevelopment());
         }
     }
 }
