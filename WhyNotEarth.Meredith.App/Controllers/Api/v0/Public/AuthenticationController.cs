@@ -90,6 +90,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             await _userManager.RemoveLoginAsync(user, userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+            await _signInManager.SignOutAsync();
 
             return Ok();
         }
