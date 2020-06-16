@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         public async Task SendAsync()
         {
             var newJumpStarts = await _dbContext.NewJumpStarts
-                .Where(item => item.Status != NewJumpStartStatus.Sent &&
+                .Where(item => item.Status == NewJumpStartStatus.Preview &&
                                item.DateTime < DateTime.UtcNow.AddMinutes(15)).ToListAsync();
 
             foreach (var newJumpStart in newJumpStarts)
