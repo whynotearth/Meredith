@@ -69,30 +69,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
-        [HttpGet("exportuserstats")]
+        [HttpGet("stats/export")]
         public async Task<IActionResult> ExportUserStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
+            var result = new List<OverAllStatsCsvResult>();
+
             var stats = await _newJumpStartService.GetUserStatsAsync(fromDate.Date, toDate.Date);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.User, item)));
 
-            return await Csv(stats, _environment.IsDevelopment());
-        }
+            stats = await _newJumpStartService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Open, item)));
 
-        [Returns200]
-        [HttpGet("exportopenstats")]
-        public async Task<IActionResult> ExportOpenStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
-        {
-            var stats = await _newJumpStartService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
+            stats = await _newJumpStartService.GetClickStatsAsync(fromDate.Date, toDate.Date);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Click, item)));
 
-            return await Csv(stats, _environment.IsDevelopment());
-        }
-
-        [Returns200]
-        [HttpGet("exportclickstats")]
-        public async Task<IActionResult> ExportClickStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
-        {
-            var stats = await _newJumpStartService.GetClickStatsAsync(fromDate.Date, toDate.Date);
-
-            return await Csv(stats, _environment.IsDevelopment());
+            return await Csv(result, _environment.IsDevelopment());
         }
     }
 }

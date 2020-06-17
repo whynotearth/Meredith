@@ -36,7 +36,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<NewJumpStartStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<NewJumpStartOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
@@ -46,50 +46,50 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
 
-            return new NewJumpStartStats(userStats, openStats, clickStats, tagStats);
+            return new NewJumpStartOverAllStats(userStats, openStats, clickStats, tagStats);
         }
 
-        public async Task<List<JumpStartDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<JumpStartDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
+                result.Add(new DailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
             }
 
             return result;
         }
 
-        public async Task<List<JumpStartDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<JumpStartDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date,
+                result.Add(new DailyStats(date,
                     await _emailRecipientService.GetOpenCountAsync(date, item => item.NewJumpStartId != null)));
             }
 
             return result;
         }
 
-        public async Task<List<JumpStartDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<JumpStartDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date,
+                result.Add(new DailyStats(date,
                     await _emailRecipientService.GetClickCountAsync(date, item => item.NewJumpStartId != null)));
             }
 
             return result;
         }
 
-        private async Task<List<JumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
+        private async Task<List<NewJumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<JumpStartDailyTagStats>();
+            var result = new List<NewJumpStartDailyTagStats>();
 
             var newJumpStarts = await _dbContext.NewJumpStarts
                 .Where(item => fromDate <= item.DateTime.Date && item.DateTime.Date <= toDate)
@@ -99,14 +99,14 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             foreach (var tag in tags)
             {
-                var tagStats = new List<JumpStartDailyStats>();
+                var tagStats = new List<DailyStats>();
 
                 for (var date = fromDate; date <= toDate; date = date.AddDays(1))
                 {
-                    tagStats.Add(new JumpStartDailyStats(date, GetTagUsage(newJumpStarts, tag, date)));
+                    tagStats.Add(new DailyStats(date, GetTagUsage(newJumpStarts, tag, date)));
                 }
 
-                result.Add(new JumpStartDailyTagStats(tag, tagStats));
+                result.Add(new NewJumpStartDailyTagStats(tag, tagStats));
             }
 
             return result;

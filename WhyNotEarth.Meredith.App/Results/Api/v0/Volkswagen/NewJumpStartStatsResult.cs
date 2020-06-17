@@ -30,12 +30,12 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         //public List<JumpStartHeatMapResult> HeatMap { get; set; } = new List<JumpStartHeatMapResult>();
 
-        public NewJumpStartStatsResult(NewJumpStartStats newJumpStartStats)
+        public NewJumpStartStatsResult(NewJumpStartOverAllStats newJumpStartOverAllStats)
         {
-            Users = newJumpStartStats.Users.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Opens = newJumpStartStats.Opens.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Clicks = newJumpStartStats.Clicks.Select(item => new JumpStartDailyStatsResult(item)).ToList();
-            Tags = newJumpStartStats.Tags.Select(item => new JumpStartDailyTagStatsResult(item)).ToList();
+            Users = newJumpStartOverAllStats.Users.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Opens = newJumpStartOverAllStats.Opens.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Clicks = newJumpStartOverAllStats.Clicks.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Tags = newJumpStartOverAllStats.Tags.Select(item => new JumpStartDailyTagStatsResult(item)).ToList();
             
             UserCount = Users.LastOrDefault()?.Count ?? 0;
             OpenCount = Opens.LastOrDefault()?.Count ?? 0;
@@ -74,10 +74,10 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public int Count { get; }
 
-        public JumpStartDailyStatsResult(JumpStartDailyStats jumpStartDailyStats)
+        public JumpStartDailyStatsResult(DailyStats dailyStats)
         {
-            Date = jumpStartDailyStats.Date;
-            Count = jumpStartDailyStats.Count;
+            Date = dailyStats.Date;
+            Count = dailyStats.Count;
         }
     }
 
@@ -87,10 +87,10 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public List<JumpStartDailyStatsResult> Stats { get; }
 
-        public JumpStartDailyTagStatsResult(JumpStartDailyTagStats jumpStartDailyTagStats)
+        public JumpStartDailyTagStatsResult(NewJumpStartDailyTagStats newJumpStartDailyTagStats)
         {
-            Tag = jumpStartDailyTagStats.Tag;
-            Stats = jumpStartDailyTagStats.Stats.Select(item => new JumpStartDailyStatsResult(item)).ToList();
+            Tag = newJumpStartDailyTagStats.Tag;
+            Stats = newJumpStartDailyTagStats.Stats.Select(item => new JumpStartDailyStatsResult(item)).ToList();
         }
     }
 
