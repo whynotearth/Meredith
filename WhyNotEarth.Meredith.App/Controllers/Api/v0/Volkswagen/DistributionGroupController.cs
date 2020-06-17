@@ -2,10 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Models;
@@ -18,13 +20,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Route("api/v0/volkswagen/distributiongroups")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageVolkswagen)]
-    public class DistributionGroupController : ControllerBase
+    public class DistributionGroupController : BaseController
     {
         private readonly RecipientService _recipientService;
+        private readonly IWebHostEnvironment _environment;
 
-        public DistributionGroupController(RecipientService recipientService)
+        public DistributionGroupController(RecipientService recipientService, IWebHostEnvironment environment)
         {
             _recipientService = recipientService;
+            _environment = environment;
         }
 
         [Returns200]
@@ -92,6 +96,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             await _recipientService.DeleteAsync(recipientId);
 
             return NoContent();
+        }
+
+        [Returns200]
+        [HttpGet("{distributionGroupName}/export")]
+        public async Task<IActionResult> Export(string distributionGroupName)
+        {
+            var recipients = await _recipientService.GetRecipientsAsync(distributionGroupName);
+
+            return await Csv(recipients.Select(item => new RecipientCsvExportResult(item)), _environment.IsDevelopment());
         }
     }
 }

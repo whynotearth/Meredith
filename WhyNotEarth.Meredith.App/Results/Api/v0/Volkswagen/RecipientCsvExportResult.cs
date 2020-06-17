@@ -2,8 +2,10 @@
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
-    public class RecipientCsvExportResult
+    public class RecipientResult
     {
+        public int Id { get; set; }
+
         public string Email { get; set; }
         
         public string FirstName { get; set; }
@@ -12,12 +14,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime CreationDateTime { get; set; }
 
-        public RecipientCsvExportResult(Data.Entity.Models.Modules.Volkswagen.Recipient recipient)
+        public RecipientResult(Data.Entity.Models.Modules.Volkswagen.Recipient recipient)
         {
+            Id = recipient.Id;
             Email = recipient.Email;
+            CreationDateTime = recipient.CreationDateTime;
             FirstName = recipient.FirstName;
             LastName = recipient.LastName;
-            CreationDateTime = recipient.CreationDateTime;
         }
     }
 }
