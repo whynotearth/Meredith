@@ -39,9 +39,8 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         private async Task SendEmailAsync(NewJumpStart newJumpStart)
         {
             var emailRecipients = await GetRecipientsAsync(newJumpStart.Id);
-            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
 
-            var emailInfo = await GetEmailInfoAsync(newJumpStart, recipients);
+            var emailInfo = await GetEmailInfoAsync(newJumpStart, emailRecipients);
 
             await _sendGridService.SendEmailAsync(emailInfo);
 
@@ -53,10 +52,11 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(NewJumpStart newJumpStart,
-            List<Tuple<string, string?>> recipients)
+        private async Task<EmailInfo> GetEmailInfoAsync(NewJumpStart newJumpStart, List<EmailRecipient> emailRecipients)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
+            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
+            
             var attachmentContent = await GetPdfContentAsync(newJumpStart.PdfUrl);
 
             return new EmailInfo(company.Id, recipients)

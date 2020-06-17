@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
@@ -40,8 +40,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpPost("")]
         public async Task<StatusCodeResult> Create(MemoModel model)
         {
-            await _memoService.CreateAsync(model.DistributionGroups!, model.Subject!, model.Date!, model.To!,
-                model.Description!);
+            await _memoService.CreateAsync(model);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
         }

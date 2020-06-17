@@ -9,6 +9,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Jobs.Public;
+using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -28,16 +29,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
             _recipientService = recipientService;
         }
 
-        public async Task CreateAsync(List<string> distributionGroups, string subject, string date, string to,
-            string description)
+        public async Task CreateAsync(MemoModel model)
         {
             var memo = new Memo
             {
-                DistributionGroups = distributionGroups,
-                Subject = subject,
-                Date = date,
-                To = to,
-                Description = description,
+                DistributionGroups = model.DistributionGroups,
+                Subject = model.Subject,
+                Date = model.Date,
+                To = model.To,
+                Description = model.Description,
+                PdfUrl = model.PdfUrl,
                 CreationDateTime = DateTime.UtcNow
             };
 

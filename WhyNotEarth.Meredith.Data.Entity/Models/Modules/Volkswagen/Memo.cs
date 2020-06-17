@@ -18,6 +18,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         
         public string Description { get; set; }
 
+        public string PdfUrl { get; set; }
+
         public List<string> DistributionGroups { get; set; }
 
         public DateTime CreationDateTime { get; set; }
