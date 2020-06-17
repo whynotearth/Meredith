@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
@@ -122,7 +123,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             if (hasDuplicate)
             {
-                throw new DuplicateRecordException($"The email {model.Email} already exist in {recipient.DistributionGroup}");
+                throw new DuplicateRecordException(
+                    $"The email {model.Email} already exist in {recipient.DistributionGroup}");
             }
 
             recipient.Email = model.Email;
@@ -146,9 +148,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<int> GetCountAsync(DateTime date)
+        public Task<int> GetCountAsync(DateTime date, Expression<Func<Recipient, bool>> condition)
         {
-            return _dbContext.Recipients.CountAsync(item => item.CreationDateTime.Date <= date);
+            var query = _dbContext.Recipients.Where(condition);
+
+            return query.CountAsync(item => item.CreationDateTime.Date <= date);
         }
 
         private async Task InsertRecordsAsync(IEnumerable<RecipientCsvModel> records)
@@ -176,6 +180,55 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 DistributionGroup = csvModel.DistributionGroup,
                 CreationDateTime = DateTime.UtcNow
             };
+        }
+
+        public async Task<OverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate, string group)
+        {
+            var userStats = await GetUserStatsAsync(fromDate, toDate, group);
+
+            var openStats = await GetOpenStatsAsync(fromDate, toDate, group);
+
+            var clickStats = await GetClickStatsAsync(fromDate, toDate, group);
+
+            return new OverAllStats(userStats, openStats, clickStats);
+        }
+
+        public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate, string group)
+        {
+            var result = new List<DailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new DailyStats(date, await GetCountAsync(date, item => item.DistributionGroup == group)));
+            }
+
+            return result;
+        }
+
+        public async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate, string group)
+        {
+            var result = new List<DailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new DailyStats(date,
+                    await _emailRecipientService.GetOpenCountAsync(date, item => item.DistributionGroup == group)));
+            }
+
+            return result;
+        }
+
+        public async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate, string group)
+        {
+            var result = new List<DailyStats>();
+
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                result.Add(new DailyStats(date,
+                    await _emailRecipientService.GetClickCountAsync(date, item => item.DistributionGroup == group)));
+            }
+
+            return result;
         }
 
         [SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Local")]

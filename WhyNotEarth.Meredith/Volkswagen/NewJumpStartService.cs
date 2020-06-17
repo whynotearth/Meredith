@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
@@ -54,7 +55,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new JumpStartDailyStats(date, await _recipientService.GetCountAsync(date)));
+                result.Add(new JumpStartDailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
             }
 
             return result;
@@ -67,7 +68,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 result.Add(new JumpStartDailyStats(date,
-                    await _emailRecipientService.GetNewJumpStartOpenCountAsync(date)));
+                    await _emailRecipientService.GetOpenCountAsync(date, item => item.NewJumpStartId != null)));
             }
 
             return result;
@@ -80,7 +81,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 result.Add(new JumpStartDailyStats(date,
-                    await _emailRecipientService.GetNewJumpStartClickCountAsync(date)));
+                    await _emailRecipientService.GetClickCountAsync(date, item => item.NewJumpStartId != null)));
             }
 
             return result;

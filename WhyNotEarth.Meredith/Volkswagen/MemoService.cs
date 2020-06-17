@@ -79,7 +79,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return new MemoInfo(memo, memoStat);
         }
 
-        public async Task<MemoOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<OverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
             
@@ -87,40 +87,40 @@ namespace WhyNotEarth.Meredith.Volkswagen
             
             var clickStats = await GetClickStatsAsync(fromDate, toDate);
 
-            return new MemoOverAllStats(userStats, openStats, clickStats);
+            return new OverAllStats(userStats, openStats, clickStats);
         }
 
-        public async Task<List<MemoDailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<MemoDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new MemoDailyStats(date, await _recipientService.GetCountAsync(date)));
+                result.Add(new DailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
             }
 
             return result;
         }
 
-        public async Task<List<MemoDailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<MemoDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new MemoDailyStats(date, await _emailRecipientService.GetMemoOpenCountAsync(date)));
+                result.Add(new DailyStats(date, await _emailRecipientService.GetOpenCountAsync(date, item => item.MemoId != null)));
             }
 
             return result;
         }
 
-        public async Task<List<MemoDailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
         {
-            var result = new List<MemoDailyStats>();
+            var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new MemoDailyStats(date, await _emailRecipientService.GetMemoClickCountAsync(date)));
+                result.Add(new DailyStats(date, await _emailRecipientService.GetClickCountAsync(date, item => item.MemoId != null)));
             }
 
             return result;

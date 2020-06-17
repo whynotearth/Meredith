@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -22,8 +23,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class DistributionGroupController : BaseController
     {
-        private readonly RecipientService _recipientService;
         private readonly IWebHostEnvironment _environment;
+        private readonly RecipientService _recipientService;
 
         public DistributionGroupController(RecipientService recipientService, IWebHostEnvironment environment)
         {
@@ -54,7 +55,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<ActionResult<List<string>>> List()
         {
             var result = await _recipientService.GetDistributionGroupsAsync();
-            
+
             return Ok(result);
         }
 
@@ -104,7 +105,37 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         {
             var recipients = await _recipientService.GetRecipientsAsync(distributionGroupName);
 
-            return await Csv(recipients.Select(item => new RecipientCsvExportResult(item)), _environment.IsDevelopment());
+            return await Csv(recipients.Select(item => new RecipientCsvExportResult(item)),
+                _environment.IsDevelopment());
+        }
+
+        [Returns200]
+        [HttpGet("{distributionGroupName}/stats")]
+        public async Task<ActionResult<List<MemoStatResult>>> OverallStats(string distributionGroupName,
+            [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var stats = await _recipientService.GetStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+
+            return Ok(new MemoOverAllStatsResult(stats));
+        }
+
+        [Returns200]
+        [HttpGet("{distributionGroupName}/stats/export")]
+        public async Task<IActionResult> ExportOverallUserStats(string distributionGroupName,
+            [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        {
+            var result = new List<OverAllStatsCsvResult>();
+
+            var stats = await _recipientService.GetUserStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.User, item)));
+
+            stats = await _recipientService.GetOpenStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Open, item)));
+
+            stats = await _recipientService.GetClickStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Click, item)));
+
+            return await Csv(result, _environment.IsDevelopment());
         }
     }
 }

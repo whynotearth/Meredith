@@ -26,7 +26,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public List<MemoDailyStatsResult> Clicks { get; }
 
-        public MemoOverAllStatsResult(MemoOverAllStats stats)
+        public MemoOverAllStatsResult(OverAllStats stats)
         {
             Users = stats.Users.Select(item => new MemoDailyStatsResult(item)).ToList();
             Opens = stats.Opens.Select(item => new MemoDailyStatsResult(item)).ToList();
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public int Count { get; }
 
-        public MemoDailyStatsResult(MemoDailyStats jumpStartDailyStats)
+        public MemoDailyStatsResult(DailyStats jumpStartDailyStats)
         {
             Date = jumpStartDailyStats.Date;
             Count = jumpStartDailyStats.Count;

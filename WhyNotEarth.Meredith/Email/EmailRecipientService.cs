@@ -90,28 +90,18 @@ namespace WhyNotEarth.Meredith.Email
             return new EmailDetailStats(notOpenedList, openedList);
         }
 
-        public Task<int> GetNewJumpStartOpenCountAsync(DateTime date)
+        public Task<int> GetOpenCountAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
         {
-            return _dbContext.EmailRecipients.CountAsync(item =>
-                item.JumpStartId != null && item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
+            var query = _dbContext.EmailRecipients.Where(condition);
+
+            return query.CountAsync(item => item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
         }
 
-        public Task<int> GetNewJumpStartClickCountAsync(DateTime date)
+        public Task<int> GetClickCountAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
         {
-            return _dbContext.EmailRecipients.CountAsync(item =>
-                item.JumpStartId != null && item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
-        }
+            var query = _dbContext.EmailRecipients.Where(condition);
 
-        public Task<int> GetMemoOpenCountAsync(DateTime date)
-        {
-            return _dbContext.EmailRecipients.CountAsync(item =>
-                item.MemoId != null && item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
-        }
-
-        public Task<int> GetMemoClickCountAsync(DateTime date)
-        {
-            return _dbContext.EmailRecipients.CountAsync(item =>
-                item.MemoId != null && item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
+            return query.CountAsync(item => item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
         }
     }
 }
