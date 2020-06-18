@@ -75,23 +75,23 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             _backgroundJobClient.Enqueue<NewJumpStartEmailJob>(job => job.SendAsync(newJumpStartId));
         }
 
-        private async Task Create(int companyId, List<string> distributionGroups, Func<EmailRecipient, EmailRecipient> keySetter)
+        private async Task Create(int companyId, List<string> distributionGroups, Func<Data.Entity.Models.Email, Data.Entity.Models.Email> keySetter)
         {
             var dateTime = DateTime.UtcNow;
             var recipients = await GetRecipients(distributionGroups);
 
             foreach (var batch in recipients.Batch(100))
             {
-                var memoRecipients = batch.Select(item => new EmailRecipient
+                var memoRecipients = batch.Select(item => new Data.Entity.Models.Email
                 {
                     CompanyId = companyId,
-                    Email = item.Email,
-                    DistributionGroup = item.DistributionGroup,
+                    EmailAddress = item.Email,
+                    Group = item.DistributionGroup,
                     Status = EmailStatus.ReadyToSend,
                     CreationDateTime = dateTime
                 }).Select(keySetter);
 
-                _dbContext.EmailRecipients.AddRange(memoRecipients);
+                _dbContext.Emails.AddRange(memoRecipients);
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -104,19 +104,19 @@ namespace WhyNotEarth.Meredith.Jobs.Public
 
         private async Task CleanForMemo(int memoId)
         {
-            var oldRecords = await _dbContext.EmailRecipients.Where(item => item.MemoId == memoId).ToListAsync();
+            var oldRecords = await _dbContext.Emails.Where(item => item.MemoId == memoId).ToListAsync();
 
-            _dbContext.EmailRecipients.RemoveRange(oldRecords);
+            _dbContext.Emails.RemoveRange(oldRecords);
 
             await _dbContext.SaveChangesAsync();
         }
 
         private async Task CleanForJumpStartAsync(int jumpStartId)
         {
-            var oldRecords = await _dbContext.EmailRecipients.Where(item => item.JumpStartId == jumpStartId)
+            var oldRecords = await _dbContext.Emails.Where(item => item.JumpStartId == jumpStartId)
                 .ToListAsync();
 
-            _dbContext.EmailRecipients.RemoveRange(oldRecords);
+            _dbContext.Emails.RemoveRange(oldRecords);
 
             await _dbContext.SaveChangesAsync();
         }
@@ -124,10 +124,10 @@ namespace WhyNotEarth.Meredith.Jobs.Public
                 
         private async Task CleanForNewJumpStartAsync(int newJumpStartId)
         {
-            var oldRecords = await _dbContext.EmailRecipients.Where(item => item.NewJumpStartId == newJumpStartId)
+            var oldRecords = await _dbContext.Emails.Where(item => item.NewJumpStartId == newJumpStartId)
                 .ToListAsync();
 
-            _dbContext.EmailRecipients.RemoveRange(oldRecords);
+            _dbContext.Emails.RemoveRange(oldRecords);
 
             await _dbContext.SaveChangesAsync();
         }

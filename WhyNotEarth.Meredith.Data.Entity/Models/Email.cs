@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    public class EmailRecipient : IEntityTypeConfiguration<EmailRecipient>
+    public class Email : IEntityTypeConfiguration<Email>
     {
         public int Id { get; set; }
 
@@ -25,23 +26,19 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public NewJumpStart NewJumpStart { get; set; }
 
-        public string Email { get; set; }
+        public string EmailAddress { get; set; }
 
-        public string DistributionGroup { get; set; }
+        public string Group { get; set; }
 
         public EmailStatus Status { get; set; }
 
         public DateTime CreationDateTime { get; set; }
 
-        public DateTime? DeliverDateTime { get; set; }
+        public List<EmailEvent> Events { get; set; }
 
-        public DateTime? OpenDateTime { get; set; }
-
-        public DateTime? ClickDateTime { get; set; }
-
-        public void Configure(EntityTypeBuilder<EmailRecipient> builder)
+        public void Configure(EntityTypeBuilder<Email> builder)
         {
-            builder.ToTable("EmailRecipients", "public");
+            builder.ToTable("Emails", "public");
         }
     }
 

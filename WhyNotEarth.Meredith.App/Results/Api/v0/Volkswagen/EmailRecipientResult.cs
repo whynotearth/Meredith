@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
@@ -11,11 +12,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime? OpenDateTime { get; }
 
-        public EmailRecipientResult(EmailRecipient emailRecipient)
+        public EmailRecipientResult(Data.Entity.Models.Email email)
         {
-            Email = emailRecipient.Email;
-            DeliverDateTime = emailRecipient.DeliverDateTime;
-            OpenDateTime = emailRecipient.OpenDateTime;
+            Email = email.EmailAddress;
+            DeliverDateTime = email.Events.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Delivered)?.DateTime;
+            OpenDateTime = email.Events.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Opened)?.DateTime;
         }
     }
 }

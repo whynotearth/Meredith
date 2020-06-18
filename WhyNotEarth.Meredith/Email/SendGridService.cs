@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.Email
 
             if (!string.IsNullOrEmpty(sendGridAccount.Bcc))
             {
-                emailInfo.Recipients.Add(Tuple.Create<string, string?>(sendGridAccount.Bcc, null));
+                emailInfo.Recipients.Add(new EmailInfoItem(Tuple.Create<string, string?>(sendGridAccount.Bcc, null)));
             }
 
             var from = new EmailAddress(sendGridAccount.FromEmail, sendGridAccount.FromEmailName);
@@ -64,31 +64,46 @@ namespace WhyNotEarth.Meredith.Email
             await Send(sendGridAccount, sendGridMessage);
         }
 
-        private SendGridMessage GetSendGridMessage(List<Tuple<string, string?>> batch, EmailAddress from,
+        private SendGridMessage GetSendGridMessage(List<EmailInfoItem> batch, EmailAddress from,
             SendGridAccount sendGridAccount, EmailInfo emailInfo)
         {
-            SendGridMessage sendGridMessage;
+            var sendGridMessage = new SendGridMessage();
+            sendGridMessage.SetFrom(from);
 
             if (emailInfo.TemplateData != null)
             {
-                sendGridMessage = MailHelper.CreateSingleTemplateEmailToMultipleRecipients(from,
-                    GetEmailAddresses(batch), sendGridAccount.TemplateId, emailInfo.TemplateData);
+                sendGridMessage.TemplateId = sendGridAccount.TemplateId;
             }
             else
             {
-                sendGridMessage = MailHelper.CreateSingleEmailToMultipleRecipients(from, GetEmailAddresses(batch),
-                    emailInfo.Subject, emailInfo.PlainTextContent, emailInfo.HtmlContent);
+                sendGridMessage.SetGlobalSubject(emailInfo.Subject);
+
+                if (!string.IsNullOrEmpty(emailInfo.PlainTextContent))
+                {
+                    sendGridMessage.AddContent(MimeType.Text, emailInfo.PlainTextContent);
+                }
+
+                if (!string.IsNullOrEmpty(emailInfo.HtmlContent))
+                {
+                    sendGridMessage.AddContent(MimeType.Html, emailInfo.HtmlContent);
+                }
             }
 
-            if (emailInfo.UniqueArgument != null)
+            for (var personalizationIndex = 0; personalizationIndex < batch.Count; ++personalizationIndex)
             {
-                foreach (var personalization in sendGridMessage.Personalizations)
+                var emailInfoItem = batch[personalizationIndex];
+                
+                var to = GetEmailAddress(emailInfoItem);
+                sendGridMessage.AddTo(to, personalizationIndex);
+
+                if (emailInfo.TemplateData != null)
                 {
-                    personalization.CustomArgs = new Dictionary<string, string>
-                    {
-                        {emailInfo.UniqueArgument, emailInfo.UniqueArgumentValue ?? string.Empty},
-                        {nameof(SendGridAccount.CompanyId), emailInfo.CompanyId.ToString()}
-                    };
+                    sendGridMessage.SetTemplateData(emailInfo.TemplateData, personalizationIndex);
+                }
+
+                if (emailInfoItem.Email != null)
+                {
+                    sendGridMessage.AddCustomArg("EmailId", emailInfoItem.Email.Id.ToString(), personalizationIndex);
                 }
             }
 
@@ -159,9 +174,9 @@ namespace WhyNotEarth.Meredith.Email
             return string.Join(", ", body.Select(item => item.Key + ":" + item.Value).ToArray());
         }
 
-        private List<EmailAddress> GetEmailAddresses(List<Tuple<string, string?>> recipients)
+        private EmailAddress GetEmailAddress(EmailInfoItem emailInfoItem)
         {
-            return recipients.Select(item => new EmailAddress(item.Item1, item.Item2)).ToList();
+            return new EmailAddress(emailInfoItem.Info.Item1, emailInfoItem.Info.Item2);
         }
     }
 
@@ -169,9 +184,9 @@ namespace WhyNotEarth.Meredith.Email
     {
         public int CompanyId { get; }
 
-        public string TemplateKey { get; set; }
+        public string? TemplateKey { get; set; }
 
-        public List<Tuple<string, string?>> Recipients { get; }
+        public List<EmailInfoItem> Recipients { get; }
 
         public object? TemplateData { get; set; }
 
@@ -181,26 +196,45 @@ namespace WhyNotEarth.Meredith.Email
 
         public string? HtmlContent { get; set; }
 
-        public string? UniqueArgument { get; set; }
-
-        public string? UniqueArgumentValue { get; set; }
-
         public DateTime? SendAt { get; set; }
 
         public string? AttachmentName { get; set; }
 
         public string? AttachmentBase64Content { get; set; }
 
-        public EmailInfo(int companyId, Tuple<string, string?> recipient)
+        public EmailInfo(int companyId, Tuple<string, string?> email) : this(companyId,
+            new List<Tuple<string, string?>> {email})
         {
-            CompanyId = companyId;
-            Recipients = new List<Tuple<string, string?>> {recipient};
         }
 
-        public EmailInfo(int companyId, List<Tuple<string, string?>> recipients)
+        public EmailInfo(int companyId, List<Tuple<string, string?>> emails)
         {
             CompanyId = companyId;
-            Recipients = recipients;
+            Recipients = emails.Select(item => new EmailInfoItem(item)).ToList();
+        }
+
+        public EmailInfo(int companyId, List<Data.Entity.Models.Email> emails)
+        {
+            CompanyId = companyId;
+            Recipients = emails.Select(item => new EmailInfoItem(item)).ToList();
+        }
+    }
+
+    public class EmailInfoItem
+    {
+        public Tuple<string, string?> Info { get; }
+
+        public Data.Entity.Models.Email? Email { get; }
+
+        public EmailInfoItem(Tuple<string, string?> info)
+        {
+            Info = info;
+        }
+
+        public EmailInfoItem(Data.Entity.Models.Email email)
+        {
+            Info = new Tuple<string, string?>(email.EmailAddress, null);
+            Email = email;
         }
     }
 }

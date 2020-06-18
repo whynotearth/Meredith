@@ -41,8 +41,8 @@ namespace WhyNotEarth.Meredith.Email
         public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup,
             int currentRecipientCount)
         {
-            var stats = await _dbContext.EmailRecipients
-                .Where(item => item.DistributionGroup == distributionGroup)
+            var stats = await _dbContext.Emails
+                .Where(item => item.Group == distributionGroup)
                 .GroupBy(item => item.Status)
                 .Select(g => new
                 {
@@ -59,9 +59,9 @@ namespace WhyNotEarth.Meredith.Email
                 clickCount);
         }
 
-        private async Task<ListStats> GetStatsAsync(Expression<Func<EmailRecipient, bool>> condition)
+        private async Task<ListStats> GetStatsAsync(Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
-            var info = await _dbContext.EmailRecipients
+            var info = await _dbContext.Emails
                 .Where(condition)
                 .GroupBy(item => item.Status)
                 .Select(g => new
@@ -78,10 +78,11 @@ namespace WhyNotEarth.Meredith.Email
         }
 
         private async Task<EmailDetailStats> GetDetailStatsAsync<TProperty>(
-            Expression<Func<EmailRecipient, bool>> condition, Expression<Func<EmailRecipient, TProperty>> include)
+            Expression<Func<Data.Entity.Models.Email, bool>> condition, Expression<Func<Data.Entity.Models.Email, TProperty>> include)
         {
-            var emailRecipients = await _dbContext.EmailRecipients
+            var emailRecipients = await _dbContext.Emails
                 .Include(include)
+                .Include(item => item.Events)
                 .Where(condition).ToListAsync();
 
             var notOpenedList = emailRecipients.Where(item => item.Status < EmailStatus.Opened).ToList();
@@ -90,32 +91,40 @@ namespace WhyNotEarth.Meredith.Email
             return new EmailDetailStats(notOpenedList, openedList);
         }
 
-        public Task<int> GetOpenCountAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        public Task<int> GetOpenCountAsync(DateTime date, Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
-            var query = _dbContext.EmailRecipients.Where(condition);
-
-            return query.CountAsync(item => item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
+            return _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(condition)
+                .SelectMany(item => item.Events)
+                .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date == date);
         }
 
-        public Task<int> GetOpenCountUpToAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        public Task<int> GetOpenCountUpToAsync(DateTime date, Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
-            var query = _dbContext.EmailRecipients.Where(condition);
-
-            return query.CountAsync(item => item.OpenDateTime != null && item.OpenDateTime.Value.Date <= date);
+            return _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(condition)
+                .SelectMany(item => item.Events)
+                .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date <= date);
         }
 
-        public Task<int> GetClickCountAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        public Task<int> GetClickCountAsync(DateTime date, Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
-            var query = _dbContext.EmailRecipients.Where(condition);
-
-            return query.CountAsync(item => item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
+            return _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(condition)
+                .SelectMany(item => item.Events)
+                .CountAsync(item => item.Type == EmailEventType.Clicked && item.DateTime.Date == date);
         }
 
-        public Task<int> GetClickCountUpToAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        public Task<int> GetClickCountUpToAsync(DateTime date, Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
-            var query = _dbContext.EmailRecipients.Where(condition);
-
-            return query.CountAsync(item => item.ClickDateTime != null && item.ClickDateTime.Value.Date <= date);
+            return _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(condition)
+                .SelectMany(item => item.Events)
+                .CountAsync(item => item.Type == EmailEventType.Clicked && item.DateTime.Date <= date);
         }
     }
 }

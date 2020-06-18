@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
             
-            var recipients = await _dbContext.EmailRecipients
+            var recipients = await _dbContext.Emails
                 .Where(item => item.MemoId == memoId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
 
@@ -47,19 +47,16 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(Memo memo, List<EmailRecipient> emailRecipients)
+        private async Task<EmailInfo> GetEmailInfoAsync(Memo memo, List<Data.Entity.Models.Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
-            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
 
             var attachmentContent = await GetPdfContentAsync(memo.PdfUrl);
 
-            return new EmailInfo(company.Id, recipients)
+            return new EmailInfo(company.Id, emails)
             {
                 TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(memo),
-                UniqueArgument = nameof(EmailRecipient.MemoId),
-                UniqueArgumentValue = memo.Id.ToString(),
                 AttachmentName = "attachment.pdf",
                 AttachmentBase64Content = attachmentContent
             };

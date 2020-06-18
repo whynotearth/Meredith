@@ -48,14 +48,14 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 
         private async Task SendEmailAsync(JumpStart jumpStart, List<Article> articles)
         {
-            var emailRecipients = await GetRecipientsAsync(jumpStart.Id);
-            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
+            var emails = await GetRecipientsAsync(jumpStart.Id);
+            //var recipients = emails.Select(item => Tuple.Create(item.EmailAddress, (string?) null)).ToList();
 
-            var emailInfo = await GetEmailInfoAsync(jumpStart, recipients, articles);
+            var emailInfo = await GetEmailInfoAsync(jumpStart, emails, articles);
 
             await _sendGridService.SendEmailAsync(emailInfo);
 
-            foreach (var emailRecipient in emailRecipients)
+            foreach (var emailRecipient in emails)
             {
                 emailRecipient.Status = EmailStatus.Sent;
             }
@@ -63,27 +63,25 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(JumpStart jumpStart, List<Tuple<string, string?>> recipients, List<Article> articles)
+        private async Task<EmailInfo> GetEmailInfoAsync(JumpStart jumpStart, List<Data.Entity.Models.Email> emails, List<Article> articles)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
             var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
-            return new EmailInfo(company.Id, recipients)
+            return new EmailInfo(company.Id, emails)
             {
                 Subject = $"Project Blue Delta - {jumpStart.DateTime:MMMM d, yyyy}",
                 HtmlContent = emailTemplate,
                 PlainTextContent = emailTemplate,
-                UniqueArgument = nameof(EmailRecipient.JumpStartId),
-                UniqueArgumentValue = jumpStart.Id.ToString(),
                 SendAt = jumpStart.DateTime
             };
         }
 
-        private Task<List<EmailRecipient>> GetRecipientsAsync(int jumpStartId)
+        private Task<List<Data.Entity.Models.Email>> GetRecipientsAsync(int jumpStartId)
         {
-            return _dbContext.EmailRecipients
+            return _dbContext.Emails
                 .Where(item => item.JumpStartId == jumpStartId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
         }

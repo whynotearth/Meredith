@@ -52,15 +52,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             var lastMonth = DateTime.UtcNow.AddMonths(-1);
-            var monthlySentEmails = await _dbContext.EmailRecipients.Where(item =>
+            var monthlySentEmails = await _dbContext.Emails.Where(item =>
                 item.CreationDateTime >= lastMonth &&
                 item.CompanyId == company.Id).CountAsync();
 
-            var monthlyActiveUsers = await _dbContext.EmailRecipients
-                .Where(item =>
-                    item.Status >= EmailStatus.Opened &&
-                    item.DeliverDateTime >= lastMonth)
-                .Select(item => item.Email)
+            var monthlyActiveUsers = await _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(item => item.Status >= EmailStatus.Opened && item.CreationDateTime >= lastMonth)
+                .Select(item => item.EmailAddress)
                 .Distinct()
                 .CountAsync();
 
@@ -71,16 +70,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class SendGridEventItem
     {
         // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
-        [JsonProperty(nameof(EmailRecipient.CompanyId))]
+        [JsonProperty("EmailId")]
+        public int? EmailId { get; set; }
+        
+        [JsonProperty(nameof(Data.Entity.Models.Email.CompanyId))]
         public int CompanyId { get; set; }
 
-        [JsonProperty(nameof(EmailRecipient.MemoId))]
+        [JsonProperty(nameof(Data.Entity.Models.Email.MemoId))]
         public int? MemoId { get; set; }
 
-        [JsonProperty(nameof(EmailRecipient.JumpStartId))]
+        [JsonProperty(nameof(Data.Entity.Models.Email.JumpStartId))]
         public int? JumpStartId { get; set; }
 
-        [JsonProperty(nameof(EmailRecipient.NewJumpStartId))]
+        [JsonProperty(nameof(Data.Entity.Models.Email.NewJumpStartId))]
         public int? NewJumpStartId { get; set; }
 
         public int Timestamp { get; set; }
@@ -98,57 +100,72 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 _ => EmailStatus.None
             };
 
+        public EmailEventType EventType =>
+            Event switch
+            {
+                "delivered" => EmailEventType.Delivered,
+                "open" => EmailEventType.Opened,
+                "click" => EmailEventType.Clicked,
+                _ => EmailEventType.None
+            };
+
         public DateTime DateTime => DateTimeOffset.FromUnixTimeSeconds(Timestamp).UtcDateTime;
 
         public async Task Apply(MeredithDbContext dbContext)
         {
-            var query = dbContext.EmailRecipients.Where(item => item.CompanyId == CompanyId && item.Email == Email);
+            Data.Entity.Models.Email email;
 
-            if (MemoId.HasValue)
+            if (EmailId.HasValue)
             {
-                query = query.Where(item => item.MemoId == MemoId);
+                email = await dbContext.Emails.FirstOrDefaultAsync(item => item.Id == EmailId);
             }
-            else if (JumpStartId.HasValue)
-            {
-                query = query.Where(item => item.JumpStartId == JumpStartId);
-            }
-            else if (NewJumpStartId.HasValue)
-            {
-                query = query.Where(item => item.NewJumpStartId == NewJumpStartId);
-            }
+            // TODO: Remove the else on the next version
             else
             {
-                return;
+                var query = dbContext.Emails.Where(item => item.CompanyId == CompanyId && item.EmailAddress == Email);
+
+                if (MemoId.HasValue)
+                {
+                    query = query.Where(item => item.MemoId == MemoId);
+                }
+                else if (JumpStartId.HasValue)
+                {
+                    query = query.Where(item => item.JumpStartId == JumpStartId);
+                }
+                else if (NewJumpStartId.HasValue)
+                {
+                    query = query.Where(item => item.NewJumpStartId == NewJumpStartId);
+                }
+                else
+                {
+                    return;
+                }
+
+                email = await query.FirstOrDefaultAsync();
+
+                if (email is null)
+                {
+                    return;
+                }
             }
-
-            var emailRecipient = await query.FirstOrDefaultAsync();
-
-            if (emailRecipient is null)
-            {
-                return;
-            }
-
-            Update(emailRecipient);
+            
+            Update(email);
         }
 
-        private void Update(EmailRecipient emailRecipient)
+        private void Update(Data.Entity.Models.Email email)
         {
-            if (Status == EmailStatus.Delivered)
+            if (EventType != EmailEventType.None)
             {
-                emailRecipient.DeliverDateTime = DateTime;
-            }
-            else if (Status == EmailStatus.Opened)
-            {
-                emailRecipient.OpenDateTime = DateTime;
-            }
-            else if (Status == EmailStatus.Clicked)
-            {
-                emailRecipient.ClickDateTime = DateTime;
+                email.Events.Add(new EmailEvent
+                {
+                    Type = EventType,
+                    DateTime = DateTime
+                });
             }
 
-            if (emailRecipient.Status < Status)
+            if (email.Status < Status)
             {
-                emailRecipient.Status = Status;
+                email.Status = Status;
             }
         }
     }

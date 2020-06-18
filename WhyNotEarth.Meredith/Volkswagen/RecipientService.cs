@@ -187,11 +187,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var userStats = await GetUserStatsAsync(fromDate, toDate, group);
 
             var openCountBeforeStart =
-                await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
+                await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), item => item.Group == group);
             var openStats = await GetOpenStatsAsync(fromDate, toDate, group);
 
             var clickCountBeforeStart =
-                await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
+                await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), item => item.Group == group);
             var clickStats = await GetClickStatsAsync(fromDate, toDate, group);
 
             return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
@@ -216,7 +216,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 result.Add(new DailyStats(date,
-                    await _emailRecipientService.GetOpenCountAsync(date, item => item.DistributionGroup == group)));
+                    await _emailRecipientService.GetOpenCountAsync(date, item => item.Group == group)));
             }
 
             return result;
@@ -229,7 +229,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
                 result.Add(new DailyStats(date,
-                    await _emailRecipientService.GetClickCountAsync(date, item => item.DistributionGroup == group)));
+                    await _emailRecipientService.GetClickCountAsync(date, item => item.Group == group)));
             }
 
             return result;

@@ -34,6 +34,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Setting> Settings { get; set; }
 
+        public DbSet<Email> Emails { get; set; }
+
         // Shop
         public DbSet<Tenant> Tenants { get; set; }
 
@@ -81,8 +83,6 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Recipient> Recipients { get; set; }
 
         public DbSet<Memo> Memos { get; set; }
-
-        public DbSet<EmailRecipient> EmailRecipients { get; set; }
 
         public DbSet<NewJumpStart> NewJumpStarts { get; set; }
 

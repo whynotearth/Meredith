@@ -52,14 +52,13 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(NewJumpStart newJumpStart, List<EmailRecipient> emailRecipients)
+        private async Task<EmailInfo> GetEmailInfoAsync(NewJumpStart newJumpStart, List<Data.Entity.Models.Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
-            var recipients = emailRecipients.Select(item => Tuple.Create(item.Email, (string?) null)).ToList();
             
             var attachmentContent = await GetPdfContentAsync(newJumpStart.PdfUrl);
 
-            return new EmailInfo(company.Id, recipients)
+            return new EmailInfo(company.Id, emails)
             {
                 TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(newJumpStart),
@@ -87,9 +86,9 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             return Convert.ToBase64String(bytes);
         }
 
-        private Task<List<EmailRecipient>> GetRecipientsAsync(int newJumpStartId)
+        private Task<List<Data.Entity.Models.Email>> GetRecipientsAsync(int newJumpStartId)
         {
-            return _dbContext.EmailRecipients
+            return _dbContext.Emails
                 .Where(item => item.NewJumpStartId == newJumpStartId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
         }
