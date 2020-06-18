@@ -6,6 +6,10 @@ namespace WhyNotEarth.Meredith.Exceptions
     {
         public object? Error { get; set; }
 
+        public InvalidActionException()
+        {
+        }
+
         public InvalidActionException(string message) : base(message)
         {
         }

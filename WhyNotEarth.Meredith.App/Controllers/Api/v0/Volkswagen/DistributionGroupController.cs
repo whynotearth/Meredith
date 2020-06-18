@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
@@ -112,9 +113,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [Returns200]
         [HttpGet("{distributionGroupName}/stats")]
         public async Task<ActionResult<OverAllStatsResult>> OverallStats(string distributionGroupName,
-            [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+            [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
-            var stats = await _recipientService.GetStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+            var (from, to) = Validate(fromDate, toDate);
+
+            var stats = await _recipientService.GetStatsAsync(from, to, distributionGroupName);
 
             return Ok(new OverAllStatsResult(stats));
         }
@@ -122,13 +125,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [Returns200]
         [HttpGet("{distributionGroupName}/stats/export")]
         public async Task<IActionResult> ExportOverallUserStats(string distributionGroupName,
-            [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+            [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
-            var stats = await _recipientService.GetStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
+            var (from, to) = Validate(fromDate, toDate);
+
+            var stats = await _recipientService.GetStatsAsync(from, to, distributionGroupName);
 
             var result = OverAllStatsCsvResult.Create(stats);
 
             return await Csv(result, _environment.IsDevelopment());
+        }
+
+        private (DateTime from, DateTime to) Validate(DateTime? fromDate, DateTime? toDate)
+        {
+            if (fromDate is null || toDate is null)
+            {
+                throw new InvalidActionException();
+            }
+
+            return (fromDate.Value.Date, toDate.Value.Date);
         }
     }
 }

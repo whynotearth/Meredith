@@ -11,6 +11,7 @@ using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
@@ -73,24 +74,38 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("overallstats")]
-        public async Task<ActionResult<OverAllStatsResult>> OverallStats([FromQuery] DateTime fromDate,
-            [FromQuery] DateTime toDate)
+        public async Task<ActionResult<OverAllStatsResult>> OverallStats([FromQuery] DateTime? fromDate,
+            [FromQuery] DateTime? toDate)
         {
-            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
+            var (from, to) = Validate(fromDate, toDate);
+
+            var stats = await _memoService.GetStatsAsync(from, to);
 
             return Ok(new OverAllStatsResult(stats));
         }
 
         [Returns200]
         [HttpGet("overallstats/export")]
-        public async Task<IActionResult> ExportOverallStats([FromQuery] DateTime fromDate,
-            [FromQuery] DateTime toDate)
+        public async Task<IActionResult> ExportOverallStats([FromQuery] DateTime? fromDate,
+            [FromQuery] DateTime? toDate)
         {
-            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
+            var (from, to) = Validate(fromDate, toDate);
+
+            var stats = await _memoService.GetStatsAsync(from, to);
 
             var result = OverAllStatsCsvResult.Create(stats);
 
             return await Csv(result, _environment.IsDevelopment());
+        }
+
+        private (DateTime from, DateTime to) Validate(DateTime? fromDate, DateTime? toDate)
+        {
+            if (fromDate is null || toDate is null)
+            {
+                throw new InvalidActionException();
+            }
+
+            return (fromDate.Value.Date, toDate.Value.Date);
         }
     }
 }
