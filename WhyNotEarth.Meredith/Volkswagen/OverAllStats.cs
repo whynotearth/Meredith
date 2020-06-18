@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Twilio.Rest.Api.V2010.Account.Usage;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {
@@ -7,15 +8,20 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         public List<DailyStats> Users { get; }
 
+        public int OpenCountBeforeStart { get; }
+
         public List<DailyStats> Opens { get; }
+
+        public int ClickCountBeforeStart { get; }
 
         public List<DailyStats> Clicks { get; }
 
-        public OverAllStats(List<DailyStats> users, List<DailyStats> opens,
-            List<DailyStats> clicks)
+        public OverAllStats(List<DailyStats> users, int openCountBeforeStart, List<DailyStats> opens, int clickCountBeforeStart, List<DailyStats> clicks)
         {
             Users = users;
+            OpenCountBeforeStart = openCountBeforeStart;
             Opens = opens;
+            ClickCountBeforeStart = clickCountBeforeStart;
             Clicks = clicks;
         }
     }

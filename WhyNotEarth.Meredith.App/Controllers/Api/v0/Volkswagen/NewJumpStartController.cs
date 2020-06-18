@@ -22,8 +22,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class NewJumpStartController : BaseController
     {
-        private readonly NewJumpStartService _newJumpStartService;
         private readonly IWebHostEnvironment _environment;
+        private readonly NewJumpStartService _newJumpStartService;
 
         public NewJumpStartController(NewJumpStartService newJumpStartService, IWebHostEnvironment environment)
         {
@@ -72,16 +72,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         [HttpGet("stats/export")]
         public async Task<IActionResult> ExportStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
-            var result = new List<OverAllStatsCsvResult>();
+            var result = new List<NewJumpStartOverAllStatsCsvResult>();
 
             var stats = await _newJumpStartService.GetUserStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.User, item)));
+            result.AddRange(stats.Select(item =>
+                new NewJumpStartOverAllStatsCsvResult(NewJumpStartOverAllStatsTypeCsvResult.User, item)));
 
             stats = await _newJumpStartService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Open, item)));
+            result.AddRange(stats.Select(item =>
+                new NewJumpStartOverAllStatsCsvResult(NewJumpStartOverAllStatsTypeCsvResult.Open, item)));
 
             stats = await _newJumpStartService.GetClickStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Click, item)));
+            result.AddRange(stats.Select(item =>
+                new NewJumpStartOverAllStatsCsvResult(NewJumpStartOverAllStatsTypeCsvResult.Click, item)));
+
+            var tagStats = await _newJumpStartService.GetTagsStatsAsync(fromDate.Date, toDate.Date);
+            foreach (var tagStat in tagStats)
+            {
+                result.AddRange(tagStat.Stats.Select(item =>
+                    new NewJumpStartOverAllStatsCsvResult(NewJumpStartOverAllStatsTypeCsvResult.Tag, item,
+                        tagStat.Tag)));
+            }
 
             return await Csv(result, _environment.IsDevelopment());
         }

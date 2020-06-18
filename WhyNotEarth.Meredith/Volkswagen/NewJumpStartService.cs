@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
@@ -40,13 +39,18 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
+            var openCountBeforeStart =
+                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => true);
             var openStats = await GetOpenStatsAsync(fromDate, toDate);
 
+            var clickCountBeforeStart =
+                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => true);
             var clickStats = await GetClickStatsAsync(fromDate, toDate);
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
 
-            return new NewJumpStartOverAllStats(userStats, openStats, clickStats, tagStats);
+            return new NewJumpStartOverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart,
+                clickStats, tagStats);
         }
 
         public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
@@ -55,7 +59,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
+                result.Add(new DailyStats(date, await _recipientService.GetUserCountAsync(date, item => true)));
             }
 
             return result;
@@ -87,7 +91,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<NewJumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<List<NewJumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<NewJumpStartDailyTagStats>();
 

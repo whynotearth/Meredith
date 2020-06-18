@@ -6,8 +6,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
     {
         public List<NewJumpStartDailyTagStats> Tags { get; }
 
-        public NewJumpStartOverAllStats(List<DailyStats> users, List<DailyStats> opens, List<DailyStats> clicks,
-            List<NewJumpStartDailyTagStats> tags) : base(users, opens, clicks)
+        public NewJumpStartOverAllStats(List<DailyStats> users, int openCountBeforeStart, List<DailyStats> opens,
+            int clickCountBeforeStart, List<DailyStats> clicks, List<NewJumpStartDailyTagStats> tags) : base(users,
+            openCountBeforeStart, opens, clickCountBeforeStart, clicks)
         {
             Tags = tags;
         }

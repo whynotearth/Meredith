@@ -33,25 +33,25 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Clicks = stats.Clicks.Select(item => new DailyStatsResult(item)).ToList();
             
             UserCount = Users.LastOrDefault()?.Count ?? 0;
-            OpenCount = Opens.Sum(item => item.Count);
-            ClickCount = Clicks.Sum(item => item.Count);
+            OpenCount = stats.OpenCountBeforeStart + Opens.Sum(item => item.Count);
+            ClickCount = stats.ClickCountBeforeStart + Clicks.Sum(item => item.Count);
 
             var firstUserCount = Users.FirstOrDefault()?.Count ?? 0;
             if (firstUserCount != 0)
             {
-                UserGrowthPercent =  GetPercent(Users.LastOrDefault()?.Count ?? 0, firstUserCount);
+                UserGrowthPercent =  GetPercent(firstUserCount, Users.LastOrDefault()?.Count ?? 0);
             }
 
-            var firstOpenCount = Opens.FirstOrDefault()?.Count ?? 0;
+            var firstOpenCount = stats.OpenCountBeforeStart + Opens.FirstOrDefault()?.Count ?? 0;
             if (firstOpenCount != 0)
             {
-                OpenGrowthPercent = GetPercent(Opens.LastOrDefault()?.Count ?? 0, firstOpenCount);
+                OpenGrowthPercent = GetPercent(firstOpenCount, OpenCount);
             }
 
-            var firstClickCount = Clicks.FirstOrDefault()?.Count ?? 0;
+            var firstClickCount = stats.ClickCountBeforeStart + Clicks.FirstOrDefault()?.Count ?? 0;
             if (firstClickCount != 0)
             {
-                ClickGrowthPercent = GetPercent(Clicks.LastOrDefault()?.Count ?? 0, firstClickCount);
+                ClickGrowthPercent = GetPercent(firstClickCount, ClickCount);
             }
         }
 

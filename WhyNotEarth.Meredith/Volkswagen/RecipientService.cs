@@ -148,7 +148,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<int> GetCountAsync(DateTime date, Expression<Func<Recipient, bool>> condition)
+        public Task<int> GetUserCountAsync(DateTime date, Expression<Func<Recipient, bool>> condition)
         {
             var query = _dbContext.Recipients.Where(condition);
 
@@ -186,11 +186,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate, group);
 
+            var openCountBeforeStart =
+                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
             var openStats = await GetOpenStatsAsync(fromDate, toDate, group);
 
+            var clickCountBeforeStart =
+                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
             var clickStats = await GetClickStatsAsync(fromDate, toDate, group);
 
-            return new OverAllStats(userStats, openStats, clickStats);
+            return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
         }
 
         public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate, string group)
@@ -199,7 +203,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await GetCountAsync(date, item => item.DistributionGroup == group)));
+                result.Add(new DailyStats(date, await GetUserCountAsync(date, item => item.DistributionGroup == group)));
             }
 
             return result;

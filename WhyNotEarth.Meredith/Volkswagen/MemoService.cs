@@ -82,12 +82,16 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public async Task<OverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var userStats = await GetUserStatsAsync(fromDate, toDate);
-            
+
+            var openCountBeforeStart =
+                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => item.MemoId != null);
             var openStats = await GetOpenStatsAsync(fromDate, toDate);
             
+            var clickCountBeforeStart =
+                await _emailRecipientService.GetClickCountAsync(fromDate.AddDays(-1), item => item.MemoId != null);
             var clickStats = await GetClickStatsAsync(fromDate, toDate);
 
-            return new OverAllStats(userStats, openStats, clickStats);
+            return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
         }
 
         public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
@@ -96,7 +100,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await _recipientService.GetCountAsync(date, item => true)));
+                result.Add(new DailyStats(date, await _recipientService.GetUserCountAsync(date, item => true)));
             }
 
             return result;
