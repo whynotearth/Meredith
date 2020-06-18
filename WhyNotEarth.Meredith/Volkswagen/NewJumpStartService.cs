@@ -42,9 +42,30 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return GetStatsCoreAsync(fromDate, toDate, null);
         }
 
-        public Task<NewJumpStartOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate, int id)
+        public async Task<NewJumpStartSingleStats> GetStatsAsync(DateTime fromDate, DateTime toDate, int id)
         {
-            return GetStatsCoreAsync(fromDate, toDate, id);
+            var newJumpStartOverAllStats = await GetStatsCoreAsync(fromDate, toDate, id);
+
+            var recipientsCount = await _dbContext.Emails.CountAsync(item => item.NewJumpStartId == id);
+            double deliverCount = await _dbContext.Emails.CountAsync(item =>
+                item.NewJumpStartId == id && item.Status >= EmailStatus.Delivered);
+            var deliverPercent = (int) (deliverCount / recipientsCount * 100);
+
+            var events = await _dbContext.Emails
+                .Include(item => item.Events)
+                .Where(item => item.NewJumpStartId == id)
+                .SelectMany(item => item.Events)
+                .OrderBy(item => item.DateTime)
+                .ToListAsync();
+
+            var firstDeliverDateTime = events.FirstOrDefault()?.DateTime;
+
+            var lastOpenDateTime = events.LastOrDefault(item => item.Type == EmailEventType.Opened)?.DateTime;
+
+            var lastClickDateTime = events.LastOrDefault(item => item.Type == EmailEventType.Clicked)?.DateTime;
+
+            return new NewJumpStartSingleStats(recipientsCount, deliverPercent, firstDeliverDateTime, lastOpenDateTime,
+                lastClickDateTime, newJumpStartOverAllStats);
         }
 
         private async Task<NewJumpStartOverAllStats> GetStatsCoreAsync(DateTime fromDate, DateTime toDate, int? id)
@@ -61,10 +82,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
-            var openCountBeforeStart = await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), condition);
+            var openCountBeforeStart =
+                await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), condition);
             var openStats = await GetOpenStatsAsync(fromDate, toDate, condition);
 
-            var clickCountBeforeStart = await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), condition);
+            var clickCountBeforeStart =
+                await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), condition);
             var clickStats = await GetClickStatsAsync(fromDate, toDate, condition);
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
@@ -85,7 +108,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate, Expression<Func<Data.Entity.Models.Email, bool>> condition)
+        private async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate,
+            Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
             var result = new List<DailyStats>();
 
@@ -97,7 +121,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate, Expression<Func<Data.Entity.Models.Email, bool>> condition)
+        private async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate,
+            Expression<Func<Data.Entity.Models.Email, bool>> condition)
         {
             var result = new List<DailyStats>();
 

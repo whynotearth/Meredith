@@ -81,7 +81,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("{id}/stats")]
-        public async Task<ActionResult<NewJumpStartOverAllStatsResult>> Stats(int id, [FromQuery] DateTime fromDate,
+        public async Task<ActionResult<NewJumpStartSingleStatsResult>> Stats(int id, [FromQuery] DateTime fromDate,
             [FromQuery] DateTime toDate)
         {
             var stats = await _newJumpStartService.GetStatsAsync(fromDate.Date, toDate.Date, id);
