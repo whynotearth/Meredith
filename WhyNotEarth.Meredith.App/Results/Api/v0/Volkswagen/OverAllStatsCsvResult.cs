@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
@@ -13,11 +15,27 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public int Count { get; }
 
-        public OverAllStatsCsvResult(OverAllStatsTypeCsvResult type, DailyStats dailyStats)
+        private OverAllStatsCsvResult(OverAllStatsTypeCsvResult type, DailyStats dailyStats)
         {
             Type = type;
             Date = dailyStats.Date;
             Count = dailyStats.Count;
+        }
+
+        public static List<OverAllStatsCsvResult> Create(OverAllStats stats)
+        {
+            var result = new List<OverAllStatsCsvResult>();
+
+            result.AddRange(stats.Users.Select(item =>
+                new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.User, item)));
+
+            result.AddRange(stats.Opens.Select(item =>
+                new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Open, item)));
+
+            result.AddRange(
+                stats.Clicks.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Click, item)));
+
+            return result;
         }
     }
 

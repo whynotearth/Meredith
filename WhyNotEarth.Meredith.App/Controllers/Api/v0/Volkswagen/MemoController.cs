@@ -86,16 +86,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         public async Task<IActionResult> ExportOverallStats([FromQuery] DateTime fromDate,
             [FromQuery] DateTime toDate)
         {
-            var result = new List<OverAllStatsCsvResult>();
+            var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
 
-            var stats = await _memoService.GetUserStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.User, item)));
-
-            stats = await _memoService.GetOpenStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Open, item)));
-
-            stats = await _memoService.GetClickStatsAsync(fromDate.Date, toDate.Date);
-            result.AddRange(stats.Select(item => new OverAllStatsCsvResult(OverAllStatsTypeCsvResult.Click, item)));
+            var result = OverAllStatsCsvResult.Create(stats);
 
             return await Csv(result, _environment.IsDevelopment());
         }

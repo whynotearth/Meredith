@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
@@ -35,17 +37,35 @@ namespace WhyNotEarth.Meredith.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<NewJumpStartOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
+        public Task<NewJumpStartOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
+            return GetStatsCoreAsync(fromDate, toDate, null);
+        }
+
+        public Task<NewJumpStartOverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate, int id)
+        {
+            return GetStatsCoreAsync(fromDate, toDate, id);
+        }
+
+        private async Task<NewJumpStartOverAllStats> GetStatsCoreAsync(DateTime fromDate, DateTime toDate, int? id)
+        {
+            Expression<Func<EmailRecipient, bool>> condition;
+            if (id.HasValue)
+            {
+                condition = item => item.NewJumpStartId == id;
+            }
+            else
+            {
+                condition = item => item.NewJumpStartId != null;
+            }
+
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
-            var openCountBeforeStart =
-                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => true);
-            var openStats = await GetOpenStatsAsync(fromDate, toDate);
+            var openCountBeforeStart = await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), condition);
+            var openStats = await GetOpenStatsAsync(fromDate, toDate, condition);
 
-            var clickCountBeforeStart =
-                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => true);
-            var clickStats = await GetClickStatsAsync(fromDate, toDate);
+            var clickCountBeforeStart = await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), condition);
+            var clickStats = await GetClickStatsAsync(fromDate, toDate, condition);
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
 
@@ -53,7 +73,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 clickStats, tagStats);
         }
 
-        public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
+        private async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<DailyStats>();
 
@@ -65,33 +85,31 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        public async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate)
+        private async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate, Expression<Func<EmailRecipient, bool>> condition)
         {
             var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date,
-                    await _emailRecipientService.GetOpenCountAsync(date, item => item.NewJumpStartId != null)));
+                result.Add(new DailyStats(date, await _emailRecipientService.GetOpenCountAsync(date, condition)));
             }
 
             return result;
         }
 
-        public async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate)
+        private async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate, Expression<Func<EmailRecipient, bool>> condition)
         {
             var result = new List<DailyStats>();
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date,
-                    await _emailRecipientService.GetClickCountAsync(date, item => item.NewJumpStartId != null)));
+                result.Add(new DailyStats(date, await _emailRecipientService.GetClickCountAsync(date, condition)));
             }
 
             return result;
         }
 
-        public async Task<List<NewJumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
+        private async Task<List<NewJumpStartDailyTagStats>> GetTagsStatsAsync(DateTime fromDate, DateTime toDate)
         {
             var result = new List<NewJumpStartDailyTagStats>();
 

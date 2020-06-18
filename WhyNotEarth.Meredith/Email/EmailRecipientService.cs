@@ -97,11 +97,25 @@ namespace WhyNotEarth.Meredith.Email
             return query.CountAsync(item => item.OpenDateTime != null && item.OpenDateTime.Value.Date == date);
         }
 
+        public Task<int> GetOpenCountUpToAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        {
+            var query = _dbContext.EmailRecipients.Where(condition);
+
+            return query.CountAsync(item => item.OpenDateTime != null && item.OpenDateTime.Value.Date <= date);
+        }
+
         public Task<int> GetClickCountAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
         {
             var query = _dbContext.EmailRecipients.Where(condition);
 
             return query.CountAsync(item => item.ClickDateTime != null && item.ClickDateTime.Value.Date == date);
+        }
+
+        public Task<int> GetClickCountUpToAsync(DateTime date, Expression<Func<EmailRecipient, bool>> condition)
+        {
+            var query = _dbContext.EmailRecipients.Where(condition);
+
+            return query.CountAsync(item => item.ClickDateTime != null && item.ClickDateTime.Value.Date <= date);
         }
     }
 }

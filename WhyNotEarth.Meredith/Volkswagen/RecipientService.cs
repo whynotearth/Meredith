@@ -187,11 +187,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var userStats = await GetUserStatsAsync(fromDate, toDate, group);
 
             var openCountBeforeStart =
-                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
+                await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
             var openStats = await GetOpenStatsAsync(fromDate, toDate, group);
 
             var clickCountBeforeStart =
-                await _emailRecipientService.GetOpenCountAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
+                await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
             var clickStats = await GetClickStatsAsync(fromDate, toDate, group);
 
             return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
