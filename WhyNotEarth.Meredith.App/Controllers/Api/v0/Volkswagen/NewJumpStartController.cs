@@ -41,16 +41,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
-        [HttpGet("stats")]
-        public async Task<ActionResult<NewJumpStartStatsResult>> Stats([FromQuery] DateTime fromDate,
-            [FromQuery] DateTime toDate)
-        {
-            var stats = await _newJumpStartService.GetStatsAsync(fromDate.Date, toDate.Date);
-
-            return Ok(new NewJumpStartStatsResult(stats));
-        }
-
-        [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<NewJumpStartResult>>> List()
         {
@@ -69,8 +59,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [Returns200]
+        [HttpGet("stats")]
+        public async Task<ActionResult<NewJumpStartOverAllStatsResult>> Stats([FromQuery] DateTime fromDate,
+            [FromQuery] DateTime toDate)
+        {
+            var stats = await _newJumpStartService.GetStatsAsync(fromDate.Date, toDate.Date);
+
+            return Ok(new NewJumpStartOverAllStatsResult(stats));
+        }
+
+        [Returns200]
         [HttpGet("stats/export")]
-        public async Task<IActionResult> ExportUserStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
+        public async Task<IActionResult> ExportStats([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
             var result = new List<OverAllStatsCsvResult>();
 

@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
-    public class MemoOverAllStatsResult
+    public class OverAllStatsResult
     {
         public int UserCount { get; }
 
@@ -20,21 +20,21 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public int ClickGrowthPercent { get; } = 100;
 
-        public List<MemoDailyStatsResult> Users { get; }
+        public List<DailyStatsResult> Users { get; }
 
-        public List<MemoDailyStatsResult> Opens { get; }
+        public List<DailyStatsResult> Opens { get; }
 
-        public List<MemoDailyStatsResult> Clicks { get; }
+        public List<DailyStatsResult> Clicks { get; }
 
-        public MemoOverAllStatsResult(OverAllStats stats)
+        public OverAllStatsResult(OverAllStats stats)
         {
-            Users = stats.Users.Select(item => new MemoDailyStatsResult(item)).ToList();
-            Opens = stats.Opens.Select(item => new MemoDailyStatsResult(item)).ToList();
-            Clicks = stats.Clicks.Select(item => new MemoDailyStatsResult(item)).ToList();
+            Users = stats.Users.Select(item => new DailyStatsResult(item)).ToList();
+            Opens = stats.Opens.Select(item => new DailyStatsResult(item)).ToList();
+            Clicks = stats.Clicks.Select(item => new DailyStatsResult(item)).ToList();
             
             UserCount = Users.LastOrDefault()?.Count ?? 0;
-            OpenCount = Opens.LastOrDefault()?.Count ?? 0;
-            ClickCount = Clicks.LastOrDefault()?.Count ?? 0;
+            OpenCount = Opens.Sum(item => item.Count);
+            ClickCount = Clicks.Sum(item => item.Count);
 
             var firstUserCount = Users.FirstOrDefault()?.Count ?? 0;
             if (firstUserCount != 0)
@@ -62,14 +62,14 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         }
     }
 
-    public class MemoDailyStatsResult
+    public class DailyStatsResult
     {
         [DataType(DataType.Date)]
         public DateTime Date { get; }
 
         public int Count { get; }
 
-        public MemoDailyStatsResult(DailyStats jumpStartDailyStats)
+        public DailyStatsResult(DailyStats jumpStartDailyStats)
         {
             Date = jumpStartDailyStats.Date;
             Count = jumpStartDailyStats.Count;

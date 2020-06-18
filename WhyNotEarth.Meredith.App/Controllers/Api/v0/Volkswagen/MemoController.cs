@@ -73,17 +73,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("overallstats")]
-        public async Task<ActionResult<List<MemoStatResult>>> OverallStats([FromQuery] DateTime fromDate,
+        public async Task<ActionResult<OverAllStatsResult>> OverallStats([FromQuery] DateTime fromDate,
             [FromQuery] DateTime toDate)
         {
             var stats = await _memoService.GetStatsAsync(fromDate.Date, toDate.Date);
 
-            return Ok(new MemoOverAllStatsResult(stats));
+            return Ok(new OverAllStatsResult(stats));
         }
 
         [Returns200]
         [HttpGet("overallstats/export")]
-        public async Task<IActionResult> ExportOverallUserStats([FromQuery] DateTime fromDate,
+        public async Task<IActionResult> ExportOverallStats([FromQuery] DateTime fromDate,
             [FromQuery] DateTime toDate)
         {
             var result = new List<OverAllStatsCsvResult>();

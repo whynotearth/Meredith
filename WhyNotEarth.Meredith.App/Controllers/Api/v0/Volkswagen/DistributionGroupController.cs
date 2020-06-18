@@ -111,12 +111,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
         [Returns200]
         [HttpGet("{distributionGroupName}/stats")]
-        public async Task<ActionResult<List<MemoStatResult>>> OverallStats(string distributionGroupName,
+        public async Task<ActionResult<OverAllStatsResult>> OverallStats(string distributionGroupName,
             [FromQuery] DateTime fromDate, [FromQuery] DateTime toDate)
         {
             var stats = await _recipientService.GetStatsAsync(fromDate.Date, toDate.Date, distributionGroupName);
 
-            return Ok(new MemoOverAllStatsResult(stats));
+            return Ok(new OverAllStatsResult(stats));
         }
 
         [Returns200]
