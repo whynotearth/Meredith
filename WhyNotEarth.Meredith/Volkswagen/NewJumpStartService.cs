@@ -80,6 +80,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 condition = item => item.NewJumpStartId != null;
             }
 
+            var userCountBeforeStart = await _recipientService.GetUserCountAsync(fromDate.AddDays(-1), item => true);
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
             var openCountBeforeStart =
@@ -92,8 +93,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             var tagStats = await GetTagsStatsAsync(fromDate, toDate);
 
-            return new NewJumpStartOverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart,
-                clickStats, tagStats);
+            return new NewJumpStartOverAllStats(userCountBeforeStart, userStats, openCountBeforeStart, openStats,
+                clickCountBeforeStart, clickStats, tagStats);
         }
 
         private async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)

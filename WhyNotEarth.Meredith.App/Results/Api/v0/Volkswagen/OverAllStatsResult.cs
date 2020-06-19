@@ -32,9 +32,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Opens = stats.Opens.Select(item => new DailyStatsResult(item)).ToList();
             Clicks = stats.Clicks.Select(item => new DailyStatsResult(item)).ToList();
             
-            UserCount = Users.LastOrDefault()?.Count ?? 0;
-            OpenCount = stats.OpenCountBeforeStart + Opens.Sum(item => item.Count);
-            ClickCount = stats.ClickCountBeforeStart + Clicks.Sum(item => item.Count);
+            UserCount = Users.LastOrDefault()?.Count ?? 0 - stats.UserCountBeforeStart;
+            OpenCount = Opens.Sum(item => item.Count);
+            ClickCount = Clicks.Sum(item => item.Count);
 
             var firstUserCount = Users.FirstOrDefault()?.Count ?? 0;
             if (firstUserCount != 0)

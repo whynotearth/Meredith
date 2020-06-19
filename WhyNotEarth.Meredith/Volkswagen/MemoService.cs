@@ -81,17 +81,19 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<OverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate)
         {
+            var userCountBeforeStart = await _recipientService.GetUserCountAsync(fromDate.AddDays(-1), item => true);
             var userStats = await GetUserStatsAsync(fromDate, toDate);
 
             var openCountBeforeStart =
                 await _emailRecipientService.GetOpenCountUpToAsync(fromDate.AddDays(-1), item => item.MemoId != null);
             var openStats = await GetOpenStatsAsync(fromDate, toDate);
-            
+
             var clickCountBeforeStart =
                 await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), item => item.MemoId != null);
             var clickStats = await GetClickStatsAsync(fromDate, toDate);
 
-            return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
+            return new OverAllStats(userCountBeforeStart, userStats, openCountBeforeStart, openStats,
+                clickCountBeforeStart, clickStats);
         }
 
         public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate)
@@ -112,7 +114,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await _emailRecipientService.GetOpenCountAsync(date, item => item.MemoId != null)));
+                result.Add(new DailyStats(date,
+                    await _emailRecipientService.GetOpenCountAsync(date, item => item.MemoId != null)));
             }
 
             return result;
@@ -124,7 +127,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await _emailRecipientService.GetClickCountAsync(date, item => item.MemoId != null)));
+                result.Add(new DailyStats(date,
+                    await _emailRecipientService.GetClickCountAsync(date, item => item.MemoId != null)));
             }
 
             return result;

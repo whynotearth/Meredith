@@ -15,10 +15,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
         public DateTime? LastClickDateTime { get; }
 
         public NewJumpStartSingleStats(int recipientsCount, int deliverPercent, DateTime? firstDeliverDateTime,
-            DateTime? lastOpenDateTime, DateTime? lastClickDateTime, NewJumpStartOverAllStats newJumpStartOverAllStats) :
-            base(newJumpStartOverAllStats.Users, newJumpStartOverAllStats.OpenCountBeforeStart,
-                newJumpStartOverAllStats.Opens, newJumpStartOverAllStats.ClickCountBeforeStart,
-                newJumpStartOverAllStats.Clicks, newJumpStartOverAllStats.Tags)
+            DateTime? lastOpenDateTime, DateTime? lastClickDateTime, NewJumpStartOverAllStats newJumpStartOverAllStats)
+            : base(newJumpStartOverAllStats.UserCountBeforeStart, newJumpStartOverAllStats.Users,
+                newJumpStartOverAllStats.OpenCountBeforeStart, newJumpStartOverAllStats.Opens,
+                newJumpStartOverAllStats.ClickCountBeforeStart, newJumpStartOverAllStats.Clicks,
+                newJumpStartOverAllStats.Tags)
         {
             RecipientsCount = recipientsCount;
             DeliverPercent = deliverPercent;

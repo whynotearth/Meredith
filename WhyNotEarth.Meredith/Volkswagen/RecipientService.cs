@@ -184,6 +184,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<OverAllStats> GetStatsAsync(DateTime fromDate, DateTime toDate, string group)
         {
+            var userCountBeforeStart =
+                await GetUserCountAsync(fromDate.AddDays(-1), item => item.DistributionGroup == group);
             var userStats = await GetUserStatsAsync(fromDate, toDate, group);
 
             var openCountBeforeStart =
@@ -194,7 +196,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 await _emailRecipientService.GetClickCountUpToAsync(fromDate.AddDays(-1), item => item.Group == group);
             var clickStats = await GetClickStatsAsync(fromDate, toDate, group);
 
-            return new OverAllStats(userStats, openCountBeforeStart, openStats, clickCountBeforeStart, clickStats);
+            return new OverAllStats(userCountBeforeStart, userStats, openCountBeforeStart, openStats,
+                clickCountBeforeStart, clickStats);
         }
 
         public async Task<List<DailyStats>> GetUserStatsAsync(DateTime fromDate, DateTime toDate, string group)
@@ -203,7 +206,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             for (var date = fromDate; date <= toDate; date = date.AddDays(1))
             {
-                result.Add(new DailyStats(date, await GetUserCountAsync(date, item => item.DistributionGroup == group)));
+                result.Add(new DailyStats(date,
+                    await GetUserCountAsync(date, item => item.DistributionGroup == group)));
             }
 
             return result;
