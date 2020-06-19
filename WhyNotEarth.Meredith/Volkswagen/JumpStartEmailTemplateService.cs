@@ -167,8 +167,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                     "image", new Dictionary<string, object>
                     {
                         {"url", article.Image?.Url ?? string.Empty},
-                        {"width", width},
-                        {"height", height},
+                        {"width", width ?? 0},
+                        {"height", height ?? 0},
                         {"wrapperWidth", wrapperWidth}
                     }
                 },
