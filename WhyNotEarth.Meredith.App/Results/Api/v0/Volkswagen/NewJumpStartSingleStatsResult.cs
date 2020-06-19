@@ -9,21 +9,19 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public int DeliverPercent { get; }
 
-        public DateTime FirstDeliverDateTime { get; }
+        public DateTime? FirstDeliverDateTime { get; }
 
-        public DateTime LastOpenDateTime { get; }
+        public DateTime? LastOpenDateTime { get; }
 
-        public DateTime LastClickDateTime { get; }
+        public DateTime? LastClickDateTime { get; }
 
-        public NewJumpStartSingleStatsResult(NewJumpStartOverAllStats newJumpStartOverAllStats, int recipientsCount,
-            int deliverPercent, DateTime firstDeliverDateTime, DateTime lastOpenDateTime, DateTime lastClickDateTime) :
-            base(newJumpStartOverAllStats)
+        public NewJumpStartSingleStatsResult(NewJumpStartSingleStats newJumpStartSingleStats) : base(newJumpStartSingleStats)
         {
-            RecipientsCount = recipientsCount;
-            DeliverPercent = deliverPercent;
-            FirstDeliverDateTime = firstDeliverDateTime;
-            LastOpenDateTime = lastOpenDateTime;
-            LastClickDateTime = lastClickDateTime;
+            RecipientsCount = newJumpStartSingleStats.RecipientsCount;
+            DeliverPercent = newJumpStartSingleStats.DeliverPercent;
+            FirstDeliverDateTime = newJumpStartSingleStats.FirstDeliverDateTime;
+            LastOpenDateTime = newJumpStartSingleStats.LastClickDateTime;
+            LastClickDateTime = newJumpStartSingleStats.LastClickDateTime;
         }
     }
 }

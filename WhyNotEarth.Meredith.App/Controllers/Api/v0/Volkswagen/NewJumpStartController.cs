@@ -93,7 +93,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             var stats = await _newJumpStartService.GetStatsAsync(from, to, id);
 
-            return Ok(new NewJumpStartOverAllStatsResult(stats));
+            return Ok(new NewJumpStartSingleStatsResult(stats));
         }
 
         [Returns200]
