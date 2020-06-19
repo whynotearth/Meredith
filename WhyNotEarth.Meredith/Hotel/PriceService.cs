@@ -1,19 +1,17 @@
-﻿namespace WhyNotEarth.Meredith.Hotel
-{
-    using Microsoft.EntityFrameworkCore;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using WhyNotEarth.Meredith.Data.Entity;
-    using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-    using WhyNotEarth.Meredith.Exceptions;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Exceptions;
 
+namespace WhyNotEarth.Meredith.Hotel
+{
     public class PriceService
     {
         protected MeredithDbContext Context { get; }
 
-        public PriceService(
-            MeredithDbContext meredithDbContext)
+        public PriceService(MeredithDbContext meredithDbContext)
         {
             Context = meredithDbContext;
         }

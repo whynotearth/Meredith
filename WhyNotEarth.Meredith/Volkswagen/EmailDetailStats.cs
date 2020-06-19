@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {

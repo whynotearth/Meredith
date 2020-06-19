@@ -125,13 +125,13 @@ namespace WhyNotEarth.Meredith.Tenant
                 .Include(item => item.Owner)
                 .FirstOrDefaultAsync(item => item.Id == tenantId);
 
-            var recepients = new List<string>()
+            var recipients = new List<string>
             {
                 user.PhoneNumber,
                 tenant.Owner.PhoneNumber
             };
 
-            StringBuilder formatReader = new StringBuilder(_twilioService.GetWhatsappSmsTemplate());
+            var formatReader = new StringBuilder(_twilioService.GetWhatsappSmsTemplate());
 
             formatReader.Replace("{orders}", string.Join("\n", orders));
             formatReader.Replace("{subTotal}", subTotal.ToString());
@@ -150,7 +150,7 @@ namespace WhyNotEarth.Meredith.Tenant
             formatReader.Replace("{tenantPhone}", tenant.Owner.PhoneNumber);
             formatReader.Replace("{tenantEmail}", tenant.Owner.Email);
 
-            await _twilioService.SendWhatsapp(formatReader.ToString(), recepients);
+            await _twilioService.SendWhatsapp(formatReader.ToString(), recipients);
         }
     }
 }
