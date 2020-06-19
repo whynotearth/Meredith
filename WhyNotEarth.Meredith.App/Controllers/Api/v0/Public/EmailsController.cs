@@ -156,6 +156,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             if (EventType != EmailEventType.None)
             {
+                email.Events ??= new List<EmailEvent>();
+
                 email.Events.Add(new EmailEvent
                 {
                     Type = EventType,
