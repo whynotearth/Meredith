@@ -24,15 +24,15 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task<string> CreateAsync(string companySlug, TenantModel model, User user)
         {
-            var slug = _slugService.GetSlug(model.Name);
-            var company = await ValidateAsync(companySlug, slug);
+            //var slug = _slugService.GetSlug(model.Name);
+            var company = await ValidateAsync(companySlug);
 
-            var tenant = GetTenant(model, company, user, slug);
+            var tenant = GetTenant(model, company, user);
 
             _dbContext.Tenants.Add(tenant);
             await _dbContext.SaveChangesAsync();
 
-            return slug;
+            return await _slugService.UpdateSlug(model.Name, tenant);            
         }
 
         public Task<List<Data.Entity.Models.Tenant>> ListAsync(string companySlug)
@@ -63,7 +63,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return await tenants.Select(t => t.Slug).ToListAsync();
         }
 
-        private async Task<Company> ValidateAsync(string companySlug, string slug)
+        private async Task<Company> ValidateAsync(string companySlug)
         {
             var company =
                 await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == companySlug.ToLower());
@@ -73,17 +73,17 @@ namespace WhyNotEarth.Meredith.Tenant
                 throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
-            var isSlugDuplicate =
-                await _dbContext.Tenants.AnyAsync(item => item.CompanyId == company.Id && item.Slug == slug.ToLower());
-            if (isSlugDuplicate)
-            {
-                throw new InvalidActionException($"The name {slug} is already in use");
-            }
+            //var isSlugDuplicate =
+            //    await _dbContext.Tenants.AnyAsync(item => item.CompanyId == company.Id && item.Slug == slug.ToLower());
+            //if (isSlugDuplicate)
+            //{
+            //    throw new InvalidActionException($"The name {slug} is already in use");
+            //}
 
             return company;
         }
 
-        private Data.Entity.Models.Tenant GetTenant(TenantModel model, Company company, User user, string slug)
+        private Data.Entity.Models.Tenant GetTenant(TenantModel model, Company company, User user)
         {
             var notificationType = model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
             var paymentMethodType = model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
@@ -91,7 +91,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return new Data.Entity.Models.Tenant
             {
                 CompanyId = company.Id,
-                Slug = slug,
+                Slug = model.Name,
                 OwnerId = user.Id,
                 Name = model.Name,
                 BusinessHours = GetBusinessHours(model.BusinessHours),
