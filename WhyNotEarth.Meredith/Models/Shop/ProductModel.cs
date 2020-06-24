@@ -16,6 +16,8 @@ namespace WhyNotEarth.Meredith.Models
 
         public string? Description { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public List<ProductLocationInventoryModel>? LocationInventories { get; set; }
 
         public List<VariationModel>? Variations { get; set; }

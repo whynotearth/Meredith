@@ -62,12 +62,7 @@ namespace WhyNotEarth.Meredith.Shop
         {
             var tenant = await CheckPermissionAsync(user, tenantSlug);
 
-            var category = new ProductCategory
-            {
-                Description = model.Description,
-                Name = model.Name,
-                TenantId = tenant.Id
-            };
+            var category = Map(new ProductCategory(), model, tenant);
 
             _dbContext.ProductCategories.Add(category);
             await _dbContext.SaveChangesAsync();
@@ -77,7 +72,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task<ProductCategory> EditAsync(string tenantSlug, int categoryId, ProductCategoryModel model, User user)
         {
-            await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await CheckPermissionAsync(user, tenantSlug);
 
             var category = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(item => item.Id == categoryId);
@@ -87,8 +82,7 @@ namespace WhyNotEarth.Meredith.Shop
                 throw new RecordNotFoundException($"Category {categoryId} not found");
             }
 
-            category.Name = model.Name;
-            category.Description = model.Description;
+            category = Map(category, model, tenant);
 
             _dbContext.ProductCategories.Update(category);
             await _dbContext.SaveChangesAsync();
@@ -112,6 +106,23 @@ namespace WhyNotEarth.Meredith.Shop
             }
 
             return tenant;
+        }
+
+        private ProductCategory Map(ProductCategory category, ProductCategoryModel model, Data.Entity.Models.Tenant tenant)
+        {
+            category.Description = model.Description;
+            category.Name = model.Name;
+            category.TenantId = tenant.Id;
+
+            if (model.ImageUrl != null)
+            {
+                category.Image = new CategoryImage
+                {
+                    Url = model.ImageUrl
+                };
+            }
+            
+            return category;
         }
     }
 }

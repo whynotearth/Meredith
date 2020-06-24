@@ -138,6 +138,14 @@ namespace WhyNotEarth.Meredith.Shop
             product.Price = new Price {Amount = model.Price!.Value};
             product.Description = model.Description;
 
+            if (model.ImageUrl != null)
+            {
+                product.Image = new ProductImage
+                {
+                    Url = model.ImageUrl
+                };
+            }
+
             if (product.Page is null)
             {
                 product.Page = new Page
