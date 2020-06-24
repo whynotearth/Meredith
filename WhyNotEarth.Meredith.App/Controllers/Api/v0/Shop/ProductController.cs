@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
@@ -14,7 +15,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Route("api/v0/shop/categories/{categoryId}/products")]
-    public class ProductController : ControllerBase
+    public class ProductController : BaseController
     {
         private readonly ProductService _productService;
         private readonly IUserService _userService;
@@ -30,13 +31,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns403]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<ShopProductResult>> Create(int categoryId, ProductModel model)
+        public async Task<CreateResult> Create(int categoryId, ProductModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            var product = await _productService.CreateAsync(categoryId, model, user);
+            await _productService.CreateAsync(categoryId, model, user);
 
-            return Ok(new ShopProductResult(product));
+            return Created();
         }
 
         [Returns204]

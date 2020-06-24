@@ -4,19 +4,15 @@ using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.Models
 {
-    public abstract class ProductModel
+    public class ProductModel
     {
         [NotNull]
         [Mandatory]
-        public int? PageId { get; set; }
+        public string? Name { get; set; }
 
         [NotNull]
         [Mandatory]
         public decimal? Price { get; set; }
-
-        [NotNull]
-        [Mandatory]
-        public string? Name { get; set; }
 
         public List<ProductLocationInventoryModel>? LocationInventories { get; set; }
 

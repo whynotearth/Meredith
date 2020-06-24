@@ -24,7 +24,6 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task<string> CreateAsync(string companySlug, TenantModel model, User user)
         {
-            //var slug = _slugService.GetSlug(model.Name);
             var company = await ValidateAsync(companySlug);
 
             var tenant = GetTenant(model, company, user);
@@ -32,7 +31,12 @@ namespace WhyNotEarth.Meredith.Tenant
             _dbContext.Tenants.Add(tenant);
             await _dbContext.SaveChangesAsync();
 
-            return await _slugService.UpdateSlug(model.Name, tenant);            
+            tenant.Slug = _slugService.GetSlug(tenant.Name, tenant.Id);
+
+            _dbContext.Tenants.Update(tenant);
+            await _dbContext.SaveChangesAsync();
+
+            return tenant.Slug;
         }
 
         public Task<List<Data.Entity.Models.Tenant>> ListAsync(string companySlug)
