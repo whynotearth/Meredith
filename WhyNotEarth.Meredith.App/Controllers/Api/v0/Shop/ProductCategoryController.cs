@@ -51,11 +51,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns403]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<ProductCategoryResult>> Create(ProductCategoryModel model)
+        public async Task<ActionResult<ProductCategoryResult>> Create(string tenantSlug, ProductCategoryModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            var category = await _productCategoryService.CreateAsync(model, user);
+            var category = await _productCategoryService.CreateAsync(tenantSlug, model, user);
 
             return Ok(new ProductCategoryResult(category));
         }
@@ -81,11 +81,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns404]
         [HttpPut("{categoryId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult> Edit(int categoryId, ProductCategoryModel model)
+        public async Task<ActionResult> Edit(string tenantSlug, int categoryId, ProductCategoryModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _productCategoryService.EditAsync(categoryId, model, user);
+            await _productCategoryService.EditAsync(tenantSlug, categoryId, model, user);
 
             return NoContent();
         }

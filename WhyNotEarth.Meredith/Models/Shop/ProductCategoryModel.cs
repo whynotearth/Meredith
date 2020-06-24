@@ -7,10 +7,6 @@ namespace WhyNotEarth.Meredith.Models
     {
         [NotNull]
         [Mandatory]
-        public string? TenantSlug { get; set; }
-
-        [NotNull]
-        [Mandatory]
         public string? Name { get; set; }
 
         public string? Description { get; set; }
