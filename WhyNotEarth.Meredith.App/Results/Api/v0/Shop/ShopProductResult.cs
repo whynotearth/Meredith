@@ -16,6 +16,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public string Name { get; }
 
+        public string? Description { get; }
+
         public List<ProductLocationInventoryResult> ProductLocationInventories { get; }
 
         public List<VariationResult> Variations { get; }
@@ -29,6 +31,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             PageId = product.PageId;
             Price = product.Price.Amount;
             CategoryId = product.CategoryId;
+            Description = product.Description;
+
             ProductLocationInventories = product.ProductLocationInventories
                 .Select(item => new ProductLocationInventoryResult(item))
                 .ToList();

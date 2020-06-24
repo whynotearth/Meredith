@@ -136,6 +136,7 @@ namespace WhyNotEarth.Meredith.Shop
             product.Name = model.Name;
             product.CategoryId = category.Id;
             product.Price = new Price {Amount = model.Price!.Value};
+            product.Description = model.Description;
 
             if (product.Page is null)
             {

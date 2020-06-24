@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns404]
         [HttpPut("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<IActionResult> Edit(int productId, int categoryId, ProductModel model)
+        public async Task<NoContentResult> Edit(int productId, int categoryId, ProductModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns404]
         [HttpDelete("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<IActionResult> Delete(int productId)
+        public async Task<NoContentResult> Delete(int productId)
         {
             var user = await _userService.GetUserAsync(User);
 

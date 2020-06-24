@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Models
         [Mandatory]
         public decimal? Price { get; set; }
 
+        public string? Description { get; set; }
+
         public List<ProductLocationInventoryModel>? LocationInventories { get; set; }
 
         public List<VariationModel>? Variations { get; set; }
