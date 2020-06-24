@@ -19,7 +19,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Tenant
 
     public class UserResult
     {
-        public string Name { get; }
+        public string FirstName { get; }
+        
+        public string LastName { get; }
 
         public string PhoneNumber { get; }
 
@@ -27,7 +29,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Tenant
 
         public UserResult(User user)
         {
-            Name = user.Name;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
             PhoneNumber = user.PhoneNumber;
             Email = user.Email;
         }

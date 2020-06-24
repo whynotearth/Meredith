@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
@@ -80,8 +81,8 @@ namespace WhyNotEarth.Meredith.Tenant
 
             var recipients = new List<Tuple<string, string?>>
             {
-                Tuple.Create<string, string?>(user.Email, user.Name),
-                Tuple.Create<string, string?>(tenant.Owner.Email, tenant.Owner.Name)
+                Tuple.Create<string, string?>(user.Email, user.FullName),
+                Tuple.Create<string, string?>(tenant.Owner.Email, tenant.Owner.FullName)
             };
 
             var templateData = new
@@ -99,7 +100,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 amount = amount,
                 tax = tax,
                 deliveryAddress = user.Address,
-                name = user.Name,
+                name = user.FullName,
                 phone = user.PhoneNumber,
                 email = user.Email,
                 paymentMethod = paymentMethod,
@@ -134,12 +135,12 @@ namespace WhyNotEarth.Meredith.Tenant
             var formatReader = new StringBuilder(_twilioService.GetWhatsappSmsTemplate());
 
             formatReader.Replace("{orders}", string.Join("\n", orders));
-            formatReader.Replace("{subTotal}", subTotal.ToString());
-            formatReader.Replace("{tax}", tax.ToString());
-            formatReader.Replace("{deliveryFee}", deliveryFee.ToString());
-            formatReader.Replace("{amount}", amount.ToString());
+            formatReader.Replace("{subTotal}", subTotal.ToString(CultureInfo.InvariantCulture));
+            formatReader.Replace("{tax}", tax.ToString(CultureInfo.InvariantCulture));
+            formatReader.Replace("{deliveryFee}", deliveryFee.ToString(CultureInfo.InvariantCulture));
+            formatReader.Replace("{amount}", amount.ToString(CultureInfo.InvariantCulture));
             formatReader.Replace("{deliveryAddress}", user.Address);
-            formatReader.Replace("{name}", user.Name);
+            formatReader.Replace("{name}", user.FullName);
             formatReader.Replace("{phone}", user.PhoneNumber);
             formatReader.Replace("{email}", user.Email);
             formatReader.Replace("{paymentMethod}", paymentMethod);

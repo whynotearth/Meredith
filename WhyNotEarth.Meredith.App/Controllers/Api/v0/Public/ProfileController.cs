@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Profile;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Identity.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
@@ -39,8 +39,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var user = await _userManager.GetUserAsync(User);
 
-            user.Email = model.Email;
-            user.Name = model.Name;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Address = model.Address;
+            user.GoogleLocation = model.GoogleLocation;
 
             var identityResult = await _userManager.UpdateAsync(user);
 

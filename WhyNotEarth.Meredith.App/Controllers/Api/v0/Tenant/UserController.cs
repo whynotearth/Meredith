@@ -38,7 +38,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             var clients = await _userService.ListAsync(tenant);
 
-            var list = clients.OrderBy(item => item.Name.ToUpper()).GroupBy(item => item.Name.ToUpper()[0]).ToList();
+            var list = clients.OrderBy(item => item.LastName.ToUpper())
+                .ThenBy(item => item.FirstName)
+                .GroupBy(item => item.LastName.ToUpper()[0]).ToList();
 
             return Ok(list.Select(item => new UserListResult(item.Key, item)).ToList());
         }

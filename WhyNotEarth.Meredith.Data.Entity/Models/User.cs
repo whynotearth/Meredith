@@ -6,7 +6,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class User : IdentityUser<int>, IEntityTypeConfiguration<User>
     {
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        
+        public string LastName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
 
         public string Address { get; set; }
 

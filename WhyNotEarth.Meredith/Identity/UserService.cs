@@ -87,9 +87,14 @@ namespace WhyNotEarth.Meredith.Identity
 
         private async Task<UserCreateResult> UpdateUser(User user, RegisterModel model)
         {
-            if (!string.IsNullOrWhiteSpace(model.Name))
+            if (!string.IsNullOrWhiteSpace(model.FirstName))
             {
-                user.Name = model.Name;
+                user.FirstName = model.FirstName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.LastName))
+            {
+                user.LastName = model.LastName;
             }
 
             if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
@@ -127,7 +132,8 @@ namespace WhyNotEarth.Meredith.Identity
                 UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Name = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 Address = model.Address,
                 GoogleLocation = model.GoogleLocation,
                 TenantId = tenantId
