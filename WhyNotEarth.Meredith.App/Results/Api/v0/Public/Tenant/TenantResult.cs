@@ -13,9 +13,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public List<string> Tags { get; }
 
-        public TimeSpan DeliveryTime { get; set; }
+        public TimeSpan DeliveryTime { get; }
 
-        public decimal DeliveryFee { get; set; }
+        public decimal DeliveryFee { get; }
+
+        public string Description { get; }
 
         public TenantResult(Data.Entity.Models.Tenant tenant)
         {
@@ -25,6 +27,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             Tags = tenant.Tags;
             DeliveryTime = tenant.DeliveryTime;
             DeliveryFee = tenant.DeliveryFee;
+            Description = tenant.Description;
         }
     }
 }

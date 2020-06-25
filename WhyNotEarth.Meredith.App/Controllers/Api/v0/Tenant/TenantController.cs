@@ -52,12 +52,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [Returns200]
         [Returns401]
         [HttpGet("mytenants")]
-        public async Task<ActionResult<List<string>>> GetAllTenantsByUser(string companySlug)
+        public async Task<ActionResult<List<TenantResult>>> GetAllTenantsByUser(string companySlug)
         {
             var user = await _userManager.GetUserAsync(User);
-            var tenants = await _tenantService.GetAllTenantByUser(user, companySlug);
+            var tenants = await _tenantService.GetAllTenantsByUser(user, companySlug);
 
-            return Ok(tenants.Select(item => item.Slug));
+            return Ok(tenants.Select(item => new TenantResult(item)).ToList());
         }
     }
 }

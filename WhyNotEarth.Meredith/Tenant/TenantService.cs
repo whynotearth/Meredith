@@ -56,7 +56,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id);
         }
 
-        public async Task<List<Data.Entity.Models.Tenant>> GetAllTenantByUser(User user, string companySlug)
+        public async Task<List<Data.Entity.Models.Tenant>> GetAllTenantsByUser(User user, string companySlug)
         {
             var tenants = await _dbContext.Tenants
                 .Include(item => item.Company)
