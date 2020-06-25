@@ -118,5 +118,10 @@ namespace WhyNotEarth.Meredith.Tenant
                 ClosingTime = item.ClosingTime?.TimeOfDay
             }).ToList();
         }
+
+        public Task<Data.Entity.Models.Tenant> GeAsync(string tenantSlug)
+        {
+            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+        }
     }
 }

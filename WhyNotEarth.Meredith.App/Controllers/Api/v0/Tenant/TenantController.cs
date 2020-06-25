@@ -59,5 +59,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             return Ok(tenants.Select(item => new TenantResult(item)).ToList());
         }
+
+        [Returns200]
+        [HttpGet("{tenantSlug}")]
+        public async Task<ActionResult<TenantResult>> Get(string tenantSlug)
+        {
+            var tenant = await _tenantService.GeAsync(tenantSlug);
+
+            return Ok(new TenantResult(tenant));
+        }
     }
 }
