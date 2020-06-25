@@ -6,6 +6,7 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 
@@ -15,18 +16,20 @@ namespace WhyNotEarth.Meredith.Tenant
     {
         private readonly MeredithDbContext _dbContext;
         private readonly SlugService _slugService;
+        private readonly IUserService _userService;
 
-        public TenantService(MeredithDbContext dbContext, SlugService slugService)
+        public TenantService(MeredithDbContext dbContext, SlugService slugService, IUserService userService)
         {
             _dbContext = dbContext;
             _slugService = slugService;
+            _userService = userService;
         }
 
         public async Task<string> CreateAsync(string companySlug, TenantModel model, User user)
         {
-            var company = await ValidateAsync(companySlug);
+            var company = await ValidateAsync(companySlug, user);
 
-            var tenant = GetTenant(model, company, user);
+            var tenant = Map(model, company, user);
 
             _dbContext.Tenants.Add(tenant);
             await _dbContext.SaveChangesAsync();
@@ -53,21 +56,17 @@ namespace WhyNotEarth.Meredith.Tenant
             return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id);
         }
 
-        public async Task<List<string?>> GetAllTenantByUser(User user, string companySlug, string? tenantSlug)
+        public async Task<List<Data.Entity.Models.Tenant>> GetAllTenantByUser(User user, string companySlug)
         {
-            var tenants = _dbContext.Tenants
-                                       .Include(item => item.Company)
-                                       .Where(item => item.Company.Slug == companySlug.ToLower() && item.OwnerId == user.Id);
+            var tenants = await _dbContext.Tenants
+                .Include(item => item.Company)
+                .Where(item => item.Company.Slug == companySlug.ToLower() && item.OwnerId == user.Id)
+                .ToListAsync();
 
-            if (!string.IsNullOrEmpty(tenantSlug))
-            {
-                tenants = tenants.Where(item => item.Slug == tenantSlug.ToLower());
-            }
-
-            return await tenants.Select(t => t.Slug).ToListAsync();
+            return tenants;
         }
 
-        private async Task<Company> ValidateAsync(string companySlug)
+        private async Task<Company> ValidateAsync(string companySlug, User user)
         {
             var company =
                 await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == companySlug.ToLower());
@@ -77,20 +76,21 @@ namespace WhyNotEarth.Meredith.Tenant
                 throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
-            //var isSlugDuplicate =
-            //    await _dbContext.Tenants.AnyAsync(item => item.CompanyId == company.Id && item.Slug == slug.ToLower());
-            //if (isSlugDuplicate)
-            //{
-            //    throw new InvalidActionException($"The name {slug} is already in use");
-            //}
+            var isExternalAccountConnected = await _userService.IsExternalAccountConnected(user);
+            if (!isExternalAccountConnected)
+            {
+                throw new InvalidActionException("You need to connect your Google or Facebook account");
+            }
 
             return company;
         }
 
-        private Data.Entity.Models.Tenant GetTenant(TenantModel model, Company company, User user)
+        private Data.Entity.Models.Tenant Map(TenantModel model, Company company, User user)
         {
-            var notificationType = model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
-            var paymentMethodType = model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
+            var notificationType =
+                model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
+            var paymentMethodType =
+                model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
 
             return new Data.Entity.Models.Tenant
             {

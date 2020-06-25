@@ -61,6 +61,14 @@ namespace WhyNotEarth.Meredith.Identity
                 IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email)), null);
         }
 
+        
+        public async Task<bool> IsExternalAccountConnected(User user)
+        {
+            var logins = await _userManager.GetLoginsAsync(user);
+
+            return logins.Any();
+        }
+
         private async Task<UserCreateResult> CreateAsync(User user, string? password)
         {
             IdentityResult identityResult;

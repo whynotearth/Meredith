@@ -13,5 +13,7 @@ namespace WhyNotEarth.Meredith.Identity
         Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant);
 
         Task<UserCreateResult> CreateAsync(RegisterModel model);
+
+        Task<bool> IsExternalAccountConnected(User user);
     }
 }

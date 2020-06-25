@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [Authorize]
         [Returns201]
         [Returns401]
-        [Returns404]
+        [Returns403]
         [HttpPost("")]
         public async Task<CreateObjectResult> Create(string companySlug, TenantModel model)
         {
@@ -39,6 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             return Created(tenantSlug);
         }
 
+        [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<TenantResult>>> List(string companySlug)
         {
@@ -48,13 +49,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
+        [Returns200]
+        [Returns401]
         [HttpGet("mytenants")]
-        public async Task<ActionResult<List<string>>> GetAllTenantsByUser(string companySlug, string? tenantSlug)
+        public async Task<ActionResult<List<string>>> GetAllTenantsByUser(string companySlug)
         {
             var user = await _userManager.GetUserAsync(User);
-            var tenants = await _tenantService.GetAllTenantByUser(user, companySlug, tenantSlug);
+            var tenants = await _tenantService.GetAllTenantByUser(user, companySlug);
 
-            return Ok(tenants);
+            return Ok(tenants.Select(item => item.Slug));
         }
     }
 }
