@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
@@ -24,7 +25,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public TenantImage Logo { get; set; }
 
-        public string Tags { get; set; }
+        public List<string> Tags { get; set; }
 
         public TimeSpan DeliveryTime { get; set; }
 
@@ -45,7 +46,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
             builder.HasOne(tenant => tenant.Owner)
                 .WithMany()
                 .HasForeignKey(tenant => tenant.OwnerId);
-            
+            builder.Property(e => e.Tags)
+                .HasConversion(
+                    v => string.Join(",", v),
+                    v => v.Split(",", StringSplitOptions.None).ToList());
         }
     }
 

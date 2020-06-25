@@ -101,7 +101,10 @@ namespace WhyNotEarth.Meredith.Tenant
                 BusinessHours = GetBusinessHours(model.BusinessHours),
                 PaymentMethodType = paymentMethodType,
                 NotificationType = notificationType,
-                Description = model.Description
+                Description = model.Description,
+                Tags = model.Tags,
+                DeliveryTime = model.DeliveryTime ?? default,
+                DeliveryFee = model.DeliveryFee ?? default
             };
         }
 

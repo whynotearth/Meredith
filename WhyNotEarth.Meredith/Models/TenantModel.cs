@@ -16,6 +16,12 @@ namespace WhyNotEarth.Meredith.Models
         
         public string? Description { get; set; }
 
+        public List<string>? Tags { get; set; }
+
+        public TimeSpan? DeliveryTime { get; set; }
+
+        public decimal? DeliveryFee { get; set; }
+
         [NotNull]
         [Mandatory]
         public List<PaymentMethodType>? PaymentMethodTypes  { get; set; }
@@ -27,7 +33,6 @@ namespace WhyNotEarth.Meredith.Models
         [NotNull]
         [Mandatory]
         public List<BusinessHourModel>? BusinessHours { get; set; }
-
     }
 
     public class BusinessHourModel

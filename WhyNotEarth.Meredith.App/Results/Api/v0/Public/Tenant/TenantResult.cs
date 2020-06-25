@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? Logo { get; }
 
-        public List<string> Tags { get; } = new List<string>();
+        public List<string> Tags { get; }
 
         public TimeSpan DeliveryTime { get; set; }
 
@@ -22,12 +22,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             Slug = tenant.Slug;
             Name = tenant.Name;
             Logo = tenant.Logo?.Url;
-
-            if (tenant.Tags != null)
-            {
-                Tags.AddRange(tenant.Tags.Split(','));
-            }
-
+            Tags = tenant.Tags;
             DeliveryTime = tenant.DeliveryTime;
             DeliveryFee = tenant.DeliveryFee;
         }
