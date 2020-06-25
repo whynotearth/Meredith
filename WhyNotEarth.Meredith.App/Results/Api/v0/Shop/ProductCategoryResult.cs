@@ -6,21 +6,21 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
     {
         public int Id { get; }
 
-        public string? Name { get; }
+        public string TenantSlug { get; }
 
-        public string? Image { get; }
+        public string Name { get; }
 
         public string? Description { get; }
 
-        public string TenantSlug { get; }
+        public string? ImageUrl { get; }
 
         public ProductCategoryResult(ProductCategory productCategory)
         {
-            this.Description = productCategory.Description;
-            this.Id = productCategory.Id;
-            this.Name = productCategory.Name;
-            this.Image = productCategory.Image?.Url;
-            this.TenantSlug = productCategory.Tenant.Slug;
+            Id = productCategory.Id;
+            TenantSlug = productCategory.Tenant.Slug;
+            Name = productCategory.Name;
+            Description = productCategory.Description;
+            ImageUrl = productCategory.Image?.Url;
         }
     }
 }

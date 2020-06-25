@@ -31,11 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         {
             var categories = await _productCategoryService.ListAsync(tenantSlug);
 
-            var result = categories
-                .Select(item => new ProductCategoryResult(item))
-                .ToList();
-
-            return Ok(result);
+            return Ok(categories.Select(item => new ProductCategoryResult(item)));
         }
 
         [Returns200]
@@ -43,6 +39,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         public async Task<ActionResult<ProductCategoryResult>> Get(int categoryId)
         {
             var category = await _productCategoryService.GetAsync(categoryId);
+
             return Ok(new ProductCategoryResult(category));
         }
 
