@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
@@ -14,7 +15,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Route("api/v0/shop/tenant/{tenantSlug}/categories")]
-    public class ProductCategoryController : ControllerBase
+    public class ProductCategoryController : BaseController
     {
         private readonly ProductCategoryService _productCategoryService;
         private readonly IUserService _userService;
@@ -43,18 +44,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return Ok(new ProductCategoryResult(category));
         }
 
-        [Returns200]
+        [Returns201]
         [Returns401]
         [Returns403]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<ProductCategoryResult>> Create(string tenantSlug, ProductCategoryModel model)
+        public async Task<CreateResult> Create(string tenantSlug, ProductCategoryModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            var category = await _productCategoryService.CreateAsync(tenantSlug, model, user);
+            await _productCategoryService.CreateAsync(tenantSlug, model, user);
 
-            return Ok(new ProductCategoryResult(category));
+            return Created();
         }
 
         [Returns200]

@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<ProductCategory> CreateAsync(string tenantSlug, ProductCategoryModel model, User user)
+        public async Task CreateAsync(string tenantSlug, ProductCategoryModel model, User user)
         {
             var tenant = await CheckPermissionAsync(user, tenantSlug);
 
@@ -66,8 +66,6 @@ namespace WhyNotEarth.Meredith.Shop
 
             _dbContext.ProductCategories.Add(category);
             await _dbContext.SaveChangesAsync();
-
-            return category;
         }
 
         public async Task<ProductCategory> EditAsync(string tenantSlug, int categoryId, ProductCategoryModel model, User user)

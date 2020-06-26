@@ -26,7 +26,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public List<NotificationType> NotificationTypes { get; }
 
-        public List<BusinessHourResult> BusinessHours { get; }
+        public List<BusinessHourResult>? BusinessHours { get; }
         
         public TenantResult(Data.Entity.Models.Tenant tenant)
         {
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             Description = tenant.Description;
             PaymentMethodTypes = tenant.PaymentMethodType.ToList();
             NotificationTypes = tenant.NotificationType.ToList();
-            BusinessHours = tenant.BusinessHours.Select(item => new BusinessHourResult(item)).ToList();
+            BusinessHours = tenant.BusinessHours?.Select(item => new BusinessHourResult(item))?.ToList();
         }
     }
 
