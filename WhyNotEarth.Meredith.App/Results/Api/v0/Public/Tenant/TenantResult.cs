@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string Name { get; }
 
-        public string? Logo { get; }
+        public string? LogoUrl { get; }
 
         public List<string> Tags { get; }
 
@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
         {
             Slug = tenant.Slug;
             Name = tenant.Name;
-            Logo = tenant.Logo?.Url;
+            LogoUrl = tenant.Logo?.Url;
             Tags = tenant.Tags;
             DeliveryTime = tenant.DeliveryTime;
             DeliveryFee = tenant.DeliveryFee;

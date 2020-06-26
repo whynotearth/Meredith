@@ -34,6 +34,7 @@ namespace WhyNotEarth.Meredith.Shop
                 .Include(item => item.ProductAttributes)
                     .ThenInclude(item => item.Price)
                 .Include(item => item.Image)
+                .Include(item => item.Category)
                 .Where(item => item.CategoryId == categoryId)
                 .ToListAsync();
         }
@@ -48,6 +49,7 @@ namespace WhyNotEarth.Meredith.Shop
                 .Include(item => item.ProductAttributes)
                     .ThenInclude(item => item.Price)
                 .Include(item => item.Image)
+                .Include(item => item.Category)
                 .FirstOrDefaultAsync(item => item.Id == productId);
 
             if (product == null)

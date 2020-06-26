@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public decimal Price { get; }
 
-        public int CategoryId { get; }
+        public ProductCategoryResult Category { get; }
 
         public string Name { get; }
 
@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             Name = product.Name;
             PageId = product.PageId;
             Price = product.Price.Amount;
-            CategoryId = product.CategoryId;
+            Category = new ProductCategoryResult(product.Category);
             Description = product.Description;
             ImageUrl = product.Image?.Url;
 
