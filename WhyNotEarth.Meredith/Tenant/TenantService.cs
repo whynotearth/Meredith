@@ -92,7 +92,7 @@ namespace WhyNotEarth.Meredith.Tenant
             var paymentMethodType =
                 model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
 
-            return new Data.Entity.Models.Tenant
+            var result = new Data.Entity.Models.Tenant
             {
                 CompanyId = company.Id,
                 Slug = model.Name,
@@ -104,8 +104,18 @@ namespace WhyNotEarth.Meredith.Tenant
                 Description = model.Description,
                 Tags = model.Tags,
                 DeliveryTime = model.DeliveryTime ?? default,
-                DeliveryFee = model.DeliveryFee ?? default
+                DeliveryFee = model.DeliveryFee ?? default,
             };
+
+            if (model.LogoUrl != null)
+            {
+                result.Logo = new TenantImage
+                {
+                    Url = model.LogoUrl
+                };
+            }
+
+            return result;
         }
 
         private List<BusinessHour> GetBusinessHours(List<BusinessHourModel> models)

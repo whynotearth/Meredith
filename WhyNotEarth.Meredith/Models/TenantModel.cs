@@ -22,6 +22,8 @@ namespace WhyNotEarth.Meredith.Models
 
         public decimal? DeliveryFee { get; set; }
 
+        public string? LogoUrl { get; set; }
+
         [NotNull]
         [Mandatory]
         public List<PaymentMethodType>? PaymentMethodTypes  { get; set; }

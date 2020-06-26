@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<TenantResult>>> List(string companySlug)
+        public async Task<ActionResult<List<TenantListResult>>> List(string companySlug)
         {
             var tenants = await _tenantService.ListAsync(companySlug);
 
@@ -52,7 +52,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [Returns200]
         [Returns401]
         [HttpGet("mytenants")]
-        public async Task<ActionResult<List<TenantResult>>> GetAllTenantsByUser(string companySlug)
+        public async Task<ActionResult<List<TenantListResult>>> GetAllTenantsByUser(string companySlug)
         {
             var user = await _userManager.GetUserAsync(User);
             var tenants = await _tenantService.GetAllTenantsByUser(user, companySlug);
