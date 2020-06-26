@@ -20,11 +20,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public string? ImageUrl { get; }
 
-        public List<ProductLocationInventoryResult> ProductLocationInventories { get; }
+        public List<ProductLocationInventoryResult> LocationInventories { get; }
 
         public List<VariationResult> Variations { get; }
 
-        public List<ProductAttributeResult> ProductAttributes { get; }
+        public List<ProductAttributeResult> Attributes { get; }
 
         public ShopProductResult(Product product)
         {
@@ -36,13 +36,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             Description = product.Description;
             ImageUrl = product.Image?.Url;
 
-            ProductLocationInventories = product.ProductLocationInventories
+            LocationInventories = product.ProductLocationInventories
                 .Select(item => new ProductLocationInventoryResult(item))
                 .ToList();
             Variations = product.Variations
                 .Select(item => new VariationResult(item))
                 .ToList();
-            ProductAttributes = product.ProductAttributes
+            Attributes = product.ProductAttributes
                 .Select(item => new ProductAttributeResult(item))
                 .ToList();
         }
