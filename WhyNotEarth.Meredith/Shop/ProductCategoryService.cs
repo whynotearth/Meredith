@@ -6,16 +6,19 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.Shop
 {
     public class ProductCategoryService
     {
         private readonly MeredithDbContext _dbContext;
+        private readonly TenantService _tenantService;
 
-        public ProductCategoryService(MeredithDbContext meredithDbContext)
+        public ProductCategoryService(MeredithDbContext meredithDbContext, TenantService tenantService)
         {
             _dbContext = meredithDbContext;
+            _tenantService = tenantService;
         }
 
         public async Task<List<ProductCategory>> ListAsync(string tenantSlug)
@@ -51,7 +54,7 @@ namespace WhyNotEarth.Meredith.Shop
                 throw new RecordNotFoundException($"Category {id} not found");
             }
 
-            await CheckPermissionAsync(user, category.Tenant.Slug);
+            await _tenantService.CheckPermissionAsync(user, category.Tenant.Slug);
 
             _dbContext.ProductCategories.Remove(category);
 
@@ -60,7 +63,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task CreateAsync(string tenantSlug, ProductCategoryModel model, User user)
         {
-            var tenant = await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
             var category = Map(new ProductCategory(), model, tenant);
 
@@ -70,7 +73,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task<ProductCategory> EditAsync(string tenantSlug, int categoryId, ProductCategoryModel model, User user)
         {
-            var tenant = await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
             var category = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(item => item.Id == categoryId);
@@ -86,24 +89,6 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
 
             return category;
-        }
-
-        private async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, string tenantSlug)
-        {
-            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
-
-            if (tenant is null)
-            {
-                tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug);
-                if (tenant is null)
-                {
-                    throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
-                }
-
-                throw new ForbiddenException("You don't own this tenant");
-            }
-
-            return tenant;
         }
 
         private ProductCategory Map(ProductCategory category, ProductCategoryModel model, Data.Entity.Models.Tenant tenant)

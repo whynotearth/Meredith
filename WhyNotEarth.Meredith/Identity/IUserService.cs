@@ -10,6 +10,8 @@ namespace WhyNotEarth.Meredith.Identity
     {
         Task<User> GetUserAsync(ClaimsPrincipal principal);
 
+        Task<User> GetUserAsync(string email);
+
         Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant);
 
         Task<UserCreateResult> CreateAsync(RegisterModel model);

@@ -26,6 +26,11 @@ namespace WhyNotEarth.Meredith.Identity
             return _userManager.GetUserAsync(principal);
         }
 
+        public Task<User> GetUserAsync(string email)
+        {
+            return _userManager.FindByEmailAsync(email);
+        }
+
         public Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant)
         {
             return _dbContext.Users

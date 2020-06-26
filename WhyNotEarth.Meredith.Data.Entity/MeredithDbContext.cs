@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
@@ -87,6 +88,9 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Memo> Memos { get; set; }
 
         public DbSet<NewJumpStart> NewJumpStarts { get; set; }
+
+        // BrowTricks
+        public DbSet<Client> Clients { get; set; }
 
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using DayOfWeek = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.DayOfWeek;
 

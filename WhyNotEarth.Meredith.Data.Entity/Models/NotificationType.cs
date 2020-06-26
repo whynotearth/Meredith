@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     [Flags]
     public enum NotificationType : byte

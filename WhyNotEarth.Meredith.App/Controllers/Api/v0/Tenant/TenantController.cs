@@ -85,9 +85,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         public async Task<ActionResult<bool>> DoesUserOwnTenant(string tenantSlug)
         {
             var user = await _userManager.GetUserAsync(User);
-            var isOwnsTheTenant = await _tenantService.IsOwnsTheTenant(user, tenantSlug);
+            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
-            return Ok(isOwnsTheTenant);
+            return Ok(tenant != null);
         }
     }
 }

@@ -137,13 +137,22 @@ namespace WhyNotEarth.Meredith.Tenant
                     .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
-        public async Task<bool> IsOwnsTheTenant(User user, string tenantSlug)
+        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, string tenantSlug)
         {
-            var tenant = await _dbContext.Tenants
-                .Where(item => item.Slug == tenantSlug && item.OwnerId == user.Id)
-                .FirstOrDefaultAsync();
+            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
 
-            return tenant != null;
+            if (tenant is null)
+            {
+                tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+                if (tenant is null)
+                {
+                    throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
+                }
+
+                throw new ForbiddenException("You don't own this tenant");
+            }
+
+            return tenant;
         }
     }
 }
