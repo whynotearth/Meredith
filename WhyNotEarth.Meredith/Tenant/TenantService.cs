@@ -131,7 +131,10 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public Task<Data.Entity.Models.Tenant> GeAsync(string tenantSlug)
         {
-            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+            return _dbContext.Tenants
+                    .Include(item => item.Logo)
+                    .Include(item => item.BusinessHours)
+                    .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
     }
 }
