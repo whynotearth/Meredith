@@ -136,5 +136,14 @@ namespace WhyNotEarth.Meredith.Tenant
                     .Include(item => item.BusinessHours)
                     .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
+
+        public async Task<bool> IsOwnsTheTenant(User user, string tenantSlug)
+        {
+            var tenant = await _dbContext.Tenants
+                .Where(item => item.Slug == tenantSlug && item.OwnerId == user.Id)
+                .FirstOrDefaultAsync();
+
+            return tenant != null;
+        }
     }
 }

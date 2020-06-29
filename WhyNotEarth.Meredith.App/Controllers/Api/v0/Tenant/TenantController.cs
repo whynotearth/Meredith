@@ -68,5 +68,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             return Ok(new TenantResult(tenant));
         }
+
+        [Authorize]
+        [Returns200]
+        [Returns401]
+        [HttpGet("owns/{tenantSlug}")]
+        // I tried my best to not let this become a thing but my best simply wasn't good enough
+        // Atharva asked for it and Paulchrisluke signed off on it
+        public async Task<ActionResult<bool>> DoesUserOwnTenant(string tenantSlug)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var isOwnsTheTenant = await _tenantService.IsOwnsTheTenant(user, tenantSlug);
+
+            return Ok(isOwnsTheTenant);
+        }
     }
 }
