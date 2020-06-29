@@ -115,6 +115,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 return Unauthorized(new {error = "Provider did not return an e-mail address"});
             }
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
                 false, true);
@@ -122,7 +123,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             if (result.Succeeded)
             {
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
-                return Redirect(returnUrl);
+
+                return await RedirectWithJwtAsync(email, returnUrl);
             }
 
             if (result.IsLockedOut)
@@ -130,7 +132,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return Unauthorized(new {error = "User is locked out"});
             }
 
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
             User user;
 
             if (User.Identity.IsAuthenticated)
@@ -164,7 +165,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             await _signInManager.SignInAsync(user, true);
-            return Redirect(returnUrl);
+            return await RedirectWithJwtAsync(user, returnUrl);
         }
 
         [Returns200]
@@ -299,11 +300,48 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private async Task<RedirectResult> RedirectWithJwtAsync(string email, string? returnUrl)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return await RedirectWithJwtAsync(user, returnUrl);
+        }
+
+        private async Task<RedirectResult> RedirectWithJwtAsync(User user, string? returnUrl)
+        {
+            var jwtToken = await GenerateJwtTokenAsync(user.Email, user);
+            var finalReturnUrl = AddQueryString(returnUrl, new Dictionary<string, string>
+            {
+                {"token", jwtToken}
+            });
+
+            return Redirect(finalReturnUrl);
+        }
+
         private UnauthorizedObjectResult Error(string message, IEnumerable<IdentityError> identityErrors)
         {
             var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
 
             return Unauthorized(new {error = $"{message}: {errors}"});
+        }
+
+        private string? AddQueryString(string? url, Dictionary<string, string> values)
+        {
+            if (url is null)
+            {
+                return url;
+            }
+
+            var uriBuilder = new UriBuilder(url);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            foreach (var keyValuePair in values)
+            {
+                query[keyValuePair.Key] = keyValuePair.Value;
+            }
+            
+            uriBuilder.Query = query.ToString();
+            return uriBuilder.ToString();
         }
     }
 }
