@@ -1,17 +1,17 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Runtime.Serialization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
-    public class BusinessHour : IEntityTypeConfiguration<BusinessHour>
+    public class BusinessHour
     {
         public int Id { get; set; }
 
         public int TenantId { get; set; }
 
-        public Tenant Tenant { get; set; }
+        public Tenant Tenant { get; set; } = null!;
 
         public DayOfWeek DayOfWeek { get; set; }
 
@@ -20,10 +20,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         public TimeSpan? OpeningTime { get; set; }
 
         public TimeSpan? ClosingTime { get; set; }
-
-        public void Configure(EntityTypeBuilder<BusinessHour> builder)
-        {
-        }
     }
 
     public enum DayOfWeek : byte

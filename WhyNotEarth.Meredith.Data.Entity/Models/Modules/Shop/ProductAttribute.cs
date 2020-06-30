@@ -1,26 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿#nullable enable
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
-    public class ProductAttribute : IEntityTypeConfiguration<ProductAttribute>
+    public class ProductAttribute
     {
         public int Id { get; set; }
 
         public int ProductId { get; set; }
 
-        public Product Product { get; set; }
+        public Product Product { get; set; } = null!;
+
+        public string Name { get; set; } = null!;
 
         public int PriceId { get; set; }
 
-        public Price Price { get; set; }
+        public Price Price { get; set; } = null!;
+    }
 
-        public string Name { get; set; }
-
+    public class ProductAttributeEntityConfig : IEntityTypeConfiguration<ProductAttribute>
+    {
         public void Configure(EntityTypeBuilder<ProductAttribute> builder)
         {
             builder.ToTable("ProductAttributes", "ModuleShop");
-            builder.Property(b => b.Name).IsRequired();
         }
     }
 }
