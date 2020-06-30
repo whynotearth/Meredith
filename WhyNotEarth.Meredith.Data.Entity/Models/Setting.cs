@@ -1,20 +1,15 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+#nullable enable
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    public class Setting : IEntityTypeConfiguration<Setting>
+    public class Setting
     {
         public int Id { get; set; }
 
         public int CompanyId { get; set; }
 
-        public Company Company { get; set; }
+        public Company Company { get; set; } = null!;
 
-        public string Value { get; set; }
-
-        public void Configure(EntityTypeBuilder<Setting> builder)
-        {
-        }
+        public string? Value { get; set; }
     }
 }

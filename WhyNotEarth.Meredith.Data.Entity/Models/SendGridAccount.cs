@@ -1,32 +1,25 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+#nullable enable
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    public class SendGridAccount : IEntityTypeConfiguration<SendGridAccount>
+    public class SendGridAccount
     {
         public int Id { get; set; }
 
         public int CompanyId { get; set; }
 
-        public Company Company { get; set; }
+        public Company Company { get; set; } = null!;
 
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
-        public string ApiKey { get; set; }
+        public string ApiKey { get; set; } = null!;
 
-        public string TemplateId { get; set; }
+        public string TemplateId { get; set; } = null!;
 
-        public string FromEmail { get; set; }
+        public string FromEmail { get; set; } = null!;
 
-        public string FromEmailName { get; set; }
+        public string? FromEmailName { get; set; }
 
-        public string Bcc { get; set; }
-
-        public void Configure(EntityTypeBuilder<SendGridAccount> builder)
-        {
-            builder.Property(b => b.ApiKey).IsRequired();
-            builder.Property(b => b.Key).IsRequired(false);
-        }
+        public string? Bcc { get; set; }
     }
 }
