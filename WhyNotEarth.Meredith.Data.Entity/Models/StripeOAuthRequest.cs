@@ -1,19 +1,15 @@
+#nullable enable
+
+using System;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    using System;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class StripeOAuthRequest : IEntityTypeConfiguration<StripeOAuthRequest>
+    public class StripeOAuthRequest
     {
-        public Company Company { get; set; }
+        public Guid Id { get; set; }
 
         public int CompanyId { get; set; }
 
-        public Guid Id { get; set; }
-
-        public void Configure(EntityTypeBuilder<StripeOAuthRequest> builder)
-        {
-        }
+        public Company Company { get; set; } = null!;
     }
 }
