@@ -1,26 +1,21 @@
+#nullable enable
+
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     [DebuggerDisplay("{" + nameof(Slug) + "}")]
-    public class Company : IEntityTypeConfiguration<Company>
+    public class Company
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Slug { get; set; } = null!;
 
-        public ICollection<Page> Pages { get; set; }
+        public string Name { get; set; } = null!;
 
-        public ICollection<Tenant> Tenants { get; set; }
+        public ICollection<Page>? Pages { get; set; }
 
-        public string Slug { get; set; }
-
-        public void Configure(EntityTypeBuilder<Company> builder)
-        {
-        }
+        public ICollection<Tenant>? Tenants { get; set; }
     }
 }

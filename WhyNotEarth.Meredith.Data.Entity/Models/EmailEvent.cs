@@ -1,25 +1,22 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
-    public class EmailEvent : IEntityTypeConfiguration<EmailEvent>
+    public class EmailEvent
     {
         public int Id { get; set; }
 
         public int EmailId { get; set; }
 
-        public Email Email { get; set; }
+        public Email Email { get; set; } = null!;
 
         public EmailEventType Type { get; set; }
 
         public DateTime DateTime { get; set; }
-
-        public void Configure(EntityTypeBuilder<EmailEvent> builder)
-        {
-            builder.ToTable("EmailEvents", "public");
-        }
     }
 
     public enum EmailEventType : byte
@@ -28,5 +25,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         Delivered = 1,
         Opened = 2,
         Clicked = 3
+    }
+
+    public class EmailEventEntityConfig : IEntityTypeConfiguration<EmailEvent>
+    {
+        public void Configure(EntityTypeBuilder<EmailEvent> builder)
+        {
+            builder.ToTable("EmailEvents", "public");
+        }
     }
 }
