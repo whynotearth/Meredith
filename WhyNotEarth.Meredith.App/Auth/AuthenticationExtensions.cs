@@ -58,6 +58,10 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
+                    options.Events.OnRedirectToAuthorizationEndpoint = context => {
+                        context.Properties.Parameters.Add("prompt", "select_account");
+                        return Task.CompletedTask;
+                    };
                 })
                 .AddFacebook(options =>
                 {

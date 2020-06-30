@@ -72,7 +72,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,
                 $"/api/v0/authentication/provider/callback?returnUrl={returnUrl}");
-            properties.Parameters.Add("prompt", "select_account");
             return new ChallengeResult(provider, properties);
         }
 
