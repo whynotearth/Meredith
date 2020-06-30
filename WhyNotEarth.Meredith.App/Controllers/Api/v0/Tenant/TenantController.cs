@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Tenant;
@@ -61,10 +62,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Returns200]
+        [Returns404]
         [HttpGet("{tenantSlug}")]
         public async Task<ActionResult<TenantResult>> Get(string tenantSlug)
         {
             var tenant = await _tenantService.GeAsync(tenantSlug);
+
+            if (tenant is null)
+            {
+                throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
+            }
 
             return Ok(new TenantResult(tenant));
         }
