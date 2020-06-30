@@ -80,6 +80,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         public async Task<IActionResult> ProviderLogout(string provider)
         {
             var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+            {
+                return Ok();
+            }
+
             var userLoginInfos = await _userManager.GetLoginsAsync(user);
 
             var userLoginInfo = userLoginInfos.FirstOrDefault(item => item.LoginProvider == provider);
