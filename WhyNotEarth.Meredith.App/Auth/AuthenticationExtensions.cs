@@ -58,10 +58,6 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                    options.Events.OnRedirectToAuthorizationEndpoint = context => {
-                        context.Properties.Parameters.Add("prompt", "select_account");
-                        return Task.CompletedTask;
-                    };
                 })
                 .AddFacebook(options =>
                 {
@@ -71,13 +67,13 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
                 });
 
-                services.ConfigureApplicationCookie(options =>
-                {
-                    options.Cookie.Name = "auth";
-                    options.Cookie.HttpOnly = false;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                    options.LoginPath = null;
-                });
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "auth";
+                options.Cookie.HttpOnly = false;
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.LoginPath = null;
+            });
         }
 
         public static IApplicationBuilder UseCustomAuthentication(this IApplicationBuilder app)

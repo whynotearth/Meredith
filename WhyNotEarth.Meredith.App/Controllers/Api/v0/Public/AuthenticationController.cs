@@ -51,7 +51,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
             if (!result.Succeeded)
             {
-                return Unauthorized(new {error = "You have entered an invalid username or password"});
+                return Unauthorized(new { error = "You have entered an invalid username or password" });
             }
 
             var user = await _userManager.FindByNameAsync(model.Email);
@@ -72,6 +72,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider,
                 $"/api/v0/authentication/provider/callback?returnUrl={returnUrl}");
+            properties.Parameters.Add("prompt", "select_account");
             return new ChallengeResult(provider, properties);
         }
 
@@ -106,7 +107,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             if (remoteError != null)
             {
-                return Unauthorized(new {error = $"Error from external provider: {remoteError}"});
+                return Unauthorized(new { error = $"Error from external provider: {remoteError}" });
             }
 
             var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -118,7 +119,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             if (!info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
             {
-                return Unauthorized(new {error = "Provider did not return an e-mail address"});
+                return Unauthorized(new { error = "Provider did not return an e-mail address" });
             }
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
 
@@ -134,7 +135,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             if (result.IsLockedOut)
             {
-                return Unauthorized(new {error = "User is locked out"});
+                return Unauthorized(new { error = "User is locked out" });
             }
 
             User user;
@@ -327,7 +328,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
 
-            return Unauthorized(new {error = $"{message}: {errors}"});
+            return Unauthorized(new { error = $"{message}: {errors}" });
         }
 
         private string? AddQueryString(string? url, Dictionary<string, string> values)
@@ -344,7 +345,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 query[keyValuePair.Key] = keyValuePair.Value;
             }
-            
+
             uriBuilder.Query = query.ToString();
             return uriBuilder.ToString();
         }

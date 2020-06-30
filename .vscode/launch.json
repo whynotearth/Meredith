@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/WhyNotEarth.Meredith.App/bin/Debug/netcoreapp2.2/WhyNotEarth.Meredith.App.dll",
+            "program": "${workspaceFolder}/WhyNotEarth.Meredith.App/bin/Debug/netcoreapp3.1/WhyNotEarth.Meredith.App.dll",
             "args": [],
             "cwd": "${workspaceFolder}/WhyNotEarth.Meredith.App",
             "stopAtEntry": false,
@@ -17,7 +17,8 @@
                 "enabled": true
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://*:5000;https://*:5001"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
