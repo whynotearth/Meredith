@@ -24,6 +24,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public string Description { get; set; }
 
+        public bool IsAvailable { get; set; }
+
         public ProductImage Image { get; set; }
 
         public List<Variation> Variations { get; set; }
