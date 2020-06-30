@@ -2,6 +2,8 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
@@ -44,5 +46,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         
         [EnumMember(Value = "saturday")]
         Saturday = 7
+    }
+
+    public class BusinessHourEntityConfig : IEntityTypeConfiguration<BusinessHour>
+    {
+        public void Configure(EntityTypeBuilder<BusinessHour> builder)
+        {
+            builder.ToTable("BusinessHours", "ModuleShop");
+        }
     }
 }
