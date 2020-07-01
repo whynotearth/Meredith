@@ -23,13 +23,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public string? H2 { get; }
 
-        public string BackgroundImage { get; }
+        public string? BackgroundImage { get; }
 
         public List<ImageResult> Images { get; } = new List<ImageResult>();
 
         public string? CtaText { get; }
 
-        public string CtaLink { get; }
+        public string? CtaLink { get; }
 
         public List<StoryResult> Stories { get; } = new List<StoryResult>();
 
@@ -37,9 +37,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public Dictionary<string, object> Modules { get; } = new Dictionary<string, object>();
 
-        public string FeaturedImage { get; }
+        public string? FeaturedImage { get; }
 
-        public string Slug { get; }
+        public string? Slug { get; }
 
         public PageResult(Data.Entity.Models.Page page, string culture)
         {
@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             AddHotelModule(page.Hotel, culture);
         }
 
-        private void AddHotelModule(Data.Entity.Models.Modules.Hotel.Hotel hotel, string culture)
+        private void AddHotelModule(Data.Entity.Models.Modules.Hotel.Hotel? hotel, string culture)
         {
             if (hotel is null)
             {

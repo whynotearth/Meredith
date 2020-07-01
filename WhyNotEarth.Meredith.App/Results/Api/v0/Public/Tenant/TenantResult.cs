@@ -14,13 +14,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? LogoUrl { get; }
 
-        public List<string> Tags { get; }
+        public List<string>? Tags { get; }
 
         public TimeSpan DeliveryTime { get; }
 
         public decimal DeliveryFee { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
         
         public List<PaymentMethodType> PaymentMethodTypes { get; }
 

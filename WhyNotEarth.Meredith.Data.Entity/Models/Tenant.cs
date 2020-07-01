@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
                 .HasForeignKey(tenant => tenant.OwnerId);
             builder.Property(e => e.Tags)
                 .HasConversion(
-                    v => string.Join(",", v),
+                    v => string.Join(",", v ?? new List<string>()),
                     v => v.Split(",", StringSplitOptions.None).ToList());
         }
     }

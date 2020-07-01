@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Products
 
         public string Name { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
 
         public List<string>? Images { get; }
 

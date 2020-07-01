@@ -20,15 +20,15 @@ namespace WhyNotEarth.Meredith.Pages
         {
             return await Include().FirstOrDefaultAsync(p =>
                 p.Company.Slug.ToLower() == companySlug.ToLower()
-                && p.Slug.ToLower() == pageSlug.ToLower());
+                && p.Slug!.ToLower() == pageSlug.ToLower());
         }
 
         public async Task<Page> GetPageAsync(string companySlug, string tenantSlug, string pageSlug)
         {
             return await Include().FirstOrDefaultAsync(p =>
                 p.Company.Slug.ToLower() == companySlug.ToLower()
-                && p.Tenant.Slug.ToLower() == tenantSlug.ToLower()
-                && p.Slug.ToLower() == pageSlug.ToLower());
+                && p.Tenant!.Slug.ToLower() == tenantSlug.ToLower()
+                && p.Slug!.ToLower() == pageSlug.ToLower());
         }
 
         public async Task<List<Page>> GetPagesAsync(string companySlug)
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.Pages
 
         public async Task<List<Page>> GetPagesAsync(string companySlug, string categoryName)
         {
-            return await Include().Where(p => p.Company.Slug == companySlug && p.Category.Name == categoryName)
+            return await Include().Where(p => p.Company.Slug == companySlug && p.Category!.Name == categoryName)
                 .ToListAsync();
         }
 
@@ -53,23 +53,23 @@ namespace WhyNotEarth.Meredith.Pages
                 .Include(p => p.Cards)
                 .Include(p => p.Category)
                 .Include(p => p.Hotel)
+                .ThenInclude(p => p!.Translations)
+                .ThenInclude(p => p.Language)
+                .Include(p => p.Hotel)
+                .ThenInclude(p => p!.Amenities)
                 .ThenInclude(p => p.Translations)
                 .ThenInclude(p => p.Language)
                 .Include(p => p.Hotel)
-                .ThenInclude(p => p.Amenities)
-                .ThenInclude(p => p.Translations)
-                .ThenInclude(p => p.Language)
+                .ThenInclude(p => p!.RoomTypes)
                 .Include(p => p.Hotel)
-                .ThenInclude(p => p.RoomTypes)
-                .Include(p => p.Hotel)
-                .ThenInclude(p => p.RoomTypes)
+                .ThenInclude(p => p!.RoomTypes)
                 .ThenInclude(p => p.Beds)
                 .Include(p => p.Hotel)
-                .ThenInclude(p => p.Rules)
+                .ThenInclude(p => p!.Rules)
                 .ThenInclude(p => p.Translations)
                 .ThenInclude(p => p.Language)
                 .Include(p => p.Hotel)
-                .ThenInclude(p => p.Spaces)
+                .ThenInclude(p => p!.Spaces)
                 .ThenInclude(p => p.Translations)
                 .ThenInclude(p => p.Language)
                 .Include(p => p.Images);
@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.Pages
         public async Task<Page> GetLandingPageAsync(string companySlug, string pageSlug)
         {
             var page = await _dbContext.Pages.FirstOrDefaultAsync(p =>
-                p.Company.Slug.ToLower() == companySlug.ToLower() && p.Slug.ToLower() == pageSlug.ToLower());
+                p.Company.Slug.ToLower() == companySlug.ToLower() && p.Slug!.ToLower() == pageSlug.ToLower());
 
             return page;
         }

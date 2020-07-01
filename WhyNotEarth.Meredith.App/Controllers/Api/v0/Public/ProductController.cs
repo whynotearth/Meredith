@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 .Include(item => item.Images)
                 .Where(item =>
                     item.Tenant.Slug.ToLower() == tenantSlug.ToLower() &&
-                    item.Category.Slug.ToLower() == categorySlug.ToLower())
+                    item.Category.Slug!.ToLower() == categorySlug.ToLower())
                 .ToListAsync();
 
             return Ok(products.Select(item => new ProductResult(item)).ToList());

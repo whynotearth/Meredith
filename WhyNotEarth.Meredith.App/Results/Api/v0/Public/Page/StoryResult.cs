@@ -13,16 +13,16 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public string CtaText { get; }
 
-        public string CtaLink { get; }
+        public string? CtaLink { get; }
 
         public string Image { get; }
 
-        public string PosterUrl { get; }
+        public string? PosterUrl { get; }
 
         public string Type { get; }
 
-        public StoryResult(int id, string content, string ctaText, string ctaLink, string image,
-            string posterUrl, Card.CardTypes cardType)
+        public StoryResult(int id, string content, string ctaText, string? ctaLink, string image,
+            string? posterUrl, Card.CardTypes cardType)
         {
             Id = id;
             Content = content;

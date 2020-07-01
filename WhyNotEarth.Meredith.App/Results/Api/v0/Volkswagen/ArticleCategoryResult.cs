@@ -4,7 +4,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
     public class ArticleCategoryResult
     {
-        public string Slug { get; }
+        public string? Slug { get; }
 
         public string Name { get; }
 
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public string? Image { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
 
         public ArticleCategoryResult(ArticleCategory category)
         {

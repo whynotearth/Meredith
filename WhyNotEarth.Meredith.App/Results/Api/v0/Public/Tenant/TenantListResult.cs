@@ -11,13 +11,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? Logo { get; }
 
-        public List<string> Tags { get; }
+        public List<string>? Tags { get; }
 
         public TimeSpan DeliveryTime { get; }
 
         public decimal DeliveryFee { get; }
 
-        public string Description { get; }
+        public string? Description { get; }
 
         public TenantListResult(Data.Entity.Models.Tenant tenant)
         {
