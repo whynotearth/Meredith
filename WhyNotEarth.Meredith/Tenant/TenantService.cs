@@ -154,5 +154,23 @@ namespace WhyNotEarth.Meredith.Tenant
 
             return tenant;
         }
+
+        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, int tenantId)
+        {
+            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
+
+            if (tenant is null)
+            {
+                tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId);
+                if (tenant is null)
+                {
+                    throw new RecordNotFoundException($"Tenant {tenantId} not found");
+                }
+
+                throw new ForbiddenException("You don't own this tenant");
+            }
+
+            return tenant;
+        }
     }
 }

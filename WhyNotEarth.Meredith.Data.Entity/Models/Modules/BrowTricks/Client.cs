@@ -20,6 +20,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public NotificationType NotificationType { get; set; }
 
         public string? Notes { get; set; }
+
+        public bool IsArchived { get; set; }
     }
 
     public class ClientEntityConfig : IEntityTypeConfiguration<Client>
