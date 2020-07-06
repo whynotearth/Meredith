@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -38,14 +39,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task EditAsync(int clientId, ClientModel model, User user)
         {
-            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"client {clientId} not found");
-            }
-
-            await ValidateAsync(user, client.TenantId);
+            var client = await ValidateAsync(user, clientId);
 
             client = await MapAsync(client, model);
 
@@ -64,14 +58,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task ArchiveAsync(int clientId, User user)
         {
-            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"client {clientId} not found");
-            }
-
-            await ValidateAsync(user, client.TenantId);
+            var client = await ValidateAsync(user, clientId);
 
             client.IsArchived = true;
 
@@ -81,16 +68,19 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task DeleteAsync(int clientId, User user)
         {
-            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"client {clientId} not found");
-            }
-
-            await ValidateAsync(user, client.TenantId);
+            var client = await ValidateAsync(user, clientId);
 
             _dbContext.Clients.Remove(client);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task SetPmuAsync(int clientId, ClientPmuModel model, User user)
+        {
+            var client = await ValidateAsync(user, clientId);
+
+            client = Map(client, model);
+
+            _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -140,9 +130,39 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return await _tenantService.CheckPermissionAsync(user, tenantSlug);
         }
 
-        private async Task ValidateAsync(User user, int tenantId)
+        private async Task<Client> ValidateAsync(User user, int clientId)
         {
-            await _tenantService.CheckPermissionAsync(user, tenantId);
+            var client = await GetClientAsync(clientId);
+
+            await _tenantService.CheckPermissionAsync(user, client.TenantId);
+
+            return client;
+        }
+
+        private async Task<Client> GetClientAsync(int clientId)
+        {
+            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            return client;
+        }
+
+        private Client Map(Client client, ClientPmuModel model)
+        {
+            client.Signature = model.Signature;
+            client.Initials = model.Initials;
+            client.AllowPhoto = model.AllowPhoto;
+            client.IsUnderCareOfPhysician = model.IsUnderCareOfPhysician;
+            client.Conditions = model.Conditions;
+            client.IsTakingBloodThinner = model.IsTakingBloodThinner;
+            client.PhysicianName = model.PhysicianName;
+            client.PhysicianPhoneNumber = model.PhysicianPhoneNumber;
+
+            return client;
         }
     }
 }

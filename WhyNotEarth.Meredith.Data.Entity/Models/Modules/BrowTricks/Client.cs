@@ -21,6 +21,22 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 
         public string? Notes { get; set; }
 
+        public string? Signature { get; set; }
+        
+        public string? Initials { get; set; }
+
+        public bool? AllowPhoto { get; set; }
+
+        public bool? IsUnderCareOfPhysician { get; set; }
+
+        public string? Conditions { get; set; }
+
+        public bool? IsTakingBloodThinner { get; set; }
+
+        public string? PhysicianName { get; set; }
+
+        public string? PhysicianPhoneNumber { get; set; }
+
         public bool IsArchived { get; set; }
     }
 

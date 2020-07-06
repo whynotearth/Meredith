@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns200]
         [Returns401]
         [Returns403]
-        [HttpPost("")]
+        [HttpGet("")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<List<ClientResult>>> List(string tenantSlug)
         {
@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns401]
         [Returns403]
         [Returns404]
-        [HttpPost("{clientId}")]
+        [HttpPost("{clientId}/archive")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<NoContentResult> Archive(int clientId)
         {
@@ -95,6 +95,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var user = await _userService.GetUserAsync(User);
 
             await _clientService.DeleteAsync(clientId, user);
+
+            return NoContent();
+        }
+
+        [Returns204]
+        [Returns401]
+        [Returns403]
+        [Returns404]
+        [HttpPost("{clientId}/pmu")]
+        [Authorize(Policy = Policies.ManageTenant)]
+        public async Task<NoContentResult> Pmu(int clientId, ClientPmuModel model)
+        {
+            var user = await _userService.GetUserAsync(User);
+
+            await _clientService.SetPmuAsync(clientId, model, user);
 
             return NoContent();
         }
