@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns401]
         [Returns403]
         [Returns404]
-        [HttpPost("{clientId}")]
+        [HttpPut("{clientId}")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<NoContentResult> Edit(int clientId, ClientModel model)
         {
