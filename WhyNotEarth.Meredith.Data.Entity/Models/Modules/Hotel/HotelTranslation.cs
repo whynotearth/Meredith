@@ -1,9 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class HotelTranslation : IEntityTypeConfiguration<HotelTranslation>
+    public class HotelTranslation
     {
         public int Id { get; set; }
 
@@ -18,7 +18,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public string GettingAround { get; set; }
 
         public string Location { get; set; }
+    }
 
+    public class HotelTranslationEntityConfig : IEntityTypeConfiguration<HotelTranslation>
+    {
         public void Configure(EntityTypeBuilder<HotelTranslation> builder)
         {
             builder.ToTable("HotelTranslations", "ModuleHotel");

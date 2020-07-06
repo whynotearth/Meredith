@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class Room : IEntityTypeConfiguration<Room>
+    public class Room
     {
         public int Id { get; set; }
 
@@ -15,7 +15,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public string Number { get; set; }
 
         public ICollection<HotelReservation> Reservations { get; set; }
+    }
 
+    public class RoomEntityConfig : IEntityTypeConfiguration<Room>
+    {
         public void Configure(EntityTypeBuilder<Room> builder)
         {
             builder.Property(e => e.Number).HasMaxLength(16);

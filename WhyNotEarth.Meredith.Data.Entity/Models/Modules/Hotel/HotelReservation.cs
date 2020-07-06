@@ -12,11 +12,14 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public Room Room { get; set; }
 
         public DateTime Start { get; set; }
-        
+
         public DateTime End { get; set; }
 
         public int NumberOfGuests { get; set; }
+    }
 
+    public class HotelReservationEntityConfig : ReservationEntityConfig
+    {
         public void Configure(EntityTypeBuilder<HotelReservation> builder)
         {
             builder.Property(e => e.Start).HasColumnType("date");

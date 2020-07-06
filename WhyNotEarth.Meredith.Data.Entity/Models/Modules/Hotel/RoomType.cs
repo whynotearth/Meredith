@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    public class RoomType : IEntityTypeConfiguration<RoomType>
+    public class RoomType
     {
         public ICollection<Bed> Beds { get; set; } = new List<Bed>();
 
@@ -21,7 +21,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public ICollection<HotelPrice> Prices { get; set; } = new List<HotelPrice>();
 
         public ICollection<Room> Rooms { get; set; } = new List<Room>();
+    }
 
+    public class RoomTypeEntityConfig : IEntityTypeConfiguration<RoomType>
+    {
         public void Configure(EntityTypeBuilder<RoomType> builder)
         {
             builder.Property(e => e.Name);

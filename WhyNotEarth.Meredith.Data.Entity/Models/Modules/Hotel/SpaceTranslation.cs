@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    public class SpaceTranslation : IEntityTypeConfiguration<SpaceTranslation>
+    public class SpaceTranslation
     {
         public int Id { get; set; }
 
@@ -16,7 +16,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public int LanguageId { get; set; }
 
         public string Name { get; set; }
+    }
 
+    public class SpaceTranslationEntityConfig : IEntityTypeConfiguration<SpaceTranslation>
+    {
         public void Configure(EntityTypeBuilder<SpaceTranslation> builder)
         {
             builder.ToTable("SpaceTranslations", "ModuleHotel");

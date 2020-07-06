@@ -1,9 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class Bed : IEntityTypeConfiguration<Bed>
+    public class Bed
     {
         public enum BedTypes
         {
@@ -12,9 +12,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
             Twin,
             Single,
             LargeTwin,
-            Double,
-
-        };
+            Double
+        }
 
         public BedTypes BedType { get; set; }
 
@@ -25,7 +24,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public RoomType RoomType { get; set; }
 
         public int RoomTypeId { get; set; }
+    }
 
+    public class BedEntityConfig : IEntityTypeConfiguration<Bed>
+    {
         public void Configure(EntityTypeBuilder<Bed> builder)
         {
             builder.ToTable("Beds", "ModuleHotel");

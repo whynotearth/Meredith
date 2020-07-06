@@ -12,7 +12,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public int RoomTypeId { get; set; }
 
         public RoomType RoomType { get; set; }
+    }
 
+    public class HotelPriceEntityConfig : PriceEntityConfig
+    {
         public void Configure(EntityTypeBuilder<HotelPrice> builder)
         {
             builder.Property(e => e.Date).HasColumnType("date");

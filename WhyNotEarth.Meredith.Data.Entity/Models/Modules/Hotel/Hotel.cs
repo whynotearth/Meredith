@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class Hotel : IEntityTypeConfiguration<Hotel>
+    public class Hotel
     {
         public ICollection<Amenity> Amenities { get; set; }
 
@@ -25,7 +25,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public ICollection<Space> Spaces { get; set; }
 
         public ICollection<HotelTranslation> Translations { get; set; }
+    }
 
+    public class HotelEntityConfig : IEntityTypeConfiguration<Hotel>
+    {
         public void Configure(EntityTypeBuilder<Hotel> builder)
         {
             builder.ToTable("Hotels", "ModuleHotel");

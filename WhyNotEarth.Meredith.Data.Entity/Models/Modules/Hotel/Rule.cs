@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    public class Rule : IEntityTypeConfiguration<Rule>
+    public class Rule
     {
         public Hotel Hotel { get; set; }
 
@@ -13,7 +13,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public int Id { get; set; }
 
         public ICollection<RuleTranslation> Translations { get; set; }
+    }
 
+    public class RuleEntityConfig : IEntityTypeConfiguration<Rule>
+    {
         public void Configure(EntityTypeBuilder<Rule> builder)
         {
             builder.ToTable("Rules", "ModuleHotel");
