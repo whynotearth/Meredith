@@ -7,8 +7,8 @@ using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Tenant;
+using WhyNotEarth.Meredith.Tenant.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 {
@@ -88,6 +88,29 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
             return Ok(tenant != null);
+        }
+
+        [Returns200]
+        [HttpGet("{tenantSlug}/address")]
+        public async Task<ActionResult<AddressResult>> GetAddress(string tenantSlug)
+        {
+            var address = await _tenantService.GetAddressAsync(tenantSlug);
+
+            return Ok(new AddressResult(address));
+        }
+
+        [Authorize]
+        [Returns201]
+        [Returns401]
+        [Returns403]
+        [HttpPost("{tenantSlug}/address")]
+        public async Task<CreateResult> SetAddress(string tenantSlug, AddressModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _tenantService.SetAddressAsync(tenantSlug, model, user);
+
+            return Created();
         }
     }
 }

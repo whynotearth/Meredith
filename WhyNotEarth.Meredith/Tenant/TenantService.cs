@@ -9,6 +9,7 @@ using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Tenant.Models;
 
 namespace WhyNotEarth.Meredith.Tenant
 {
@@ -171,6 +172,36 @@ namespace WhyNotEarth.Meredith.Tenant
             }
 
             return tenant;
+        }
+
+        public async Task<Address?> GetAddressAsync(string tenantSlug)
+        {
+            var tenant = await _dbContext.Tenants
+                .Include(item => item.Address)
+                .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+
+            if (tenant is null)
+            {
+                throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
+            }
+
+            return tenant.Address;
+        }
+
+        public async Task SetAddressAsync(string tenantSlug, AddressModel model, User user)
+        {
+            var tenant = await CheckPermissionAsync(user, tenantSlug);
+
+            tenant.Address ??= new Address();
+
+            tenant.Address.Street = model.Street;
+            tenant.Address.ApartmentNumber = model.ApartmentNumber;
+            tenant.Address.City = model.City;
+            tenant.Address.ZipCode = model.ZipCode;
+            tenant.Address.State = model.State;
+
+            _dbContext.Tenants.Update(tenant);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

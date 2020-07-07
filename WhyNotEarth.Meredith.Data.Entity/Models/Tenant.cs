@@ -42,6 +42,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public string? Description { get; set; }
 
         public ICollection<Page>? Pages { get; set; }
+
+        public int? AddressId { get; set; }
+
+        public Address? Address { get; set; }
     }
 
     public class TenantImage : Image
