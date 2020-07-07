@@ -129,8 +129,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             if (result.Succeeded)
             {
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                
+                var currentUser = await _userManager.FindByEmailAsync(email);
 
-                return await RedirectWithJwtAsync(email, returnUrl);
+                await UpdateUserAsync(info, currentUser);
+
+                return await RedirectWithJwtAsync(currentUser, returnUrl);
             }
 
             if (result.IsLockedOut)
@@ -149,30 +153,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 user = await _userManager.FindByEmailAsync(email);
             }
 
-            var imageUrl = info.Principal.FindFirstValue("picture");
             if (user is null)
             {
                 user = new User
                 {
                     UserName = email,
                     Email = email,
-                    ImageUrl = imageUrl
                 };
+
+                _userService.Map(user, info);
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     return Error("Error creating user", createResult.Errors);
-                }
-            }
-            else if (user.ImageUrl is null)
-            {
-                user.ImageUrl = imageUrl;
-
-                var updateResult = await _userManager.UpdateAsync(user);
-                if (!updateResult.Succeeded)
-                {
-                    return Error("Error creating user", updateResult.Errors);
                 }
             }
 
@@ -318,13 +312,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private async Task<RedirectResult> RedirectWithJwtAsync(string email, string? returnUrl)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            return await RedirectWithJwtAsync(user, returnUrl);
-        }
-
         private async Task<RedirectResult> RedirectWithJwtAsync(User user, string? returnUrl)
         {
             var jwtToken = await GenerateJwtTokenAsync(user.Email, user);
@@ -334,6 +321,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             });
 
             return Redirect(finalReturnUrl);
+        }
+
+        private async Task UpdateUserAsync(ExternalLoginInfo externalLoginInfo, User user)
+        {
+            user = _userService.Map(user, externalLoginInfo);
+
+            await _userManager.UpdateAsync(user);
         }
 
         private UnauthorizedObjectResult Error(string message, IEnumerable<IdentityError> identityErrors)

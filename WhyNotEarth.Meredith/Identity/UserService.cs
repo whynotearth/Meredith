@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -12,8 +14,8 @@ namespace WhyNotEarth.Meredith.Identity
 {
     internal class UserService : IUserService
     {
-        private readonly UserManager _userManager;
         private readonly MeredithDbContext _dbContext;
+        private readonly UserManager _userManager;
 
         public UserService(UserManager userManager, MeredithDbContext dbContext)
         {
@@ -44,7 +46,7 @@ namespace WhyNotEarth.Meredith.Identity
 
             if (user is null)
             {
-                user = await MapUserAsync(model);   
+                user = await MapUserAsync(model);
 
                 return await CreateAsync(user, model.Password);
             }
@@ -66,12 +68,29 @@ namespace WhyNotEarth.Meredith.Identity
                 IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email)), null);
         }
 
-        
         public async Task<bool> IsExternalAccountConnected(User user)
         {
             var logins = await _userManager.GetLoginsAsync(user);
 
             return logins.Any();
+        }
+
+        public User Map(User user, ExternalLoginInfo externalLoginInfo)
+        {
+            user.FirstName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.GivenName);
+
+            if (externalLoginInfo.LoginProvider == GoogleDefaults.AuthenticationScheme)
+            {
+                user.LastName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
+            }
+            else if (externalLoginInfo.LoginProvider == FacebookDefaults.AuthenticationScheme)
+            {
+                user.LastName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Surname);
+            }
+
+            user.ImageUrl = externalLoginInfo.Principal.FindFirstValue("picture");
+
+            return user;
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)
@@ -128,7 +147,8 @@ namespace WhyNotEarth.Meredith.Identity
 
             if (!string.IsNullOrWhiteSpace(model.TenantSlug))
             {
-                var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == model.TenantSlug.ToLower());
+                var tenant =
+                    await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == model.TenantSlug.ToLower());
                 tenantId = tenant?.Id;
             }
 
