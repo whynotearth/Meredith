@@ -16,6 +16,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile
 
         public string? GoogleLocation { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public ProfileResult(User user)
         {
             Email = user.Email;
@@ -24,6 +26,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile
             PhoneNumber = user.PhoneNumber;
             Address = user.Address;
             GoogleLocation = user.GoogleLocation;
+            ImageUrl = user.ImageUrl;
         }
     }
 }

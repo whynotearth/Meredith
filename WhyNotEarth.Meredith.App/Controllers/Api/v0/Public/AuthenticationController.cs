@@ -149,18 +149,30 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 user = await _userManager.FindByEmailAsync(email);
             }
 
+            var imageUrl = info.Principal.FindFirstValue("picture");
             if (user is null)
             {
                 user = new User
                 {
                     UserName = email,
-                    Email = email
+                    Email = email,
+                    ImageUrl = imageUrl
                 };
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     return Error("Error creating user", createResult.Errors);
+                }
+            }
+            else if (user.ImageUrl is null)
+            {
+                user.ImageUrl = imageUrl;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    return Error("Error creating user", updateResult.Errors);
                 }
             }
 

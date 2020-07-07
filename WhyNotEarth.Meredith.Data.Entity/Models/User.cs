@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public string FullName => string.Join(' ', FirstName, LastName);
 
+        public string? ImageUrl { get; set; }
+        
         public string? Address { get; set; }
 
         public string? GoogleLocation { get; set; }

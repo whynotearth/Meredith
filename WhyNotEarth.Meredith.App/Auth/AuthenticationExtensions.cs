@@ -58,6 +58,17 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
+                    
+                    // Profile picture
+                    options.Scope.Add("profile");
+                    options.Events.OnCreatingTicket = context =>
+                    {                      
+                        var picture = context.User.GetProperty("picture").GetString();
+
+                        context.Identity.AddClaim(new Claim("picture", picture));
+
+                        return Task.CompletedTask;
+                    };
                 })
                 .AddFacebook(options =>
                 {
@@ -65,6 +76,18 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
+                    
+                    // Profile picture
+                    options.Fields.Add("picture");
+                    options.Events.OnCreatingTicket = context =>
+                    {
+                        //var profileImg = context.User["picture"]["data"].Value<string>("url");
+                        var picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url").GetString();
+
+                        context.Identity.AddClaim(new Claim("picture", picture));
+
+                        return Task.CompletedTask;
+                    };
                 });
 
             services.ConfigureApplicationCookie(options =>
