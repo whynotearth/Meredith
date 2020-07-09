@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -8,13 +10,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public int Id { get; set; }
 
-        public RoomType RoomType { get; set; }
-
         public int RoomTypeId { get; set; }
 
-        public string Number { get; set; }
+        public RoomType RoomType { get; set; } = null!;
 
-        public ICollection<HotelReservation> Reservations { get; set; }
+        public string? Number { get; set; }
+
+        public ICollection<HotelReservation> Reservations { get; set; } = null!;
     }
 
     public class RoomEntityConfig : IEntityTypeConfiguration<Room>

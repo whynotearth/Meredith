@@ -1,3 +1,5 @@
+#nullable enable
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -5,25 +7,25 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
     public class Bed
     {
-        public enum BedTypes
-        {
-            King,
-            Queen,
-            Twin,
-            Single,
-            LargeTwin,
-            Double
-        }
+        public int Id { get; set; }
+
+        public int RoomTypeId { get; set; }
+
+        public RoomType RoomType { get; set; } = null!;
 
         public BedTypes BedType { get; set; }
 
         public int Count { get; set; }
+    }
 
-        public int Id { get; set; }
-
-        public RoomType RoomType { get; set; }
-
-        public int RoomTypeId { get; set; }
+    public enum BedTypes
+    {
+        King,
+        Queen,
+        Twin,
+        Single,
+        LargeTwin,
+        Double
     }
 
     public class BedEntityConfig : IEntityTypeConfiguration<Bed>

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -9,7 +11,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public int RoomId { get; set; }
 
-        public Room Room { get; set; }
+        public Room Room { get; set; } = null!;
 
         public DateTime Start { get; set; }
 

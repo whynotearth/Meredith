@@ -1,3 +1,5 @@
+#nullable enable
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -7,15 +9,15 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
     {
         public int Id { get; set; }
 
-        public Amenity Amenity { get; set; }
-
         public int AmenityId { get; set; }
 
-        public Language Language { get; set; }
+        public Amenity Amenity { get; set; } = null!;
 
         public int LanguageId { get; set; }
+        
+        public Language Language { get; set; } = null!;
 
-        public string Text { get; set; }
+        public string? Text { get; set; }
     }
 
     public class AmenityTranslationEntityConfig : IEntityTypeConfiguration<AmenityTranslation>

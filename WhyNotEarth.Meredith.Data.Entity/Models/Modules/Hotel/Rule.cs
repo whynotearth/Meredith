@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -6,13 +8,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
     public class Rule
     {
-        public Hotel Hotel { get; set; }
+        public int Id { get; set; }
 
         public int HotelId { get; set; }
 
-        public int Id { get; set; }
+        public Hotel Hotel { get; set; } = null!;
 
-        public ICollection<RuleTranslation> Translations { get; set; }
+        public ICollection<RuleTranslation>? Translations { get; set; }
     }
 
     public class RuleEntityConfig : IEntityTypeConfiguration<Rule>
