@@ -78,18 +78,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns204]
         [Returns404]
-        [HttpDelete("{clientId}")]
-        public async Task<NoContentResult> Delete(int clientId)
-        {
-            var user = await _userService.GetUserAsync(User);
-
-            await _clientService.DeleteAsync(clientId, user);
-
-            return NoContent();
-        }
-
-        [Returns204]
-        [Returns404]
         [HttpPost("{clientId}/pmu")]
         public async Task<NoContentResult> Pmu(int clientId, ClientPmuModel model)
         {

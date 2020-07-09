@@ -65,14 +65,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int clientId, User user)
-        {
-            var client = await ValidateAsync(user, clientId);
-
-            _dbContext.Clients.Remove(client);
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task SetPmuAsync(int clientId, ClientPmuModel model, User user)
         {
             var client = await ValidateAsync(user, clientId);
