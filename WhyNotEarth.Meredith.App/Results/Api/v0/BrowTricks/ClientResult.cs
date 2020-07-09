@@ -22,6 +22,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public string? AvatarUrl { get; set; }
 
+        public bool IsPmuCompleted { get; set; }
+
         public ClientResult(Client client)
         {
             Id = client.Id;
@@ -31,6 +33,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             PhoneNumber = client.User.PhoneNumber;
             NotificationTypes = client.NotificationType.ToList();
             AvatarUrl = client.User.ImageUrl;
+            IsPmuCompleted = client.IsPmuCompleted;
         }
     }
 }

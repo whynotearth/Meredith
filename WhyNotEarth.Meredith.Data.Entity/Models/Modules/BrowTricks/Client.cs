@@ -22,6 +22,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 
         public List<ClientNote>? Notes { get; set; }
 
+        public bool IsPmuCompleted { get; set; }
+
         public string? Signature { get; set; }
         
         public string? Initials { get; set; }

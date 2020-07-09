@@ -151,6 +151,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         private Client Map(Client client, ClientPmuModel model)
         {
+            client.IsPmuCompleted = true;
             client.Signature = model.Signature;
             client.Initials = model.Initials;
             client.AllowPhoto = model.AllowPhoto;
