@@ -55,16 +55,22 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         private async Task<EmailInfo> GetEmailInfoAsync(NewJumpStart newJumpStart, List<Data.Entity.Models.Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
-            
-            var attachmentContent = await GetPdfContentAsync(newJumpStart.PdfUrl);
 
-            return new EmailInfo(company.Id, emails)
+            var result = new EmailInfo(company.Id, emails)
             {
                 TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(newJumpStart),
-                AttachmentName = $"{newJumpStart.DateTime.Date:yyyy_MM_dd}.pdf",
-                AttachmentBase64Content = attachmentContent
             };
+
+            if (newJumpStart.PdfUrl != null)
+            {
+                var attachmentContent = await GetPdfContentAsync(newJumpStart.PdfUrl);
+
+                result.AttachmentName = $"{newJumpStart.DateTime.Date:yyyy_MM_dd}.pdf";
+                result.AttachmentBase64Content = attachmentContent;
+            }
+
+            return result;
         }
 
         private Dictionary<string, object> GetTemplateData(NewJumpStart newJumpStart)
@@ -74,7 +80,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
                 {"subject", $"Project Blue Delta - {newJumpStart.DateTime:MMMM d, yyyy}"},
                 {"date", newJumpStart.DateTime.ToString("dddd | MMM. d, yyyy")},
                 //{"to", newJumpStart.Status},
-                {"description", newJumpStart.Body}
+                {"description", newJumpStart.Body ?? string.Empty}
             };
         }
 

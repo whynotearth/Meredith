@@ -174,7 +174,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 return 0;
             }
 
-            if (!newJumpStart.Tags.Contains(tag))
+            if (newJumpStart.Tags?.Contains(tag) == false)
             {
                 return 0;
             }

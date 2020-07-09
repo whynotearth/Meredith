@@ -162,7 +162,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {"id", article.Id},
                 {"headline", article.Headline},
                 {"description", RenderMarkdown(article.Description)},
-                {"imageCaption", article.Excerpt},
+                {"imageCaption", article.Excerpt ?? string.Empty},
                 {
                     "image", new Dictionary<string, object>
                     {
@@ -243,7 +243,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
-        private (int? width, int? height, int wrapperWidth) GetImageSize(Image image, bool isTwoColumn, bool isWide)
+        private (int? width, int? height, int wrapperWidth) GetImageSize(Image? image, bool isTwoColumn, bool isWide)
         {
             if (image?.Width is null || image.Height is null)
             {

@@ -51,15 +51,21 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
-            var attachmentContent = await GetPdfContentAsync(memo.PdfUrl);
-
-            return new EmailInfo(company.Id, emails)
+            var result = new EmailInfo(company.Id, emails)
             {
                 TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(memo),
-                AttachmentName = "attachment.pdf",
-                AttachmentBase64Content = attachmentContent
             };
+
+            if (memo.PdfUrl != null)
+            {
+                var attachmentContent = await GetPdfContentAsync(memo.PdfUrl);
+
+                result.AttachmentName = "attachment.pdf";
+                result.AttachmentBase64Content = attachmentContent;
+            }
+
+            return result;
         }
 
         private Dictionary<string, object> GetTemplateData(Memo memo)

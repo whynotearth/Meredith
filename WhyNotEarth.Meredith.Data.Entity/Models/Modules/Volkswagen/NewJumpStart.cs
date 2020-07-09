@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
                     v => v.Split(",", StringSplitOptions.None).ToList());
             builder.Property(e => e.Tags)
                 .HasConversion(
-                    v => string.Join(",", v),
+                    v => string.Join(",", v ?? new List<string>()),
                     v => v.Split(",", StringSplitOptions.None).ToList());
         }
     }

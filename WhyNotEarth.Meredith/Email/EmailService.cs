@@ -91,26 +91,26 @@ namespace WhyNotEarth.Meredith.Email
             stringBuilder.Append($"<div>{Markdown.ToHtml(hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Description)}</div>");
             stringBuilder.Append("<div>");
             
-            var values = hotel.Spaces.SelectMany(item => item.Translations)
+            var values = hotel.Spaces?.SelectMany(item => item.Translations)
                 .Where(item => item.Language.Culture == "en-US")
-                .Select(item => item.Name).ToList();
+                .Select(item => item.Name ?? string.Empty)?.ToList() ?? new List<string>();
 
             AddSection("Spaces", values, stringBuilder);
 
-            values = hotel.Amenities.SelectMany(item => item.Translations)
+            values = hotel.Amenities?.SelectMany(item => item.Translations)
                 .Where(item => item.Language.Culture == "en-US")
-                .Select(item => item.Text).ToList();
+                .Select(item => item.Text ?? string.Empty).ToList() ?? new List<string>();
 
             AddSection("Amenities", values, stringBuilder);
 
-            values = hotel.Rules.SelectMany(item => item.Translations)
+            values = hotel.Rules?.SelectMany(item => item.Translations)
                 .Where(item => item.Language.Culture == "en-US")
-                .Select(item => item.Text).ToList();
+                .Select(item => item.Text ?? string.Empty).ToList() ?? new List<string>();
 
             AddSection("Rules", values, stringBuilder);
 
-            values = hotel.Translations.Where(item => item.Language.Culture == "en-US")
-                .Select(item => item.GettingAround).ToList();
+            values = hotel.Translations?.Where(item => item.Language.Culture == "en-US")
+                .Select(item => item.GettingAround ?? string.Empty).ToList() ?? new List<string>();
 
             stringBuilder.Append("<!-- getting around -->");
             stringBuilder.Append($"<div>{string.Join("\n", values.Select(item => Markdown.ToHtml(item)))}</div>");

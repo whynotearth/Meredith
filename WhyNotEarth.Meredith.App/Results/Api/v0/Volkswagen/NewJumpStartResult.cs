@@ -14,11 +14,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public List<string> DistributionGroups { get; }
 
-        public List<string> Tags { get; set; }
+        public List<string>? Tags { get; set; }
 
-        public string Body { get; set; }
+        public string? Body { get; set; }
 
-        public string PdfUrl { get; set; }
+        public string? PdfUrl { get; set; }
 
         public NewJumpStartResult(NewJumpStart newJumpStart)
         {

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Page;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 {
@@ -60,7 +61,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             var imageResults = page.Images.OrderBy(i => i.Order).Select(i => new ImageResult(i));
             Images.AddRange(imageResults);
 
-            var storyResults = page.Cards.OrderBy(c => c.Order).Select(c => new StoryResult(c.Id, c.Text, c.CallToAction,
+            var storyResults = page.Cards.OrderBy(c => c.Order).Select(c => new StoryResult(c.Id, c.Text,
+                c.CallToAction,
                 c.CallToActionUrl, c.BackgroundUrl, c.PosterUrl, c.CardType));
             Stories.AddRange(storyResults);
 
@@ -86,16 +88,20 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
                 hotel.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Location
             );
 
-            hotelModule.Amenities.AddRange(hotel.Amenities.SelectMany(a => a.Translations)
-                .Where(t => t.Language.Culture == culture).Select(t => t.Text));
+            var amenities = hotel.Amenities?.SelectMany(a => a.Translations)?.Where(t => t.Language.Culture == culture)
+                .Select(t => t.Text ?? string.Empty);
+            Add(amenities, hotelModule.Amenities);
 
-            hotelModule.Rules.AddRange(hotel.Rules.SelectMany(r => r.Translations)
-                .Where(t => t.Language.Culture == culture).Select(t => t.Text));
+            var rules = hotel.Rules?.SelectMany(r => r.Translations)?.Where(t => t.Language.Culture == culture)
+                .Select(t => t.Text ?? string.Empty);
+            Add(rules, hotelModule.Rules);
 
-            hotelModule.Spaces.AddRange(hotel.Spaces.SelectMany(s => s.Translations)
-                .Where(t => t.Language.Culture == culture).Select(t => t.Name));
+            var spaces = hotel.Spaces?.SelectMany(s => s.Translations)?.Where(t => t.Language.Culture == culture)
+                .Select(t => t.Name ?? string.Empty);
+            Add(spaces, hotelModule.Spaces);
 
-            foreach (var roomType in hotel.RoomTypes)
+            var roomTypes = hotel.RoomTypes ?? new List<RoomType>();
+            foreach (var roomType in roomTypes)
             {
                 var roomTypeResult = new RoomTypeResult(roomType.Id, roomType.Name, roomType.Capacity);
 
@@ -107,6 +113,16 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             }
 
             Modules.Add("hotel", hotelModule);
+        }
+
+        private void Add<T>(IEnumerable<T>? enumerable, List<T> target)
+        {
+            if (enumerable is null)
+            {
+                return;
+            }
+
+            target.AddRange(enumerable);
         }
     }
 }
