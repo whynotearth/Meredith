@@ -30,7 +30,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             LastName = client.User.LastName;
             PhoneNumber = client.User.PhoneNumber;
             NotificationTypes = client.NotificationType.ToList();
-            Notes = client.Notes;
+            AvatarUrl = client.User.ImageUrl;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,7 +20,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         
         public NotificationType NotificationType { get; set; }
 
-        public string? Notes { get; set; }
+        public List<ClientNote>? Notes { get; set; }
 
         public string? Signature { get; set; }
         

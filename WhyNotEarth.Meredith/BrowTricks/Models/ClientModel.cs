@@ -17,7 +17,5 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
         public string? PhoneNumber { get; set; }
 
         public NotificationType NotificationType { get; set; }
-
-        public string? Notes { get; set; }
     }
 }

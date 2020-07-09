@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -120,7 +119,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             
             client.User = user;
             client.NotificationType = model.NotificationType;
-            client.Notes = model.Notes;
 
             return client;
         }

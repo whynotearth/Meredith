@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Hotel;
@@ -71,6 +72,11 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             serviceCollection
                 .AddScoped<Tenant.ReservationService>()
                 .AddScoped<TwilioService>();
+
+            // BrowTricks
+            serviceCollection
+                .AddScoped<ClientService>()
+                .AddScoped<ClientNoteService>();
 
             return serviceCollection;
         }
