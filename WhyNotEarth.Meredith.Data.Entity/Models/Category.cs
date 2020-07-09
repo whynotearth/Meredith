@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+
 #nullable enable
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
@@ -17,5 +21,12 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
     public class CategoryImage : Image
     {
+    }
+
+    public class CategoryEntityConfig : IEntityTypeConfiguration<Category>
+    {
+        public void Configure(EntityTypeBuilder<Category> builder)
+        {
+        }
     }
 }

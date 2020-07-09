@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -6,29 +8,37 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
-    public class NewJumpStart : IEntityTypeConfiguration<NewJumpStart>
+    public class NewJumpStart
     {
         public int Id { get; set; }
 
         public DateTime DateTime { get; set; }
 
-        public string Subject { get; set; }
+        public string Subject { get; set; } = null!;
 
-        public List<string> DistributionGroups { get; set; }
+        public List<string> DistributionGroups { get; set; } = null!;
 
-        public List<string> Tags { get; set; }
+        public List<string>? Tags { get; set; }
 
-        public string Body { get; set; }
+        public string? Body { get; set; }
 
-        public string PdfUrl { get; set; }
+        public string? PdfUrl { get; set; }
 
         public NewJumpStartStatus Status { get; set; }
+    }
 
+    public enum NewJumpStartStatus : byte
+    {
+        Preview = 1,
+        Sending = 2,
+        Sent = 3
+    }
+
+    public class NewJumpStartEntityConfig : IEntityTypeConfiguration<NewJumpStart>
+    {
         public void Configure(EntityTypeBuilder<NewJumpStart> builder)
         {
             builder.ToTable("NewJumpStarts", "ModuleVolkswagen");
-            builder.Property(b => b.Subject).IsRequired();
-            builder.Property(b => b.DistributionGroups).IsRequired();
             builder.Property(e => e.DistributionGroups)
                 .HasConversion(
                     v => string.Join(",", v),
@@ -38,12 +48,5 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
                     v => string.Join(",", v),
                     v => v.Split(",", StringSplitOptions.None).ToList());
         }
-    }
-
-    public enum NewJumpStartStatus : byte
-    {
-        Preview = 1,
-        Sending = 2,
-        Sent = 3
     }
 }

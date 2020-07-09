@@ -1,10 +1,12 @@
+#nullable enable
+
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
-    public class Article : IEntityTypeConfiguration<Article>
+    public class Article
     {
         public int Id { get; set; }
 
@@ -12,22 +14,36 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public int CategoryId { get; set; }
 
-        public ArticleCategory Category { get; set; }
+        public ArticleCategory Category { get; set; } = null!;
 
-        public string Headline  { get; set; }
+        public string Headline  { get; set; } = null!;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
-        public string Excerpt { get; set; }
+        public string? Excerpt { get; set; }
 
         public DateTime? EventDate { get; set; }
 
         public int? ImageId { get; set; }
 
-        public ArticleImage Image { get; set; }
+        public ArticleImage? Image { get; set; }
 
         public int? Order { get; set; }
+    }
 
+    public class ArticleImage : Image
+    {
+    }
+
+    public class ArticleCategory : Category
+    {
+        public string Color { get; set; } = null!;
+
+        public int Priority { get; set; }
+    }
+
+    public class ArticleEntityConfig : IEntityTypeConfiguration<Article>
+    {
         public void Configure(EntityTypeBuilder<Article> builder)
         {
             builder.ToTable("Articles", "ModuleVolkswagen");
@@ -36,16 +52,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         }
     }
 
-    public class ArticleImage : Image
+    public class ArticleCategoryEntityConfig : CategoryEntityConfig
     {
-    }
-
-    public class ArticleCategory : Category, IEntityTypeConfiguration<ArticleCategory>
-    {
-        public string Color { get; set; }
-
-        public int Priority { get; set; }
-
         public void Configure(EntityTypeBuilder<ArticleCategory> builder)
         {
             builder.Property(b => b.Color).IsRequired();

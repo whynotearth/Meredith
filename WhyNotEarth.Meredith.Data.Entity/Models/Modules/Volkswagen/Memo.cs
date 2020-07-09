@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -6,32 +8,30 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
-    public class Memo : IEntityTypeConfiguration<Memo>
+    public class Memo
     {
         public int Id { get; set; }
 
-        public string Subject { get; set; }
+        public string Subject { get; set; } = null!;
         
-        public string Date { get; set; }
+        public string Date { get; set; } = null!;
         
-        public string To { get; set; }
+        public string To { get; set; } = null!;
         
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
-        public string PdfUrl { get; set; }
+        public string? PdfUrl { get; set; }
 
-        public List<string> DistributionGroups { get; set; }
+        public List<string> DistributionGroups { get; set; } = null!;
 
         public DateTime CreationDateTime { get; set; }
-        
+    }
+
+    public class MemoEntityConfig : IEntityTypeConfiguration<Memo>
+    {
         public void Configure(EntityTypeBuilder<Memo> builder)
         {
             builder.ToTable("Memos", "ModuleVolkswagen");
-            builder.Property(b => b.Subject).IsRequired();
-            builder.Property(b => b.Date).IsRequired();
-            builder.Property(b => b.To).IsRequired();
-            builder.Property(b => b.Description).IsRequired();
-            builder.Property(b => b.DistributionGroups).IsRequired();
             builder.Property(e => e.DistributionGroups)
                 .HasConversion(
                     v => string.Join(",", v),
