@@ -28,7 +28,7 @@
     <PackageReference Include="RollbarDotNet" Version="0.7.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.5.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Data.Entity.csproj" />
