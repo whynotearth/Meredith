@@ -53,12 +53,15 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
     public class ProductLocationInventoryResult
     {
+        public int Id { get; }
+
         public int LocationId { get; }
 
         public int Count { get; }
 
         public ProductLocationInventoryResult(ProductLocationInventory productLocationInventory)
         {
+            Id = productLocationInventory.Id;
             LocationId = productLocationInventory.LocationId;
             Count = productLocationInventory.Count;
         }
@@ -66,12 +69,15 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
     public class VariationResult
     {
+        public int Id { get; }
+
         public string Name { get; }
 
         public decimal Price { get; set; }
 
         public VariationResult(Variation variation)
         {
+            Id = variation.Id;
             Name = variation.Name;
             Price = variation.Price.Amount;
         }
@@ -79,14 +85,17 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
     public class ProductAttributeResult
     {
+        public int Id { get; }
+
         public string Name { get; }
 
         public decimal Price { get; set; }
 
-        public ProductAttributeResult(ProductAttribute variation)
+        public ProductAttributeResult(ProductAttribute attribute)
         {
-            Name = variation.Name;
-            Price = variation.Price.Amount;
+            Id = attribute.Id;
+            Name = attribute.Name;
+            Price = attribute.Price.Amount;
         }
     }
 }
