@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Hotel;
@@ -37,7 +38,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<EmailRecipientJob>()
                 .AddScoped<SlugService>()
                 .AddScoped<IUserService, UserService>()
-                .AddScoped<IFileService, FileService>();
+                .AddScoped<IFileService, FileService>()
+                .AddScoped<ICloudinaryService, CloudinaryService>();
 
             // Hotel
             serviceCollection

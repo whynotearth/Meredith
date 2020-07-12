@@ -52,6 +52,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<Variation> Variations { get; set; }
 
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
+
         public DbSet<ProductLocationInventory> ProductLocationInventories { get; set; }
 
         public DbSet<Location> Locations { get; set; }

@@ -31,6 +31,8 @@ namespace WhyNotEarth.Meredith.Models
 
     public class ProductLocationInventoryModel
     {
+        public int? Id { get; set; }
+
         [NotNull]
         [Mandatory]
         public int? LocationId { get; set; }
@@ -42,6 +44,8 @@ namespace WhyNotEarth.Meredith.Models
 
     public class VariationModel
     {
+        public int? Id { get; set; }
+
         [NotNull]
         [Mandatory]
         public string? Name { get; set; }
@@ -53,6 +57,8 @@ namespace WhyNotEarth.Meredith.Models
 
     public class ProductAttributeModel
     {
+        public int? Id { get; set; }
+
         [NotNull]
         [Mandatory]
         public string? Name { get; set; }
