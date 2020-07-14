@@ -107,7 +107,10 @@ namespace WhyNotEarth.Meredith.Tenant
                 Tags = model.Tags,
                 DeliveryTime = model.DeliveryTime ?? default,
                 DeliveryFee = model.DeliveryFee ?? default,
-                IsActive = model.IsActive
+                IsActive = model.IsActive!.Value,
+                PhoneNumber = model.PhoneNumber,
+                FacebookUrl = model.FacebookUrl,
+                WhatsAppNumber = model.WhatsAppNumber
             };
 
             if (model.LogoUrl != null)
@@ -137,6 +140,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return _dbContext.Tenants
                     .Include(item => item.Logo)
                     .Include(item => item.BusinessHours)
+                    .Include(item => item.Address)
                     .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
