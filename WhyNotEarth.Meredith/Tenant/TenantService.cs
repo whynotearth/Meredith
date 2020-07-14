@@ -61,6 +61,7 @@ namespace WhyNotEarth.Meredith.Tenant
         {
             var tenants = await _dbContext.Tenants
                 .Include(item => item.Company)
+                .Include(item => item.Logo)
                 .Where(item => item.Company.Slug == companySlug.ToLower() && item.OwnerId == user.Id)
                 .ToListAsync();
 
