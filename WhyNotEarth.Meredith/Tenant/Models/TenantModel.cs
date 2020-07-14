@@ -37,10 +37,6 @@ namespace WhyNotEarth.Meredith.Tenant.Models
         [Mandatory]
         public List<BusinessHourModel>? BusinessHours { get; set; }
 
-        [NotNull]
-        [Mandatory]
-        public bool? IsActive { get; set; }
-
         public string? PhoneNumber { get; set; }
 
         public string? FacebookUrl { get; set; }

@@ -107,7 +107,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 Tags = model.Tags,
                 DeliveryTime = model.DeliveryTime ?? default,
                 DeliveryFee = model.DeliveryFee ?? default,
-                IsActive = model.IsActive!.Value,
+                IsActive = true,
                 PhoneNumber = model.PhoneNumber,
                 FacebookUrl = model.FacebookUrl,
                 WhatsAppNumber = model.WhatsAppNumber
@@ -205,6 +205,16 @@ namespace WhyNotEarth.Meredith.Tenant
             tenant.Address.City = model.City;
             tenant.Address.ZipCode = model.ZipCode;
             tenant.Address.State = model.State;
+
+            _dbContext.Tenants.Update(tenant);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task SetActivityAsync(string tenantSlug, TenantActivityModel model, User user)
+        {
+            var tenant = await CheckPermissionAsync(user, tenantSlug);
+
+            tenant.IsActive = model.IsActive!.Value;
 
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();

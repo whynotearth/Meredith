@@ -40,6 +40,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             return Created(tenantSlug);
         }
 
+        [Authorize]
+        [Returns204]
+        [Returns401]
+        [Returns403]
+        [HttpPost("{tenantSlug}/active")]
+        public async Task<NoContentResult> SetActivity(string tenantSlug, TenantActivityModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _tenantService.SetActivityAsync(tenantSlug, model, user);
+
+            return NoContent();
+        }
+
         [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<TenantListResult>>> List(string companySlug)
