@@ -19,6 +19,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? Description { get; }
 
+        public bool IsActive { get; }
+
         public TenantListResult(Data.Entity.Models.Tenant tenant)
         {
             Slug = tenant.Slug;
@@ -28,6 +30,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             DeliveryTime = tenant.DeliveryTime;
             DeliveryFee = tenant.DeliveryFee;
             Description = tenant.Description;
+            IsActive = tenant.IsActive;
         }
     }
 }

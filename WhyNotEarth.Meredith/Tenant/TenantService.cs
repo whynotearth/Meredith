@@ -106,6 +106,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 Tags = model.Tags,
                 DeliveryTime = model.DeliveryTime ?? default,
                 DeliveryFee = model.DeliveryFee ?? default,
+                IsActive = model.IsActive
             };
 
             if (model.LogoUrl != null)

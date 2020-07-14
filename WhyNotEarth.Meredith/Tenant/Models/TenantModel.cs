@@ -36,6 +36,10 @@ namespace WhyNotEarth.Meredith.Tenant.Models
         [NotNull]
         [Mandatory]
         public List<BusinessHourModel>? BusinessHours { get; set; }
+
+        [NotNull]
+        [Mandatory]
+        public bool IsActive { get; set; }
     }
 
     public class BusinessHourModel

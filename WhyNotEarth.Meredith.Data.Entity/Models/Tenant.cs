@@ -46,6 +46,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public int? AddressId { get; set; }
 
         public Address? Address { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     public class TenantImage : Image
