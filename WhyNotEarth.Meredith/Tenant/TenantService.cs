@@ -7,7 +7,6 @@ using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant.Models;
 
@@ -26,7 +25,7 @@ namespace WhyNotEarth.Meredith.Tenant
             _userService = userService;
         }
 
-        public async Task<string> CreateAsync(string companySlug, TenantModel model, User user)
+        public async Task<string> CreateAsync(string companySlug, TenantCreateModel model, User user)
         {
             var company = await ValidateAsync(companySlug, user);
 
@@ -87,7 +86,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return company;
         }
 
-        private Data.Entity.Models.Tenant Map(TenantModel model, Company company, User user)
+        private Data.Entity.Models.Tenant Map(TenantCreateModel model, Company company, User user)
         {
             var notificationType =
                 model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
@@ -138,15 +137,17 @@ namespace WhyNotEarth.Meredith.Tenant
         public Task<Data.Entity.Models.Tenant> GeAsync(string tenantSlug)
         {
             return _dbContext.Tenants
-                    .Include(item => item.Logo)
-                    .Include(item => item.BusinessHours)
-                    .Include(item => item.Address)
-                    .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+                .Include(item => item.Logo)
+                .Include(item => item.BusinessHours)
+                .Include(item => item.Address)
+                .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
         public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, string tenantSlug)
         {
-            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
+            var tenant =
+                await _dbContext.Tenants.FirstOrDefaultAsync(item =>
+                    item.Slug == tenantSlug && item.OwnerId == user.Id);
 
             if (tenant is null)
             {
@@ -164,7 +165,8 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, int tenantId)
         {
-            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
+            var tenant =
+                await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
 
             if (tenant is null)
             {
@@ -218,6 +220,27 @@ namespace WhyNotEarth.Meredith.Tenant
 
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task EditAsync(string tenantSlug, TenantEditModel model, User user)
+        {
+            var tenant = await CheckPermissionAsync(user, tenantSlug);
+
+            tenant = Map(tenant, model);
+
+            _dbContext.Tenants.Update(tenant);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        private Data.Entity.Models.Tenant Map(Data.Entity.Models.Tenant tenant, TenantEditModel model)
+        {
+            if (model.HasPromotion.HasValue)
+            {
+                tenant.HasPromotion = model.HasPromotion.Value;
+                tenant.PromotionPercent = model.PromotionPercent!.Value;
+            }
+
+            return tenant;
         }
     }
 }

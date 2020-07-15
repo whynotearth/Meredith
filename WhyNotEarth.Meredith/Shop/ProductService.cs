@@ -35,6 +35,7 @@ namespace WhyNotEarth.Meredith.Shop
                     .ThenInclude(item => item.Price)
                 .Include(item => item.Image)
                 .Include(item => item.Category)
+                    .ThenInclude(item => item.Tenant)
                 .Where(item => item.CategoryId == categoryId)
                 .ToListAsync();
         }
@@ -50,9 +51,10 @@ namespace WhyNotEarth.Meredith.Shop
                     .ThenInclude(item => item.Price)
                 .Include(item => item.Image)
                 .Include(item => item.Category)
+                    .ThenInclude(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == productId);
 
-            if (product == null)
+            if (product is null)
             {
                 throw new RecordNotFoundException($"Product {productId} not found");
             }

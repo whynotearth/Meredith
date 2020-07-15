@@ -12,6 +12,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public decimal Price { get; }
 
+        public int DiscountPercent { get; }
+
         public ProductCategoryResult Category { get; }
 
         public string Name { get; }
@@ -34,6 +36,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             Name = product.Name;
             PageId = product.PageId;
             Price = product.Price.Amount;
+            DiscountPercent = product.Category.Tenant.HasPromotion ? product.Category.Tenant.PromotionPercent : 0;
             Category = new ProductCategoryResult(product.Category);
             Description = product.Description;
             IsAvailable = product.IsAvailable;
@@ -68,12 +71,17 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
     {
         public string Name { get; }
 
-        public decimal Price { get; set; }
+        public decimal Price { get; }
+
+        public int DiscountPercent { get; }
 
         public VariationResult(Variation variation)
         {
             Name = variation.Name;
             Price = variation.Price.Amount;
+            DiscountPercent = variation.Product.Category.Tenant.HasPromotion
+                ? variation.Product.Category.Tenant.PromotionPercent
+                : 0;
         }
     }
 
@@ -81,12 +89,17 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
     {
         public string Name { get; }
 
-        public decimal Price { get; set; }
+        public decimal Price { get; }
 
-        public ProductAttributeResult(ProductAttribute variation)
+        public int DiscountPercent { get; }
+
+        public ProductAttributeResult(ProductAttribute attribute)
         {
-            Name = variation.Name;
-            Price = variation.Price.Amount;
+            Name = attribute.Name;
+            Price = attribute.Price.Amount;
+            DiscountPercent = attribute.Product.Category.Tenant.HasPromotion
+                ? attribute.Product.Category.Tenant.PromotionPercent
+                : 0;
         }
     }
 }

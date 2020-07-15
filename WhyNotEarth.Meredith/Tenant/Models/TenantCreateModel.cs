@@ -9,12 +9,12 @@ using DayOfWeek = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.DayOfWeek
 
 namespace WhyNotEarth.Meredith.Tenant.Models
 {
-    public class TenantModel
+    public class TenantCreateModel
     {
         [NotNull]
         [Mandatory]
         public string? Name { get; set; }
-        
+
         public string? Description { get; set; }
 
         public List<string>? Tags { get; set; }
@@ -27,11 +27,11 @@ namespace WhyNotEarth.Meredith.Tenant.Models
 
         [NotNull]
         [Mandatory]
-        public List<PaymentMethodType>? PaymentMethodTypes  { get; set; }
+        public List<PaymentMethodType>? PaymentMethodTypes { get; set; }
 
         [NotNull]
         [Mandatory]
-        public List<NotificationType>? NotificationTypes  { get; set; }
+        public List<NotificationType>? NotificationTypes { get; set; }
 
         [NotNull]
         [Mandatory]

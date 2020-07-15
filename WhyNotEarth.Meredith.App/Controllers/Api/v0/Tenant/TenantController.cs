@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [Returns401]
         [Returns403]
         [HttpPost("")]
-        public async Task<CreateObjectResult> Create(string companySlug, TenantModel model)
+        public async Task<CreateObjectResult> Create(string companySlug, TenantCreateModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -125,6 +125,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             await _tenantService.SetAddressAsync(tenantSlug, model, user);
 
             return Created();
+        }
+
+        [Authorize]
+        [Returns204]
+        [Returns401]
+        [Returns403]
+        [HttpPatch("{tenantSlug}")]
+        public async Task<NoContentResult> Edit(string tenantSlug, TenantEditModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _tenantService.EditAsync(tenantSlug, model, user);
+
+            return NoContent();
         }
     }
 }

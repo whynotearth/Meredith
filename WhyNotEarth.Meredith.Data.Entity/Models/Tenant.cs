@@ -54,6 +54,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public string? FacebookUrl { get; set; }
 
         public string? WhatsAppNumber { get; set; }
+
+        public bool HasPromotion { get; set; }
+
+        public int PromotionPercent { get; set; }
     }
 
     public class TenantImage : Image
