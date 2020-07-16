@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
-
-#nullable enable
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {

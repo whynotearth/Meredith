@@ -137,7 +137,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
             if (!isUsedInAnyOtherArticle)
             {
-                _dbContext.Images.Remove(article.Image);
+                _dbContext.Images.Remove(article.Image!);
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace WhyNotEarth.Meredith.Data.Entity.Models
+﻿namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class Keyword
     {

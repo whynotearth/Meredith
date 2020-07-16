@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public Task<Data.Entity.Models.Tenant?> GetTenant(User user)
         {
-            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id);
+            return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id)!;
         }
 
         public async Task<List<Data.Entity.Models.Tenant>> GetAllTenantsByUser(User user, string companySlug)

@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace WhyNotEarth.Meredith.Data.Entity.Models
 {
     public class Setting
