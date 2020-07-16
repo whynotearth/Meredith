@@ -33,4 +33,4 @@ If you're new to **contributing to the WHY NOT EARTH open source project**, sign
 
 ## License
 
-MEREDITH is licensed under the [Apache License, Version 2.0](LICENSE).
+Meredith Core is licensed under the [AGPL-3.0 License](LICENSE).
