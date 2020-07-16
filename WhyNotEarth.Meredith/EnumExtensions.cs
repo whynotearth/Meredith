@@ -19,5 +19,23 @@ namespace WhyNotEarth.Meredith
 
             return result;
         }
+
+        public static T ToFlag<T>(this List<T>? enumValues) where T : Enum
+        {
+            var result = (byte)(object)default(T)!;
+
+            if (enumValues is null)
+            {
+                return (T)(object)result;
+            }
+
+            foreach (var value in enumValues)
+            {
+                var intValue = (byte) (object) value;
+                result |= intValue;
+            }
+
+            return (T)(object)result;
+        }
     }
 }

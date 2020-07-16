@@ -88,11 +88,6 @@ namespace WhyNotEarth.Meredith.Tenant
 
         private Data.Entity.Models.Tenant Map(TenantCreateModel model, Company company, User user)
         {
-            var notificationType =
-                model.NotificationTypes.Aggregate(model.NotificationTypes.First(), (current, next) => current | next);
-            var paymentMethodType =
-                model.PaymentMethodTypes.Aggregate(model.PaymentMethodTypes.First(), (current, next) => current | next);
-
             var result = new Data.Entity.Models.Tenant
             {
                 CompanyId = company.Id,
@@ -100,8 +95,8 @@ namespace WhyNotEarth.Meredith.Tenant
                 OwnerId = user.Id,
                 Name = model.Name,
                 BusinessHours = GetBusinessHours(model.BusinessHours),
-                PaymentMethodType = paymentMethodType,
-                NotificationType = notificationType,
+                PaymentMethodType = model.PaymentMethodTypes.ToFlag(),
+                NotificationType = model.NotificationTypes.ToFlag(),
                 Description = model.Description,
                 Tags = model.Tags,
                 DeliveryTime = model.DeliveryTime ?? default,

@@ -110,7 +110,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
             
             client.User = user;
-            client.NotificationType = model.NotificationType;
+            client.NotificationType = model.NotificationTypes.ToFlag();
 
             return client;
         }

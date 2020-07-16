@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Validation;
 
@@ -16,6 +17,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
 
         public string? PhoneNumber { get; set; }
 
-        public NotificationType NotificationType { get; set; }
+        public List<NotificationType>? NotificationTypes { get; set; }
     }
 }
