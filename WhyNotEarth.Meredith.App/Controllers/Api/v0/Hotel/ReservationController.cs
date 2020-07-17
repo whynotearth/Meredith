@@ -1,9 +1,9 @@
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Reservation;
 using WhyNotEarth.Meredith.Data.Entity;

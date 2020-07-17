@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public string Description { get; }
 
         public int OpenPercentage { get; }
-        
+
         public MemoStatResult(MemoInfo memoInfo)
         {
             Id = memoInfo.Memo.Id;

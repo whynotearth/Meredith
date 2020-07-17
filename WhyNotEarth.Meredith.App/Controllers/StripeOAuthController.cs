@@ -4,11 +4,11 @@ using WhyNotEarth.Meredith.App.Models.StripeOAuth;
 
 namespace WhyNotEarth.Meredith.App.Controllers
 {
-    using System;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     using Stripe;
+    using System;
+    using System.Threading.Tasks;
 
     [Route("/stripe/oauth")]
     [DisableCors]

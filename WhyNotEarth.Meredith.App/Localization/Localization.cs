@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Localization;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Localization;
 
 namespace WhyNotEarth.Meredith.App.Localization
 {

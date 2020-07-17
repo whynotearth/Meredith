@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.Sms
 
         public TwilioService(IOptions<TwilioOptions> options)
         {
-            _options = options.Value;            
+            _options = options.Value;
         }
 
         public string GetWhatsappSmsTemplate()

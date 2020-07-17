@@ -26,9 +26,9 @@ namespace WhyNotEarth.Meredith.Stripe
 
             var paymentIntent = await paymentIntentService.CreateAsync(new PaymentIntentCreateOptions
             {
-                Amount = (int) (amount * 100),
+                Amount = (int)(amount * 100),
                 Currency = "usd",
-                ApplicationFeeAmount = (int) Math.Ceiling(amount * 10m),
+                ApplicationFeeAmount = (int)Math.Ceiling(amount * 10m),
                 Metadata = metadata,
                 ReceiptEmail = email
             }, GetRequestOptions(stripeAccountId));
@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.Stripe
                 throw new StripeException("Invalid Stripe event.");
             }
 
-            return (PaymentIntent) stripeEvent.Data.Object;
+            return (PaymentIntent)stripeEvent.Data.Object;
         }
     }
 }

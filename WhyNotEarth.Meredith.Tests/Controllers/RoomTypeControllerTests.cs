@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -131,12 +131,12 @@ namespace WhyNotEarth.Meredith.Tests.Controllers
             }
 
             meredithDbContext.Reservations.AddRange(new HotelReservation
-                {
-                    Id = 1,
-                    RoomId = 1,
-                    Start = new DateTime(2020, 1, 1),
-                    End = new DateTime(2020, 1, 2)
-                },
+            {
+                Id = 1,
+                RoomId = 1,
+                Start = new DateTime(2020, 1, 1),
+                End = new DateTime(2020, 1, 2)
+            },
                 new HotelReservation
                 {
                     Id = 2,

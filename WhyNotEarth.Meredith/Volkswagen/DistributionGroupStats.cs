@@ -18,8 +18,8 @@
 
             if (receiversCount != 0)
             {
-                OpenPercent = (int) ((double) openCount / receiversCount * 100);
-                ClickPercent = (int) ((double) clickCount / receiversCount * 100);
+                OpenPercent = (int)((double)openCount / receiversCount * 100);
+                ClickPercent = (int)((double)clickCount / receiversCount * 100);
             }
         }
     }

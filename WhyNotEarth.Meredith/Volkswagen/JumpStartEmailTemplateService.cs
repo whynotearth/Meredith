@@ -198,15 +198,15 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             Handlebars.RegisterHelper("to_slug", (writer, context, parameters) =>
             {
-                var slug = ((string) parameters[0]).ToLower();
+                var slug = ((string)parameters[0]).ToLower();
                 var cleanSlug = Regex.Replace(slug, "/\\s/g", "-");
                 writer.Write(cleanSlug);
             });
 
             Handlebars.RegisterHelper("cloudinary_transform", (writer, context, parameters) =>
             {
-                var url = (string) parameters[0];
-                var transform = (string) parameters[1];
+                var url = (string)parameters[0];
+                var transform = (string)parameters[1];
 
                 var value = Regex.Replace(url, "\\/upload\\/", $"/upload/{transform}/");
                 writer.Write(value);
@@ -266,7 +266,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
 
             var width = Math.Min(image.Width.Value / retinaRatio, maxWidth);
-            var height = (int) ((double) width / image.Width.Value * image.Height.Value);
+            var height = (int)((double)width / image.Width.Value * image.Height.Value);
 
             return (width, height, maxWidth);
         }

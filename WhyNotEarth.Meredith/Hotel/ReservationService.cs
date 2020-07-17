@@ -56,7 +56,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new InvalidActionException("There are no rooms available of this type");
             }
 
-            var totalDays = (int) endDate.Subtract(startDate).TotalDays;
+            var totalDays = (int)endDate.Subtract(startDate).TotalDays;
             if (totalDays <= 0)
             {
                 throw new InvalidActionException("Invalid number of days to reserve");
@@ -65,7 +65,7 @@ namespace WhyNotEarth.Meredith.Hotel
             var dailyPrices = await _meredithDbContext.Prices
                 .OfType<HotelPrice>()
                 .Where(p => p.Date >= startDate && p.Date < endDate).ToListAsync();
-            
+
             var paidDays = dailyPrices.Count;
 
             if (paidDays != totalDays)

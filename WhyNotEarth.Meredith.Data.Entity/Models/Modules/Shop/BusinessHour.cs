@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.Serialization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Runtime.Serialization;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         [EnumMember(Value = "friday")]
         Friday = 6,
-        
+
         [EnumMember(Value = "saturday")]
         Saturday = 7
     }

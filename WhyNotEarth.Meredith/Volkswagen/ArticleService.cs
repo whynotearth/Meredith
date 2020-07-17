@@ -112,7 +112,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         private async Task SetImageAsync(Article article, string? imageUrl, int? imageWidth, int? imageHeight)
         {
             await DeleteImageAsync(article);
-            
+
             if (!string.IsNullOrEmpty(imageUrl))
             {
                 article.Image = new ArticleImage

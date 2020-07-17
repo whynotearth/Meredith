@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         public int UserId { get; set; }
 
         public User User { get; set; } = null!;
-        
+
         public DateTime Created { get; set; }
 
         public string? Email { get; set; }
@@ -30,11 +30,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         public string? AddressFriendlyName { get; set; }
 
         public string? StreetAddress { get; set; }
-        
+
         public string? City { get; set; }
 
         public string? Floor { get; set; }
-        
+
         public string? Apartment { get; set; }
 
         public string? WhereToPark { get; set; }

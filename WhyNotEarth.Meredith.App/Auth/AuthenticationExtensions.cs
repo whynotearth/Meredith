@@ -1,10 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +6,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
@@ -58,11 +58,11 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                    
+
                     // Profile picture
                     options.Scope.Add("profile");
                     options.Events.OnCreatingTicket = context =>
-                    {                      
+                    {
                         var picture = context.User.GetProperty("picture").GetString();
 
                         context.Identity.AddClaim(new Claim("picture", picture));
@@ -76,7 +76,7 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientId = config["ClientId"];
                     options.ClientSecret = config["ClientSecret"];
                     options.Events.OnRemoteFailure = HandleOnRemoteFailure;
-                    
+
                     // Profile picture
                     options.Fields.Add("picture");
                     options.Events.OnCreatingTicket = context =>

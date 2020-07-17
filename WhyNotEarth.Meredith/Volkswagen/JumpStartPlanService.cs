@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
                 var jumpStartPlan = new JumpStartPlan(sendDateTime, dailyArticles.OrderBy(item => item.Order).ToList(),
                     distributionGroups, jumpStart);
-                
+
                 result.Add(jumpStartPlan);
             }
 

@@ -7,13 +7,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     public class User : IdentityUser<int>
     {
         public string? FirstName { get; set; }
-        
+
         public string? LastName { get; set; }
 
         public string FullName => string.Join(' ', FirstName, LastName);
 
         public string? ImageUrl { get; set; }
-        
+
         public string? Address { get; set; }
 
         public string? GoogleLocation { get; set; }
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Users");
-            
+
             builder.HasOne(user => user.Tenant)
                 .WithMany()
                 .HasForeignKey(user => user.TenantId);

@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Identity;
 

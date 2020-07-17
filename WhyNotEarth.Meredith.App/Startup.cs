@@ -1,5 +1,4 @@
-﻿using System;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Converters;
 using RollbarDotNet.Core;
 using RollbarDotNet.Logger;
+using System;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.App.DbContext;
@@ -104,7 +104,7 @@ namespace WhyNotEarth.Meredith.App
             }
 
             app.UseDbContext(dbContext);
-            
+
             app.UseCustomLocalization();
 
             app.UseCustomSwagger();
@@ -125,9 +125,9 @@ namespace WhyNotEarth.Meredith.App
                 endpoints.MapControllers();
 
                 endpoints.MapHangfireDashboard(new DashboardOptions
-                    {
-                        Authorization = new IDashboardAuthorizationFilter[] { }
-                    })
+                {
+                    Authorization = new IDashboardAuthorizationFilter[] { }
+                })
                     .RequireAuthorization(Policies.Developer);
             });
 

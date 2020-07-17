@@ -92,7 +92,7 @@ namespace WhyNotEarth.Meredith.Email
             for (var personalizationIndex = 0; personalizationIndex < batch.Count; ++personalizationIndex)
             {
                 var emailInfoItem = batch[personalizationIndex];
-                
+
                 var to = GetEmailAddress(emailInfoItem);
                 sendGridMessage.AddTo(to, personalizationIndex);
 
@@ -203,7 +203,7 @@ namespace WhyNotEarth.Meredith.Email
         public string? AttachmentBase64Content { get; set; }
 
         public EmailInfo(int companyId, Tuple<string, string?> email) : this(companyId,
-            new List<Tuple<string, string?>> {email})
+            new List<Tuple<string, string?>> { email })
         {
         }
 

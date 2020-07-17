@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using System;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Migrations
 {
@@ -141,13 +141,13 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 nullable: false,
                 defaultValue: "");
 
-            migrationBuilder.InsertData("Roles", 
-                new[] {"Id", "Name", "NormalizedName", "ConcurrencyStamp"},
-                new object[] {1, "Developer", "DEVELOPER", "ad35c612-7f0e-4f7e-82c6-d5a82764f325"});
+            migrationBuilder.InsertData("Roles",
+                new[] { "Id", "Name", "NormalizedName", "ConcurrencyStamp" },
+                new object[] { 1, "Developer", "DEVELOPER", "ad35c612-7f0e-4f7e-82c6-d5a82764f325" });
 
-            migrationBuilder.InsertData("Roles", 
-                new[] {"Id", "Name", "NormalizedName", "ConcurrencyStamp"},
-                new object[] {2, "VolkswagenAdmin", "VOLKSWAGENADMIN", "e4b3490d-c55d-43bb-88b0-f73ad5d447c5"});
+            migrationBuilder.InsertData("Roles",
+                new[] { "Id", "Name", "NormalizedName", "ConcurrencyStamp" },
+                new object[] { 2, "VolkswagenAdmin", "VOLKSWAGENADMIN", "e4b3490d-c55d-43bb-88b0-f73ad5d447c5" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

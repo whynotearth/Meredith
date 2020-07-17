@@ -6,7 +6,7 @@ namespace WhyNotEarth.Meredith.Services
     public interface IFileService
     {
         Task SaveAsync(string path, string contentType, Stream stream);
-        
+
         Task GetAsync(string path, Stream stream);
     }
 }

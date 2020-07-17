@@ -12,7 +12,7 @@
 
             if (SentCount != 0)
             {
-                OpenPercentage = (int) ((double) openCount / sentCount * 100);
+                OpenPercentage = (int)((double)openCount / sentCount * 100);
             }
         }
     }

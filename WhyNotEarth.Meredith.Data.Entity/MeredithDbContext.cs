@@ -36,7 +36,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
         public DbSet<Setting> Settings { get; set; } = null!;
 
         public DbSet<Email> Emails { get; set; } = null!;
-        
+
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
         // Shop
@@ -103,7 +103,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasPostgresExtension("uuid-ossp");
-            
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(MeredithDbContext).Assembly);
         }
     }

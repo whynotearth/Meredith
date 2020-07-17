@@ -1,9 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Moq;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
@@ -54,7 +54,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
                     Date = Start.AddDays(i)
                 });
 
-            for (var i = 0; i < 1; i++) roomType.Rooms.Add(new Room {Number = i.ToString()});
+            for (var i = 0; i < 1; i++) roomType.Rooms.Add(new Room { Number = i.ToString() });
 
             dbContext.RoomTypes.Add(roomType);
             await dbContext.SaveChangesAsync();

@@ -1,11 +1,11 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace WhyNotEarth.Meredith.App.Mvc
 {
     public class CreateResult : StatusCodeResult
     {
-        public CreateResult() : base((int) HttpStatusCode.Created)
+        public CreateResult() : base((int)HttpStatusCode.Created)
         {
         }
     }
@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Mvc
     {
         public CreateObjectResult(object value) : base(value)
         {
-            StatusCode = (int) HttpStatusCode.Created;
+            StatusCode = (int)HttpStatusCode.Created;
         }
     }
 }

@@ -12,9 +12,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 newSchema: "ModuleVolkswagen");
 
             // Custom
-            migrationBuilder.UpdateData("Roles", "Id", 2, 
-                new [] {"Name", "NormalizedName"},
-                new object[] {"VolkswagenManager", "VOLKSWAGENMANAGER"});
+            migrationBuilder.UpdateData("Roles", "Id", 2,
+                new[] { "Name", "NormalizedName" },
+                new object[] { "VolkswagenManager", "VOLKSWAGENMANAGER" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -25,9 +25,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Migrations
                 newName: "Recipients");
 
             // Custom
-            migrationBuilder.UpdateData("Roles", "Id", 2, 
-                new [] {"Name", "NormalizedName"},
-                new object[] {"VolkswagenAdmin", "VOLKSWAGENADMIN"});
+            migrationBuilder.UpdateData("Roles", "Id", 2,
+                new[] { "Name", "NormalizedName" },
+                new object[] { "VolkswagenAdmin", "VOLKSWAGENADMIN" });
         }
     }
 }

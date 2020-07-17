@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Email
         {
             return GetDetailStatsAsync(item => item.JumpStartId == jumpStartId, item => item.JumpStart);
         }
-        
+
         public async Task<DistributionGroupStats> GetDistributionGroupStats(string distributionGroup,
             int currentRecipientCount)
         {

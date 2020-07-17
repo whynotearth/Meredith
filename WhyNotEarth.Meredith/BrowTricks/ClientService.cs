@@ -108,7 +108,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             {
                 client.Tenant = tenant;
             }
-            
+
             client.User = user;
             client.NotificationType = model.NotificationTypes.ToFlag();
 

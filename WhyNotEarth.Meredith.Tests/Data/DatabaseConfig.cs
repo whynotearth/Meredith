@@ -1,9 +1,9 @@
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using RoushTech.Xunit.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
 

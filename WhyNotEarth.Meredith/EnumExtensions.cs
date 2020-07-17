@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith
 {
-    public static class EnumExtensions 
+    public static class EnumExtensions
     {
         public static List<T> ToList<T>(this T enumValue) where T : Enum
         {
             var result = new List<T>();
 
-            foreach(T value in Enum.GetValues(typeof(T)))
+            foreach (T value in Enum.GetValues(typeof(T)))
             {
                 if (enumValue.HasFlag(value!))
                 {
@@ -31,7 +31,7 @@ namespace WhyNotEarth.Meredith
 
             foreach (var value in enumValues)
             {
-                var intValue = (byte) (object) value;
+                var intValue = (byte)(object)value;
                 result |= intValue;
             }
 

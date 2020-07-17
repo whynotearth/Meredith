@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Identity.Models;
@@ -59,7 +59,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
 
-            return BadRequest(new {error = errors});
+            return BadRequest(new { error = errors });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public string? CallToActionUrl { get; set; }
 
         public int PageId { get; set; }
-        
+
         public Page Page { get; set; } = null!;
 
         public string? PosterUrl { get; set; }

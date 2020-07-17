@@ -90,7 +90,7 @@ namespace WhyNotEarth.Meredith.Email
 
             stringBuilder.Append($"<div>{Markdown.ToHtml(hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Description)}</div>");
             stringBuilder.Append("<div>");
-            
+
             var values = hotel.Spaces?.SelectMany(item => item.Translations)
                 .Where(item => item.Language.Culture == "en-US")
                 .Select(item => item.Name ?? string.Empty)?.ToList() ?? new List<string>();
@@ -126,7 +126,7 @@ namespace WhyNotEarth.Meredith.Email
             {
                 return;
             }
-            
+
             stringBuilder.Append($@"
                 <!-- {header} -->
                 <div>

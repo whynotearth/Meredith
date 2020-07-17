@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 {
@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public int UserId { get; set; }
 
         public User User { get; set; } = null!;
-        
+
         public NotificationType NotificationType { get; set; }
 
         public List<ClientNote>? Notes { get; set; }
@@ -23,7 +23,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public bool IsPmuCompleted { get; set; }
 
         public string? Signature { get; set; }
-        
+
         public string? Initials { get; set; }
 
         public bool? AllowPhoto { get; set; }

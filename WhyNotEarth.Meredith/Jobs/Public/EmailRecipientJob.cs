@@ -121,7 +121,7 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             await _dbContext.SaveChangesAsync();
         }
 
-                
+
         private async Task CleanForNewJumpStartAsync(int newJumpStartId)
         {
             var oldRecords = await _dbContext.Emails.Where(item => item.NewJumpStartId == newJumpStartId)

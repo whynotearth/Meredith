@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {

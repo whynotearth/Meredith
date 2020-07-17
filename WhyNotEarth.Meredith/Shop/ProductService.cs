@@ -153,7 +153,7 @@ namespace WhyNotEarth.Meredith.Shop
         {
             product.Name = model.Name;
             product.CategoryId = category.Id;
-            product.Price = new Price {Amount = model.Price!.Value};
+            product.Price = new Price { Amount = model.Price!.Value };
             product.Description = model.Description;
             product.IsAvailable = model.IsAvailable!.Value;
 
@@ -183,7 +183,7 @@ namespace WhyNotEarth.Meredith.Shop
                 {
                     Id = item.Id ?? default,
                     Count = item.Count!.Value,
-                    Location = new Location {Name = model.Name} // TODO: What is the desired value for the field?
+                    Location = new Location { Name = model.Name } // TODO: What is the desired value for the field?
                 }).ToList();
 
             product.ProductAttributes = model.Attributes?.Select(item =>

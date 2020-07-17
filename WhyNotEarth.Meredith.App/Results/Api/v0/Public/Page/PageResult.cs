@@ -1,6 +1,6 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Page;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
@@ -106,7 +106,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
                 var roomTypeResult = new RoomTypeResult(roomType.Id, roomType.Name, roomType.Capacity);
 
                 roomTypeResult.Beds.AddRange(
-                    roomType.Beds.Select(b => new BedResult((int) b.BedType, b.BedType.ToString(), b.Count))
+                    roomType.Beds.Select(b => new BedResult((int)b.BedType, b.BedType.ToString(), b.Count))
                 );
 
                 hotelModule.RoomTypes.Add(roomTypeResult);

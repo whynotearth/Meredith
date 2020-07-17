@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
         public decimal DeliveryFee { get; }
 
         public string? Description { get; }
-        
+
         public List<PaymentMethodType> PaymentMethodTypes { get; }
 
         public List<NotificationType> NotificationTypes { get; }
@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
         public bool HasPromotion { get; }
 
         public int PromotionPercent { get; }
-        
+
         public TenantResult(Data.Entity.Models.Tenant tenant)
         {
             Slug = tenant.Slug;

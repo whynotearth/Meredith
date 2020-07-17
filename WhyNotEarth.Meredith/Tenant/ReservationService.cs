@@ -95,8 +95,8 @@ namespace WhyNotEarth.Meredith.Tenant
                     email = tenant.Owner.Email
                 },
                 orderProducts = string.Join("<br />", orders),
-                subTotal =  subTotal,
-                deliveryFee =  deliveryFee,
+                subTotal = subTotal,
+                deliveryFee = deliveryFee,
                 amount = amount,
                 tax = tax,
                 deliveryAddress = user.Address,

@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                     "Cannot find any distribution group. Please import your recipients first.");
             }
 
-            return new List<string> {distributionGroup};
+            return new List<string> { distributionGroup };
         }
     }
 }

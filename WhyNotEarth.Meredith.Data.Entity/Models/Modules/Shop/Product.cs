@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 {
@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
         public int PriceId { get; set; }
 
         public Price Price { get; set; } = null!;
-        
+
         public int CategoryId { get; set; }
 
         public ProductCategory Category { get; set; } = null!;

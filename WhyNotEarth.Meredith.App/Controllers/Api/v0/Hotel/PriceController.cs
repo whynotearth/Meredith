@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
 using WhyNotEarth.Meredith.Hotel;
 
@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         {
             var newPrice = await _priceService.CreatePriceAsync(price.Amount, price.Date, price.RoomTypeId);
 
-            return Ok(new {PriceId = newPrice.Id});
+            return Ok(new { PriceId = newPrice.Id });
         }
     }
 }

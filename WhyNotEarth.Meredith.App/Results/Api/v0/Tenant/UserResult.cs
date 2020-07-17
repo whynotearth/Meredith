@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Tenant
     public class UserResult
     {
         public string? FirstName { get; }
-        
+
         public string? LastName { get; }
 
         public string PhoneNumber { get; }

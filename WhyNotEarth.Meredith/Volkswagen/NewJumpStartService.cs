@@ -49,11 +49,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var recipientsCount = await _dbContext.Emails.CountAsync(item => item.NewJumpStartId == id);
             double deliverCount = await _dbContext.Emails.CountAsync(item =>
                 item.NewJumpStartId == id && item.Status >= EmailStatus.Delivered);
-            
+
             var deliverPercent = 100;
             if (recipientsCount != 0)
             {
-                deliverPercent = (int) (deliverCount / recipientsCount * 100);
+                deliverPercent = (int)(deliverCount / recipientsCount * 100);
             }
 
             var events = await _dbContext.Emails

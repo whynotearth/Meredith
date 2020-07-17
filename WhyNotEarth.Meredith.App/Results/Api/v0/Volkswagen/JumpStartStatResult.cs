@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public List<string> Articles { get; }
 
         public int OpenPercentage { get; }
-        
+
         public JumpStartStatResult(JumpStartInfo jumpStartInfo)
         {
             Id = jumpStartInfo.JumpStart.Id;

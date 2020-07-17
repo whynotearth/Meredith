@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.Shop
             var category = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(item => item.Id == categoryId);
 
-            if(category is null)
+            if (category is null)
             {
                 throw new RecordNotFoundException($"Category {categoryId} not found");
             }
@@ -104,7 +104,7 @@ namespace WhyNotEarth.Meredith.Shop
                     Url = model.ImageUrl
                 };
             }
-            
+
             return category;
         }
     }

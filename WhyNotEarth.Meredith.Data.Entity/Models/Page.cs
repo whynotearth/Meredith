@@ -1,8 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
         public ICollection<Keyword>? Keywords { get; set; }
 
         public DateTime CreationDateTime { get; set; }
-                
+
         public DateTime? EditDateTime { get; set; }
 
         public ICollection<PageTranslation>? Translations { get; set; }

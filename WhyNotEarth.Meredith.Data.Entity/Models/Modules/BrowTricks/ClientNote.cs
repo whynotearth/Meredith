@@ -6,7 +6,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
     public class ClientNote
     {
         public int Id { get; set; }
-        
+
         public int ClientId { get; set; }
 
         public Client Client { get; set; } = null!;

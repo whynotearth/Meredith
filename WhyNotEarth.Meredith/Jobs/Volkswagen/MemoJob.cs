@@ -30,13 +30,13 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         public async Task SendAsync(int memoId)
         {
             var memo = await _dbContext.Memos.FirstOrDefaultAsync(item => item.Id == memoId);
-            
+
             var recipients = await _dbContext.Emails
                 .Where(item => item.MemoId == memoId && item.Status == EmailStatus.ReadyToSend)
                 .ToListAsync();
 
             var emailInfo = await GetEmailInfoAsync(memo, recipients);
-            
+
             await _sendGridService.SendEmailAsync(emailInfo);
 
             foreach (var recipient in recipients)

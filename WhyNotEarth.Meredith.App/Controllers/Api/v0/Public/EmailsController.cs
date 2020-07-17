@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.SendGrid;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         // Schema: https://sendgrid.com/docs/for-developers/tracking-events/event/
         [JsonProperty("EmailId")]
         public int? EmailId { get; set; }
-        
+
         [JsonProperty(nameof(Data.Entity.Models.Email.CompanyId))]
         public int CompanyId { get; set; }
 
@@ -148,7 +148,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                     return;
                 }
             }
-            
+
             Update(email);
         }
 

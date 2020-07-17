@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WhyNotEarth.Meredith.App.Localization
 {
@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.App.Localization
                     Default = new OpenApiString("en"),
                     Type = "string",
                     Enum = Localization.SupportedCultures
-                        .Select(c => OpenApiAnyFactory.CreateFor(new OpenApiSchema {Type = "string"}, c)).ToList()
+                        .Select(c => OpenApiAnyFactory.CreateFor(new OpenApiSchema { Type = "string" }, c)).ToList()
                 },
                 Required = false
             });

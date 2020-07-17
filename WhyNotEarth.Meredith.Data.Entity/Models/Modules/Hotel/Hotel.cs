@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
 {
     public class Hotel
     {
         public int Id { get; set; }
-        
+
         public int? CompanyId { get; set; }
 
         public Company? Company { get; set; }

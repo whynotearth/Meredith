@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 {
@@ -11,11 +11,11 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
         public int Id { get; set; }
 
         public string Subject { get; set; } = null!;
-        
+
         public string Date { get; set; } = null!;
-        
+
         public string To { get; set; } = null!;
-        
+
         public string Description { get; set; } = null!;
 
         public string? PdfUrl { get; set; }

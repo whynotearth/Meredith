@@ -1,8 +1,8 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Linq;
+using System.Threading.Tasks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Stripe.Data;
 

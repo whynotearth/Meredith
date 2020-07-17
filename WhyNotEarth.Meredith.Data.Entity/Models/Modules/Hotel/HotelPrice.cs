@@ -1,6 +1,6 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel

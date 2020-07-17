@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
         public Amenity Amenity { get; set; } = null!;
 
         public int LanguageId { get; set; }
-        
+
         public Language Language { get; set; } = null!;
 
         public string? Text { get; set; }
