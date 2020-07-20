@@ -17,13 +17,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageTenant)]
-    [Route("api/v0/browtricks/tenant/{tenantSlug}/clients")]
+    [Route("api/v0/browtricks/tenants/{tenantSlug}/clients")]
     public class ClientController : BaseController
     {
-        private readonly ClientService _clientService;
+        private readonly IClientService _clientService;
         private readonly IUserService _userService;
 
-        public ClientController(ClientService clientService, IUserService userService)
+        public ClientController(IClientService clientService, IUserService userService)
         {
             _clientService = clientService;
             _userService = userService;

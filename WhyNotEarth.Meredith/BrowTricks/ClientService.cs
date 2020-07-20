@@ -13,7 +13,7 @@ using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
-    public class ClientService
+    internal class ClientService : IClientService
     {
         private readonly MeredithDbContext _dbContext;
         private readonly TenantService _tenantService;
@@ -28,9 +28,9 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task CreateAsync(string tenantSlug, ClientModel model, User user)
         {
-            var tenant = await ValidateAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
-            var client = await MapAsync(new Client(), model, tenant);
+            var client = await MapClientAsync(new Client(), model, tenant);
 
             _dbContext.Clients.Add(client);
             await _dbContext.SaveChangesAsync();
@@ -38,9 +38,9 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task EditAsync(int clientId, ClientModel model, User user)
         {
-            var client = await ValidateAsync(user, clientId);
+            var client = await GetClientAsync(user, clientId);
 
-            client = await MapAsync(client, model);
+            client = await MapClientAsync(client, model);
 
             _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task ArchiveAsync(int clientId, User user)
         {
-            var client = await ValidateAsync(user, clientId);
+            var client = await GetClientAsync(user, clientId);
 
             client.IsArchived = true;
 
@@ -67,9 +67,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task SetPmuAsync(int clientId, ClientPmuModel model, User user)
         {
-            var client = await ValidateAsync(user, clientId);
+            var client = await GetClientAsync(user, clientId);
 
-            client = Map(client, model);
+            var questions = await _dbContext.PmuQuestions
+                .Where(item => item.TenantId == client.TenantId)
+                .ToListAsync();
+
+            client = MapPmu(client, model, questions);
 
             _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
@@ -100,7 +104,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return userCreateResult.User!;
         }
 
-        private async Task<Client> MapAsync(Client client, ClientModel model, Data.Entity.Models.Tenant? tenant = null)
+        private async Task<Client> MapClientAsync(Client client, ClientModel model,
+            Data.Entity.Models.Tenant? tenant = null)
         {
             var user = await GetOrCreateUserAsync(model);
 
@@ -115,12 +120,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
-        private async Task<Data.Entity.Models.Tenant> ValidateAsync(User user, string tenantSlug)
-        {
-            return await _tenantService.CheckPermissionAsync(user, tenantSlug);
-        }
-
-        private async Task<Client> ValidateAsync(User user, int clientId)
+        private async Task<Client> GetClientAsync(User user, int clientId)
         {
             var client = await GetClientAsync(clientId);
 
@@ -141,7 +141,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
-        private Client Map(Client client, ClientPmuModel model)
+        private Client MapPmu(Client client, ClientPmuModel model, List<PmuQuestion> questions)
         {
             client.IsPmuCompleted = true;
             client.Signature = model.Signature;
@@ -152,6 +152,23 @@ namespace WhyNotEarth.Meredith.BrowTricks
             client.IsTakingBloodThinner = model.IsTakingBloodThinner;
             client.PhysicianName = model.PhysicianName;
             client.PhysicianPhoneNumber = model.PhysicianPhoneNumber;
+
+            client.PmuAnswers = new List<PmuAnswer>();
+            foreach (var pmuQuestion in questions)
+            {
+                var answer = model.Answers.FirstOrDefault(item => item.QuestionId == pmuQuestion.Id);
+
+                if (answer is null)
+                {
+                    throw new InvalidActionException($"Question {pmuQuestion.Id} is not answered");
+                }
+
+                client.PmuAnswers.Add(new PmuAnswer
+                {
+                    QuestionId = pmuQuestion.Id,
+                    Answer = answer.Answer
+                });
+            }
 
             return client;
         }

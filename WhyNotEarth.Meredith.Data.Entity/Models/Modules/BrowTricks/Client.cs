@@ -39,6 +39,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public string? PhysicianPhoneNumber { get; set; }
 
         public bool IsArchived { get; set; }
+
+        public List<PmuAnswer>? PmuAnswers { get; set; }
     }
 
     public class ClientEntityConfig : IEntityTypeConfiguration<Client>

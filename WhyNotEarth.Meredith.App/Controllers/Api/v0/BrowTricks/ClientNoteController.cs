@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageTenant)]
-    [Route("api/v0/browtricks/tenant/{tenantSlug}/clients/{clientId}/notes")]
+    [Route("api/v0/browtricks/tenants/{tenantSlug}/clients/{clientId}/notes")]
     public class ClientNoteController : BaseController
     {
         private readonly ClientNoteService _clientNoteService;
