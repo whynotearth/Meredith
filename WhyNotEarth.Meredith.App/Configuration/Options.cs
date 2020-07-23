@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RollbarDotNet.Configuration;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.GoogleCloud;
+using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Sms;
 using WhyNotEarth.Meredith.Stripe.Data;
 
@@ -18,7 +19,8 @@ namespace WhyNotEarth.Meredith.App.Configuration
                 .Configure<StripeOptions>(o => configuration.GetSection("Stripe").Bind(o))
                 .Configure<JwtOptions>(o => configuration.GetSection("Jwt").Bind(o))
                 .Configure<GoogleCloudOptions>(o => configuration.GetSection("GoogleCloud").Bind(o))
-                .Configure<TwilioOptions>(o => configuration.GetSection("Twilio").Bind(o));
+                .Configure<TwilioOptions>(o => configuration.GetSection("Twilio").Bind(o))
+                .Configure<HelloSignOptions>(o => configuration.GetSection("HelloSign").Bind(o));
         }
     }
 }

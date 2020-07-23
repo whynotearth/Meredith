@@ -1,10 +1,12 @@
-﻿using CsvHelper;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using CsvHelper;
+using Microsoft.AspNetCore.Mvc;
+using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Identity;
 
 namespace WhyNotEarth.Meredith.App.Mvc
 {
@@ -46,6 +48,12 @@ namespace WhyNotEarth.Meredith.App.Mvc
             await streamWriter.FlushAsync();
 
             return memoryStream.ToArray();
+        }
+
+        [NonAction]
+        protected Task<User> GetCurrentUserAsync(IUserService userService)
+        {
+            return userService.GetUserAsync(User);
         }
     }
 }

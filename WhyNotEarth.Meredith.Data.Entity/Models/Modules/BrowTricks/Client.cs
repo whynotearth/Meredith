@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Collections.Generic;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 {
@@ -41,6 +41,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public bool IsArchived { get; set; }
 
         public List<PmuAnswer>? PmuAnswers { get; set; }
+
+        public string? SignatureRequestId { get; set; }
+
+        public string? PmuPdf { get; set; }
     }
 
     public class ClientEntityConfig : IEntityTypeConfiguration<Client>

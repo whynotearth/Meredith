@@ -3,6 +3,7 @@ using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
+using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Jobs.Public;
@@ -39,7 +40,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<SlugService>()
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IFileService, FileService>()
-                .AddScoped<ICloudinaryService, CloudinaryService>();
+                .AddScoped<ICloudinaryService, CloudinaryService>()
+                .AddScoped<IHelloSignService, HelloSignService>();
 
             // Hotel
             serviceCollection
