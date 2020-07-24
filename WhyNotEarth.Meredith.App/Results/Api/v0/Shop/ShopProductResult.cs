@@ -10,9 +10,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
 
         public int PageId { get; }
 
-        public decimal Price { get; }
+        public decimal OriginalPrice { get; }
 
         public int DiscountPercent { get; }
+
+        public decimal Price { get; }
 
         public ProductCategoryResult Category { get; }
 
@@ -35,8 +37,12 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Shop
             Id = product.Id;
             Name = product.Name;
             PageId = product.PageId;
-            Price = product.Price.Amount;
+            OriginalPrice = product.Price.Amount;
             DiscountPercent = product.Category.Tenant.HasPromotion ? product.Category.Tenant.PromotionPercent : 0;
+
+            var discount = DiscountPercent / 100M;
+            Price = OriginalPrice - (OriginalPrice * discount);
+
             Category = new ProductCategoryResult(product.Category);
             Description = product.Description;
             IsAvailable = product.IsAvailable;
