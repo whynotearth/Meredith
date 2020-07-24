@@ -52,7 +52,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
             return await _dbContext.Clients
                 .Include(item => item.User)
-                .Where(item => item.TenantId == tenant.Id).ToListAsync();
+                .Where(item => item.TenantId == tenant.Id && item.IsArchived == false)
+                .ToListAsync();
         }
 
         public async Task ArchiveAsync(int clientId, User user)
@@ -107,14 +108,23 @@ namespace WhyNotEarth.Meredith.BrowTricks
         private async Task<Client> MapClientAsync(Client client, ClientModel model,
             Data.Entity.Models.Tenant? tenant = null)
         {
-            var user = await GetOrCreateUserAsync(model);
-
-            if (tenant != null)
+            if (client.User is null)
             {
-                client.Tenant = tenant;
+                client.User = await GetOrCreateUserAsync(model);
+            }
+            else
+            {
+                client.User.Email = model.Email;
+                client.User.FirstName = model.FirstName;
+                client.User.LastName = model.LastName;
+                client.User.PhoneNumber = model.PhoneNumber;
             }
 
-            client.User = user;
+            if (client.Tenant is null)
+            {
+                client.Tenant = tenant!;
+            }
+
             client.NotificationType = model.NotificationTypes.ToFlag();
 
             return client;
@@ -122,21 +132,16 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         private async Task<Client> GetClientAsync(User user, int clientId)
         {
-            var client = await GetClientAsync(clientId);
-
-            await _tenantService.CheckPermissionAsync(user, client.TenantId);
-
-            return client;
-        }
-
-        private async Task<Client> GetClientAsync(int clientId)
-        {
-            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
+            var client = await _dbContext.Clients
+                .Include(item => item.User)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
 
             if (client is null)
             {
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
+
+            await _tenantService.CheckPermissionAsync(user, client.TenantId);
 
             return client;
         }

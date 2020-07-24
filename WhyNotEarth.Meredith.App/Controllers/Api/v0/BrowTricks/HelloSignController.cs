@@ -26,10 +26,5 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             return Ok();
         }
-
-        public class Test
-        {
-            public string json { get; set; }
-        }
     }
 }
