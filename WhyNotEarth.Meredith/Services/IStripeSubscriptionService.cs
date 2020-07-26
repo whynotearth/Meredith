@@ -12,6 +12,6 @@ namespace WhyNotEarth.Meredith.Services
 
         Task ChangeSubscriptionPlanAsync(string subscriptionId, string planId);
 
-        Task<string?> GetPlanByName(string name);
+        Task<string?> GetPriceByDescription(string description);
     }
 }

@@ -72,22 +72,11 @@ namespace WhyNotEarth.Meredith.Stripe
             await subscriptionItemService.DeleteAsync(itemToDeleteId, null, GetRequestOptions());
         }
 
-        public async Task<string?> GetPlanByName(string name)
+        public async Task<string?> GetPriceByDescription(string description)
         {
-            var productService = new ProductService();
-            var products = await productService.ListAsync(null, GetRequestOptions());
-            var product = products.FirstOrDefault(p => p.Name == name).Id; ;
-            if (product == null)
-            {
-                return null;
-            }
-
             var priceService = new PriceService();
-            var prices = await priceService.ListAsync(new PriceListOptions
-            {
-                Product = product
-            }, GetRequestOptions());
-            return prices.FirstOrDefault().Id;
+            var prices = await priceService.ListAsync(null, GetRequestOptions());
+            return prices.FirstOrDefault(p => p.Nickname == description).Id;
         }
     }
 }
