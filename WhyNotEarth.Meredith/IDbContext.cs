@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -119,6 +119,16 @@ namespace WhyNotEarth.Meredith
         DbSet<FormItem> FormItems { get; set; }
 
         DbSet<FormSignature> FormSignatures { get; set; }
+
+        DbSet<PaymentCard> PlatformCards { get; set; }
+
+        DbSet<Customer> PlatformCustomers { get; set; }
+
+        DbSet<Discount> PlatformDiscounts { get; set; }
+
+        DbSet<Plan> PlatformPlans { get; set; }
+
+        DbSet<Subscription> PlatformSubscriptions { get; set; }
 
         DatabaseFacade Database { get; }
 

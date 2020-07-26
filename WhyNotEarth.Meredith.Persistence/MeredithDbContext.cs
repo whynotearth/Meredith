@@ -114,6 +114,17 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<FormSignature> FormSignatures { get; set; } = null!;
 
+        // Platform
+        public DbSet<PaymentCard> PlatformCards { get; set; } = null!;
+
+        public DbSet<Customer> PlatformCustomers { get; set; } = null!;
+
+        public DbSet<Discount> PlatformDiscounts { get; set; } = null!;
+
+        public DbSet<Plan> PlatformPlans { get; set; } = null!;
+
+        public DbSet<Subscription> PlatformSubscriptions { get; set; } = null!;
+
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {
         }
