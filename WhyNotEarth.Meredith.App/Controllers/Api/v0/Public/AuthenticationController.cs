@@ -130,7 +130,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
 
-                var currentUser = await _userManager.FindByEmailAsync(email);
+                var currentUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
                 await UpdateUserAsync(info, currentUser);
 
