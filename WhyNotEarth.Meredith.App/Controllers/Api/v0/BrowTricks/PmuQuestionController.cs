@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns403]
         [Returns404]
         [HttpPost("")]
-        public async Task<CreateResult> Create(string tenantSlug, PmuQuestionModel model)
+        public async Task<CreateResult> Create(string tenantSlug, PmuQuestionCreateModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns403]
         [Returns404]
         [HttpPut("{questionId}")]
-        public async Task<NoContentResult> Edit(string tenantSlug, int questionId, PmuQuestionModel model)
+        public async Task<NoContentResult> Edit(string tenantSlug, int questionId, PmuQuestionEditModel model)
         {
             var user = await _userService.GetUserAsync(User);
 

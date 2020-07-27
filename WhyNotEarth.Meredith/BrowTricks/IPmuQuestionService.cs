@@ -8,9 +8,9 @@ namespace WhyNotEarth.Meredith.BrowTricks
 {
     public interface IPmuQuestionService
     {
-        Task CreateAsync(string tenantSlug, PmuQuestionModel model, User user);
+        Task CreateAsync(string tenantSlug, PmuQuestionCreateModel model, User user);
 
-        Task EditAsync(string tenantSlug, int questionId, PmuQuestionModel model, User user);
+        Task EditAsync(string tenantSlug, int questionId, PmuQuestionEditModel model, User user);
 
         Task DeleteAsync(string tenantSlug, int questionId, User user);
 

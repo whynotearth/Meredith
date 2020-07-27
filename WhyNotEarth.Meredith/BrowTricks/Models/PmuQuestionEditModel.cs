@@ -3,7 +3,7 @@ using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Models
 {
-    public class PmuQuestionModel
+    public class PmuQuestionEditModel
     {
         [NotNull]
         [Mandatory]

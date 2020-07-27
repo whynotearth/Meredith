@@ -22,13 +22,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
             _tenantService = tenantService;
         }
 
-        public async Task CreateAsync(string tenantSlug, PmuQuestionModel model, User user)
+        public async Task CreateAsync(string tenantSlug, PmuQuestionCreateModel createModel, User user)
         {
             var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
-            var pmuQuestion = Map(new PmuQuestion(), tenant, model);
+            var pmuQuestions = Map(tenant, createModel);
 
-            _dbContext.PmuQuestions.Add(pmuQuestion);
+            _dbContext.PmuQuestions.AddRange(pmuQuestions);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -40,7 +40,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 .ToListAsync();
         }
 
-        public async Task EditAsync(string tenantSlug, int questionId, PmuQuestionModel model, User user)
+        public async Task EditAsync(string tenantSlug, int questionId, PmuQuestionEditModel model, User user)
         {
             var (tenant, question) = await GetAsync(user, tenantSlug, questionId);
 
@@ -68,13 +68,22 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
             if (question is null)
             {
-                throw new RecordNotFoundException($"Question {questionId} not found");
+                throw new RecordNotFoundException($"Questions {questionId} not found");
             }
 
             return (tenant, question);
         }
 
-        private PmuQuestion Map(PmuQuestion pmuQuestion, Data.Entity.Models.Tenant tenant, PmuQuestionModel model)
+        private List<PmuQuestion> Map(Data.Entity.Models.Tenant tenant, PmuQuestionCreateModel model)
+        {
+            return model.Questions.Select(item => new PmuQuestion
+            {
+                TenantId = tenant.Id,
+                Question = item
+            }).ToList();
+        }
+
+        private PmuQuestion Map(PmuQuestion pmuQuestion, Data.Entity.Models.Tenant tenant, PmuQuestionEditModel model)
         {
             pmuQuestion.TenantId = tenant.Id;
             pmuQuestion.Question = model.Question;
