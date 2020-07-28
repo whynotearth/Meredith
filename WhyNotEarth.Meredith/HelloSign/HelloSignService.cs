@@ -19,11 +19,11 @@ namespace WhyNotEarth.Meredith.HelloSign
         private readonly MeredithDbContext _dbContext;
         private readonly IWebHostEnvironment _environment;
         private readonly GoogleStorageService _googleStorageService;
-        private readonly ClientService _clientService;
+        private readonly IClientService _clientService;
         private readonly HelloSignOptions _options;
 
         public HelloSignService(IOptions<HelloSignOptions> options, IWebHostEnvironment environment,
-            MeredithDbContext dbContext, GoogleStorageService googleStorageService, ClientService clientService)
+            MeredithDbContext dbContext, GoogleStorageService googleStorageService, IClientService clientService)
         {
             _environment = environment;
             _dbContext = dbContext;
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         public async Task<string> GetSignatureRequestAsync(int clientId, User user)
         {
-            var client = await _clientService.GetClientAsync(user, clientId);
+            var client = await _clientService.GetClientAsync(clientId, user);
 
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
 
