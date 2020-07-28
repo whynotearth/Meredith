@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.GoogleCloud;
 using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
 
@@ -20,25 +19,22 @@ namespace WhyNotEarth.Meredith.HelloSign
         private readonly MeredithDbContext _dbContext;
         private readonly IWebHostEnvironment _environment;
         private readonly GoogleStorageService _googleStorageService;
+        private readonly ClientService _clientService;
         private readonly HelloSignOptions _options;
 
         public HelloSignService(IOptions<HelloSignOptions> options, IWebHostEnvironment environment,
-            MeredithDbContext dbContext, GoogleStorageService googleStorageService)
+            MeredithDbContext dbContext, GoogleStorageService googleStorageService, ClientService clientService)
         {
             _environment = environment;
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
+            _clientService = clientService;
             _options = options.Value;
         }
 
-        public async Task<string> GetSignatureRequestAsync(string tenantSlug, User user)
+        public async Task<string> GetSignatureRequestAsync(int clientId, User user)
         {
-            var client = await GetClientAsync(tenantSlug, user);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"Client for user {user.Id} not found");
-            }
+            var client = await _clientService.GetClientAsync(user, clientId);
 
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
 
@@ -102,14 +98,6 @@ namespace WhyNotEarth.Meredith.HelloSign
         private string GetFilePath(Client client)
         {
             return Path.Combine(BrowTricksCompany.Slug, "pmu", client.Id.ToString());
-        }
-
-        private Task<Client> GetClientAsync(string tenantSlug, User user)
-        {
-            return _dbContext.Clients
-                .Include(item => item.User)
-                .Include(item => item.Tenant)
-                .FirstOrDefaultAsync(item => item.UserId == user.Id && item.Tenant.Slug == tenantSlug);
         }
     }
 }

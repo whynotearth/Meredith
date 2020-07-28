@@ -130,7 +130,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
-        private async Task<Client> GetClientAsync(User user, int clientId)
+        public async Task<Client> GetClientAsync(User user, int clientId)
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)

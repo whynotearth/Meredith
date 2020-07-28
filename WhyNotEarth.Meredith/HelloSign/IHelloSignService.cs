@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 {
     public interface IHelloSignService
     {
-        Task<string> GetSignatureRequestAsync(string tenantSlug, User user);
+        Task<string> GetSignatureRequestAsync(int clientId, User user);
 
         Task ProcessEventsAsync(string json);
     }
