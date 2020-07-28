@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 
             return Ok(new
             {
-                reservation.Created,
+                Created = reservation.CreatedAt,
                 reservation.Email,
                 reservation.End,
                 reservation.Id,
@@ -52,7 +52,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
                 Payments = reservation.Payments.Select(p => new
                 {
                     p.Amount,
-                    p.Created,
+                    Created = p.CreatedAt,
                     p.Id,
                     p.Status,
                     p.UserId

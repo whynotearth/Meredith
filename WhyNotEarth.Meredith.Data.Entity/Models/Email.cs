@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models
@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public EmailStatus Status { get; set; }
 
-        public DateTime CreationDateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public List<EmailEvent>? Events { get; set; }
     }

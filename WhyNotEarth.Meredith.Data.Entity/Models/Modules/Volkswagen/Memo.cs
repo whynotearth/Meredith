@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public List<string> DistributionGroups { get; set; } = null!;
 
-        public DateTime CreationDateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public class MemoEntityConfig : IEntityTypeConfiguration<Memo>

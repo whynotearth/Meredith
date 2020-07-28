@@ -164,7 +164,7 @@ namespace WhyNotEarth.Meredith.Shop
                 CompanyId = tenant.CompanyId,
                 TenantId = tenant.Id,
                 Slug = _slugService.GetSlug(product.Name),
-                CreationDateTime = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             product.Variations = model.Variations?.Select(item =>

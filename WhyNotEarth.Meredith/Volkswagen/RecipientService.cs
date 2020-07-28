@@ -102,7 +102,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                CreationDateTime = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             });
 
             return _dbContext.SaveChangesAsync();
@@ -152,7 +152,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         {
             var query = _dbContext.Recipients.Where(condition);
 
-            return query.CountAsync(item => item.CreationDateTime.Date <= date);
+            return query.CountAsync(item => item.CreatedAt.Date <= date);
         }
 
         private async Task InsertRecordsAsync(IEnumerable<RecipientCsvModel> records)
@@ -178,7 +178,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 FirstName = csvModel.FirstName,
                 LastName = csvModel.LastName,
                 DistributionGroup = csvModel.DistributionGroup,
-                CreationDateTime = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
         }
 

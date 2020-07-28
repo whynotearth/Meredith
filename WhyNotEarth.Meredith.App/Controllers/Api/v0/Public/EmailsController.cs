@@ -53,12 +53,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             var lastMonth = DateTime.UtcNow.AddMonths(-1);
             var monthlySentEmails = await _dbContext.Emails.Where(item =>
-                item.CreationDateTime >= lastMonth &&
+                item.CreatedAt >= lastMonth &&
                 item.CompanyId == company.Id).CountAsync();
 
             var monthlyActiveUsers = await _dbContext.Emails
                 .Include(item => item.Events)
-                .Where(item => item.Status >= EmailStatus.Opened && item.CreationDateTime >= lastMonth)
+                .Where(item => item.Status >= EmailStatus.Opened && item.CreatedAt >= lastMonth)
                 .Select(item => item.EmailAddress)
                 .Distinct()
                 .CountAsync();

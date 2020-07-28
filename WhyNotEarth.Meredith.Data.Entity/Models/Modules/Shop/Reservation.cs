@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public User User { get; set; } = null!;
 
-        public DateTime Created { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public string? Email { get; set; }
 

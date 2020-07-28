@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 To = model.To,
                 Description = model.Description,
                 PdfUrl = model.PdfUrl,
-                CreationDateTime = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
 
             _dbContext.Memos.Add(memo);
@@ -51,7 +51,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public async Task<List<MemoInfo>> GetStatsAsync()
         {
-            var memos = await _dbContext.Memos.OrderByDescending(item => item.CreationDateTime).ToListAsync();
+            var memos = await _dbContext.Memos.OrderByDescending(item => item.CreatedAt).ToListAsync();
 
             var result = new List<MemoInfo>();
 

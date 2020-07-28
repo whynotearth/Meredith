@@ -82,7 +82,7 @@ namespace WhyNotEarth.Meredith.Hotel
             var reservation = new HotelReservation
             {
                 Amount = totalAmount,
-                Created = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 Start = startDate,
                 End = endDate,
                 Email = email,
@@ -121,7 +121,7 @@ namespace WhyNotEarth.Meredith.Hotel
             var payment = new Payment
             {
                 Amount = amount,
-                Created = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 ReservationId = reservation.Id,
                 Status = PaymentStatus.IntentGenerated,
                 PaymentIntentId = paymentIntent.Id,
@@ -140,7 +140,7 @@ namespace WhyNotEarth.Meredith.Hotel
             var payment = new Payment
             {
                 Amount = paymentIntent.Amount,
-                Created = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 ReservationId = int.Parse(paymentIntent.Metadata[MetadataReservationIdKey]),
                 Status = PaymentStatus.Fulfilled,
                 PaymentIntentId = paymentIntent.Id,

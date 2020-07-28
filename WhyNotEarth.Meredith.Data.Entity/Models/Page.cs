@@ -44,9 +44,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public ICollection<Keyword>? Keywords { get; set; }
 
-        public DateTime CreationDateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public DateTime? EditDateTime { get; set; }
+        public DateTime? EditedAt { get; set; }
 
         public ICollection<PageTranslation>? Translations { get; set; }
     }

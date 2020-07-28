@@ -18,7 +18,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         {
             Id = recipient.Id;
             Email = recipient.Email;
-            CreationDateTime = recipient.CreationDateTime;
+            CreationDateTime = recipient.CreatedAt;
             FirstName = recipient.FirstName;
             LastName = recipient.LastName;
         }

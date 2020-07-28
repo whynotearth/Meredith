@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
 
         public PaymentStatus Status { get; set; }
 
-        public DateTime Created { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public enum PaymentStatus

@@ -88,7 +88,7 @@ namespace WhyNotEarth.Meredith.Jobs.Public
                     EmailAddress = item.Email,
                     Group = item.DistributionGroup,
                     Status = EmailStatus.ReadyToSend,
-                    CreationDateTime = dateTime
+                    CreatedAt = dateTime
                 }).Select(keySetter);
 
                 _dbContext.Emails.AddRange(memoRecipients);

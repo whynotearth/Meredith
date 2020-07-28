@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
             Id = memoInfo.Memo.Id;
             DistributionGroups = memoInfo.Memo.DistributionGroups;
             Subject = memoInfo.Memo.Subject;
-            CreationDateTime = memoInfo.Memo.CreationDateTime;
+            CreationDateTime = memoInfo.Memo.CreatedAt;
             To = memoInfo.Memo.To;
             Description = memoInfo.Memo.Description;
             OpenPercentage = memoInfo.ListStats.OpenPercentage;

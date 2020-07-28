@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
 
         public string DistributionGroup { get; set; } = null!;
 
-        public DateTime CreationDateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public class RecipientEntityConfig : IEntityTypeConfiguration<Recipient>
