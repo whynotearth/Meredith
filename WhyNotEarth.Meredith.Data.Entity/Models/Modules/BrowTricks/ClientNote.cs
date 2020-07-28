@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
@@ -12,6 +13,8 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public Client Client { get; set; } = null!;
 
         public string Note { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; }
     }
 
     public class ClientNoteEntityConfig : IEntityTypeConfiguration<ClientNote>

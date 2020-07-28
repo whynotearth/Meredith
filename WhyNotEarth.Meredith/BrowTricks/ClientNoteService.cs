@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 }
 
                 clientNote.Note = model.Note;
+                clientNote.CreatedAt = DateTime.UtcNow;
             }
             else
             {
@@ -75,7 +77,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
                 client.Notes.Add(new ClientNote
                 {
-                    Note = model.Note
+                    Note = model.Note,
+                    CreatedAt = DateTime.UtcNow
                 });
             }
 
