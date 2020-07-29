@@ -77,7 +77,7 @@ namespace WhyNotEarth.Meredith.Email
 
             var to = Tuple.Create<string, string?>(hotelReservation.User.Email, hotelReservation.User.UserName);
 
-            var emailInfo = new EmailInfo(hotel.CompanyId.Value, to)
+            var emailInfo = new EmailMessage(hotel.CompanyId.Value, to)
             {
                 TemplateData = templateData
             };

@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Mvc;
-using WhyNotEarth.Meredith.HelloSign;
+using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 {
@@ -11,18 +10,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [ProducesErrorResponseType(typeof(void))]
     public class HelloSignController : BaseController
     {
-        private readonly IHelloSignService _helloSignService;
+        private readonly IPmuService _pmuService;
 
-        public HelloSignController(IHelloSignService helloSignService)
+        public HelloSignController(IPmuService pmuService)
         {
-            _helloSignService = helloSignService;
+            _pmuService = pmuService;
         }
 
         [Returns200]
         [HttpPost("callback")]
-        public async Task<ActionResult> HelloSignCallback([FromForm] string json)
+        public ActionResult HelloSignCallback([FromForm] string json)
         {
-            await _helloSignService.ProcessEventsAsync(json);
+            _pmuService.ProcessHelloSignCallback(json);
 
             return Ok("Hello API Event Received");
         }

@@ -22,5 +22,7 @@ namespace WhyNotEarth.Meredith.Identity
         User Map(User user, ExternalLoginInfo externalLoginInfo);
 
         Task UpdateUserAsync(User user);
+
+        Task<string> GenerateJwtTokenAsync(User user);
     }
 }

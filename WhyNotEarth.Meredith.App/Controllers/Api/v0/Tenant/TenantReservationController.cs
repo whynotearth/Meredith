@@ -1,31 +1,25 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Salon;
-using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Tenant;
+using WhyNotEarth.Meredith.Tenant.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 {
     [ApiVersion("0")]
     [Route("api/v0/tenants/{tenantSlug}")]
     [ProducesErrorResponseType(typeof(void))]
-    public class TenantReservationController : ControllerBase
+    public class TenantReservationController : BaseController
     {
-        private readonly MeredithDbContext _meredithDbContext;
         private readonly ReservationService _reservationService;
-        private readonly UserManager _userManager;
+        private readonly IUserService _userService;
 
-        public TenantReservationController(MeredithDbContext meredithDbContext, ReservationService reservationService,
-            UserManager userManager)
+        public TenantReservationController(ReservationService reservationService, IUserService userService)
         {
-            _meredithDbContext = meredithDbContext;
             _reservationService = reservationService;
-            _userManager = userManager;
+            _userService = userService;
         }
 
         [Authorize]
@@ -36,24 +30,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [HttpPost("reservations")]
         public async Task<IActionResult> Reserve(string tenantSlug, TenantReservationModel model)
         {
-            if (model.DeliveryDateTime < DateTime.UtcNow)
-            {
-                return BadRequest("Invalid delivery date");
-            }
+            var user = await GetCurrentUserAsync(_userService);
 
-            var tenant =
-                await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Slug.ToLower() == tenantSlug.ToLower());
-
-            if (tenant is null)
-            {
-                return NotFound($"Tenant {tenantSlug} not found");
-            }
-
-            var userId = _userManager.GetUserId(User);
-
-            _reservationService.Reserve(tenant.Id, model.Orders.Select(i => i.ToString()).ToList(), model.SubTotal,
-                model.DeliveryFee, model.Amount, model.Tax, model.DeliveryDateTime, model.UserTimeZoneOffset,
-                model.PaymentMethod, model.Message, userId, model.WhatsappNotification);
+            await _reservationService.ReserveAsync(tenantSlug, model, user);
 
             return Ok();
         }

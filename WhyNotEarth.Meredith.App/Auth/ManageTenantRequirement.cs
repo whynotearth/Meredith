@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.App.Auth
     // Unfortunately, we can't access route values in the endpoint routing
     // so we can't get tenantSlug and check the actual owner of the tenant here
     // so we are just testing if the user has any tenants at all and actual permission check
-    // is done in the services TenantService.CheckPermissionAsync()
+    // is done in the services TenantService.CheckOwnerAsync()
     // https://github.com/dotnet/aspnetcore/issues/14442
     public class ManageTenantHandler : AuthorizationHandler<ManageTenantRequirement>
     {

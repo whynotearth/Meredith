@@ -1,0 +1,47 @@
+﻿using System;
+using Microsoft.Extensions.Options;
+using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Twilio;
+
+namespace WhyNotEarth.Meredith.BrowTricks
+{
+    internal class PmuNotifications
+    {
+        private readonly TwilioOptions _options;
+
+        public PmuNotifications(IOptions<TwilioOptions> options)
+        {
+            _options = options.Value;
+        }
+
+        public ShortMessage GetConsentNotification(Data.Entity.Models.Tenant tenant, User user, string formUrl)
+        {
+            return new ShortMessage
+            {
+                CompanyId = tenant.CompanyId,
+                TenantId = tenant.Id,
+                Body =
+                    $"{tenant.Name} needs the following paperwork to be completed before your appointment. It should take about 5 minutes.\r\n\r\n{formUrl}",
+                From = _options.PhoneNumber,
+                To = user.PhoneNumber,
+                IsWhatsApp = false,
+                CreatedAt = DateTime.UtcNow
+            };
+        }
+
+        public ShortMessage GetCompletionNotification(Data.Entity.Models.Tenant tenant, User user, string pdfUrl)
+        {
+            return new ShortMessage
+            {
+                CompanyId = tenant.CompanyId,
+                TenantId = tenant.Id,
+                Body =
+                    $"You have completed your PMU Consent form for {tenant.Name}. Click below to view your completed consent form.\r\n\r\n{pdfUrl}",
+                From = _options.PhoneNumber,
+                To = user.PhoneNumber,
+                IsWhatsApp = false,
+                CreatedAt = DateTime.UtcNow
+            };
+        }
+    }
+}

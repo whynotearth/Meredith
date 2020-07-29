@@ -96,7 +96,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
 
-            await _tenantService.CheckPermissionAsync(user, client.TenantId);
+            await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
             return client;
         }

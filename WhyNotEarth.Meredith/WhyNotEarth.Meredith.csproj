@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Sms/OrderTemplateWhatsapp.txt" />
+    <EmbeddedResource Include="Tenant/ReservationWhatsAppMessageTemplate.txt" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column-pdf.html" />
     <EmbeddedResource Include="Volkswagen/Templates/two-column.html" />

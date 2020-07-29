@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
+namespace WhyNotEarth.Meredith.Tenant.Models
 {
-    public class TenantReservationModel
+    public class TenantReservationModel : IValidatableObject
     {
         [Required]
         public List<Order> Orders { get; set; } = null!;
@@ -26,6 +26,14 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Salon
         public string? Message { get; set; }
 
         public bool? WhatsappNotification { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (DeliveryDateTime < DateTime.UtcNow)
+            {
+                yield return new ValidationResult("Invalid delivery date", new[] { nameof(DeliveryDateTime) });
+            }
+        }
     }
 
     public class Order

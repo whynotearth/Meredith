@@ -1,15 +1,11 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HelloSign;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.GoogleCloud;
 using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
 
 namespace WhyNotEarth.Meredith.HelloSign
@@ -17,14 +13,11 @@ namespace WhyNotEarth.Meredith.HelloSign
     internal class HelloSignService : IHelloSignService
     {
         private readonly MeredithDbContext _dbContext;
-        private readonly GoogleStorageService _googleStorageService;
         private readonly HelloSignOptions _options;
 
-        public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext,
-            GoogleStorageService googleStorageService)
+        public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext)
         {
             _dbContext = dbContext;
-            _googleStorageService = googleStorageService;
             _options = options.Value;
         }
 
@@ -56,15 +49,24 @@ namespace WhyNotEarth.Meredith.HelloSign
             return signUrlResponse.SignUrl;
         }
 
-        public async Task ProcessEventsAsync(string json)
+        public string? GetDownloadableSignaturesAsync(string json)
         {
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
             var myEvent = apiClient.ParseEvent(json);
 
             if (myEvent.EventType == "signature_request_downloadable")
             {
-                await SavePdfAsync(myEvent.SignatureRequest.SignatureRequestId);
+                return myEvent.SignatureRequest.SignatureRequestId;
             }
+
+            return null;
+        }
+
+        public byte[] DownloadSignature(string signatureRequestId)
+        {
+            var apiClient = new global::HelloSign.Client(_options.ApiKey);
+
+            return apiClient.DownloadSignatureRequestFiles(signatureRequestId);
         }
 
         private async Task AddDisclosuresAsync(TemplateSignatureRequest request, Client client)
@@ -90,34 +92,6 @@ namespace WhyNotEarth.Meredith.HelloSign
                 Value = result.ToString(),
                 Name = "Disclosures"
             });
-        }
-
-        private async Task SavePdfAsync(string signatureRequestId)
-        {
-            var client =
-                await _dbContext.Clients.FirstOrDefaultAsync(item => item.SignatureRequestId == signatureRequestId);
-
-            if (client is null)
-            {
-                return;
-            }
-
-            var apiClient = new global::HelloSign.Client(_options.ApiKey);
-
-            var pdfData = apiClient.DownloadSignatureRequestFiles(client.SignatureRequestId);
-
-            var path = GetFilePath(client);
-            await _googleStorageService.UploadFileAsync(path, "application/pdf", new MemoryStream(pdfData));
-
-            client.PmuPdf = path;
-            client.PmuStatus = PmuStatusType.Completed;
-            _dbContext.Clients.Update(client);
-            await _dbContext.SaveChangesAsync();
-        }
-
-        private string GetFilePath(Client client)
-        {
-            return string.Join("/", BrowTricksCompany.Slug, "pmu", client.Id.ToString());
         }
 
         private async Task<Client> GetClientAsync(int clientId)

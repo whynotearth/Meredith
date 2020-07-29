@@ -62,14 +62,14 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(JumpStart jumpStart, List<Data.Entity.Models.Email> emails, List<Article> articles)
+        private async Task<EmailMessage> GetEmailInfoAsync(JumpStart jumpStart, List<Data.Entity.Models.Email> emails, List<Article> articles)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
             var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
-            return new EmailInfo(company.Id, emails)
+            return new EmailMessage(company.Id, emails)
             {
                 Subject = $"Project Blue Delta - {jumpStart.DateTime:MMMM d, yyyy}",
                 HtmlContent = emailTemplate,

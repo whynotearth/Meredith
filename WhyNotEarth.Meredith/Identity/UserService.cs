@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Models;
@@ -15,12 +20,14 @@ namespace WhyNotEarth.Meredith.Identity
     internal class UserService : IUserService
     {
         private readonly MeredithDbContext _dbContext;
+        private readonly JwtOptions _jwtOptions;
         private readonly UserManager _userManager;
 
-        public UserService(UserManager userManager, MeredithDbContext dbContext)
+        public UserService(UserManager userManager, MeredithDbContext dbContext, IOptions<JwtOptions> jwtOptions)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _jwtOptions = jwtOptions.Value;
         }
 
         public Task<User> GetUserAsync(ClaimsPrincipal principal)
@@ -98,6 +105,38 @@ namespace WhyNotEarth.Meredith.Identity
             user.UserName = user.Email;
 
             await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<string> GenerateJwtTokenAsync(User user)
+        {
+            if (!_jwtOptions.IsValid())
+            {
+                throw new Exception("Missing JWT configurations.");
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddDays(_jwtOptions.ExpireDays);
+
+            var token = new JwtSecurityToken(
+                _jwtOptions.Issuer,
+                _jwtOptions.Issuer,
+                claims,
+                expires: expires,
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

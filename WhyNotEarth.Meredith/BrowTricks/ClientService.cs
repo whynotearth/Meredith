@@ -8,7 +8,6 @@ using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Tenant;
@@ -18,19 +17,17 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class ClientService : IClientService
     {
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly IHelloSignService _helloSignService;
         private readonly MeredithDbContext _dbContext;
         private readonly TenantService _tenantService;
         private readonly IUserService _userService;
 
         public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService,
-            ICloudinaryService cloudinaryService, IHelloSignService helloSignService)
+            ICloudinaryService cloudinaryService)
         {
             _userService = userService;
             _dbContext = dbContext;
             _tenantService = tenantService;
             _cloudinaryService = cloudinaryService;
-            _helloSignService = helloSignService;
         }
 
         public async Task CreateAsync(string tenantSlug, ClientModel model, User user)
@@ -74,30 +71,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<string> SetPmuAsync(int clientId, ClientPmuModel model, User user)
-        {
-            var client = await GetAsync(clientId, user);
-
-            if (client.PmuStatus != PmuStatusType.Incomplete)
-            {
-                throw new InvalidActionException("This client is already signed their PMU form");
-            }
-
-            var oldValues = await _dbContext.Disclosures.Where(item => item.ClientId == clientId).ToListAsync();
-            _dbContext.Disclosures.RemoveRange(oldValues);
-
-            var disclosures = model.Disclosures.Select(item => new Disclosure
-            {
-                ClientId = clientId,
-                Value = item
-            });
-
-            _dbContext.Disclosures.AddRange(disclosures);
-            await _dbContext.SaveChangesAsync();
-
-            return await _helloSignService.GetSignatureRequestAsync(clientId);
-        }
-
         public async Task<Client> GetAsync(int clientId, User user)
         {
             var client = await _dbContext.Clients
@@ -111,19 +84,9 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
 
-            await _tenantService.CheckPermissionAsync(user, client.TenantId);
+            await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
             return client;
-        }
-
-        public async Task SetPmuSignedAsync(int clientId, User user)
-        {
-            var client = await GetAsync(clientId, user);
-
-            client.PmuStatus = PmuStatusType.Saving;
-
-            _dbContext.Clients.Update(client);
-            await _dbContext.SaveChangesAsync();
         }
 
         private async Task<User> GetOrCreateUserAsync(ClientModel model)

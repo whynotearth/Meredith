@@ -6,6 +6,8 @@ namespace WhyNotEarth.Meredith.HelloSign
     {
         internal Task<string> GetSignatureRequestAsync(int clientId);
 
-        Task ProcessEventsAsync(string json);
+        string? GetDownloadableSignaturesAsync(string json);
+
+        byte[] DownloadSignature(string signatureRequestId);
     }
 }

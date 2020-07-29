@@ -4,8 +4,9 @@ using RollbarDotNet.Configuration;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.HelloSign;
-using WhyNotEarth.Meredith.Sms;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Stripe.Data;
+using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.App.Configuration
 {

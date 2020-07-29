@@ -1,157 +1,73 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Email;
-using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Sms;
+using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Tenant.Models;
+using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.Tenant
 {
     public class ReservationService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly MeredithDbContext _dbContext;
         private readonly SendGridService _sendGridService;
-        private readonly UserManager _userManager;
-        private readonly TwilioService _twilioService;
+        private readonly TenantReservationNotification _tenantReservationNotification;
 
-        public ReservationService(MeredithDbContext meredithDbContext, SendGridService sendGridService,
-            IBackgroundJobClient backgroundJobClient, UserManager userManager, TwilioService twilioService)
+        public ReservationService(IBackgroundJobClient backgroundJobClient,
+            TenantReservationNotification tenantReservationNotification, MeredithDbContext dbContext,
+            SendGridService sendGridService)
         {
-            _meredithDbContext = meredithDbContext;
-            _sendGridService = sendGridService;
             _backgroundJobClient = backgroundJobClient;
-            _userManager = userManager;
-            _twilioService = twilioService;
+            _tenantReservationNotification = tenantReservationNotification;
+            _dbContext = dbContext;
+            _sendGridService = sendGridService;
         }
 
-        public void Reserve(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee, decimal amount,
-            decimal tax, DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod, string? message,
-            string userId, bool? whatsappNotification)
+        public async Task ReserveAsync(string tenantSlug, TenantReservationModel model, User user)
         {
-            if (whatsappNotification == true)
-            {
-                _backgroundJobClient.Enqueue<ReservationService>(service =>
-               service.SendWhatsappSms(tenantId, orders, subTotal, deliveryFee, amount, tax, deliveryDateTime,
-                   userTimeZoneOffset, paymentMethod, message, userId));
-            }
-            else
-            {
-                _backgroundJobClient.Enqueue<ReservationService>(service =>
-                    service.SendEmail(tenantId, orders, subTotal, deliveryFee, amount, tax, deliveryDateTime,
-                        userTimeZoneOffset, paymentMethod, message, userId));
-            }
-        }
-
-        public async Task SendEmail(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee,
-            decimal amount, decimal tax, DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod,
-            string? message, string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user is null)
-            {
-                throw new Exception($"Cannot find the user: {userId}");
-            }
-
-            var tenant = await _meredithDbContext.Tenants
+            var tenant = await _dbContext.Tenants
                 .Include(item => item.Owner)
                 .Include(item => item.Company)
-                .FirstOrDefaultAsync(item => item.Id == tenantId);
+                .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
 
             if (tenant is null)
             {
-                throw new Exception($"Cannot find the tenant: {tenantId}");
+                throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
             }
 
             if (tenant.Company is null)
             {
-                throw new Exception($"Tenant: {tenantId} is not connected to any company");
+                throw new RecordNotFoundException($"Tenant: {tenantSlug} is not connected to any company");
             }
 
             if (tenant.Owner is null)
             {
-                throw new Exception($"Tenant: {tenantId} does not have an owner");
+                throw new RecordNotFoundException($"Tenant: {tenantSlug} does not have an owner");
             }
 
-            var recipients = new List<Tuple<string, string?>>
+            if (model.WhatsappNotification == true)
             {
-                Tuple.Create<string, string?>(user.Email, user.FullName),
-                Tuple.Create<string, string?>(tenant.Owner.Email, tenant.Owner.FullName)
-            };
+                var shortMessages = _tenantReservationNotification.GetWhatsAppMessage(tenant, model, user);
 
-            var templateData = new
-            {
-                subject = $"your order with {tenant.Company.Name}",
-                tenant = new
+                _dbContext.ShortMessages.AddRange(shortMessages);
+                await _dbContext.SaveChangesAsync();
+
+                foreach (var shortMessage in shortMessages)
                 {
-                    h2 = tenant.Name,
-                    phone = tenant.Owner.PhoneNumber,
-                    email = tenant.Owner.Email
-                },
-                orderProducts = string.Join("<br />", orders),
-                subTotal = subTotal,
-                deliveryFee = deliveryFee,
-                amount = amount,
-                tax = tax,
-                deliveryAddress = user.Address,
-                name = user.FullName,
-                phone = user.PhoneNumber,
-                email = user.Email,
-                paymentMethod = paymentMethod,
-                deliveryTime = deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm"),
-                message = message ?? string.Empty,
-                googleMaps = user.GoogleLocation
-            };
-
-            var emailInfo = new EmailInfo(tenant.Company.Id, recipients)
+                    _backgroundJobClient.Enqueue<ITwilioService>(service =>
+                        service.SendAsync(shortMessage.Id));
+                }
+            }
+            else
             {
-                TemplateData = templateData
-            };
+                var emailMessage = _tenantReservationNotification.GetEmailMessage(tenant, model, user);
 
-            await _sendGridService.SendEmailAsync(emailInfo);
-        }
-        public async Task SendWhatsappSms(int tenantId, List<string> orders, decimal subTotal, decimal deliveryFee,
-            decimal amount, decimal tax, DateTime deliveryDateTime, int userTimeZoneOffset, string paymentMethod,
-            string? message, string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            var tenant = await _meredithDbContext.Tenants
-                .Include(item => item.Owner)
-                .FirstOrDefaultAsync(item => item.Id == tenantId);
-
-            var recipients = new List<string>
-            {
-                user.PhoneNumber,
-                tenant.Owner.PhoneNumber
-            };
-
-            var formatReader = new StringBuilder(_twilioService.GetWhatsappSmsTemplate());
-
-            formatReader.Replace("{orders}", string.Join("\n", orders));
-            formatReader.Replace("{subTotal}", subTotal.ToString(CultureInfo.InvariantCulture));
-            formatReader.Replace("{tax}", tax.ToString(CultureInfo.InvariantCulture));
-            formatReader.Replace("{deliveryFee}", deliveryFee.ToString(CultureInfo.InvariantCulture));
-            formatReader.Replace("{amount}", amount.ToString(CultureInfo.InvariantCulture));
-            formatReader.Replace("{deliveryAddress}", user.Address);
-            formatReader.Replace("{name}", user.FullName);
-            formatReader.Replace("{phone}", user.PhoneNumber);
-            formatReader.Replace("{email}", user.Email);
-            formatReader.Replace("{paymentMethod}", paymentMethod);
-            formatReader.Replace("{deliveryTime}", deliveryDateTime.InZone(userTimeZoneOffset, "ddd, d MMM hh:mm"));
-            formatReader.Replace("{message}", !string.IsNullOrEmpty(message) ? message : "N/A");
-            formatReader.Replace("{tenantName}", tenant.Name.ToUpper());
-            formatReader.Replace("{tenantGooglemaps}", tenant.Owner.GoogleLocation);
-            formatReader.Replace("{tenantPhone}", tenant.Owner.PhoneNumber);
-            formatReader.Replace("{tenantEmail}", tenant.Owner.Email);
-
-            await _twilioService.SendWhatsapp(formatReader.ToString(), recipients);
+                await _sendGridService.SendEmailAsync(emailMessage);
+            }
         }
     }
 }

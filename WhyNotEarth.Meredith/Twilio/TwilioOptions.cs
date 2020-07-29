@@ -1,8 +1,8 @@
-﻿namespace WhyNotEarth.Meredith.Sms
+﻿namespace WhyNotEarth.Meredith.Twilio
 {
     public class TwilioOptions
     {
-        public string AccountSID { get; set; } = null!;
+        public string AccountSid { get; set; } = null!;
 
         public string AuthToken { get; set; } = null!;
 

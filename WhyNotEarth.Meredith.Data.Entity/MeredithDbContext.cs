@@ -39,6 +39,8 @@ namespace WhyNotEarth.Meredith.Data.Entity
 
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
+        public DbSet<ShortMessage> ShortMessages { get; set; } = null!;
+
         // Shop
         public DbSet<Tenant> Tenants { get; set; } = null!;
 

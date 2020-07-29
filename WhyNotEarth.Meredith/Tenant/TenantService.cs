@@ -138,11 +138,11 @@ namespace WhyNotEarth.Meredith.Tenant
                 .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
-        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, string tenantSlug)
+        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User owner, string tenantSlug)
         {
             var tenant =
                 await _dbContext.Tenants.FirstOrDefaultAsync(item =>
-                    item.Slug == tenantSlug && item.OwnerId == user.Id);
+                    item.Slug == tenantSlug && item.OwnerId == owner.Id);
 
             if (tenant is null)
             {
@@ -158,10 +158,10 @@ namespace WhyNotEarth.Meredith.Tenant
             return tenant;
         }
 
-        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User user, int tenantId)
+        public async Task<Data.Entity.Models.Tenant> CheckOwnerAsync(User owner, int tenantId)
         {
             var tenant =
-                await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
+                await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == owner.Id);
 
             if (tenant is null)
             {

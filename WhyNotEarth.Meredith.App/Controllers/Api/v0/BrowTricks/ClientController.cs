@@ -110,28 +110,5 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             return NoContent();
         }
-
-        [Returns200]
-        [Returns404]
-        [HttpPost("{clientId}/pmu")]
-        public async Task<ActionResult<string>> Pmu(int clientId, ClientPmuModel model)
-        {
-            var user = await GetCurrentUserAsync(_userService);
-
-            var url = await _clientService.SetPmuAsync(clientId, model, user);
-
-            return Ok(url);
-        }
-
-        [Returns204]
-        [HttpPost("{clientId}/pmu/signed")]
-        public async Task<NoContentResult> Signed(int clientId)
-        {
-            var user = await GetCurrentUserAsync(_userService);
-
-            await _clientService.SetPmuSignedAsync(clientId, user);
-
-            return NoContent();
-        }
     }
 }

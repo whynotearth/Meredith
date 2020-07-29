@@ -1,4 +1,4 @@
-namespace WhyNotEarth.Meredith.App.Configuration
+namespace WhyNotEarth.Meredith.Identity
 {
     public class JwtOptions
     {

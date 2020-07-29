@@ -47,11 +47,11 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailInfo> GetEmailInfoAsync(Memo memo, List<Data.Entity.Models.Email> emails)
+        private async Task<EmailMessage> GetEmailInfoAsync(Memo memo, List<Data.Entity.Models.Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
-            var result = new EmailInfo(company.Id, emails)
+            var result = new EmailMessage(company.Id, emails)
             {
                 TemplateKey = TemplateKey,
                 TemplateData = GetTemplateData(memo),

@@ -1,18 +1,13 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
-using WhyNotEarth.Meredith.App.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
 using WhyNotEarth.Meredith.Data.Entity.Models;
@@ -27,20 +22,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class AuthenticationController : ControllerBase
     {
-        private readonly JwtOptions _jwtOptions;
         private readonly SendGridService _sendGridService;
-        private readonly IUserService _userService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IOptions<JwtOptions> jwtOptions, SendGridService sendGridService, IUserService userService)
+            SendGridService sendGridService, IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _sendGridService = sendGridService;
             _userService = userService;
-            _jwtOptions = jwtOptions.Value;
         }
 
         [Returns200]
@@ -56,7 +49,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            return Ok(await GenerateJwtTokenAsync(model.Email, user));
+            return Ok(await _userService.GenerateJwtTokenAsync(user));
         }
 
         [HttpPost("logout")]
@@ -121,6 +114,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             {
                 return Unauthorized(new { error = "Provider did not return an e-mail address" });
             }
+
             var email = info.Principal.FindFirstValue(ClaimTypes.Email);
 
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
@@ -277,45 +271,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             await _signInManager.SignInAsync(user, true);
 
-            return Ok(await GenerateJwtTokenAsync(user.Email, user));
-        }
-
-        private async Task<string> GenerateJwtTokenAsync(string email, User user)
-        {
-            if (!_jwtOptions.IsValid())
-            {
-                throw new Exception("Missing JWT configurations.");
-            }
-
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
-
-            var roles = await _userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_jwtOptions.ExpireDays);
-
-            var token = new JwtSecurityToken(
-                _jwtOptions.Issuer,
-                _jwtOptions.Issuer,
-                claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return Ok(await _userService.GenerateJwtTokenAsync(user));
         }
 
         private async Task<RedirectResult> RedirectWithJwtAsync(User user, string? returnUrl)
         {
-            var jwtToken = await GenerateJwtTokenAsync(user.Email, user);
-            var finalReturnUrl = AddQueryString(returnUrl, new Dictionary<string, string>
+            var jwtToken = await _userService.GenerateJwtTokenAsync(user);
+            var finalReturnUrl = UrlHelper.AddQueryString(returnUrl, new Dictionary<string, string>
             {
                 {"token", jwtToken}
             });
@@ -335,25 +297,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             var errors = string.Join(",", identityErrors.Select(e => e.Description).ToList());
 
             return Unauthorized(new { error = $"{message}: {errors}" });
-        }
-
-        private string? AddQueryString(string? url, Dictionary<string, string> values)
-        {
-            if (url is null)
-            {
-                return url;
-            }
-
-            var uriBuilder = new UriBuilder(url);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            foreach (var keyValuePair in values)
-            {
-                query[keyValuePair.Key] = keyValuePair.Value;
-            }
-
-            uriBuilder.Query = query.ToString();
-            return uriBuilder.ToString();
         }
     }
 }
