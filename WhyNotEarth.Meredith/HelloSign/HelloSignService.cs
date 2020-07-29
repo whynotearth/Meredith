@@ -2,9 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HelloSign;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
@@ -16,16 +14,14 @@ namespace WhyNotEarth.Meredith.HelloSign
 {
     internal class HelloSignService : IHelloSignService
     {
-        private readonly MeredithDbContext _dbContext;
-        private readonly IWebHostEnvironment _environment;
-        private readonly GoogleStorageService _googleStorageService;
         private readonly IClientService _clientService;
+        private readonly MeredithDbContext _dbContext;
+        private readonly GoogleStorageService _googleStorageService;
         private readonly HelloSignOptions _options;
 
-        public HelloSignService(IOptions<HelloSignOptions> options, IWebHostEnvironment environment,
-            MeredithDbContext dbContext, GoogleStorageService googleStorageService, IClientService clientService)
+        public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext,
+            GoogleStorageService googleStorageService, IClientService clientService)
         {
-            _environment = environment;
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
             _clientService = clientService;
@@ -40,7 +36,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             var request = new TemplateSignatureRequest();
             request.AddTemplate(_options.TemplateId);
-            request.TestMode = _environment.IsDevelopment();
+            request.TestMode = _options.TestMode;
             request.AddSigner("Client", client.User.Email, client.User.FullName);
 
             request.AddCustomField("Name", client.User.FullName);
