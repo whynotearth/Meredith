@@ -8,23 +8,23 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
     {
         public int Id { get; }
 
-        public string Email { get; set; }
+        public string Email { get; }
 
-        public string? FirstName { get; set; }
+        public string? FirstName { get; }
 
-        public string? LastName { get; set; }
+        public string? LastName { get; }
 
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; }
 
-        public List<NotificationType> NotificationTypes { get; set; }
+        public List<NotificationType> NotificationTypes { get; }
 
-        public string? Notes { get; set; }
+        public string? AvatarUrl { get; }
 
-        public string? AvatarUrl { get; set; }
+        public bool IsPmuCompleted { get; }
 
-        public bool IsPmuCompleted { get; set; }
+        public string? PmuPdfUrl { get; }
 
-        public ClientResult(Client client)
+        public ClientResult(Client client, string? pmuPdfUrl)
         {
             Id = client.Id;
             Email = client.User.Email;
@@ -34,6 +34,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             NotificationTypes = client.NotificationType.ToList();
             AvatarUrl = client.User.ImageUrl;
             IsPmuCompleted = client.IsPmuCompleted;
+            PmuPdfUrl = pmuPdfUrl;
         }
     }
 }

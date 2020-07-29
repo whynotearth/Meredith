@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 {
@@ -22,15 +22,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     public class ClientController : BaseController
     {
         private readonly IClientService _clientService;
+        private readonly IFileService _fileService;
         private readonly IHelloSignService _helloSignService;
         private readonly IUserService _userService;
 
         public ClientController(IClientService clientService, IUserService userService,
-            IHelloSignService helloSignService)
+            IHelloSignService helloSignService, IFileService fileService)
         {
             _clientService = clientService;
             _userService = userService;
             _helloSignService = helloSignService;
+            _fileService = fileService;
         }
 
         [Returns201]
@@ -65,7 +67,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             var clients = await _clientService.GetListAsync(tenantSlug, user);
 
-            return Ok(clients.Select(item => new ClientResult(item)));
+            var result = new List<ClientResult>();
+            foreach (var client in clients)
+            {
+                string? pmuPdfUlr = null;
+
+                if (client.PmuPdf != null)
+                {
+                    pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
+                }
+
+                result.Add(new ClientResult(client, pmuPdfUlr));
+            }
+
+            return Ok(result);
         }
 
         [Returns204]

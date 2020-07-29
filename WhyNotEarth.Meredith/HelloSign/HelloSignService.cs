@@ -87,6 +87,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             await _googleStorageService.UploadFileAsync(path, "application/pdf", new MemoryStream(pdfData));
 
             client.PmuPdf = path;
+            client.IsPmuCompleted = true;
             _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
         }

@@ -8,5 +8,7 @@ namespace WhyNotEarth.Meredith.Services
         Task SaveAsync(string path, string contentType, Stream stream);
 
         Task GetAsync(string path, Stream stream);
+
+        Task<string> GetPrivateUrlAsync(string path);
     }
 }

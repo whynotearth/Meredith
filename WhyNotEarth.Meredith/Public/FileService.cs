@@ -23,5 +23,10 @@ namespace WhyNotEarth.Meredith.Public
         {
             await _googleStorageService.DownloadFileAsync(path, stream);
         }
+
+        public Task<string> GetPrivateUrlAsync(string path)
+        {
+            return _googleStorageService.CreateSignedUrlAsync(path, 24);
+        }
     }
 }

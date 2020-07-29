@@ -148,7 +148,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         private Client MapPmu(Client client, ClientPmuModel model, List<PmuQuestion> questions)
         {
-            client.IsPmuCompleted = true;
             client.Signature = model.Signature;
             client.Initials = model.Initials;
             client.AllowPhoto = model.AllowPhoto;
