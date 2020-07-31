@@ -55,7 +55,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             serviceCollection
                 .AddScoped<TenantService>()
                 .AddScoped<ProductService>()
-                .AddScoped<ProductCategoryService>();
+                .AddScoped<ProductCategoryService>()
+                .AddScoped<SeoSchemaService>();
 
             // Volkswagen
             serviceCollection

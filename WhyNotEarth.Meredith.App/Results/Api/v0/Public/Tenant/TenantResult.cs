@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WhyNotEarth.Meredith.Public;
@@ -43,6 +44,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public int PromotionPercent { get; }
 
+        public object? SeoSchema { get; }
+
         public TenantResult(Meredith.Public.Tenant tenant)
         {
             Slug = tenant.Slug;
@@ -62,6 +65,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             WhatsAppNumber = tenant.WhatsAppNumber;
             HasPromotion = tenant.HasPromotion;
             PromotionPercent = tenant.PromotionPercent;
+        }
+
+        public TenantResult(Meredith.Public.Tenant tenant, string schema) : this(tenant)
+        {
+            SeoSchema = schema is null ? null : JsonConvert.DeserializeObject<dynamic>(schema);
         }
     }
 
