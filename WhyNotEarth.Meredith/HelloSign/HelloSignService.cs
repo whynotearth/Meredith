@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using HelloSign;
 using Microsoft.EntityFrameworkCore;
@@ -7,30 +8,32 @@ using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.GoogleCloud;
+using WhyNotEarth.Meredith.Tenant;
 using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
     internal class HelloSignService : IHelloSignService
     {
-        private readonly IClientService _clientService;
         private readonly MeredithDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
         private readonly HelloSignOptions _options;
+        private readonly TenantService _tenantService;
 
         public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext,
-            GoogleStorageService googleStorageService, IClientService clientService)
+            GoogleStorageService googleStorageService, TenantService tenantService)
         {
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
-            _clientService = clientService;
+            _tenantService = tenantService;
             _options = options.Value;
         }
 
         public async Task<string> GetSignatureRequestAsync(int clientId, User user)
         {
-            var client = await _clientService.GetClientAsync(clientId, user);
+            var client = await GetClientAsync(clientId, user);
 
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
 
@@ -44,6 +47,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             request.AddCustomField("Conditions", client.Conditions);
             request.AddCustomField("PhysicianName", client.PhysicianName);
             request.AddCustomField("PhysicianPhoneNumber", client.PhysicianPhoneNumber);
+            AddCustomQuestions(request, client);
 
             var embeddedSignatureResponse =
                 apiClient.CreateEmbeddedSignatureRequest(request, _options.ClientId);
@@ -67,6 +71,26 @@ namespace WhyNotEarth.Meredith.HelloSign
             {
                 await SavePdfAsync(myEvent.SignatureRequest.SignatureRequestId);
             }
+        }
+
+        private void AddCustomQuestions(TemplateSignatureRequest request, Client client)
+        {
+            if (client.PmuAnswers is null)
+            {
+                return;
+            }
+
+            var result = new StringBuilder();
+            foreach (var pmuAnswer in client.PmuAnswers)
+            {
+                result.AppendFormat("{0}\r\n{1}\r\n\r\n", pmuAnswer.Question.Question, pmuAnswer.Answer);
+            }
+
+            request.CustomFields.Add(new CustomField
+            {
+                Value = result.ToString(),
+                Name = "CustomQuestions"
+            });
         }
 
         private async Task SavePdfAsync(string signatureRequestId)
@@ -95,6 +119,24 @@ namespace WhyNotEarth.Meredith.HelloSign
         private string GetFilePath(Client client)
         {
             return Path.Combine(BrowTricksCompany.Slug, "pmu", client.Id.ToString());
+        }
+
+        private async Task<Client> GetClientAsync(int clientId, User user)
+        {
+            var client = await _dbContext.Clients
+                .Include(item => item.User)
+                .Include(item => item.PmuAnswers)
+                .ThenInclude(item => item.Question)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            await _tenantService.CheckPermissionAsync(user, client.TenantId);
+
+            return client;
         }
     }
 }

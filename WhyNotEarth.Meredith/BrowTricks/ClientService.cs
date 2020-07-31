@@ -80,7 +80,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Client> GetClientAsync(int clientId, User user)
+        private async Task<Client> GetClientAsync(int clientId, User user)
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
