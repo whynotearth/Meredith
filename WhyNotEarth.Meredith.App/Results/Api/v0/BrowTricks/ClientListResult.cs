@@ -4,7 +4,7 @@ using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {
-    public class ClientResult
+    public class ClientListResult
     {
         public int Id { get; }
 
@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public string? PmuPdfUrl { get; }
 
-        public ClientResult(Client client, string? pmuPdfUrl)
+        public ClientListResult(Client client, string? pmuPdfUrl)
         {
             Id = client.Id;
             Email = client.User.Email;

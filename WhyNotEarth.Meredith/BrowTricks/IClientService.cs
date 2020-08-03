@@ -17,5 +17,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         Task ArchiveAsync(int clientId, User user);
 
         Task SetPmuAsync(int clientId, ClientPmuModel model, User user);
+
+        Task<Client> GetAsync(int clientId, User user);
     }
 }

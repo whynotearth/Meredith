@@ -2,19 +2,16 @@
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 {
-    public class ImageResult
+    public class VideoResult
     {
         public string? PublicId { get; }
 
         public string Url { get; }
 
-        public int Order { get; }
-
-        public ImageResult(Image image)
+        public VideoResult(Video video)
         {
-            PublicId = image.CloudinaryPublicId;
-            Url = image.Url;
-            Order = image.Order;
+            PublicId = video.CloudinaryPublicId;
+            Url = video.Url;
         }
     }
 }

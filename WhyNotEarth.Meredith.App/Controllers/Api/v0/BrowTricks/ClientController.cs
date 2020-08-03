@@ -61,13 +61,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<ClientResult>>> List(string tenantSlug)
+        public async Task<ActionResult<List<ClientListResult>>> List(string tenantSlug)
         {
             var user = await GetCurrentUserAsync(_userService);
 
             var clients = await _clientService.GetListAsync(tenantSlug, user);
 
-            var result = new List<ClientResult>();
+            var result = new List<ClientListResult>();
             foreach (var client in clients)
             {
                 string? pmuPdfUlr = null;
@@ -77,10 +77,29 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
                     pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
                 }
 
-                result.Add(new ClientResult(client, pmuPdfUlr));
+                result.Add(new ClientListResult(client, pmuPdfUlr));
             }
 
             return Ok(result);
+        }
+
+        [Returns200]
+        [Returns404]
+        [HttpGet("{clientId}")]
+        public async Task<ActionResult<ClientGetResult>> Get(int clientId)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            var client = await _clientService.GetAsync(clientId, user);
+
+            string? pmuPdfUlr = null;
+
+            if (client.PmuPdf != null)
+            {
+                pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
+            }
+
+            return Ok(new ClientListResult(client, pmuPdfUlr));
         }
 
         [Returns204]
