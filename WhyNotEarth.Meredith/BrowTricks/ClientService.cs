@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
+using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
@@ -17,13 +18,15 @@ namespace WhyNotEarth.Meredith.BrowTricks
     {
         private readonly MeredithDbContext _dbContext;
         private readonly TenantService _tenantService;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly IUserService _userService;
 
-        public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService)
+        public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService, ICloudinaryService cloudinaryService)
         {
             _userService = userService;
             _dbContext = dbContext;
             _tenantService = tenantService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task CreateAsync(string tenantSlug, ClientModel model, User user)
@@ -142,6 +145,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             client.NotificationType = model.NotificationTypes.ToFlag();
+            client.Images = await _cloudinaryService.GetUpdatedValueAsync(client.Images, model.Images);
+            client.Videos = await _cloudinaryService.GetUpdatedValueAsync(client.Videos, model.Videos);
 
             return client;
         }

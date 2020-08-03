@@ -4,13 +4,15 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
     {
         public int Id { get; set; }
 
+        public string? CloudinaryPublicId { get; set; }
+
+        public string Url { get; set; } = null!;
+
         public string? Title { get; set; }
 
         public string? AltText { get; set; }
 
         public int Order { get; set; }
-
-        public string Url { get; set; } = null!;
 
         public int? Width { get; set; }
 

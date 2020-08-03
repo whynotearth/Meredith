@@ -217,13 +217,13 @@ namespace WhyNotEarth.Meredith.Shop
                 if (model.ImageUrl != null)
                 {
                     // Delete old image
-                    await _cloudinaryService.DeleteAsync(product.Image.Url);
+                    await _cloudinaryService.DeleteByUrlAsync(product.Image.Url);
 
                     product.Image.Url = model.ImageUrl;
                 }
                 else
                 {
-                    await _cloudinaryService.DeleteAsync(product.Image.Url);
+                    await _cloudinaryService.DeleteByUrlAsync(product.Image.Url);
                     product.Image = null;
                 }
             }

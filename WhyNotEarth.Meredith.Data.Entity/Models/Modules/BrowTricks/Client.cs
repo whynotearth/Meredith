@@ -20,6 +20,10 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 
         public List<ClientNote>? Notes { get; set; }
 
+        public List<Image>? Images { get; set; }
+
+        public List<Video>? Videos { get; set; }
+
         public bool IsPmuCompleted { get; set; }
 
         public string? Signature { get; set; }
