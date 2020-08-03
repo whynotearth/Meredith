@@ -20,9 +20,9 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 
         public List<ClientNote>? Notes { get; set; }
 
-        public List<Image>? Images { get; set; }
+        public List<ClientImage>? Images { get; set; }
 
-        public List<Video>? Videos { get; set; }
+        public List<ClientVideo>? Videos { get; set; }
 
         public bool IsPmuCompleted { get; set; }
 
@@ -51,11 +51,33 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public string? PmuPdf { get; set; }
     }
 
+    public class ClientImage : Image
+    {
+        public int? ClientId { get; set; }
+
+        public Client? Client { get; set; }
+    }
+
+    public class ClientVideo : Video
+    {
+        public int? ClientId { get; set; }
+
+        public Client? Client { get; set; }
+    }
+
     public class ClientEntityConfig : IEntityTypeConfiguration<Client>
     {
         public void Configure(EntityTypeBuilder<Client> builder)
         {
             builder.ToTable("Clients", "ModuleBrowTricks");
+
+            builder.HasMany(e => e.Images)
+                .WithOne(i => i.Client!)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(e => e.Videos)
+                .WithOne(i => i.Client!)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

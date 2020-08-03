@@ -99,7 +99,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
                 pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
             }
 
-            return Ok(new ClientListResult(client, pmuPdfUlr));
+            return Ok(new ClientGetResult(client, pmuPdfUlr));
         }
 
         [Returns204]

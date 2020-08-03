@@ -13,8 +13,8 @@ namespace WhyNotEarth.Meredith.Cloudinary
 
         Task<Image?> GetUpdatedValueAsync(Image? oldValue, CloudinaryImageModel? model);
 
-        Task<List<Image>> GetUpdatedValueAsync(List<Image>? oldValues, List<CloudinaryImageModel>? models);
+        Task<List<T>> GetUpdatedValueAsync<T>(List<T>? oldValues, List<CloudinaryImageModel>? models) where T : Image, new();
 
-        Task<List<Video>> GetUpdatedValueAsync(List<Video>? oldValues, List<CloudinaryVideoModel>? models);
+        Task<List<T>> GetUpdatedValueAsync<T>(List<T>? oldValues, List<CloudinaryVideoModel>? models) where T : Video, new();
     }
 }

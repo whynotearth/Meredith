@@ -75,52 +75,90 @@ namespace WhyNotEarth.Meredith.Cloudinary
             return null;
         }
 
-        public async Task<List<Image>> GetUpdatedValueAsync(List<Image>? oldValues, List<CloudinaryImageModel>? models)
+        public async Task<List<T>> GetUpdatedValueAsync<T>(List<T>? oldValues, List<CloudinaryImageModel>? models)
+            where T : Image, new()
         {
             // Delete the removed ones from Cloudinary
             if (oldValues != null)
             {
                 foreach (var oldValue in oldValues)
                 {
-                    if (!models.Any(item => item.PublicId == oldValue.CloudinaryPublicId))
+                    if (models?.Any(item => item.PublicId == oldValue.CloudinaryPublicId) != true)
                     {
                         await DeleteAsync(oldValue.CloudinaryPublicId!);
                     }
                 }
             }
 
-            return models?.Select(m =>
-                new Image
+            var result = new List<T>();
+
+            if (models is null)
+            {
+                return result;
+            }
+
+            foreach (var model in models)
+            {
+                var oldValue = oldValues?.FirstOrDefault(image => image.CloudinaryPublicId == model.PublicId);
+
+                if (oldValue != null)
                 {
-                    Id = oldValues?.FirstOrDefault(image => image.CloudinaryPublicId == m.PublicId)?.Id ??
-                         default,
-                    CloudinaryPublicId = m.PublicId,
-                    Url = m.Url
-                }).ToList() ?? new List<Image>();
+                    result.Add(oldValue);
+                }
+                else
+                {
+                    result.Add(new T
+                    {
+                        CloudinaryPublicId = model.PublicId,
+                        Url = model.Url
+                    });
+                }
+            }
+
+            return result;
         }
 
-        public async Task<List<Video>> GetUpdatedValueAsync(List<Video>? oldValues, List<CloudinaryVideoModel>? models)
+        public async Task<List<T>> GetUpdatedValueAsync<T>(List<T>? oldValues, List<CloudinaryVideoModel>? models)
+            where T : Video, new()
         {
             // Delete the removed ones from Cloudinary
             if (oldValues != null)
             {
                 foreach (var oldValue in oldValues)
                 {
-                    if (!models.Any(item => item.PublicId == oldValue.CloudinaryPublicId))
+                    if (models?.Any(item => item.PublicId == oldValue.CloudinaryPublicId) != true)
                     {
                         await DeleteAsync(oldValue.CloudinaryPublicId!);
                     }
                 }
             }
 
-            return models?.Select(m =>
-                new Video
+            var result = new List<T>();
+
+            if (models is null)
+            {
+                return result;
+            }
+
+            foreach (var model in models)
+            {
+                var oldValue = oldValues?.FirstOrDefault(image => image.CloudinaryPublicId == model.PublicId);
+
+                if (oldValue != null)
                 {
-                    Id = oldValues?.FirstOrDefault(image => image.CloudinaryPublicId == m.PublicId)?.Id ??
-                         default,
-                    CloudinaryPublicId = m.PublicId,
-                    Url = m.Url
-                }).ToList() ?? new List<Video>();
+                    result.Add(oldValue);
+                }
+                else
+                {
+                    result.Add(new T
+                    {
+                        CloudinaryPublicId = model.PublicId,
+                        Url = model.Url
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }
