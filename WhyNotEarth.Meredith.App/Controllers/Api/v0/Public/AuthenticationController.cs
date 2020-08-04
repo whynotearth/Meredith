@@ -54,7 +54,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return Unauthorized(new { error = "You have entered an invalid username or password" });
             }
 
-            var user = await _userManager.FindByNameAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             return Ok(await GenerateJwtTokenAsync(model.Email, user));
         }
@@ -158,7 +158,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 user = new User
                 {
                     UserName = email,
-                    Email = email,
+                    Email = email
                 };
 
                 _userService.Map(user, info);
