@@ -67,7 +67,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
             var myEvent = apiClient.ParseEvent(json);
 
-            if (myEvent.EventType == "signature_request_all_signed")
+            if (myEvent.EventType == "signature_request_downloadable")
             {
                 await SavePdfAsync(myEvent.SignatureRequest.SignatureRequestId);
             }

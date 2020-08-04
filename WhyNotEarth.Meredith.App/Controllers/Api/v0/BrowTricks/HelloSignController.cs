@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             await _helloSignService.ProcessEventsAsync(json);
 
-            return Ok();
+            return Ok("Hello API Event Received");
         }
     }
 }
