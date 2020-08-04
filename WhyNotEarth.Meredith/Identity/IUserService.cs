@@ -20,5 +20,7 @@ namespace WhyNotEarth.Meredith.Identity
         Task<bool> IsExternalAccountConnected(User user);
 
         User Map(User user, ExternalLoginInfo externalLoginInfo);
+        
+        Task UpdateUserAsync(User user);
     }
 }

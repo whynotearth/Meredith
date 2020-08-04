@@ -93,6 +93,13 @@ namespace WhyNotEarth.Meredith.Identity
             return user;
         }
 
+        public async Task UpdateUserAsync(User user)
+        {
+            user.UserName = user.Email;
+
+            await _userManager.UpdateAsync(user);
+        }
+
         private async Task<UserCreateResult> CreateAsync(User user, string? password)
         {
             IdentityResult identityResult;

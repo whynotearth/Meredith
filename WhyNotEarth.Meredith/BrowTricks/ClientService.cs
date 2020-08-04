@@ -135,10 +135,12 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
             else
             {
-                //client.User.Email = model.Email;
+                client.User.Email = model.Email;
                 client.User.FirstName = model.FirstName;
                 client.User.LastName = model.LastName;
                 client.User.PhoneNumber = model.PhoneNumber;
+
+                await _userService.UpdateUserAsync(client.User);
             }
 
             if (client.Tenant is null)
