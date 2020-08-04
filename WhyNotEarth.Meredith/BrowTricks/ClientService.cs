@@ -16,12 +16,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
 {
     internal class ClientService : IClientService
     {
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly MeredithDbContext _dbContext;
         private readonly TenantService _tenantService;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IUserService _userService;
 
-        public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService, ICloudinaryService cloudinaryService)
+        public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService,
+            ICloudinaryService cloudinaryService)
         {
             _userService = userService;
             _dbContext = dbContext;
@@ -34,6 +35,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
 
             var client = await MapClientAsync(new Client(), model, tenant);
+            client.PmuStatus = PmuStatusType.Incomplete;
 
             _dbContext.Clients.Add(client);
             await _dbContext.SaveChangesAsync();
@@ -101,6 +103,16 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
+        public async Task SetPmuSignedAsync(int clientId, User user)
+        {
+            var client = await GetAsync(clientId, user);
+
+            client.PmuStatus = PmuStatusType.Saving;
+
+            _dbContext.Clients.Update(client);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private async Task<User> GetOrCreateUserAsync(ClientModel model)
         {
             var user = await _userService.GetUserAsync(model.Email);
@@ -157,15 +169,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         private Client MapPmu(Client client, ClientPmuModel model, List<PmuQuestion> questions)
         {
-            client.Signature = model.Signature;
-            client.Initials = model.Initials;
-            client.AllowPhoto = model.AllowPhoto;
-            client.IsUnderCareOfPhysician = model.IsUnderCareOfPhysician;
-            client.Conditions = model.Conditions;
-            client.IsTakingBloodThinner = model.IsTakingBloodThinner;
-            client.PhysicianName = model.PhysicianName;
-            client.PhysicianPhoneNumber = model.PhysicianPhoneNumber;
-
             client.PmuAnswers = new List<PmuAnswer>();
             foreach (var pmuQuestion in questions)
             {

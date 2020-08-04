@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -24,23 +25,7 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
 
         public List<ClientVideo>? Videos { get; set; }
 
-        public bool IsPmuCompleted { get; set; }
-
-        public string? Signature { get; set; }
-
-        public string? Initials { get; set; }
-
-        public bool? AllowPhoto { get; set; }
-
-        public bool? IsUnderCareOfPhysician { get; set; }
-
-        public string? Conditions { get; set; }
-
-        public bool? IsTakingBloodThinner { get; set; }
-
-        public string? PhysicianName { get; set; }
-
-        public string? PhysicianPhoneNumber { get; set; }
+        public PmuStatusType PmuStatus { get; set; }
 
         public bool IsArchived { get; set; }
 
@@ -63,6 +48,18 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
+    }
+
+    public enum PmuStatusType
+    {
+        [EnumMember(Value = "incomplete")]
+        Incomplete = 1,
+
+        [EnumMember(Value = "saving")]
+        Saving = 2,
+
+        [EnumMember(Value = "completed")]
+        Completed = 3
     }
 
     public class ClientEntityConfig : IEntityTypeConfiguration<Client>

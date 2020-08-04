@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public string? AvatarUrl { get; }
 
-        public bool IsPmuCompleted { get; }
+        public PmuStatusType PmuStatus { get; }
 
         public string? PmuPdfUrl { get; }
 
@@ -39,7 +39,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             PhoneNumber = client.User.PhoneNumber;
             NotificationTypes = client.NotificationType.ToList();
             AvatarUrl = client.User.ImageUrl;
-            IsPmuCompleted = client.IsPmuCompleted;
+            PmuStatus = client.PmuStatus;
             PmuPdfUrl = pmuPdfUrl;
             Images = client.Images?.Select(item => new ImageResult(item)).ToList();
             Videos = client.Videos?.Select(item => new VideoResult(item)).ToList();

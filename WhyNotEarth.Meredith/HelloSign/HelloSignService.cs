@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Tenant;
@@ -44,9 +45,6 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             request.AddCustomField("Name", client.User.FullName);
             request.AddCustomField("TenantName", client.Tenant.Name);
-            request.AddCustomField("Conditions", client.Conditions);
-            request.AddCustomField("PhysicianName", client.PhysicianName);
-            request.AddCustomField("PhysicianPhoneNumber", client.PhysicianPhoneNumber);
             AddCustomQuestions(request, client);
 
             var embeddedSignatureResponse =
@@ -111,7 +109,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             await _googleStorageService.UploadFileAsync(path, "application/pdf", new MemoryStream(pdfData));
 
             client.PmuPdf = path;
-            client.IsPmuCompleted = true;
+            client.PmuStatus = PmuStatusType.Completed;
             _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
         }

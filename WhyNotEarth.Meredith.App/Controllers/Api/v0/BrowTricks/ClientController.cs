@@ -136,5 +136,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             return Ok(url);
         }
+
+        [Returns204]
+        [HttpPost("{clientId}/pmu/signed")]
+        public async Task<NoContentResult> Signed(int clientId)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            await _clientService.SetPmuSignedAsync(clientId, user);
+
+            return NoContent();
+        }
     }
 }
