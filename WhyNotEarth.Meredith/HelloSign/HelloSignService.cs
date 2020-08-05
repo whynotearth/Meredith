@@ -7,11 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.GoogleCloud;
-using WhyNotEarth.Meredith.Tenant;
 using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
 
 namespace WhyNotEarth.Meredith.HelloSign
@@ -21,20 +19,18 @@ namespace WhyNotEarth.Meredith.HelloSign
         private readonly MeredithDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
         private readonly HelloSignOptions _options;
-        private readonly TenantService _tenantService;
 
         public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext,
-            GoogleStorageService googleStorageService, TenantService tenantService)
+            GoogleStorageService googleStorageService)
         {
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
-            _tenantService = tenantService;
             _options = options.Value;
         }
 
-        public async Task<string> GetSignatureRequestAsync(int clientId, User user)
+        async Task<string> IHelloSignService.GetSignatureRequestAsync(int clientId)
         {
-            var client = await GetClientAsync(clientId, user);
+            var client = await GetClientAsync(clientId);
 
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
 
@@ -119,7 +115,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             return Path.Combine(BrowTricksCompany.Slug, "pmu", client.Id.ToString());
         }
 
-        private async Task<Client> GetClientAsync(int clientId, User user)
+        private async Task<Client> GetClientAsync(int clientId)
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
@@ -131,8 +127,6 @@ namespace WhyNotEarth.Meredith.HelloSign
             {
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
-
-            await _tenantService.CheckPermissionAsync(user, client.TenantId);
 
             return client;
         }

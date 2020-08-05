@@ -7,7 +7,6 @@ using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
-using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Services;
 
@@ -23,15 +22,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     {
         private readonly IClientService _clientService;
         private readonly IFileService _fileService;
-        private readonly IHelloSignService _helloSignService;
         private readonly IUserService _userService;
 
         public ClientController(IClientService clientService, IUserService userService,
-            IHelloSignService helloSignService, IFileService fileService)
+            IFileService fileService)
         {
             _clientService = clientService;
             _userService = userService;
-            _helloSignService = helloSignService;
             _fileService = fileService;
         }
 
@@ -114,25 +111,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
-        [Returns204]
+        [Returns200]
         [Returns404]
         [HttpPost("{clientId}/pmu")]
-        public async Task<NoContentResult> Pmu(int clientId, ClientPmuModel model)
+        public async Task<ActionResult<string>> Pmu(int clientId, ClientPmuModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _clientService.SetPmuAsync(clientId, model, user);
-
-            return NoContent();
-        }
-
-        [Returns200]
-        [HttpPost("{clientId}/pmu/sign")]
-        public async Task<ActionResult<string>> Sign(int clientId)
-        {
-            var user = await GetCurrentUserAsync(_userService);
-
-            var url = await _helloSignService.GetSignatureRequestAsync(clientId, user);
+            var url = await _clientService.SetPmuAsync(clientId, model, user);
 
             return Ok(url);
         }
