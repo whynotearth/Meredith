@@ -83,6 +83,9 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new InvalidActionException("This client is already signed their PMU form");
             }
 
+            var oldValues = await _dbContext.Disclosures.Where(item => item.ClientId == clientId).ToListAsync();
+            _dbContext.Disclosures.RemoveRange(oldValues);
+
             var disclosures = model.Disclosures.Select(item => new Disclosure
             {
                 ClientId = clientId,
