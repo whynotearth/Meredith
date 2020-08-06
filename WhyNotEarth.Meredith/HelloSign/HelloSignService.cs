@@ -73,6 +73,13 @@ namespace WhyNotEarth.Meredith.HelloSign
                 .ToListAsync();
 
             var result = new StringBuilder();
+
+            if (disclosures.Any())
+            {
+                result.AppendFormat("{0}\r\n",
+                    "Your artist has added some additional disclosures. Please read and sign if you agree to book your appointment");
+            }
+
             foreach (var disclosure in disclosures)
             {
                 result.AppendFormat("{0}\r\n\r\n", disclosure.Value);
