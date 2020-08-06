@@ -41,7 +41,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             request.AddCustomField("Name", client.User.FullName);
             request.AddCustomField("TenantName", client.Tenant.Name);
-            AddCustomQuestions(request, client);
+            await AddDisclosuresAsync(request, client);
 
             var embeddedSignatureResponse =
                 apiClient.CreateEmbeddedSignatureRequest(request, _options.ClientId);
@@ -67,23 +67,21 @@ namespace WhyNotEarth.Meredith.HelloSign
             }
         }
 
-        private void AddCustomQuestions(TemplateSignatureRequest request, Client client)
+        private async Task AddDisclosuresAsync(TemplateSignatureRequest request, Client client)
         {
-            if (client.PmuAnswers is null)
-            {
-                return;
-            }
+            var disclosures = await _dbContext.Disclosures.Where(item => item.ClientId == client.Id)
+                .ToListAsync();
 
             var result = new StringBuilder();
-            foreach (var pmuAnswer in client.PmuAnswers)
+            foreach (var disclosure in disclosures)
             {
-                result.AppendFormat("{0}\r\n{1}\r\n\r\n", pmuAnswer.Question.Question, pmuAnswer.Answer);
+                result.AppendFormat("{0}\r\n\r\n", disclosure.Value);
             }
 
             request.CustomFields.Add(new CustomField
             {
                 Value = result.ToString(),
-                Name = "CustomQuestions"
+                Name = "Disclosures"
             });
         }
 
@@ -119,8 +117,6 @@ namespace WhyNotEarth.Meredith.HelloSign
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
-                .Include(item => item.PmuAnswers)
-                .ThenInclude(item => item.Question)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
             if (client is null)

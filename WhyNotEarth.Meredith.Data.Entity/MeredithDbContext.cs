@@ -94,7 +94,7 @@ namespace WhyNotEarth.Meredith.Data.Entity
         // BrowTricks
         public DbSet<Client> Clients { get; set; } = null!;
 
-        public DbSet<PmuQuestion> PmuQuestions { get; set; } = null!;
+        public DbSet<Disclosure> Disclosures { get; set; } = null!;
 
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {

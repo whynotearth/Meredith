@@ -80,8 +80,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             // BrowTricks
             serviceCollection
                 .AddScoped<IClientService, ClientService>()
-                .AddScoped<ClientNoteService>()
-                .AddScoped<IPmuQuestionService, PmuQuestionService>();
+                .AddScoped<ClientNoteService>();
 
             return serviceCollection;
         }

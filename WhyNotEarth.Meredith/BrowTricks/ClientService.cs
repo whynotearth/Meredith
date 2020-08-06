@@ -83,13 +83,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new InvalidActionException("This client is already signed their PMU form");
             }
 
-            var questions = await _dbContext.PmuQuestions
-                .Where(item => item.TenantId == client.TenantId)
-                .ToListAsync();
+            var disclosures = model.Disclosures.Select(item => new Disclosure
+            {
+                ClientId = clientId,
+                Value = item
+            });
 
-            client = MapPmu(client, model, questions);
-
-            _dbContext.Clients.Update(client);
+            _dbContext.Disclosures.AddRange(disclosures);
             await _dbContext.SaveChangesAsync();
 
             return await _helloSignService.GetSignatureRequestAsync(clientId);
@@ -173,28 +173,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             client.NotificationType = model.NotificationTypes.ToFlag();
             client.Images = await _cloudinaryService.GetUpdatedValueAsync(client.Images, model.Images);
             client.Videos = await _cloudinaryService.GetUpdatedValueAsync(client.Videos, model.Videos);
-
-            return client;
-        }
-
-        private Client MapPmu(Client client, ClientPmuModel model, List<PmuQuestion> questions)
-        {
-            client.PmuAnswers = new List<PmuAnswer>();
-            foreach (var pmuQuestion in questions)
-            {
-                var answer = model.Answers.FirstOrDefault(item => item.QuestionId == pmuQuestion.Id);
-
-                if (answer is null)
-                {
-                    throw new InvalidActionException($"Question {pmuQuestion.Id} is not answered");
-                }
-
-                client.PmuAnswers.Add(new PmuAnswer
-                {
-                    QuestionId = pmuQuestion.Id,
-                    Answer = answer.Answer
-                });
-            }
 
             return client;
         }
