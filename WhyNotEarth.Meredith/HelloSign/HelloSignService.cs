@@ -110,7 +110,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         private string GetFilePath(Client client)
         {
-            return Path.Combine(BrowTricksCompany.Slug, "pmu", client.Id.ToString());
+            return string.Join("/", BrowTricksCompany.Slug, "pmu", client.Id.ToString());
         }
 
         private async Task<Client> GetClientAsync(int clientId)
