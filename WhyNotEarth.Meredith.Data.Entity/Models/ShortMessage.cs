@@ -16,8 +16,6 @@ namespace WhyNotEarth.Meredith.Data.Entity.Models
 
         public Tenant? Tenant { get; set; }
 
-        public string From { get; set; } = null!;
-
         public string To { get; set; } = null!;
 
         public string Body { get; set; } = null!;

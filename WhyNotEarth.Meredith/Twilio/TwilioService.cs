@@ -54,12 +54,12 @@ namespace WhyNotEarth.Meredith.Twilio
         {
             TwilioClient.Init(_options.AccountSid, _options.AuthToken);
 
-            message.From = GetPhoneNumber(message.From, message.IsWhatsApp).ToString();
+            var from = GetPhoneNumber(_options.PhoneNumber, message.IsWhatsApp).ToString();
             message.To = GetPhoneNumber(message.To, message.IsWhatsApp).ToString();
 
             var result = await MessageResource.CreateAsync(
                 body: message.Body,
-                from: message.From,
+                from: from,
                 to: message.To
             );
         }
