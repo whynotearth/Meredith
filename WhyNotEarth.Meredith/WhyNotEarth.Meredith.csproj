@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="BrowTricks/Templates/Pmu.pdf" />
+    <EmbeddedResource Include="BrowTricks/Templates/PmuWithDisclosures.pdf" />
     <EmbeddedResource Include="Tenant/ReservationWhatsAppMessageTemplate.txt" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column-pdf.html" />
