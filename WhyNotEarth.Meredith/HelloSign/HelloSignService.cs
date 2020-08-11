@@ -5,7 +5,7 @@ using HelloSign;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Data.Entity.Models;
 using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
 
 namespace WhyNotEarth.Meredith.HelloSign
@@ -21,19 +21,18 @@ namespace WhyNotEarth.Meredith.HelloSign
             _options = options.Value;
         }
 
-        async Task<string> IHelloSignService.GetSignatureRequestAsync(int clientId)
+        async Task<string> IHelloSignService.GetSignatureRequestAsync(Client client, User user,
+            Data.Entity.Models.Tenant tenant)
         {
-            var client = await GetClientAsync(clientId);
-
             var apiClient = new global::HelloSign.Client(_options.ApiKey);
 
             var request = new TemplateSignatureRequest();
             request.AddTemplate(_options.TemplateId);
             request.TestMode = _options.TestMode;
-            request.AddSigner("Client", client.User.Email, client.User.FullName);
+            request.AddSigner("Client", user.Email, user.FullName);
 
-            request.AddCustomField("Name", client.User.FullName);
-            request.AddCustomField("TenantName", client.Tenant.Name);
+            request.AddCustomField("Name", user.FullName);
+            request.AddCustomField("TenantName", tenant.Name);
             await AddDisclosuresAsync(request, client);
 
             var embeddedSignatureResponse =
@@ -92,20 +91,6 @@ namespace WhyNotEarth.Meredith.HelloSign
                 Value = result.ToString(),
                 Name = "Disclosures"
             });
-        }
-
-        private async Task<Client> GetClientAsync(int clientId)
-        {
-            var client = await _dbContext.Clients
-                .Include(item => item.User)
-                .FirstOrDefaultAsync(item => item.Id == clientId);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"client {clientId} not found");
-            }
-
-            return client;
         }
     }
 }

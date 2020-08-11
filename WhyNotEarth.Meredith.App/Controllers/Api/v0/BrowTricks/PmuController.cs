@@ -23,8 +23,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _userService = userService;
         }
 
+        [Authorize]
         [Returns200]
         [Returns404]
+        [Returns401]
+        [Returns403]
         [HttpPost("")]
         public async Task<ActionResult<string>> Pmu(int clientId, ClientPmuModel model)
         {
@@ -35,7 +38,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Ok(url);
         }
 
+        [Authorize]
         [Returns204]
+        [Returns401]
+        [Returns403]
         [HttpPost("signed")]
         public async Task<NoContentResult> Signed(int clientId)
         {

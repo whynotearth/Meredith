@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             _dbContext.Disclosures.AddRange(disclosures);
             await _dbContext.SaveChangesAsync();
 
-            return await _helloSignService.GetSignatureRequestAsync(clientId);
+            return await _helloSignService.GetSignatureRequestAsync(client, client.User, client.Tenant);
         }
 
         public async Task SetSignedAsync(int clientId, User user)
@@ -130,6 +130,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
+                .Include(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
             if (client is null)
