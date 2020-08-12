@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhyNotEarth.Meredith", "Why
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhyNotEarth.Meredith.Tests", "WhyNotEarth.Meredith.Tests\WhyNotEarth.Meredith.Tests.csproj", "{FD86B7F6-42E8-4591-8D12-BDF4AADA50EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhyNotEarth.Meredith.Data.Entity", "WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Data.Entity.csproj", "{D214F836-7109-4A94-8EF1-B172CBF81AB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhyNotEarth.Meredith.Persistence", "WhyNotEarth.Meredith.Persistence\WhyNotEarth.Meredith.Persistence.csproj", "{D214F836-7109-4A94-8EF1-B172CBF81AB0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{53F6DC21-5E64-43FF-8AD8-805B733EC578}"
 	ProjectSection(SolutionItems) = preProject
