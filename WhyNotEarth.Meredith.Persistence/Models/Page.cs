@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models
+namespace WhyNotEarth.Meredith.Persistence.Models
 {
     [DebuggerDisplay("{" + nameof(Slug) + "}")]
     public class Page

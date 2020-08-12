@@ -2,7 +2,7 @@
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using System;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Migrations
+namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     public partial class AddBusinessHours : Migration
     {

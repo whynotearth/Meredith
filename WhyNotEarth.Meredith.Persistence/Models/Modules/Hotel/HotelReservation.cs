@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Shop;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel
 {
     public class HotelReservation : Reservation
     {

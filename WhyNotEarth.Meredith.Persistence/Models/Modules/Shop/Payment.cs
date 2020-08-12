@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
     public class Payment
     {

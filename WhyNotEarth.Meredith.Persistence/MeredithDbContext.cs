@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
-using Product = WhyNotEarth.Meredith.Data.Entity.Models.Product;
-using ShoppingProduct = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Product;
+using WhyNotEarth.Meredith.Persistence.Models;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.BrowTricks;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Shop;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Volkswagen;
+using Product = WhyNotEarth.Meredith.Persistence.Models.Product;
+using ShoppingProduct = WhyNotEarth.Meredith.Persistence.Models.Modules.Shop.Product;
 
-namespace WhyNotEarth.Meredith.Data.Entity
+namespace WhyNotEarth.Meredith.Persistence
 {
     public class MeredithDbContext : IdentityDbContext<User, Role, int>
     {

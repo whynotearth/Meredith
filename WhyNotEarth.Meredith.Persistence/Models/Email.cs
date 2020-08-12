@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models
+namespace WhyNotEarth.Meredith.Persistence.Models
 {
     public class Email
     {

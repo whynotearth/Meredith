@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
+using WhyNotEarth.Meredith.Persistence.Models.Modules.Shop;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models
+namespace WhyNotEarth.Meredith.Persistence.Models
 {
     public class Tenant
     {

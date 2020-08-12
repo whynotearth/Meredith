@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Migrations
+namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     public partial class AddCreatedAtToClientNote : Migration
     {

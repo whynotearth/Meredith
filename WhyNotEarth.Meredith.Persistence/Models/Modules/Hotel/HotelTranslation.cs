@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel
 {
     public class HotelTranslation
     {

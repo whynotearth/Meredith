@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Migrations
+namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     public partial class AddShortMessageTable : Migration
     {

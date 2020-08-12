@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
     public class Price
     {

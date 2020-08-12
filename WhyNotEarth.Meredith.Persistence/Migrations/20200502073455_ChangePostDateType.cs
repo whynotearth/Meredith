@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Migrations
+namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     public partial class ChangePostDateType : Migration
     {

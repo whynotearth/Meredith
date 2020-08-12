@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.BrowTricks
 {
     public class Disclosure
     {

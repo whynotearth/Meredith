@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Runtime.Serialization;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
     public class BusinessHour
     {

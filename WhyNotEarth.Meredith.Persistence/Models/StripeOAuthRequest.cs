@@ -1,6 +1,6 @@
 using System;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models
+namespace WhyNotEarth.Meredith.Persistence.Models
 {
     public class StripeOAuthRequest
     {

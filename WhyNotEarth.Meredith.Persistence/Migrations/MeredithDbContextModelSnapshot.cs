@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WhyNotEarth.Meredith.Data.Entity;
+using WhyNotEarth.Meredith.Persistence;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Migrations
+namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
     partial class MeredithDbContextModelSnapshot : ModelSnapshot

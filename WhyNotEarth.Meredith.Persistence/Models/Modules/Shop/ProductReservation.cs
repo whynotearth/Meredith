@@ -1,4 +1,4 @@
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
     public class ProductReservation : Reservation
     {

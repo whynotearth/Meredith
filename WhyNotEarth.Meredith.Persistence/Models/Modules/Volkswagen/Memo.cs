@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Volkswagen
 {
     public class Memo
     {

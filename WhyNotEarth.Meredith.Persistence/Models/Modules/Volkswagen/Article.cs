@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen
+namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Volkswagen
 {
     public class Article
     {
