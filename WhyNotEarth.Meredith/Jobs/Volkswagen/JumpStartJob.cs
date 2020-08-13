@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
     public class JumpStartJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly JumpStartService _jumpStartService;
         private readonly SettingsService _settingsService;
@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         // Every 15 minutes
         public static string CronExpression { get; } = "*/15 * * * *";
 
-        public JumpStartJob(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
+        public JumpStartJob(IDbContext dbContext, IBackgroundJobClient backgroundJobClient,
             JumpStartPlanService jumpStartPlanService, JumpStartService jumpStartService,
             SettingsService settingsService)
         {
@@ -60,7 +60,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
                 jumpStarts.Add(jumpStart);
             }
 
-            _dbContext.UpdateRange(jumpStarts);
+            _dbContext.JumpStarts.UpdateRange(jumpStarts);
             await _dbContext.SaveChangesAsync();
 
             foreach (var jumpStart in jumpStarts)

@@ -23,6 +23,7 @@ using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
+using WhyNotEarth.Meredith.Persistence;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
 [assembly: ApiController]
@@ -54,6 +55,7 @@ namespace WhyNotEarth.Meredith.App
                 options => options.SetPostgresVersion(new Version(9, 6))));
 
             services.AddMeredith();
+            services.AddPersistence();
 
             services.AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
                 .Configure<ForwardedHeadersOptions>(options =>
@@ -89,7 +91,7 @@ namespace WhyNotEarth.Meredith.App
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
-            IRecurringJobManager recurringJobManager, MeredithDbContext dbContext)
+            IRecurringJobManager recurringJobManager, IDbContext dbContext)
         {
             app.UseForwardedHeaders();
 

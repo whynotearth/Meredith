@@ -12,19 +12,19 @@ namespace WhyNotEarth.Meredith.Email
 {
     public class EmailService : IEmailService
     {
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _IDbContext;
         private readonly SendGridService _sendGridService;
 
-        public EmailService(MeredithDbContext meredithDbContext, SendGridService sendGridService)
+        public EmailService(IDbContext IDbContext, SendGridService sendGridService)
         {
-            _meredithDbContext = meredithDbContext;
+            _IDbContext = IDbContext;
             _sendGridService = sendGridService;
         }
 
         public async Task SendReservationEmail(HotelReservation hotelReservation, RoomType roomType, IEnumerable<HotelPrice> dailyPrices,
             decimal vatAmount, int paidDays, string? country, string phoneNumber)
         {
-            var hotel = await _meredithDbContext.Hotels
+            var hotel = await _IDbContext.Hotels
                 .Include(item => item.Translations)
                 .ThenInclude(item => item.Language)
                 .Include(item => item.Page)

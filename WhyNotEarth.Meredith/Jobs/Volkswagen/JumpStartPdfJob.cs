@@ -12,11 +12,11 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
     public class JumpStartPdfJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
         private readonly PuppeteerService _puppeteerService;
 
-        public JumpStartPdfJob(MeredithDbContext dbContext, GoogleStorageService googleStorageService,
+        public JumpStartPdfJob(IDbContext dbContext, GoogleStorageService googleStorageService,
             IBackgroundJobClient backgroundJobClient, PuppeteerService puppeteerService)
         {
             _dbContext = dbContext;
@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await UploadPdfAsync(jumpStart, pdfData);
 
             jumpStart.HasPdf = true;
-            _dbContext.Update(jumpStart);
+            _dbContext.JumpStarts.Update(jumpStart);
 
             await _dbContext.SaveChangesAsync();
 

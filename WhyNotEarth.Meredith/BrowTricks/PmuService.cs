@@ -17,13 +17,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class PmuService : IPmuService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly IHelloSignService _helloSignService;
         private readonly PmuNotifications _pmuNotifications;
         private readonly TenantService _tenantService;
         private readonly IUserService _userService;
 
-        public PmuService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService,
+        public PmuService(IUserService userService, IDbContext dbContext, TenantService tenantService,
             IHelloSignService helloSignService, PmuNotifications pmuNotifications,
             IBackgroundJobClient backgroundJobClient)
         {

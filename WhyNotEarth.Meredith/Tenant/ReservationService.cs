@@ -12,12 +12,12 @@ namespace WhyNotEarth.Meredith.Tenant
     public class ReservationService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SendGridService _sendGridService;
         private readonly TenantReservationNotification _tenantReservationNotification;
 
         public ReservationService(IBackgroundJobClient backgroundJobClient,
-            TenantReservationNotification tenantReservationNotification, MeredithDbContext dbContext,
+            TenantReservationNotification tenantReservationNotification, IDbContext dbContext,
             SendGridService sendGridService)
         {
             _backgroundJobClient = backgroundJobClient;

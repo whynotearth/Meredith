@@ -14,13 +14,13 @@ namespace WhyNotEarth.Meredith.Shop
     public class ProductService
     {
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SlugService _slugService;
 
-        public ProductService(MeredithDbContext meredithDbContext, SlugService slugService,
+        public ProductService(IDbContext IDbContext, SlugService slugService,
             ICloudinaryService cloudinaryService)
         {
-            _dbContext = meredithDbContext;
+            _dbContext = IDbContext;
             _slugService = slugService;
             _cloudinaryService = cloudinaryService;
         }

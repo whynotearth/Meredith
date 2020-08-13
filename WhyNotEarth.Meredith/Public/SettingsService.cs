@@ -6,9 +6,9 @@ namespace WhyNotEarth.Meredith.Public
 {
     public class SettingsService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public SettingsService(MeredithDbContext dbContext)
+        public SettingsService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.Public
             else
             {
                 config.Value = json;
-                _dbContext.Update(config);
+                _dbContext.Settings.Update(config);
             }
 
             await _dbContext.SaveChangesAsync();

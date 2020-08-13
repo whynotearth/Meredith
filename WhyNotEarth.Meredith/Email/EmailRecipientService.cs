@@ -10,9 +10,9 @@ namespace WhyNotEarth.Meredith.Email
 {
     public class EmailRecipientService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public EmailRecipientService(MeredithDbContext dbContext)
+        public EmailRecipientService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -10,12 +10,12 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 {
     public class JumpStartEmailJob
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly JumpStartEmailTemplateService _jumpStartEmailTemplateService;
         private readonly JumpStartPdfJob _jumpStartPdfJob;
         private readonly SendGridService _sendGridService;
 
-        public JumpStartEmailJob(MeredithDbContext dbContext, SendGridService sendGridService,
+        public JumpStartEmailJob(IDbContext dbContext, SendGridService sendGridService,
             JumpStartEmailTemplateService jumpStartEmailTemplateService, JumpStartPdfJob jumpStartPdfJob)
         {
             _dbContext = dbContext;

@@ -16,14 +16,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
     [ProducesErrorResponseType(typeof(void))]
     public class ReservationController : ControllerBase
     {
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _dbContext;
         private readonly ReservationService _reservationService;
         private readonly IUserService _userService;
 
-        public ReservationController(MeredithDbContext meredithDbContext, IUserService userService,
+        public ReservationController(IDbContext IDbContext, IUserService userService,
             ReservationService reservationService)
         {
-            _meredithDbContext = meredithDbContext;
+            _dbContext = IDbContext;
             _userService = userService;
             _reservationService = reservationService;
         }
@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         public async Task<IActionResult> Get(int reservationId)
         {
             var user = await _userService.GetUserAsync(User);
-            var reservation = await _meredithDbContext.Reservations.OfType<HotelReservation>()
+            var reservation = await _dbContext.Reservations.OfType<HotelReservation>()
                 .Include(r => r.Payments)
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .FirstOrDefaultAsync();
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         public async Task<ActionResult<PayReservationResult>> PayReservation(int reservationId, PayModel model)
         {
             var reservation =
-                await _meredithDbContext.Reservations.FirstOrDefaultAsync(item => item.Id == reservationId);
+                await _dbContext.Reservations.FirstOrDefaultAsync(item => item.Id == reservationId);
 
             if (reservation is null)
             {

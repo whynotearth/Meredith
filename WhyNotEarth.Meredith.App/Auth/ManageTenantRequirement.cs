@@ -16,10 +16,10 @@ namespace WhyNotEarth.Meredith.App.Auth
     // https://github.com/dotnet/aspnetcore/issues/14442
     public class ManageTenantHandler : AuthorizationHandler<ManageTenantRequirement>
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly IUserService _userService;
 
-        public ManageTenantHandler(MeredithDbContext dbContext, IUserService userService)
+        public ManageTenantHandler(IDbContext dbContext, IUserService userService)
         {
             _dbContext = dbContext;
             _userService = userService;

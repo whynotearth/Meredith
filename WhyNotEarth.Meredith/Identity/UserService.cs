@@ -18,11 +18,11 @@ namespace WhyNotEarth.Meredith.Identity
 {
     internal class UserService : IUserService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
         private readonly UserManager _userManager;
 
-        public UserService(UserManager userManager, MeredithDbContext dbContext, IOptions<JwtOptions> jwtOptions)
+        public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions)
         {
             _userManager = userManager;
             _dbContext = dbContext;

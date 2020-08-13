@@ -15,9 +15,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class EmailsController : ControllerBase
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public EmailsController(MeredithDbContext dbContext)
+        public EmailsController(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -110,7 +110,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         public DateTime DateTime => DateTimeOffset.FromUnixTimeSeconds(Timestamp).UtcDateTime;
 
-        public async Task Apply(MeredithDbContext dbContext)
+        public async Task Apply(IDbContext dbContext)
         {
             Meredith.Public.Email email;
 

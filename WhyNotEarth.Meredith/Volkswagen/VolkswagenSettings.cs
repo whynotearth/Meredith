@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         public TimeSpan? SendTime { get; set; } = new TimeSpan(10, 14, 0);
 
-        public async Task<List<string>> GetDistributionGroupAsync(MeredithDbContext dbContext)
+        public async Task<List<string>> GetDistributionGroupAsync(IDbContext dbContext)
         {
             if (!string.IsNullOrEmpty(DistributionGroups))
             {

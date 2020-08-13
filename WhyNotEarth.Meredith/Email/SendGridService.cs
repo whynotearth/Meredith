@@ -13,13 +13,13 @@ namespace WhyNotEarth.Meredith.Email
 {
     public class SendGridService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
         // SendGrid accepts a maximum recipients of 1000 per API call
         // https://sendgrid.com/docs/for-developers/sending-email/v3-mail-send-faq/#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to
         public static int BatchSize { get; } = 900;
 
-        public SendGridService(MeredithDbContext dbContext)
+        public SendGridService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

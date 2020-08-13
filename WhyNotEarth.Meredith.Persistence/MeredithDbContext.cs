@@ -8,9 +8,9 @@ using WhyNotEarth.Meredith.Volkswagen;
 using Product = WhyNotEarth.Meredith.Public.Product;
 using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
 
-namespace WhyNotEarth.Meredith
+namespace WhyNotEarth.Meredith.Persistence
 {
-    public class MeredithDbContext : IdentityDbContext<User, Role, int>
+    public class MeredithDbContext : IdentityDbContext<User, Role, int>, IDbContext
     {
         // Public
         public DbSet<Card> Cards { get; set; } = null!;

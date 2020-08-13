@@ -7,11 +7,11 @@ namespace WhyNotEarth.Meredith.Hotel
 {
     public class PriceService
     {
-        protected MeredithDbContext Context { get; }
+        protected IDbContext Context { get; }
 
-        public PriceService(MeredithDbContext meredithDbContext)
+        public PriceService(IDbContext IDbContext)
         {
-            Context = meredithDbContext;
+            Context = IDbContext;
         }
 
         public async Task<HotelPrice> CreatePriceAsync(decimal amount, DateTime date, int roomTypeId)

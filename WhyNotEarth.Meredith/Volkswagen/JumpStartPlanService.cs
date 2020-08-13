@@ -9,12 +9,12 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartPlanService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SettingsService _settingsService;
 
         public int MaximumArticlesPerDayCount { get; } = 5;
 
-        public JumpStartPlanService(MeredithDbContext dbContext, SettingsService settingsService)
+        public JumpStartPlanService(IDbContext dbContext, SettingsService settingsService)
         {
             _dbContext = dbContext;
             _settingsService = settingsService;

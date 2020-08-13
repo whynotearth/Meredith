@@ -12,19 +12,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class CompanyController : ControllerBase
     {
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _dbContext;
         private readonly StripeOptions _stripeOptions;
 
-        public CompanyController(MeredithDbContext meredithDbContext, IOptions<StripeOptions> stripeOptions)
+        public CompanyController(IDbContext IDbContext, IOptions<StripeOptions> stripeOptions)
         {
-            _meredithDbContext = meredithDbContext;
+            _dbContext = IDbContext;
             _stripeOptions = stripeOptions.Value;
         }
 
         [HttpGet("{companyId}/stripe/keys/publishable")]
         public async Task<IActionResult> StripePublishableKey(int companyId)
         {
-            var accountId = await _meredithDbContext.StripeAccounts
+            var accountId = await _dbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();

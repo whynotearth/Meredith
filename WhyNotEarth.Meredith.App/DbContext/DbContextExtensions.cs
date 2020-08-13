@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.App.DbContext
 {
     public static class DbContextExtensions
     {
-        public static IApplicationBuilder UseDbContext(this IApplicationBuilder app, MeredithDbContext dbContext)
+        public static IApplicationBuilder UseDbContext(this IApplicationBuilder app, IDbContext dbContext)
         {
             dbContext.Database.Migrate();
 

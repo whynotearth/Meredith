@@ -13,10 +13,10 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
     {
         private const string TemplateKey = "NewJumpStart";
 
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SendGridService _sendGridService;
 
-        public NewJumpStartEmailJob(MeredithDbContext dbContext, SendGridService sendGridService)
+        public NewJumpStartEmailJob(IDbContext dbContext, SendGridService sendGridService)
         {
             _dbContext = dbContext;
             _sendGridService = sendGridService;

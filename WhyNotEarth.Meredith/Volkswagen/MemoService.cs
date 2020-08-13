@@ -14,11 +14,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
     public class MemoService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly EmailRecipientService _emailRecipientService;
         private readonly RecipientService _recipientService;
 
-        public MemoService(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient,
+        public MemoService(IDbContext dbContext, IBackgroundJobClient backgroundJobClient,
             EmailRecipientService emailRecipientService, RecipientService recipientService)
         {
             _dbContext = dbContext;

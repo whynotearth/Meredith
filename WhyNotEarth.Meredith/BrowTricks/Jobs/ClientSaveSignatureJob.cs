@@ -12,13 +12,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
     internal class ClientSaveSignatureJob : IClientSaveSignatureJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly IFileService _fileService;
         private readonly GoogleStorageService _googleStorageService;
         private readonly IHelloSignService _helloSignService;
         private readonly PmuNotifications _pmuNotifications;
 
-        public ClientSaveSignatureJob(MeredithDbContext dbContext, IHelloSignService helloSignService,
+        public ClientSaveSignatureJob(IDbContext dbContext, IHelloSignService helloSignService,
             GoogleStorageService googleStorageService, PmuNotifications pmuNotifications,
             IBackgroundJobClient backgroundJobClient, IFileService fileService)
         {

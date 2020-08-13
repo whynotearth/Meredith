@@ -9,11 +9,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class JumpStartPreviewService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly JumpStartPlanService _jumpStartPlanService;
         private readonly PuppeteerService _puppeteerService;
 
-        public JumpStartPreviewService(MeredithDbContext dbContext, PuppeteerService puppeteerService,
+        public JumpStartPreviewService(IDbContext dbContext, PuppeteerService puppeteerService,
             JumpStartPlanService jumpStartPlanService)
         {
             _dbContext = dbContext;

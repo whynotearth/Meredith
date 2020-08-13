@@ -14,17 +14,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
     [ProducesErrorResponseType(typeof(void))]
     public class RoomTypeController : ControllerBase
     {
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _dbContext;
 
-        public RoomTypeController(MeredithDbContext meredithDbContext)
+        public RoomTypeController(IDbContext IDbContext)
         {
-            _meredithDbContext = meredithDbContext;
+            _dbContext = IDbContext;
         }
 
         [HttpGet("{roomTypeId}/prices/")]
         public async Task<ActionResult<List<PricesResult>>> Prices(int roomTypeId, DateTime startDate, DateTime endDate)
         {
-            var prices = await _meredithDbContext.Prices
+            var prices = await _dbContext.Prices
                 .OfType<HotelPrice>()
                 .Where(p => p.RoomTypeId == roomTypeId &&
                             startDate <= p.Date && p.Date <= endDate &&

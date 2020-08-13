@@ -12,11 +12,11 @@ namespace WhyNotEarth.Meredith.Tenant
 {
     public class TenantService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SlugService _slugService;
         private readonly IUserService _userService;
 
-        public TenantService(MeredithDbContext dbContext, SlugService slugService, IUserService userService)
+        public TenantService(IDbContext dbContext, SlugService slugService, IUserService userService)
         {
             _dbContext = dbContext;
             _slugService = slugService;

@@ -12,10 +12,10 @@ namespace WhyNotEarth.Meredith.BrowTricks
 {
     public class ClientNoteService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly TenantService _tenantService;
 
-        public ClientNoteService(MeredithDbContext dbContext, TenantService tenantService)
+        public ClientNoteService(IDbContext dbContext, TenantService tenantService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;

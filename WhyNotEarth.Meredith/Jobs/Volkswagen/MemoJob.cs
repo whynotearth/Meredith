@@ -16,10 +16,10 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
     {
         private const string TemplateKey = "Memo";
 
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SendGridService _sendGridService;
 
-        public MemoJob(MeredithDbContext dbContext, SendGridService sendGridService)
+        public MemoJob(IDbContext dbContext, SendGridService sendGridService)
         {
             _dbContext = dbContext;
             _sendGridService = sendGridService;

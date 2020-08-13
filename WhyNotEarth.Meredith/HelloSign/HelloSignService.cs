@@ -18,10 +18,10 @@ namespace WhyNotEarth.Meredith.HelloSign
 {
     internal class HelloSignService : IHelloSignService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly HelloSignOptions _options;
 
-        public HelloSignService(IOptions<HelloSignOptions> options, MeredithDbContext dbContext)
+        public HelloSignService(IOptions<HelloSignOptions> options, IDbContext dbContext)
         {
             _dbContext = dbContext;
             _options = options.Value;
@@ -82,7 +82,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             var signUrlResponse = apiClient.GetSignUrl(signatureId);
 
             client.SignatureRequestId = embeddedSignatureResponse.SignatureRequestId;
-            _dbContext.Update(client);
+            _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
 
             return signUrlResponse.SignUrl;

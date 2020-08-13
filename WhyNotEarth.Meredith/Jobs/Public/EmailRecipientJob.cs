@@ -14,9 +14,9 @@ namespace WhyNotEarth.Meredith.Jobs.Public
     public class EmailRecipientJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public EmailRecipientJob(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient)
+        public EmailRecipientJob(IDbContext dbContext, IBackgroundJobClient backgroundJobClient)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;

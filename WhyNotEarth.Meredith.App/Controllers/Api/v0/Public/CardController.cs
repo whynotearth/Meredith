@@ -10,11 +10,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class CardController : ControllerBase
     {
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _dbContext;
 
-        public CardController(MeredithDbContext meredithDbContext)
+        public CardController(IDbContext IDbContext)
         {
-            _meredithDbContext = meredithDbContext;
+            _dbContext = IDbContext;
         }
 
         [Returns200]
@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpGet("{id}/related")]
         public async Task<ActionResult<StoryResult>> Related(int id)
         {
-            var card = await _meredithDbContext.Cards.FirstOrDefaultAsync(c => c.Id == id);
+            var card = await _dbContext.Cards.FirstOrDefaultAsync(c => c.Id == id);
 
             if (card is null)
             {

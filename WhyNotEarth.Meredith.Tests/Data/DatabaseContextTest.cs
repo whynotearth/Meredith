@@ -1,3 +1,5 @@
+using WhyNotEarth.Meredith.Persistence;
+
 namespace WhyNotEarth.Meredith.Tests.Data
 {
     using Microsoft.Extensions.DependencyInjection;

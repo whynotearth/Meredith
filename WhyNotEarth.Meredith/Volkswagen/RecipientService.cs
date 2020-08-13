@@ -17,10 +17,10 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class RecipientService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly EmailRecipientService _emailRecipientService;
 
-        public RecipientService(MeredithDbContext dbContext, EmailRecipientService emailRecipientService)
+        public RecipientService(IDbContext dbContext, EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;
             _emailRecipientService = emailRecipientService;
@@ -129,7 +129,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             recipient.FirstName = model.FirstName;
             recipient.LastName = model.LastName;
 
-            _dbContext.Update(recipient);
+            _dbContext.Recipients.Update(recipient);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -142,7 +142,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 throw new RecordNotFoundException($"Recipient {recipientId} not found");
             }
 
-            _dbContext.Remove(recipient);
+            _dbContext.Recipients.Remove(recipient);
             await _dbContext.SaveChangesAsync();
         }
 

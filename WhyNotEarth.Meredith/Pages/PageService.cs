@@ -8,9 +8,9 @@ namespace WhyNotEarth.Meredith.Pages
 {
     public class PageService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public PageService(MeredithDbContext dbContext)
+        public PageService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

@@ -17,10 +17,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class SettingsController : ControllerBase
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly SettingsService _settingsService;
 
-        public SettingsController(SettingsService settingsService, MeredithDbContext dbContext)
+        public SettingsController(SettingsService settingsService, IDbContext dbContext)
         {
             _settingsService = settingsService;
             _dbContext = dbContext;

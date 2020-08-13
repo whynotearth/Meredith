@@ -13,11 +13,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class NewJumpStartService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly EmailRecipientService _emailRecipientService;
         private readonly RecipientService _recipientService;
 
-        public NewJumpStartService(MeredithDbContext dbContext, RecipientService recipientService,
+        public NewJumpStartService(IDbContext dbContext, RecipientService recipientService,
             EmailRecipientService emailRecipientService)
         {
             _dbContext = dbContext;

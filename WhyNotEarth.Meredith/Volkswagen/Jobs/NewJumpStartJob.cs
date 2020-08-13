@@ -10,14 +10,14 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
     public class NewJumpStartJob
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
         public static string Id { get; } = "NewJumpStartJob_SendAsync";
 
         // Every 15 minutes
         public static string CronExpression { get; } = "*/15 * * * *";
 
-        public NewJumpStartJob(MeredithDbContext dbContext, IBackgroundJobClient backgroundJobClient)
+        public NewJumpStartJob(IDbContext dbContext, IBackgroundJobClient backgroundJobClient)
         {
             _dbContext = dbContext;
             _backgroundJobClient = backgroundJobClient;
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
                 newJumpStart.Status = NewJumpStartStatus.Sending;
             }
 
-            _dbContext.UpdateRange(newJumpStarts);
+            _dbContext.NewJumpStarts.UpdateRange(newJumpStarts);
             await _dbContext.SaveChangesAsync();
 
             foreach (var newJumpStart in newJumpStarts)

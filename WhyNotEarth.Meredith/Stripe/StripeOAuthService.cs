@@ -11,13 +11,13 @@ namespace WhyNotEarth.Meredith.Stripe
 
     public class StripeOAuthService : StripeServiceBase
     {
-        protected MeredithDbContext MeredithDbContext { get; }
+        protected IDbContext IDbContext { get; }
 
 
         public StripeOAuthService(IOptions<StripeOptions> stripeOptions,
-            MeredithDbContext meredithDbContext) : base(stripeOptions)
+            IDbContext IDbContext) : base(stripeOptions)
         {
-            MeredithDbContext = meredithDbContext;
+            IDbContext = IDbContext;
         }
 
         public string GetOAuthRegisterUrl(Guid requestId)
@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.Stripe
 
         public async Task Register(Guid requestId, string code)
         {
-            var request = await MeredithDbContext.StripeOAuthRequests.FirstOrDefaultAsync(s => s.Id == requestId);
+            var request = await IDbContext.StripeOAuthRequests.FirstOrDefaultAsync(s => s.Id == requestId);
             if (request == null)
             {
                 throw new Exception("Invalid request ID");
@@ -42,14 +42,14 @@ namespace WhyNotEarth.Meredith.Stripe
                 GrantType = "authorization_code"
             }, GetRequestOptions());
             var stripeAccount =
-                await MeredithDbContext.StripeAccounts.FirstOrDefaultAsync(s => s.CompanyId == request.CompanyId);
+                await IDbContext.StripeAccounts.FirstOrDefaultAsync(s => s.CompanyId == request.CompanyId);
             if (stripeAccount == null)
             {
                 stripeAccount = new StripeAccount
                 {
                     CompanyId = request.CompanyId
                 };
-                MeredithDbContext.StripeAccounts.Add(stripeAccount);
+                IDbContext.StripeAccounts.Add(stripeAccount);
             }
 
             stripeAccount.AccessToken = oAuthToken.AccessToken;
@@ -59,8 +59,8 @@ namespace WhyNotEarth.Meredith.Stripe
             stripeAccount.StripePublishableKey = oAuthToken.StripePublishableKey;
             stripeAccount.StripeUserId = oAuthToken.StripeUserId;
             stripeAccount.Scope = oAuthToken.Scope;
-            MeredithDbContext.StripeOAuthRequests.Remove(request);
-            await MeredithDbContext.SaveChangesAsync();
+            IDbContext.StripeOAuthRequests.Remove(request);
+            await IDbContext.SaveChangesAsync();
         }
     }
 }

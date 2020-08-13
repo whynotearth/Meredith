@@ -15,11 +15,11 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class ClientService : IClientService
     {
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly TenantService _tenantService;
         private readonly IUserService _userService;
 
-        public ClientService(IUserService userService, MeredithDbContext dbContext, TenantService tenantService,
+        public ClientService(IUserService userService, IDbContext dbContext, TenantService tenantService,
             ICloudinaryService cloudinaryService)
         {
             _userService = userService;

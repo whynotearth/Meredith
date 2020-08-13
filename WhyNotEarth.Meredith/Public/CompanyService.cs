@@ -6,11 +6,11 @@ namespace WhyNotEarth.Meredith.Public
 {
     public class CompanyService
     {
-        protected MeredithDbContext Context { get; }
+        protected IDbContext Context { get; }
 
-        public CompanyService(MeredithDbContext meredithDbContext)
+        public CompanyService(IDbContext IDbContext)
         {
-            Context = meredithDbContext;
+            Context = IDbContext;
         }
 
         public async Task<Company> CreateCompanyAsync(string name, string slug)

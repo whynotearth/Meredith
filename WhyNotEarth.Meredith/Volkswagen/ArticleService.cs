@@ -8,9 +8,9 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class ArticleService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public ArticleService(MeredithDbContext dbContext)
+        public ArticleService(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

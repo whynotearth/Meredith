@@ -11,10 +11,10 @@ namespace WhyNotEarth.Meredith.Twilio
 {
     internal class TwilioService : ITwilioService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly TwilioOptions _options;
 
-        public TwilioService(IOptions<TwilioOptions> options, MeredithDbContext dbContext)
+        public TwilioService(IOptions<TwilioOptions> options, IDbContext dbContext)
         {
             _dbContext = dbContext;
             _options = options.Value;

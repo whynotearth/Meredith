@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
 using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Persistence;
 using Xunit;
 
 namespace WhyNotEarth.Meredith.Tests.Controllers

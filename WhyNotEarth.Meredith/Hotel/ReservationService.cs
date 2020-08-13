@@ -17,16 +17,16 @@ namespace WhyNotEarth.Meredith.Hotel
         private const string MetadataReservationIdKey = "Reservation.Id";
         private const string MetadataUserIdKey = "User.Id";
 
-        private readonly MeredithDbContext _meredithDbContext;
+        private readonly IDbContext _IDbContext;
         private readonly ClaimsPrincipal _user;
         private readonly IUserService _userService;
         private readonly IStripeService _stripeService;
         private readonly IEmailService _emailService;
 
-        public ReservationService(MeredithDbContext meredithDbContext, ClaimsPrincipal user, IUserService userService,
+        public ReservationService(IDbContext IDbContext, ClaimsPrincipal user, IUserService userService,
             IStripeService stripeService, IEmailService emailService)
         {
-            _meredithDbContext = meredithDbContext;
+            _IDbContext = IDbContext;
             _user = user;
             _userService = userService;
             _stripeService = stripeService;
@@ -36,7 +36,7 @@ namespace WhyNotEarth.Meredith.Hotel
         public async Task<HotelReservation> CreateReservation(int roomTypeId, DateTime startDate, DateTime endDate,
             string fullName, string email, string? message, string? phoneCountry, string phone, int numberOfGuests)
         {
-            var roomType = await _meredithDbContext.RoomTypes
+            var roomType = await _IDbContext.RoomTypes
                 .FirstOrDefaultAsync(rt => rt.Id == roomTypeId);
 
             if (roomType is null)
@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new RecordNotFoundException();
             }
 
-            var availableRooms = await _meredithDbContext.Rooms
+            var availableRooms = await _IDbContext.Rooms
                 .Where(r => !r.Reservations
                     .Any(re => re.Start >= startDate && re.End <= endDate))
                 .ToListAsync();
@@ -60,7 +60,7 @@ namespace WhyNotEarth.Meredith.Hotel
                 throw new InvalidActionException("Invalid number of days to reserve");
             }
 
-            var dailyPrices = await _meredithDbContext.Prices
+            var dailyPrices = await _IDbContext.Prices
                 .OfType<HotelPrice>()
                 .Where(p => p.Date >= startDate && p.Date < endDate).ToListAsync();
 
@@ -92,8 +92,8 @@ namespace WhyNotEarth.Meredith.Hotel
                 User = user
             };
 
-            _meredithDbContext.Reservations.Add(reservation);
-            await _meredithDbContext.SaveChangesAsync();
+            _IDbContext.Reservations.Add(reservation);
+            await _IDbContext.SaveChangesAsync();
 
             await _emailService.SendReservationEmail(reservation, roomType, dailyPrices, vat,
                 paidDays, phoneCountry, phone);
@@ -125,8 +125,8 @@ namespace WhyNotEarth.Meredith.Hotel
                 PaymentIntentId = paymentIntent.Id,
                 UserId = user.Id
             };
-            _meredithDbContext.Payments.Add(payment);
-            await _meredithDbContext.SaveChangesAsync();
+            _IDbContext.Payments.Add(payment);
+            await _IDbContext.SaveChangesAsync();
 
             return paymentIntent.ClientSecret;
         }
@@ -145,14 +145,14 @@ namespace WhyNotEarth.Meredith.Hotel
                 UserId = int.Parse(paymentIntent.Metadata[MetadataUserIdKey])
             };
 
-            _meredithDbContext.Payments.Add(payment);
-            await _meredithDbContext.SaveChangesAsync();
+            _IDbContext.Payments.Add(payment);
+            await _IDbContext.SaveChangesAsync();
         }
 
         private async Task<(HotelReservation, Company, User)> GetReservation(int reservationId)
         {
             var user = await _userService.GetUserAsync(_user);
-            var results = await _meredithDbContext.Reservations.OfType<HotelReservation>()
+            var results = await _IDbContext.Reservations.OfType<HotelReservation>()
                 .Where(r => r.Id == reservationId && r.UserId == user.Id)
                 .Select(r => new
                 {
@@ -171,14 +171,14 @@ namespace WhyNotEarth.Meredith.Hotel
 
         private async Task<string> GetStripeAccountFromCompany(int companyId)
         {
-            var stripeAccountId = await _meredithDbContext.StripeAccounts
+            var stripeAccountId = await _IDbContext.StripeAccounts
                 .Where(s => s.CompanyId == companyId)
                 .Select(s => s.StripeUserId)
                 .FirstOrDefaultAsync();
 
             if (stripeAccountId is null)
             {
-                if (await _meredithDbContext.Companies.AnyAsync(c => c.Id == companyId))
+                if (await _IDbContext.Companies.AnyAsync(c => c.Id == companyId))
                 {
                     throw new RecordNotFoundException($"Company {companyId} does not have Stripe configured");
                 }

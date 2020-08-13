@@ -18,9 +18,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
     [Authorize(Policy = Policies.ManageVolkswagen)]
     public class ArticleCategoryController : ControllerBase
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public ArticleCategoryController(MeredithDbContext dbContext)
+        public ArticleCategoryController(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

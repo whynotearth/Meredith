@@ -15,9 +15,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class ProductsController : ControllerBase
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public ProductsController(MeredithDbContext dbContext)
+        public ProductsController(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

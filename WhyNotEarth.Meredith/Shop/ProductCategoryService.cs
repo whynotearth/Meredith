@@ -11,12 +11,12 @@ namespace WhyNotEarth.Meredith.Shop
 {
     public class ProductCategoryService
     {
-        private readonly MeredithDbContext _dbContext;
+        private readonly IDbContext _dbContext;
         private readonly TenantService _tenantService;
 
-        public ProductCategoryService(MeredithDbContext meredithDbContext, TenantService tenantService)
+        public ProductCategoryService(IDbContext IDbContext, TenantService tenantService)
         {
-            _dbContext = meredithDbContext;
+            _dbContext = IDbContext;
             _tenantService = tenantService;
         }
 
