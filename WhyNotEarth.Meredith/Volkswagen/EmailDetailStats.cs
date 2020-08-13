@@ -4,11 +4,11 @@ namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class EmailDetailStats
     {
-        public List<Data.Entity.Models.Email> NotOpenedList { get; }
+        public List<Public.Email> NotOpenedList { get; }
 
-        public List<Data.Entity.Models.Email> OpenedList { get; }
+        public List<Public.Email> OpenedList { get; }
 
-        public EmailDetailStats(List<Data.Entity.Models.Email> notOpenedList, List<Data.Entity.Models.Email> openedList)
+        public EmailDetailStats(List<Public.Email> notOpenedList, List<Public.Email> openedList)
         {
             NotOpenedList = notOpenedList;
             OpenedList = openedList;

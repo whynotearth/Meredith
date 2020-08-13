@@ -5,8 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Products;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {

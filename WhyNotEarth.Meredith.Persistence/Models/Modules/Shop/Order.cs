@@ -1,18 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Collections.Generic;
+using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
-    public class Order
-    {
-        public int Id { get; set; }
-
-        public PaymentMethodType PaymentMethodType { get; set; }
-
-        public List<OrderLine> OrderLines { get; set; } = null!;
-    }
-
     public class OrderEntityConfig : IEntityTypeConfiguration<Order>
     {
         public void Configure(EntityTypeBuilder<Order> builder)

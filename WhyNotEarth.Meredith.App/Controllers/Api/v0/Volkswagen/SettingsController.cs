@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Volkswagen;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
 

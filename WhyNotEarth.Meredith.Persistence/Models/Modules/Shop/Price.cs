@@ -1,15 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
-    public class Price
-    {
-        public int Id { get; set; }
-
-        public decimal Amount { get; set; }
-    }
-
     public class PriceEntityConfig : IEntityTypeConfiguration<Price>
     {
         public void Configure(EntityTypeBuilder<Price> builder)

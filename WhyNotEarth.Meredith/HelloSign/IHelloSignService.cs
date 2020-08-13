@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
+using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
@@ -10,6 +10,6 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         byte[] DownloadSignature(string signatureRequestId);
 
-        internal Task<string> GetSignatureRequestAsync(Client client, User user, Data.Entity.Models.Tenant tenant);
+        internal Task<string> GetSignatureRequestAsync(Client client, User user, Public.Tenant tenant);
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Stripe;
-using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Stripe.Data;
 

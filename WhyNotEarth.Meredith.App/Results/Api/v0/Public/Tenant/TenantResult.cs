@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
-using DayOfWeek = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.DayOfWeek;
+using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Shop;
+using DayOfWeek = WhyNotEarth.Meredith.Shop.DayOfWeek;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 {
@@ -43,7 +43,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public int PromotionPercent { get; }
 
-        public TenantResult(Data.Entity.Models.Tenant tenant)
+        public TenantResult(Meredith.Public.Tenant tenant)
         {
             Slug = tenant.Slug;
             Name = tenant.Name;

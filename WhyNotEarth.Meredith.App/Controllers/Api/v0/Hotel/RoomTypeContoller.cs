@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Hotel;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
 {

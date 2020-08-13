@@ -5,8 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Volkswagen
 {

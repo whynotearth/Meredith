@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant.Models;
 
 namespace WhyNotEarth.Meredith.Tenant
@@ -15,7 +15,7 @@ namespace WhyNotEarth.Meredith.Tenant
     {
         private const string WhatsAppOrderSmsTemplateName = "ReservationWhatsAppMessageTemplate.txt";
 
-        public EmailMessage GetEmailMessage(Data.Entity.Models.Tenant tenant, TenantReservationModel model, User user)
+        public EmailMessage GetEmailMessage(Public.Tenant tenant, TenantReservationModel model, User user)
         {
             var recipients = new List<Tuple<string, string?>>
             {
@@ -55,7 +55,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return emailInfo;
         }
 
-        public List<ShortMessage> GetWhatsAppMessage(Data.Entity.Models.Tenant tenant, TenantReservationModel model,
+        public List<ShortMessage> GetWhatsAppMessage(Public.Tenant tenant, TenantReservationModel model,
             User user)
         {
             var recipients = new List<string>

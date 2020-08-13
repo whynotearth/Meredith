@@ -2,7 +2,6 @@ namespace WhyNotEarth.Meredith.Tests.Data
 {
     using Microsoft.Extensions.DependencyInjection;
     using RoushTech.Xunit.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.Data.Entity;
 
     public class DatabaseContextTest : DbContextTest<MeredithDbContext>
     {

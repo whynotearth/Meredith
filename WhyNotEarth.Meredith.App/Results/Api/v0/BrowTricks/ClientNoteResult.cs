@@ -1,5 +1,5 @@
 ﻿using System;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
+using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {

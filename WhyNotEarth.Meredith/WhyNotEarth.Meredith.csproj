@@ -40,7 +40,4 @@
     <PackageReference Include="Stripe.net" Version="37.30.0" />
     <PackageReference Include="Twilio" Version="5.45.2" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WhyNotEarth.Meredith.Data.Entity\WhyNotEarth.Meredith.Persistence.csproj" />
-  </ItemGroup>
 </Project>

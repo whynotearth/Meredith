@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
 
 namespace WhyNotEarth.Meredith.App.DbContext
 {

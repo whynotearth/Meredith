@@ -4,13 +4,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
+using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.Hotel
 {

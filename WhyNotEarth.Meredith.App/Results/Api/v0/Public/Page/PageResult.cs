@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Page;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Hotel;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 {
@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
 
         public string? Slug { get; }
 
-        public PageResult(Data.Entity.Models.Page page, string culture)
+        public PageResult(Meredith.Public.Page page, string culture)
         {
             Id = page.Id;
             Brand = page.Company.Slug;
@@ -74,7 +74,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             AddHotelModule(page.Hotel, culture);
         }
 
-        private void AddHotelModule(Data.Entity.Models.Modules.Hotel.Hotel? hotel, string culture)
+        private void AddHotelModule(Meredith.Hotel.Hotel? hotel, string culture)
         {
             if (hotel is null)
             {

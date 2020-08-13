@@ -6,8 +6,8 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.Cloudinary.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using Video = WhyNotEarth.Meredith.Data.Entity.Models.Video;
+using WhyNotEarth.Meredith.Public;
+using Video = WhyNotEarth.Meredith.Public.Video;
 
 namespace WhyNotEarth.Meredith.Cloudinary
 {

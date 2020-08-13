@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             return Ok(list.Select(item => new UserListResult(item.Key, item)).ToList());
         }
 
-        private async Task<Data.Entity.Models.Tenant> GetCurrentTenantAsync()
+        private async Task<Meredith.Public.Tenant> GetCurrentTenantAsync()
         {
             var user = await _userService.GetUserAsync(User);
             var tenant = await _tenantService.GetTenant(user);

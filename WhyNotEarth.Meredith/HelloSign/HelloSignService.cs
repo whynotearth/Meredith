@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 using HelloSign;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
-using Client = WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks.Client;
+using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Public;
+using Client = WhyNotEarth.Meredith.BrowTricks.Client;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
@@ -49,7 +48,7 @@ namespace WhyNotEarth.Meredith.HelloSign
         }
 
         async Task<string> IHelloSignService.GetSignatureRequestAsync(Client client, User user,
-            Data.Entity.Models.Tenant tenant)
+            Public.Tenant tenant)
         {
             var disclosures = await _dbContext.Disclosures.Where(item => item.ClientId == client.Id)
                 .ToListAsync();

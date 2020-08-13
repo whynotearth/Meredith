@@ -21,7 +21,6 @@ using WhyNotEarth.Meredith.App.DbContext;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
-using WhyNotEarth.Meredith.Data.Entity;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;

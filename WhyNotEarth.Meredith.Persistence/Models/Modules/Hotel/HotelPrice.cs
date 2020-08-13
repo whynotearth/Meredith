@@ -1,19 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Persistence.Models.Modules.Shop;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel
 {
-    public class HotelPrice : Price
-    {
-        public DateTime Date { get; set; }
-
-        public int RoomTypeId { get; set; }
-
-        public RoomType RoomType { get; set; } = null!;
-    }
-
     public class HotelPriceEntityConfig : PriceEntityConfig
     {
         public void Configure(EntityTypeBuilder<HotelPrice> builder)

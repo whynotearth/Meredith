@@ -13,9 +13,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Configuration;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Auth
 {

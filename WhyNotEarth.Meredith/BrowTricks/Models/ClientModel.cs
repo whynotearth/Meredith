@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using WhyNotEarth.Meredith.Cloudinary.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Models

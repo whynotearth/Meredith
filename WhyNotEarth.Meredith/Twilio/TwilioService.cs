@@ -5,8 +5,7 @@ using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Twilio
 {

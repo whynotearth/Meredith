@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.Identity
 
         Task<User> GetUserAsync(string email);
 
-        Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant);
+        Task<List<User>> ListAsync(Public.Tenant tenant);
 
         Task<UserCreateResult> CreateAsync(RegisterModel model);
 

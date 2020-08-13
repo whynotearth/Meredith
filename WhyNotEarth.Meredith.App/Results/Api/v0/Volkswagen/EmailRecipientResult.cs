@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime? OpenDateTime { get; }
 
-        public EmailRecipientResult(Data.Entity.Models.Email email)
+        public EmailRecipientResult(Meredith.Public.Email email)
         {
             Email = email.EmailAddress;
             DeliverDateTime = email.Events.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Delivered)?.DateTime;

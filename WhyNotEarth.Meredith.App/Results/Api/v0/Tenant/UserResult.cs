@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Tenant
 {

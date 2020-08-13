@@ -4,12 +4,10 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using Xunit;
 

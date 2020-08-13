@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Persistence.Models
 {
-    public class Role : IdentityRole<int>
-    {
-    }
-
     public class RoleEntityConfig : IEntityTypeConfiguration<Role>
     {
         public void Configure(EntityTypeBuilder<Role> builder)

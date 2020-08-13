@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public bool IsActive { get; }
 
-        public TenantListResult(Data.Entity.Models.Tenant tenant)
+        public TenantListResult(Meredith.Public.Tenant tenant)
         {
             Slug = tenant.Slug;
             Name = tenant.Name;

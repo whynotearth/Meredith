@@ -5,12 +5,10 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Jobs;
 using WhyNotEarth.Meredith.BrowTricks.Models;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Twilio;
 

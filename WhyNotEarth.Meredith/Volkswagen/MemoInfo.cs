@@ -1,6 +1,4 @@
-﻿using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
-
-namespace WhyNotEarth.Meredith.Volkswagen
+﻿namespace WhyNotEarth.Meredith.Volkswagen
 {
     public class MemoInfo
     {

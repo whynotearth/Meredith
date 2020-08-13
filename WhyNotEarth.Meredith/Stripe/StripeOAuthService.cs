@@ -1,11 +1,11 @@
+using WhyNotEarth.Meredith.Public;
+
 namespace WhyNotEarth.Meredith.Stripe
 {
     using System;
     using System.Threading.Tasks;
     using Data;
     using global::Stripe;
-    using Meredith.Data.Entity;
-    using Meredith.Data.Entity.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
 

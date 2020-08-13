@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant.Models;
 using WhyNotEarth.Meredith.Twilio;
 

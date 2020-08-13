@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace WhyNotEarth.Meredith.Persistence.Models
+namespace WhyNotEarth.Meredith.Public
 {
     [Flags]
     public enum NotificationType : byte

@@ -4,13 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Cloudinary;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
-using Product = WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop.Product;
+using Product = WhyNotEarth.Meredith.Shop.Product;
 
 namespace WhyNotEarth.Meredith.Shop
 {
@@ -111,7 +108,7 @@ namespace WhyNotEarth.Meredith.Shop
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<(ProductCategory, Data.Entity.Models.Tenant)> ValidateAsync(int categoryId, User user,
+        private async Task<(ProductCategory, Public.Tenant)> ValidateAsync(int categoryId, User user,
             List<VariationModel>? variationModels)
         {
             var category = await _dbContext.ProductCategories.FirstOrDefaultAsync(item => item.Id == categoryId);
@@ -133,7 +130,7 @@ namespace WhyNotEarth.Meredith.Shop
             return (category, tenant);
         }
 
-        private async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(ProductCategory category, User user)
+        private async Task<Public.Tenant> CheckPermissionAsync(ProductCategory category, User user)
         {
             var tenant =
                 await _dbContext.Tenants.FirstOrDefaultAsync(item =>
@@ -148,7 +145,7 @@ namespace WhyNotEarth.Meredith.Shop
         }
 
         private async Task<Product> MapAsync(Product product, ProductCategory category,
-            Data.Entity.Models.Tenant tenant,
+            Public.Tenant tenant,
             ProductModel model)
         {
             product.Name = model.Name;

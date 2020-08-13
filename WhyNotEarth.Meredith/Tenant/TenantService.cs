@@ -2,12 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Shop;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Tenant.Models;
 
 namespace WhyNotEarth.Meredith.Tenant
@@ -42,7 +40,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return tenant.Slug;
         }
 
-        public Task<List<Data.Entity.Models.Tenant>> ListAsync(string companySlug)
+        public Task<List<Public.Tenant>> ListAsync(string companySlug)
         {
             return _dbContext.Tenants
                 .Include(item => item.Company)
@@ -51,12 +49,12 @@ namespace WhyNotEarth.Meredith.Tenant
                 .ToListAsync();
         }
 
-        public Task<Data.Entity.Models.Tenant?> GetTenant(User user)
+        public Task<Public.Tenant?> GetTenant(User user)
         {
             return _dbContext.Tenants.FirstOrDefaultAsync(item => item.OwnerId == user.Id)!;
         }
 
-        public async Task<List<Data.Entity.Models.Tenant>> GetAllTenantsByUser(User user, string companySlug)
+        public async Task<List<Public.Tenant>> GetAllTenantsByUser(User user, string companySlug)
         {
             var tenants = await _dbContext.Tenants
                 .Include(item => item.Company)
@@ -86,9 +84,9 @@ namespace WhyNotEarth.Meredith.Tenant
             return company;
         }
 
-        private Data.Entity.Models.Tenant Map(TenantCreateModel model, Company company, User user)
+        private Public.Tenant Map(TenantCreateModel model, Company company, User user)
         {
-            var result = new Data.Entity.Models.Tenant
+            var result = new Public.Tenant
             {
                 CompanyId = company.Id,
                 Slug = model.Name,
@@ -129,7 +127,7 @@ namespace WhyNotEarth.Meredith.Tenant
             }).ToList();
         }
 
-        public Task<Data.Entity.Models.Tenant> GeAsync(string tenantSlug)
+        public Task<Public.Tenant> GeAsync(string tenantSlug)
         {
             return _dbContext.Tenants
                 .Include(item => item.Logo)
@@ -138,7 +136,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
-        public async Task<Data.Entity.Models.Tenant> CheckPermissionAsync(User owner, string tenantSlug)
+        public async Task<Public.Tenant> CheckPermissionAsync(User owner, string tenantSlug)
         {
             var tenant =
                 await _dbContext.Tenants.FirstOrDefaultAsync(item =>
@@ -158,7 +156,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return tenant;
         }
 
-        public async Task<Data.Entity.Models.Tenant> CheckOwnerAsync(User owner, int tenantId)
+        public async Task<Public.Tenant> CheckOwnerAsync(User owner, int tenantId)
         {
             var tenant =
                 await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == owner.Id);
@@ -227,7 +225,7 @@ namespace WhyNotEarth.Meredith.Tenant
             await _dbContext.SaveChangesAsync();
         }
 
-        private Data.Entity.Models.Tenant Map(Data.Entity.Models.Tenant tenant, TenantEditModel model)
+        private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
         {
             if (model.HasPromotion.HasValue)
             {

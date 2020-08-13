@@ -1,4 +1,5 @@
 ﻿using System;
+using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {
@@ -14,7 +15,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 
         public DateTime CreationDateTime { get; set; }
 
-        public RecipientResult(Data.Entity.Models.Modules.Volkswagen.Recipient recipient)
+        public RecipientResult(Recipient recipient)
         {
             Id = recipient.Id;
             Email = recipient.Email;

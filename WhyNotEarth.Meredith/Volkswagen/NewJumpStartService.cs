@@ -4,11 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen
@@ -75,7 +73,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private async Task<NewJumpStartOverAllStats> GetStatsCoreAsync(DateTime fromDate, DateTime toDate, int? id)
         {
-            Expression<Func<Data.Entity.Models.Email, bool>> condition;
+            Expression<Func<Public.Email, bool>> condition;
             if (id.HasValue)
             {
                 condition = item => item.NewJumpStartId == id;
@@ -115,7 +113,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         private async Task<List<DailyStats>> GetOpenStatsAsync(DateTime fromDate, DateTime toDate,
-            Expression<Func<Data.Entity.Models.Email, bool>> condition)
+            Expression<Func<Public.Email, bool>> condition)
         {
             var result = new List<DailyStats>();
 
@@ -128,7 +126,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
         }
 
         private async Task<List<DailyStats>> GetClickStatsAsync(DateTime fromDate, DateTime toDate,
-            Expression<Func<Data.Entity.Models.Email, bool>> condition)
+            Expression<Func<Public.Email, bool>> condition)
         {
             var result = new List<DailyStats>();
 

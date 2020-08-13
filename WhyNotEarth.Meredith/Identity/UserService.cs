@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -40,7 +39,7 @@ namespace WhyNotEarth.Meredith.Identity
             return _userManager.FindByEmailAsync(email);
         }
 
-        public Task<List<User>> ListAsync(Data.Entity.Models.Tenant tenant)
+        public Task<List<User>> ListAsync(Public.Tenant tenant)
         {
             return _dbContext.Users
                 .Where(item => item.TenantId == tenant.Id)

@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.Shop
@@ -91,7 +90,7 @@ namespace WhyNotEarth.Meredith.Shop
             return category;
         }
 
-        private ProductCategory Map(ProductCategory category, ProductCategoryModel model, Data.Entity.Models.Tenant tenant)
+        private ProductCategory Map(ProductCategory category, ProductCategoryModel model, Public.Tenant tenant)
         {
             category.Description = model.Description;
             category.Name = model.Name;

@@ -6,8 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
+using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
 using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Email
 {
@@ -213,7 +212,7 @@ namespace WhyNotEarth.Meredith.Email
             Recipients = emails.Select(item => new EmailMessageRecipient(item)).ToList();
         }
 
-        public EmailMessage(int companyId, List<Data.Entity.Models.Email> emails)
+        public EmailMessage(int companyId, List<Public.Email> emails)
         {
             CompanyId = companyId;
             Recipients = emails.Select(item => new EmailMessageRecipient(item)).ToList();
@@ -231,7 +230,7 @@ namespace WhyNotEarth.Meredith.Email
             Info = info;
         }
 
-        public EmailMessageRecipient(Data.Entity.Models.Email email)
+        public EmailMessageRecipient(Public.Email email)
         {
             Info = new Tuple<string, string?>(email.EmailAddress, null);
             EmailId = email.Id;

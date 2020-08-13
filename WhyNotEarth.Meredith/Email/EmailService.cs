@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Markdig;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
+using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Email
@@ -84,7 +83,7 @@ namespace WhyNotEarth.Meredith.Email
             await _sendGridService.SendEmailAsync(emailInfo);
         }
 
-        private string GetRoomDescription(Data.Entity.Models.Modules.Hotel.Hotel hotel)
+        private string GetRoomDescription(Hotel.Hotel hotel)
         {
             var stringBuilder = new StringBuilder();
 

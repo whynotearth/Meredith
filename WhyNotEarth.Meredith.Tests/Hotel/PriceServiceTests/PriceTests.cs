@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Hotel;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Tests.Data;

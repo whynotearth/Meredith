@@ -1,15 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
-    public class Location
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; } = null!;
-    }
-
     public class LocationEntityConfig : IEntityTypeConfiguration<Location>
     {
         public void Configure(EntityTypeBuilder<Location> builder)

@@ -1,0 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace WhyNotEarth.Meredith.Public
+{
+    public class Category
+    {
+        public int Id { get; set; }
+
+        public string? Slug { get; set; }
+
+        public string Name { get; set; } = null!;
+
+        public CategoryImage? Image { get; set; }
+
+        public string? Description { get; set; }
+    }
+
+    public class CategoryImage : Image
+    {
+    }
+}

@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Cloudinary;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.BrowTricks
@@ -115,7 +113,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         }
 
         private async Task<Client> MapClientAsync(Client client, ClientModel model,
-            Data.Entity.Models.Tenant? tenant = null)
+            Public.Tenant? tenant = null)
         {
             if (client.User is null)
             {

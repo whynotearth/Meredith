@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {

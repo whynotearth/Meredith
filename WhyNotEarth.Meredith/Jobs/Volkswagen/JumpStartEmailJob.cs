@@ -2,10 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Jobs.Volkswagen
@@ -62,7 +60,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailMessage> GetEmailInfoAsync(JumpStart jumpStart, List<Data.Entity.Models.Email> emails, List<Article> articles)
+        private async Task<EmailMessage> GetEmailInfoAsync(JumpStart jumpStart, List<Meredith.Public.Email> emails, List<Article> articles)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
@@ -78,7 +76,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             };
         }
 
-        private Task<List<Data.Entity.Models.Email>> GetRecipientsAsync(int jumpStartId)
+        private Task<List<Meredith.Public.Email>> GetRecipientsAsync(int jumpStartId)
         {
             return _dbContext.Emails
                 .Where(item => item.JumpStartId == jumpStartId && item.Status == EmailStatus.ReadyToSend)

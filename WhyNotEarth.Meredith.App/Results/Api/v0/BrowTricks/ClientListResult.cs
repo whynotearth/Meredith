@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using WhyNotEarth.Meredith.Data.Entity.Models;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.BrowTricks;
+using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {

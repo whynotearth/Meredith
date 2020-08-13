@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Data.Entity;
-using WhyNotEarth.Meredith.Data.Entity.Models.Modules.Volkswagen;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Volkswagen.Models;

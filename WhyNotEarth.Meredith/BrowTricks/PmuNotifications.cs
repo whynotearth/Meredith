@@ -1,11 +1,11 @@
 ﻿using System;
-using WhyNotEarth.Meredith.Data.Entity.Models;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
     internal class PmuNotifications
     {
-        public ShortMessage GetConsentNotification(Data.Entity.Models.Tenant tenant, User user, string formUrl)
+        public ShortMessage GetConsentNotification(Public.Tenant tenant, User user, string formUrl)
         {
             return new ShortMessage
             {
@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             };
         }
 
-        public ShortMessage GetCompletionNotification(Data.Entity.Models.Tenant tenant, User user, string pdfUrl)
+        public ShortMessage GetCompletionNotification(Public.Tenant tenant, User user, string pdfUrl)
         {
             return new ShortMessage
             {

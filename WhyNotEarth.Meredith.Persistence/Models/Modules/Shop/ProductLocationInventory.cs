@@ -1,23 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WhyNotEarth.Meredith.Shop;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Shop
 {
-    public class ProductLocationInventory
-    {
-        public int Id { get; set; }
-
-        public int ProductId { get; set; }
-
-        public Product Product { get; set; } = null!;
-
-        public int LocationId { get; set; }
-
-        public Location Location { get; set; } = null!;
-
-        public int Count { get; set; }
-    }
-
     public class ProductLocationInventoryEntityConfig : IEntityTypeConfiguration<ProductLocationInventory>
     {
         public void Configure(EntityTypeBuilder<ProductLocationInventory> builder)

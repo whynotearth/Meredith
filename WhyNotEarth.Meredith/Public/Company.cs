@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace WhyNotEarth.Meredith.Persistence.Models
+namespace WhyNotEarth.Meredith.Public
 {
     [DebuggerDisplay("{" + nameof(Slug) + "}")]
     public class Company

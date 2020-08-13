@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Persistence.Models;
-using WhyNotEarth.Meredith.Persistence.Models.Modules.BrowTricks;
-using WhyNotEarth.Meredith.Persistence.Models.Modules.Hotel;
-using WhyNotEarth.Meredith.Persistence.Models.Modules.Shop;
-using WhyNotEarth.Meredith.Persistence.Models.Modules.Volkswagen;
-using Product = WhyNotEarth.Meredith.Persistence.Models.Product;
-using ShoppingProduct = WhyNotEarth.Meredith.Persistence.Models.Modules.Shop.Product;
+using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Shop;
+using WhyNotEarth.Meredith.Volkswagen;
+using Product = WhyNotEarth.Meredith.Public.Product;
+using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
 
-namespace WhyNotEarth.Meredith.Persistence
+namespace WhyNotEarth.Meredith
 {
     public class MeredithDbContext : IdentityDbContext<User, Role, int>
     {
@@ -35,14 +35,14 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<Setting> Settings { get; set; } = null!;
 
-        public DbSet<Email> Emails { get; set; } = null!;
+        public DbSet<Public.Email> Emails { get; set; } = null!;
 
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
         public DbSet<ShortMessage> ShortMessages { get; set; } = null!;
 
         // Shop
-        public DbSet<Tenant> Tenants { get; set; } = null!;
+        public DbSet<Public.Tenant> Tenants { get; set; } = null!;
 
         public DbSet<Reservation> Reservations { get; set; } = null!;
 
@@ -70,7 +70,7 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<Bed> Beds { get; set; } = null!;
 
-        public DbSet<Hotel> Hotels { get; set; } = null!;
+        public DbSet<Hotel.Hotel> Hotels { get; set; } = null!;
 
         public DbSet<Language> Languages { get; set; } = null!;
 
