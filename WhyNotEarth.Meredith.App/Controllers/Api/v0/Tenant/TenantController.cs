@@ -18,12 +18,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
     public class TenantController : BaseController
     {
         private readonly TenantService _tenantService;
+        private readonly SeoSchemaService _seoSchemaService;
         private readonly UserManager _userManager;
 
-        public TenantController(UserManager userManager, TenantService tenantService)
+        public TenantController(UserManager userManager, TenantService tenantService, SeoSchemaService seoSchemaService)
         {
             _userManager = userManager;
             _tenantService = tenantService;
+            _seoSchemaService = seoSchemaService;
         }
 
         [Authorize]
@@ -87,7 +89,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
             }
 
-            return Ok(new TenantResult(tenant));
+            var schema = _seoSchemaService.CreateTenantShopSchema(tenant);
+
+            return Ok(new TenantResult(tenant, schema));
         }
 
         [Authorize]
