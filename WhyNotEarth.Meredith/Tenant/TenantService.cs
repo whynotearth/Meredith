@@ -133,6 +133,8 @@ namespace WhyNotEarth.Meredith.Tenant
                 .Include(item => item.Logo)
                 .Include(item => item.BusinessHours)
                 .Include(item => item.Address)
+                .Include(item => item.Owner)
+                .Include(item => item.Company)
                 .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
