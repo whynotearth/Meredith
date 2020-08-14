@@ -99,9 +99,16 @@ namespace WhyNotEarth.Meredith.Identity
             return user;
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task UpdateUserAsync(int userId, string email, string? firstName, string? lastName,
+            string? phoneNumber)
         {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            user.Email = email;
             user.UserName = user.Email;
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.PhoneNumber = phoneNumber;
 
             await _userManager.UpdateAsync(user);
         }
