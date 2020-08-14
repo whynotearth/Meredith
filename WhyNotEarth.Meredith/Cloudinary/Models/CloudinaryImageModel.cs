@@ -12,5 +12,13 @@ namespace WhyNotEarth.Meredith.Cloudinary.Models
         [NotNull]
         [Mandatory]
         public string? Url { get; set; }
+
+        [NotNull]
+        [Mandatory]
+        public int? Width { get; set; }
+
+        [NotNull]
+        [Mandatory]
+        public int? Height { get; set; }
     }
 }

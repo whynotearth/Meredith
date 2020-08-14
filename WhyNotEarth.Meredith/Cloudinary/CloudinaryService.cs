@@ -37,44 +37,6 @@ namespace WhyNotEarth.Meredith.Cloudinary
             return cloudinary.DestroyAsync(deleteParams);
         }
 
-        public async Task<Image?> GetUpdatedValueAsync(Image? oldValue, CloudinaryImageModel? model)
-        {
-            if (oldValue is null)
-            {
-                if (model != null)
-                {
-                    // Add
-                    return new Image
-                    {
-                        Url = model.Url,
-                        CloudinaryPublicId = model.PublicId
-                    };
-                }
-
-                return null;
-            }
-
-            if (model != null)
-            {
-                // Update
-
-                // Delete old image
-                await DeleteAsync(oldValue.CloudinaryPublicId!);
-
-                return new Image
-                {
-                    Id = oldValue.Id,
-                    Url = model.Url,
-                    CloudinaryPublicId = model.PublicId
-                };
-            }
-
-            // Delete
-            await DeleteAsync(oldValue.CloudinaryPublicId!);
-
-            return null;
-        }
-
         public async Task<List<T>> GetUpdatedValueAsync<T>(List<T>? oldValues, List<CloudinaryImageModel>? models)
             where T : Image, new()
         {
@@ -110,7 +72,9 @@ namespace WhyNotEarth.Meredith.Cloudinary
                     result.Add(new T
                     {
                         CloudinaryPublicId = model.PublicId,
-                        Url = model.Url
+                        Url = model.Url,
+                        Width = model.Width,
+                        Height = model.Height
                     });
                 }
             }
@@ -153,7 +117,12 @@ namespace WhyNotEarth.Meredith.Cloudinary
                     result.Add(new T
                     {
                         CloudinaryPublicId = model.PublicId,
-                        Url = model.Url
+                        Url = model.Url,
+                        Width = model.Width!.Value,
+                        Height = model.Height!.Value,
+                        Duration = model.Duration!.Value,
+                        Format = model.Format,
+                        ThumbnailUrl = model.ThumbnailUrl
                     });
                 }
             }

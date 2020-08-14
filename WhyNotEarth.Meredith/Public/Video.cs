@@ -7,5 +7,15 @@ namespace WhyNotEarth.Meredith.Public
         public string CloudinaryPublicId { get; set; } = null!;
 
         public string Url { get; set; } = null!;
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public double Duration { get; set; }
+
+        public string Format { get; set; } = null!;
+
+        public string ThumbnailUrl { get; set; } = null!;
     }
 }
