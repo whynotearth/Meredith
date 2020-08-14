@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;

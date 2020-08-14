@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using WhyNotEarth.Meredith.Identity;
 
 namespace WhyNotEarth.Meredith.App.Auth

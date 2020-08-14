@@ -1,6 +1,6 @@
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Page;
 using WhyNotEarth.Meredith.Hotel;
 

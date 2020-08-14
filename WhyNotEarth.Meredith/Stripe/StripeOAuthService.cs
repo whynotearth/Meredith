@@ -1,23 +1,20 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Stripe;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Stripe.Data;
 
 namespace WhyNotEarth.Meredith.Stripe
 {
-    using System;
-    using System.Threading.Tasks;
-    using Data;
-    using global::Stripe;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-
     public class StripeOAuthService : StripeServiceBase
     {
-        protected IDbContext IDbContext { get; }
+        private readonly IDbContext _dbContext;
 
-
-        public StripeOAuthService(IOptions<StripeOptions> stripeOptions,
-            IDbContext IDbContext) : base(stripeOptions)
+        public StripeOAuthService(IOptions<StripeOptions> stripeOptions, IDbContext dbContext) : base(stripeOptions)
         {
-            IDbContext = IDbContext;
+            _dbContext = dbContext;
         }
 
         public string GetOAuthRegisterUrl(Guid requestId)
@@ -28,7 +25,7 @@ namespace WhyNotEarth.Meredith.Stripe
 
         public async Task Register(Guid requestId, string code)
         {
-            var request = await IDbContext.StripeOAuthRequests.FirstOrDefaultAsync(s => s.Id == requestId);
+            var request = await _dbContext.StripeOAuthRequests.FirstOrDefaultAsync(s => s.Id == requestId);
             if (request == null)
             {
                 throw new Exception("Invalid request ID");
@@ -42,14 +39,14 @@ namespace WhyNotEarth.Meredith.Stripe
                 GrantType = "authorization_code"
             }, GetRequestOptions());
             var stripeAccount =
-                await IDbContext.StripeAccounts.FirstOrDefaultAsync(s => s.CompanyId == request.CompanyId);
+                await _dbContext.StripeAccounts.FirstOrDefaultAsync(s => s.CompanyId == request.CompanyId);
             if (stripeAccount == null)
             {
                 stripeAccount = new StripeAccount
                 {
                     CompanyId = request.CompanyId
                 };
-                IDbContext.StripeAccounts.Add(stripeAccount);
+                _dbContext.StripeAccounts.Add(stripeAccount);
             }
 
             stripeAccount.AccessToken = oAuthToken.AccessToken;
@@ -59,8 +56,8 @@ namespace WhyNotEarth.Meredith.Stripe
             stripeAccount.StripePublishableKey = oAuthToken.StripePublishableKey;
             stripeAccount.StripeUserId = oAuthToken.StripeUserId;
             stripeAccount.Scope = oAuthToken.Scope;
-            IDbContext.StripeOAuthRequests.Remove(request);
-            await IDbContext.SaveChangesAsync();
+            _dbContext.StripeOAuthRequests.Remove(request);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

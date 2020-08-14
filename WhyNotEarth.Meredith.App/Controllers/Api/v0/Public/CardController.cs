@@ -1,6 +1,6 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public

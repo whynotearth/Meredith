@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Price;
 using WhyNotEarth.Meredith.Hotel;

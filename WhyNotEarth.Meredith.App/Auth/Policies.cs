@@ -9,4 +9,3 @@
         public const string ManageTenant = "ManageTenant";
     }
 }
-

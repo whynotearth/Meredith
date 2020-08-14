@@ -13,6 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhyNotEarth.Meredith.Persis
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{53F6DC21-5E64-43FF-8AD8-805B733EC578}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		.azure\cd.yml = .azure\cd.yml
 		.azure\ci.yml = .azure\ci.yml

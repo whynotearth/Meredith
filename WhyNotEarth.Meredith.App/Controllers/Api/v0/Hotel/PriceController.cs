@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Price;
 using WhyNotEarth.Meredith.Hotel;
 

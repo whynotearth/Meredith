@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Persistence.Models

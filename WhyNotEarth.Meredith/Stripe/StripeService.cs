@@ -10,12 +10,8 @@ namespace WhyNotEarth.Meredith.Stripe
 {
     public class StripeService : StripeServiceBase, IStripeService
     {
-        protected IDbContext IDbContext { get; }
-
-        public StripeService(IOptions<StripeOptions> stripeOptions,
-            IDbContext IDbContext) : base(stripeOptions)
+        public StripeService(IOptions<StripeOptions> stripeOptions) : base(stripeOptions)
         {
-            IDbContext = IDbContext;
         }
 
         public async Task<PaymentIntent> CreatePaymentIntent(string stripeAccountId, decimal amount, string email,
