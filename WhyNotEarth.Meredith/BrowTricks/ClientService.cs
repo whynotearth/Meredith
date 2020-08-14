@@ -117,7 +117,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             if (client.User is null)
             {
-                client.User = await GetOrCreateUserAsync(model);
+                var user = await GetOrCreateUserAsync(model);
+                client.UserId = user.Id;
             }
             else
             {
