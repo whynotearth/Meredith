@@ -57,6 +57,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         private async Task SendPmuCompletionNotificationAsync(Client client)
         {
+            if (string.IsNullOrWhiteSpace(client.User.PhoneNumber))
+            {
+                return;
+            }
+
             var pdfUrl = await _fileService.GetPrivateUrlAsync(client.PmuPdf!);
 
             var shortMessage = _pmuNotifications.GetCompletionNotification(client.Tenant, client.User, pdfUrl);
