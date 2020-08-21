@@ -3,28 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Markdig;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Makrdown;
 using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Email
 {
     public class EmailService : IEmailService
     {
-        private readonly IDbContext _IDbContext;
+        private readonly IDbContext _dbContext;
         private readonly SendGridService _sendGridService;
+        private readonly IMarkdownService _markdownService;
 
-        public EmailService(IDbContext IDbContext, SendGridService sendGridService)
+        public EmailService(IDbContext dbContext, SendGridService sendGridService, IMarkdownService markdownService)
         {
-            _IDbContext = IDbContext;
+            _dbContext = dbContext;
             _sendGridService = sendGridService;
+            _markdownService = markdownService;
         }
 
         public async Task SendReservationEmail(HotelReservation hotelReservation, RoomType roomType, IEnumerable<HotelPrice> dailyPrices,
             decimal vatAmount, int paidDays, string? country, string phoneNumber)
         {
-            var hotel = await _IDbContext.Hotels
+            var hotel = await _dbContext.Hotels
                 .Include(item => item.Translations)
                 .ThenInclude(item => item.Language)
                 .Include(item => item.Page)
@@ -53,7 +55,7 @@ namespace WhyNotEarth.Meredith.Email
                 resort = new
                 {
                     featuredImage = hotel.Page.FeaturedImage,
-                    h2 = hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Title
+                    h2 = hotel.Page.Translations?.FirstOrDefault(t => t.Language.Culture == "en-US")?.Title
                 },
                 numberOfGuests = hotelReservation.NumberOfGuests,
                 checkIn = hotelReservation.Start.ToString("ddd, d MMM"),
@@ -87,12 +89,15 @@ namespace WhyNotEarth.Meredith.Email
         {
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append($"<div>{Markdown.ToHtml(hotel.Page.Translations.FirstOrDefault(t => t.Language.Culture == "en-US")?.Description)}</div>");
+            var html = _markdownService.ToHtml(
+                hotel.Page.Translations?.FirstOrDefault(t => t.Language.Culture == "en-US")?.Description ??
+                string.Empty);
+            stringBuilder.Append($"<div>{html}</div>");
             stringBuilder.Append("<div>");
 
             var values = hotel.Spaces?.SelectMany(item => item.Translations)
                 .Where(item => item.Language.Culture == "en-US")
-                .Select(item => item.Name ?? string.Empty)?.ToList() ?? new List<string>();
+                .Select(item => item.Name ?? string.Empty).ToList() ?? new List<string>();
 
             AddSection("Spaces", values, stringBuilder);
 
@@ -112,7 +117,7 @@ namespace WhyNotEarth.Meredith.Email
                 .Select(item => item.GettingAround ?? string.Empty).ToList() ?? new List<string>();
 
             stringBuilder.Append("<!-- getting around -->");
-            stringBuilder.Append($"<div>{string.Join("\n", values.Select(item => Markdown.ToHtml(item)))}</div>");
+            stringBuilder.Append($"<div>{string.Join("\n", values.Select(item => _markdownService.ToHtml(item)))}</div>");
 
             stringBuilder.Append("</div>");
 
@@ -130,7 +135,7 @@ namespace WhyNotEarth.Meredith.Email
                 <!-- {header} -->
                 <div>
                   <h2>{header}</h2>
-                  {string.Join("\n", values.Select(item => Markdown.ToHtml(item)))}
+                  {string.Join("\n", values.Select(item => _markdownService.ToHtml(item)))}
                 </div>"
             );
         }

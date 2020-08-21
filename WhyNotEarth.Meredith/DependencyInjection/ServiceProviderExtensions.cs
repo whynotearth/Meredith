@@ -9,7 +9,9 @@ using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Jobs.Public;
 using WhyNotEarth.Meredith.Jobs.Volkswagen;
+using WhyNotEarth.Meredith.Makrdown;
 using WhyNotEarth.Meredith.Pages;
+using WhyNotEarth.Meredith.Pdf;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Shop;
@@ -43,7 +45,9 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IFileService, FileService>()
                 .AddScoped<ICloudinaryService, CloudinaryService>()
                 .AddScoped<IHelloSignService, HelloSignService>()
-                .AddScoped<ITwilioService, TwilioService>();
+                .AddScoped<ITwilioService, TwilioService>()
+                .AddScoped<IMarkdownService, MarkdownService>()
+                .AddScoped<IHtmlService, HtmlService>();
 
             // Hotel
             serviceCollection
@@ -67,7 +71,6 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<JumpStartEmailTemplateService>()
                 .AddScoped<RecipientService>()
                 .AddScoped<JumpStartPreviewService>()
-                .AddScoped<PuppeteerService>()
                 .AddScoped<JumpStartPlanService>()
                 .AddScoped<JumpStartMarkdownService>()
                 .AddScoped<NewJumpStartService>()

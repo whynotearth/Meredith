@@ -5,6 +5,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.Jobs.Public;
+using WhyNotEarth.Meredith.Pdf;
 using WhyNotEarth.Meredith.Volkswagen;
 
 namespace WhyNotEarth.Meredith.Jobs.Volkswagen
@@ -14,15 +15,18 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IDbContext _dbContext;
         private readonly GoogleStorageService _googleStorageService;
-        private readonly PuppeteerService _puppeteerService;
+        private readonly IHtmlService _htmlService;
+        private readonly JumpStartEmailTemplateService _jumpStartEmailTemplateService;
 
         public JumpStartPdfJob(IDbContext dbContext, GoogleStorageService googleStorageService,
-            IBackgroundJobClient backgroundJobClient, PuppeteerService puppeteerService)
+            IBackgroundJobClient backgroundJobClient, JumpStartEmailTemplateService jumpStartEmailTemplateService,
+            IHtmlService htmlService)
         {
             _dbContext = dbContext;
             _googleStorageService = googleStorageService;
             _backgroundJobClient = backgroundJobClient;
-            _puppeteerService = puppeteerService;
+            _jumpStartEmailTemplateService = jumpStartEmailTemplateService;
+            _htmlService = htmlService;
         }
 
         public async Task CreatePdfAsync(int jumpStartId)
@@ -37,12 +41,13 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             }
 
             var articles = await _dbContext.Articles
-                    .Include(item => item.Category)
-                    .ThenInclude(item => item.Image)
-                    .Where(item => item.Date == jumpStart.DateTime.Date)
-                    .OrderBy(item => item.Order).ToListAsync();
+                .Include(item => item.Category)
+                .ThenInclude(item => item.Image)
+                .Where(item => item.Date == jumpStart.DateTime.Date)
+                .OrderBy(item => item.Order).ToListAsync();
 
-            var pdfData = await _puppeteerService.BuildPdfAsync(jumpStart.DateTime, articles);
+            var emailTemplate = _jumpStartEmailTemplateService.GetPdfHtml(jumpStart.DateTime, articles);
+            var pdfData = await _htmlService.ToPdfAsync(emailTemplate);
 
             await UploadPdfAsync(jumpStart, pdfData);
 
@@ -62,7 +67,8 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
 
         private async Task UploadPdfAsync(JumpStart jumpStart, byte[] pdfData)
         {
-            await _googleStorageService.UploadFileAsync(GetName(jumpStart), "application/pdf", new MemoryStream(pdfData));
+            await _googleStorageService.UploadFileAsync(GetName(jumpStart), "application/pdf",
+                new MemoryStream(pdfData));
         }
 
         private string GetName(JumpStart jumpStart)
