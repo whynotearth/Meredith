@@ -11,6 +11,8 @@ using HelloSign;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Makrdown;
+using WhyNotEarth.Meredith.Pdf;
 using WhyNotEarth.Meredith.Public;
 using Client = WhyNotEarth.Meredith.BrowTricks.Client;
 
@@ -18,12 +20,20 @@ namespace WhyNotEarth.Meredith.HelloSign
 {
     internal class HelloSignService : IHelloSignService
     {
+        // https://app.hellosign.com/api/textTagsWalkthrough
+        // https://app.hellosign.com/api/embeddedTest
+
         private readonly IDbContext _dbContext;
+        private readonly IHtmlService _htmlService;
+        private readonly IMarkdownService _markdownService;
         private readonly HelloSignOptions _options;
 
-        public HelloSignService(IOptions<HelloSignOptions> options, IDbContext dbContext)
+        public HelloSignService(IOptions<HelloSignOptions> options, IDbContext dbContext, IHtmlService htmlService,
+            IMarkdownService markdownService)
         {
             _dbContext = dbContext;
+            _htmlService = htmlService;
+            _markdownService = markdownService;
             _options = options.Value;
         }
 
@@ -63,7 +73,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             };
 
             request.AddSigner(user.Email, user.FullName);
-            request.AddFile(GetTemplate(disclosures.Any()), "pmu.pdf", "application/pdf");
+            request.AddFile(await GetTemplateAsync(disclosures), "pmu.pdf", "application/pdf");
 
             // https://github.com/hellosign/hellosign-dotnet-sdk/issues/59
             var customFields = new List<CustomField>
@@ -71,7 +81,6 @@ namespace WhyNotEarth.Meredith.HelloSign
                 new CustomField("Name", user.FullName),
                 new CustomField("TenantName", tenant.Name)
             };
-            AddDisclosures(customFields, disclosures);
             apiClient.AdditionalParameters.Add("custom_fields", JsonSerializer.Serialize(customFields));
 
             var embeddedSignatureResponse =
@@ -88,31 +97,45 @@ namespace WhyNotEarth.Meredith.HelloSign
             return signUrlResponse.SignUrl;
         }
 
-        private void AddDisclosures(List<CustomField> customFields, List<Disclosure> disclosures)
+        private Task<byte[]> GetTemplateAsync(List<Disclosure> disclosures)
         {
-            if (!disclosures.Any())
-            {
-                return;
-            }
+            var templateName = "Pmu.html";
+
+            var templateHtml = GetTemplateHtml(templateName);
+
+            templateHtml = AddDisclosures(templateHtml, disclosures);
+
+            return _htmlService.ToPdfAsync(templateHtml);
+        }
+
+        private string AddDisclosures(string templateHtml, List<Disclosure> disclosures)
+        {
+            const string placeHolder = "[_Disclosures_]";
 
             var result = new StringBuilder();
 
             foreach (var disclosure in disclosures)
             {
-                result.AppendFormat("{0}\r\n\r\n", disclosure.Value);
+                var disclosureHtml = _markdownService.ToHtml(disclosure.Value);
+
+                result.AppendFormat("<p><span style=\"color: white;\">[initial|req|signer1]</span>{0}</p><br />",
+                    disclosureHtml);
             }
 
-            customFields.Add(new CustomField("Disclosures", result.ToString()));
+            return templateHtml.Replace(placeHolder, result.ToString());
         }
 
-        private byte[] GetTemplate(bool hasDisclosures)
+        private string GetTemplateHtml(string templateName)
         {
-            // https://app.hellosign.com/api/textTagsWalkthrough
-            var templateName = hasDisclosures ? "PmuWithDisclosures.pdf" : "Pmu.pdf";
-
             var assembly = typeof(HelloSignService).GetTypeInfo().Assembly;
 
             var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
+
+            if (name is null)
+            {
+                throw new Exception($"Missing {templateName} resource.");
+            }
+
             var stream = assembly.GetManifestResourceStream(name);
 
             if (stream is null)
@@ -120,10 +143,9 @@ namespace WhyNotEarth.Meredith.HelloSign
                 throw new Exception($"Missing {templateName} resource.");
             }
 
-            using var memoryStream = new MemoryStream();
-            stream.CopyTo(memoryStream);
+            var reader = new StreamReader(stream);
 
-            return memoryStream.ToArray();
+            return reader.ReadToEnd();
         }
 
         private class CustomField
