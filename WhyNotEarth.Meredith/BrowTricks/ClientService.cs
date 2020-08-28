@@ -87,28 +87,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
-        public async Task<List<ClientImage>> GetAllImages(string tenantSlug, User user)
-        {
-            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
-
-            return await _dbContext.Images
-                .OfType<ClientImage>()
-                .Include(item => item.Client)
-                .Where(item => item.Client!.TenantId == tenant.Id)
-                .ToListAsync();
-        }
-
-        public async Task<List<ClientVideo>> GetAllVideos(string tenantSlug, User user)
-        {
-            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
-
-            return await _dbContext.Videos
-                .OfType<ClientVideo>()
-                .Include(item => item.Client)
-                .Where(item => item.Client!.TenantId == tenant.Id)
-                .ToListAsync();
-        }
-
         private async Task<User> GetOrCreateUserAsync(ClientModel model)
         {
             var user = await _userService.GetUserAsync(model.Email);

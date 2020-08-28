@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.Identity
     {
         Task<User> GetUserAsync(ClaimsPrincipal principal);
 
-        Task<User> GetUserAsync(string email);
+        Task<User?> GetUserAsync(string email);
 
         Task<List<User>> ListAsync(Public.Tenant tenant);
 

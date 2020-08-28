@@ -16,9 +16,5 @@ namespace WhyNotEarth.Meredith.BrowTricks
         Task ArchiveAsync(int clientId, User user);
 
         Task<Client> GetAsync(int clientId, User user);
-
-        Task<List<ClientImage>> GetAllImages(string tenantSlug, User user);
-
-        Task<List<ClientVideo>> GetAllVideos(string tenantSlug, User user);
     }
 }

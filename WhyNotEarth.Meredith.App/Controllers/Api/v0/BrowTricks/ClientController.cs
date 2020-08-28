@@ -83,7 +83,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns200]
         [Returns404]
         [HttpGet("{clientId}")]
-        public async Task<ActionResult<ClientGetResult>> Get(string tenantSlug, int clientId)
+        public async Task<ActionResult<ClientGetResult>> Get(int clientId)
         {
             var user = await GetCurrentUserAsync(_userService);
 
@@ -96,10 +96,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
                 pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
             }
 
-            var images = await _clientService.GetAllImages(tenantSlug, user);
-            var videos = await _clientService.GetAllVideos(tenantSlug, user);
-
-            return Ok(new ClientGetResult(client, pmuPdfUlr, images, videos));
+            return Ok(new ClientGetResult(client, pmuPdfUlr));
         }
 
         [Returns204]
