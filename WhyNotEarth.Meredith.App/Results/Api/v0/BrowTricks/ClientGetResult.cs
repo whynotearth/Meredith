@@ -30,7 +30,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public List<VideoResult>? Videos { get; }
 
-        public ClientGetResult(Client client, string? pmuPdfUrl)
+        public ClientGetResult(Client client, string? pmuPdfUrl, List<ClientImage> images, List<ClientVideo> videos)
         {
             Id = client.Id;
             Email = client.User.Email;
@@ -41,8 +41,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             AvatarUrl = client.User.ImageUrl;
             PmuStatus = client.PmuStatus;
             PmuPdfUrl = pmuPdfUrl;
-            Images = client.Images?.Select(item => new ImageResult(item)).ToList();
-            Videos = client.Videos?.Select(item => new VideoResult(item)).ToList();
+            Images = images.Select(item => new ImageResult(item)).ToList();
+            Videos = videos.Select(item => new VideoResult(item)).ToList();
         }
     }
 }

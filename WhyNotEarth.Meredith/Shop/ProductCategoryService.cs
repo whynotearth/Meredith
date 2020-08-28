@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.Shop
                 throw new RecordNotFoundException($"Category {id} not found");
             }
 
-            await _tenantService.CheckPermissionAsync(user, category.Tenant.Slug);
+            await _tenantService.CheckOwnerAsync(user, category.Tenant.Slug);
 
             _dbContext.ProductCategories.Remove(category);
 
@@ -62,7 +62,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task CreateAsync(string tenantSlug, ProductCategoryModel model, User user)
         {
-            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             var category = Map(new ProductCategory(), model, tenant);
 
@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.Shop
 
         public async Task<ProductCategory> EditAsync(string tenantSlug, int categoryId, ProductCategoryModel model, User user)
         {
-            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             var category = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(item => item.Id == categoryId);

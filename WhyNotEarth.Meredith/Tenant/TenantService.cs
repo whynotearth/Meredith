@@ -136,7 +136,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 .FirstOrDefaultAsync(item => item.Slug == tenantSlug);
         }
 
-        public async Task<Public.Tenant> CheckPermissionAsync(User owner, string tenantSlug)
+        public async Task<Public.Tenant> CheckOwnerAsync(User owner, string tenantSlug)
         {
             var tenant =
                 await _dbContext.Tenants.FirstOrDefaultAsync(item =>
@@ -191,7 +191,7 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task SetAddressAsync(string tenantSlug, AddressModel model, User user)
         {
-            var tenant = await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await CheckOwnerAsync(user, tenantSlug);
 
             tenant.Address ??= new Address();
 
@@ -207,7 +207,7 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task SetActivityAsync(string tenantSlug, TenantActivityModel model, User user)
         {
-            var tenant = await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await CheckOwnerAsync(user, tenantSlug);
 
             tenant.IsActive = model.IsActive!.Value;
 
@@ -217,7 +217,7 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public async Task EditAsync(string tenantSlug, TenantEditModel model, User user)
         {
-            var tenant = await CheckPermissionAsync(user, tenantSlug);
+            var tenant = await CheckOwnerAsync(user, tenantSlug);
 
             tenant = Map(tenant, model);
 

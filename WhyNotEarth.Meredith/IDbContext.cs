@@ -26,6 +26,8 @@ namespace WhyNotEarth.Meredith
 
         public DbSet<Image> Images { get; set; }
 
+        public DbSet<Video> Videos { get; set; }
+
         public DbSet<Page> Pages { get; set; }
 
         public DbSet<SendGridAccount> SendGridAccounts { get; set; }
@@ -47,10 +49,6 @@ namespace WhyNotEarth.Meredith
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }
-
-        /*public DbSet<IdentityRoleClaim<int>> RoleClaims { get; set; }
-
-        public DbSet<IdentityUserRole<int>> UserRoles { get; set; }*/
 
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; }

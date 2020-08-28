@@ -99,7 +99,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         private Task<byte[]> GetTemplateAsync(List<Disclosure> disclosures)
         {
-            var templateName = "Pmu.html";
+            const string templateName = "Pmu.html";
 
             var templateHtml = GetTemplateHtml(templateName);
 

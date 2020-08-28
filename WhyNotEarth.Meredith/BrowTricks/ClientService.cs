@@ -30,7 +30,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task CreateAsync(string tenantSlug, ClientModel model, User user)
         {
-            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             var client = await MapClientAsync(new Client(), model, tenant);
             client.PmuStatus = PmuStatusType.Incomplete;
@@ -51,7 +51,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task<List<Client>> GetListAsync(string tenantSlug, User user)
         {
-            var tenant = await _tenantService.CheckPermissionAsync(user, tenantSlug);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             return await _dbContext.Clients
                 .Include(item => item.User)
@@ -85,6 +85,28 @@ namespace WhyNotEarth.Meredith.BrowTricks
             await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
             return client;
+        }
+
+        public async Task<List<ClientImage>> GetAllImages(string tenantSlug, User user)
+        {
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+
+            return await _dbContext.Images
+                .OfType<ClientImage>()
+                .Include(item => item.Client)
+                .Where(item => item.Client!.TenantId == tenant.Id)
+                .ToListAsync();
+        }
+
+        public async Task<List<ClientVideo>> GetAllVideos(string tenantSlug, User user)
+        {
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+
+            return await _dbContext.Videos
+                .OfType<ClientVideo>()
+                .Include(item => item.Client)
+                .Where(item => item.Client!.TenantId == tenant.Id)
+                .ToListAsync();
         }
 
         private async Task<User> GetOrCreateUserAsync(ClientModel model)

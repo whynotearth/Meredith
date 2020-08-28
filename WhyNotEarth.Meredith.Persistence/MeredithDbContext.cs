@@ -23,6 +23,8 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<Image> Images { get; set; } = null!;
 
+        public DbSet<Video> Videos { get; set; } = null!;
+
         public DbSet<Page> Pages { get; set; } = null!;
 
         public DbSet<SendGridAccount> SendGridAccounts { get; set; } = null!;
