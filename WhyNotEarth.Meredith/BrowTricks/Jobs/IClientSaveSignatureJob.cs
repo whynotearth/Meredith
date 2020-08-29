@@ -4,6 +4,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 {
     public interface IClientSaveSignatureJob
     {
-        Task SaveSignature(string signatureRequestId);
+        Task SaveSignature(int clientId);
     }
 }

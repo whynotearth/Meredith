@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
 
-        public int ClientId { get; set; }
+        public int TenantId { get; set; }
 
-        public Client Client { get; set; } = null!;
+        public Public.Tenant Tenant { get; set; } = null!;
 
         public string Value { get; set; } = null!;
     }

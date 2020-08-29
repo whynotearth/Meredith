@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using WhyNotEarth.Meredith.Public;
 
@@ -28,9 +29,10 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public bool IsArchived { get; set; }
 
-        public string? SignatureRequestId { get; set; }
-
         public string? PmuPdf { get; set; }
+
+        public DateTime? SignedAt { get; set; }
+
     }
 
     public class ClientImage : Image

@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IFileService, FileService>()
                 .AddScoped<ICloudinaryService, CloudinaryService>()
-                .AddScoped<IHelloSignService, HelloSignService>()
+                .AddScoped<IPmuPdfService, PmuPdfService>()
                 .AddScoped<ITwilioService, TwilioService>()
                 .AddScoped<IMarkdownService, MarkdownService>()
                 .AddScoped<IHtmlService, HtmlService>();
@@ -89,7 +89,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IClientSaveSignatureJob, ClientSaveSignatureJob>()
                 .AddScoped<ClientNoteService>()
                 .AddScoped<PmuNotifications>()
-                .AddScoped<IBrowTricksTenantService, BrowTricksTenantService>();
+                .AddScoped<IBrowTricksTenantService, BrowTricksTenantService>()
+                .AddScoped<IDisclosureService, DisclosureService>();
 
             return serviceCollection;
         }

@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.GoogleCloud;
 using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Twilio;
@@ -14,38 +15,38 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IDbContext _dbContext;
         private readonly IFileService _fileService;
-        private readonly GoogleStorageService _googleStorageService;
-        private readonly IHelloSignService _helloSignService;
         private readonly PmuNotifications _pmuNotifications;
+        private readonly IPmuPdfService _pmuPdfService;
 
-        public ClientSaveSignatureJob(IDbContext dbContext, IHelloSignService helloSignService,
-            GoogleStorageService googleStorageService, PmuNotifications pmuNotifications,
+        public ClientSaveSignatureJob(IDbContext dbContext, IPmuPdfService pmuPdfService, PmuNotifications pmuNotifications,
             IBackgroundJobClient backgroundJobClient, IFileService fileService)
         {
             _dbContext = dbContext;
-            _helloSignService = helloSignService;
-            _googleStorageService = googleStorageService;
+            _pmuPdfService = pmuPdfService;
             _pmuNotifications = pmuNotifications;
             _backgroundJobClient = backgroundJobClient;
             _fileService = fileService;
         }
 
-        public async Task SaveSignature(string signatureRequestId)
+        public async Task SaveSignature(int clientId)
         {
             var client = await _dbContext.Clients
-                    .Include(item => item.Tenant)
-                    .Include(item => item.User)
-                    .FirstOrDefaultAsync(item => item.SignatureRequestId == signatureRequestId);
+                .Include(item => item.Tenant)
+                .Include(item => item.User)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
 
             if (client is null)
             {
                 return;
             }
 
-            var pdfData = _helloSignService.DownloadSignature(signatureRequestId);
+            var disclosures =
+                await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
-            var path = GetFilePath(client);
-            await _googleStorageService.UploadFileAsync(path, "application/pdf", new MemoryStream(pdfData));
+            var pdfData = await _pmuPdfService.GetPdfAsync(disclosures);
+
+            var path = await _fileService.SaveAsync(BrowTricksCompany.Slug, GetFilePath(client), "application/pdf",
+                new MemoryStream(pdfData));
 
             client.PmuPdf = path;
             client.PmuStatus = PmuStatusType.Completed;
@@ -73,9 +74,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
                 service.SendAsync(shortMessage.Id));
         }
 
-        private string GetFilePath(Client client)
+        private List<string> GetFilePath(Client client)
         {
-            return string.Join("/", BrowTricksCompany.Slug, "pmu", client.Id.ToString());
+            return new List<string>
+            {
+                "pmu",
+                client.Id.ToString()
+            };
         }
     }
 }

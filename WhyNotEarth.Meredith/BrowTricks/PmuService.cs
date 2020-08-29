@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Jobs;
-using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.HelloSign;
 using WhyNotEarth.Meredith.Identity;
@@ -18,24 +18,24 @@ namespace WhyNotEarth.Meredith.BrowTricks
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IDbContext _dbContext;
-        private readonly IHelloSignService _helloSignService;
+        private readonly IPmuPdfService _pmuPdfService;
         private readonly PmuNotifications _pmuNotifications;
         private readonly TenantService _tenantService;
         private readonly IUserService _userService;
 
         public PmuService(IUserService userService, IDbContext dbContext, TenantService tenantService,
-            IHelloSignService helloSignService, PmuNotifications pmuNotifications,
+            IPmuPdfService pmuPdfService, PmuNotifications pmuNotifications,
             IBackgroundJobClient backgroundJobClient)
         {
             _userService = userService;
             _dbContext = dbContext;
             _tenantService = tenantService;
-            _helloSignService = helloSignService;
+            _pmuPdfService = pmuPdfService;
             _pmuNotifications = pmuNotifications;
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public async Task<string> SetAsync(int clientId, ClientPmuModel model, User user)
+        public async Task<byte[]> GetPdfAsync(int clientId, User user)
         {
             var client = await ValidateOwnerOrSelf(clientId, user);
 
@@ -44,26 +44,20 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new InvalidActionException("This client is already signed their PMU form");
             }
 
-            var oldValues = await _dbContext.Disclosures.Where(item => item.ClientId == clientId).ToListAsync();
-            _dbContext.Disclosures.RemoveRange(oldValues);
+            var disclosures = await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
-            var disclosures = model.Disclosures.Select(item => new Disclosure
-            {
-                ClientId = clientId,
-                Value = item
-            });
-
-            _dbContext.Disclosures.AddRange(disclosures);
-            await _dbContext.SaveChangesAsync();
-
-            return await _helloSignService.GetSignatureRequestAsync(client, client.User, client.Tenant);
+            return await _pmuPdfService.GetPdfAsync(disclosures);
         }
 
-        public async Task SetSignedAsync(int clientId, User user)
+        public async Task SignAsync(int clientId, User user)
         {
             var client = await ValidateOwnerOrSelf(clientId, user);
 
             client.PmuStatus = PmuStatusType.Saving;
+            client.SignedAt = DateTime.UtcNow;
+
+            _backgroundJobClient.Enqueue<IClientSaveSignatureJob>(service =>
+                service.SaveSignature(clientId));
 
             _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
@@ -97,19 +91,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
             _backgroundJobClient.Enqueue<ITwilioService>(service =>
                 service.SendAsync(shortMessage.Id));
-        }
-
-        public void ProcessHelloSignCallback(string json)
-        {
-            var signatureRequestId = _helloSignService.GetDownloadableSignaturesAsync(json);
-
-            if (signatureRequestId is null)
-            {
-                return;
-            }
-
-            _backgroundJobClient.Enqueue<IClientSaveSignatureJob>(service =>
-                service.SaveSignature(signatureRequestId));
         }
 
         private async Task<string> GetFormUrlAsync(string callbackUrl, User user)
