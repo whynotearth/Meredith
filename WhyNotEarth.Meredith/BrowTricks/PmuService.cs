@@ -17,15 +17,15 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class PmuService : IPmuService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly ILoginTokenService _loginTokenService;
         private readonly IDbContext _dbContext;
-        private readonly IPmuPdfService _pmuPdfService;
+        private readonly ILoginTokenService _loginTokenService;
         private readonly PmuNotifications _pmuNotifications;
+        private readonly IPmuPdfService _pmuPdfService;
         private readonly TenantService _tenantService;
 
-        public PmuService(IDbContext dbContext, TenantService tenantService,
-            IPmuPdfService pmuPdfService, PmuNotifications pmuNotifications,
-            IBackgroundJobClient backgroundJobClient, ILoginTokenService loginTokenService)
+        public PmuService(IDbContext dbContext, TenantService tenantService, IPmuPdfService pmuPdfService,
+            PmuNotifications pmuNotifications, IBackgroundJobClient backgroundJobClient,
+            ILoginTokenService loginTokenService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
@@ -44,7 +44,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new InvalidActionException("This client is already signed their PMU form");
             }
 
-            var disclosures = await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
+            var disclosures =
+                await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
             return await _pmuPdfService.GetPngAsync(client.Tenant, disclosures);
         }

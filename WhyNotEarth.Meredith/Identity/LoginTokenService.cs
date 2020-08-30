@@ -44,9 +44,9 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<User?> ValidateTokenAsync(string token)
         {
-            var loginToken =
-                await _dbContext.LoginTokens.FirstOrDefaultAsync(item =>
-                    item.Token == token && DateTime.UtcNow <= item.ExpiresAt);
+            var loginToken = await _dbContext.LoginTokens
+                .Include(item => item.User)
+                .FirstOrDefaultAsync(item => item.Token == token && DateTime.UtcNow <= item.ExpiresAt);
 
             return loginToken?.User;
         }
