@@ -41,7 +41,18 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task EditAsync(int clientId, ClientModel model, User user)
         {
-            var client = await GetAsync(clientId, user);
+            var client = await _dbContext.Clients
+                .Include(item => item.User)
+                .Include(item => item.Images)
+                .Include(item => item.Videos)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
             client = await MapClientAsync(client, model);
 
@@ -61,7 +72,14 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task ArchiveAsync(int clientId, User user)
         {
-            var client = await GetAsync(clientId, user);
+            var client = await _dbContext.Clients.FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
             client.IsArchived = true;
 
@@ -75,6 +93,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 .Include(item => item.User)
                 .Include(item => item.Images)
                 .Include(item => item.Videos)
+                .Include(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
             if (client is null)
@@ -82,7 +101,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
 
-            await _tenantService.CheckOwnerAsync(user, client.TenantId);
+            ValidateOwnerOrSelf(client, user);
 
             return client;
         }
@@ -136,6 +155,23 @@ namespace WhyNotEarth.Meredith.BrowTricks
             client.Videos = await _cloudinaryService.GetUpdatedValueAsync(client.Videos, model.Videos);
 
             return client;
+        }
+
+        private void ValidateOwnerOrSelf(Client client, User user)
+        {
+            if (client.UserId == user.Id)
+            {
+                // It's the user itself
+                return;
+            }
+
+            if (client.Tenant.OwnerId == user.Id)
+            {
+                // It's the owner
+                return;
+            }
+
+            throw new ForbiddenException();
         }
     }
 }
