@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 {
     public interface IPmuService
     {
-        Task<byte[]> GetPdfAsync(int clientId, User user);
+        Task<byte[]> GetPngAsync(int clientId, User user);
 
         Task SignAsync(int clientId, User user);
 

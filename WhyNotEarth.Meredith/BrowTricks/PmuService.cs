@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             _backgroundJobClient = backgroundJobClient;
         }
 
-        public async Task<byte[]> GetPdfAsync(int clientId, User user)
+        public async Task<byte[]> GetPngAsync(int clientId, User user)
         {
             var client = await ValidateOwnerOrSelf(clientId, user);
 
@@ -46,12 +46,17 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
             var disclosures = await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
-            return await _pmuPdfService.GetPdfAsync(disclosures);
+            return await _pmuPdfService.GetPngAsync(disclosures);
         }
 
         public async Task SignAsync(int clientId, User user)
         {
             var client = await ValidateOwnerOrSelf(clientId, user);
+
+            if (client.PmuStatus != PmuStatusType.Incomplete)
+            {
+                throw new InvalidActionException("This client is already signed their PMU form");
+            }
 
             client.PmuStatus = PmuStatusType.Saving;
             client.SignedAt = DateTime.UtcNow;

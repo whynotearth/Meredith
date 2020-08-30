@@ -65,6 +65,12 @@ namespace WhyNotEarth.Meredith.App.Mvc
         }
 
         [NonAction]
+        public IActionResult Based64Png(byte[] data, IWebHostEnvironment environment)
+        {
+            return Based64File(data, "image/png", "png", environment);
+        }
+
+        [NonAction]
         public IActionResult Based64File(byte[] data, string contentType, string extension, IWebHostEnvironment environment)
         {
             if (environment.IsDevelopment())

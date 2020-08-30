@@ -35,9 +35,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var data = await _pmuService.GetPdfAsync(clientId, user);
+            var data = await _pmuService.GetPngAsync(clientId, user);
 
-            return Based64Pdf(data, _environment);
+            return Based64Png(data, _environment);
         }
 
         [Authorize]

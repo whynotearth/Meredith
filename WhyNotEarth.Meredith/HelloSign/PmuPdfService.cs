@@ -24,13 +24,27 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         public Task<byte[]> GetPdfAsync(List<Disclosure> disclosures)
         {
+            var templateHtml = GetTemplateHtml(disclosures);
+
+            return _htmlService.ToPdfAsync(templateHtml);
+        }
+
+        public Task<byte[]> GetPngAsync(List<Disclosure> disclosures)
+        {
+            var templateHtml = GetTemplateHtml(disclosures);
+
+            return _htmlService.ToPngAsync(templateHtml);
+        }
+
+        private string GetTemplateHtml(List<Disclosure> disclosures)
+        {
             const string templateName = "Pmu.html";
 
             var templateHtml = GetTemplateHtml(templateName);
 
             templateHtml = AddDisclosures(templateHtml, disclosures);
 
-            return _htmlService.ToPdfAsync(templateHtml);
+            return templateHtml;
         }
 
         private string AddDisclosures(string templateHtml, List<Disclosure> disclosures)
