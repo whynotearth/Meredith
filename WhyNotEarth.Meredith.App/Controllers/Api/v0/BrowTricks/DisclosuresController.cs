@@ -16,7 +16,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [Returns403]
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.ManageTenant)]
     [Route("api/v0/browtricks/tenants/{tenantSlug}/disclosures")]
     public class DisclosuresController : BaseController
     {
@@ -31,6 +30,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns204]
         [HttpPost("")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<NoContentResult> Create(string tenantSlug, DisclosureModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -40,6 +40,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
+        [Authorize]
         [Returns200]
         [HttpGet("")]
         public async Task<ActionResult<List<DisclosureResult>>> List(string tenantSlug)

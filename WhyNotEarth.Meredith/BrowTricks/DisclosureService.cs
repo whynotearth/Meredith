@@ -60,9 +60,35 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task<List<Disclosure>> ListAsync(string tenantSlug, User user)
         {
-            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+            await ValidateOwnerOrClient(tenantSlug, user);
 
-            return await _dbContext.Disclosures.Where(item => item.TenantId == tenant.Id).ToListAsync();
+            return await _dbContext.Disclosures
+                .Include(item => item.Tenant)
+                .Where(item => item.Tenant.Slug == tenantSlug)
+                .ToListAsync();
+        }
+
+        private async Task ValidateOwnerOrClient(string tenantSlug, User user)
+        {
+            var tenant = await _dbContext.Tenants
+                .FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
+
+            // It's the owner
+            if (tenant != null)
+            {
+                return;
+            }
+
+            var client = await _dbContext.Clients
+                .Include(item => item.Tenant)
+                .FirstOrDefaultAsync(item => item.UserId == user.Id && item.Tenant.Slug == tenantSlug);
+
+            if (client != null)
+            {
+                return;
+            }
+
+            throw new ForbiddenException();
         }
     }
 }
