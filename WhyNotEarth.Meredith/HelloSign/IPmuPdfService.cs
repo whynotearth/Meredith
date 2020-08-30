@@ -6,8 +6,8 @@ namespace WhyNotEarth.Meredith.HelloSign
 {
     public interface IPmuPdfService
     {
-        public Task<byte[]> GetPdfAsync(List<Disclosure> disclosures);
+        public Task<byte[]> GetPdfAsync(Public.Tenant tenant, List<Disclosure> disclosures);
 
-        public Task<byte[]> GetPngAsync(List<Disclosure> disclosures);
+        public Task<byte[]> GetPngAsync(Public.Tenant tenant, List<Disclosure> disclosures);
     }
 }

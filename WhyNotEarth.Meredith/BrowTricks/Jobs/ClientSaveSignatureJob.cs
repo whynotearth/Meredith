@@ -43,7 +43,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
             var disclosures =
                 await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
-            var pdfData = await _pmuPdfService.GetPdfAsync(disclosures);
+            var pdfData = await _pmuPdfService.GetPdfAsync(client.Tenant, disclosures);
 
             var path = await _fileService.SaveAsync(BrowTricksCompany.Slug, GetFilePath(client), "application/pdf",
                 new MemoryStream(pdfData));

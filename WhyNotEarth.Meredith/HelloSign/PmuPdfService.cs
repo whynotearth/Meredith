@@ -22,46 +22,59 @@ namespace WhyNotEarth.Meredith.HelloSign
             _markdownService = markdownService;
         }
 
-        public Task<byte[]> GetPdfAsync(List<Disclosure> disclosures)
+        public Task<byte[]> GetPdfAsync(Public.Tenant tenant, List<Disclosure> disclosures)
         {
-            var templateHtml = GetTemplateHtml(disclosures);
+            var templateHtml = GetTemplateHtml(tenant, disclosures);
 
             return _htmlService.ToPdfAsync(templateHtml);
         }
 
-        public Task<byte[]> GetPngAsync(List<Disclosure> disclosures)
+        public Task<byte[]> GetPngAsync(Public.Tenant tenant, List<Disclosure> disclosures)
         {
-            var templateHtml = GetTemplateHtml(disclosures);
+            var templateHtml = GetTemplateHtml(tenant, disclosures);
 
             return _htmlService.ToPngAsync(templateHtml);
         }
 
-        private string GetTemplateHtml(List<Disclosure> disclosures)
+        private string GetTemplateHtml(Public.Tenant tenant, List<Disclosure> disclosures)
         {
             const string templateName = "Pmu.html";
 
             var templateHtml = GetTemplateHtml(templateName);
 
-            templateHtml = AddDisclosures(templateHtml, disclosures);
+            templateHtml = FillTheTemplate(templateHtml, tenant, disclosures);
 
             return templateHtml;
         }
 
-        private string AddDisclosures(string templateHtml, List<Disclosure> disclosures)
+        private string FillTheTemplate(string templateHtml, Public.Tenant tenant, List<Disclosure> disclosures)
         {
-            const string placeHolder = "[_Disclosures_]";
+            var keyValues = new Dictionary<string, string>
+            {
+                {"[_Disclosures_]", GetDisclosures(disclosures)},
+                {"[_TenantName_]", tenant.Name}
+            };
 
+            foreach (var keyValue in keyValues)
+            {
+                templateHtml = templateHtml.Replace(keyValue.Key, keyValue.Value);
+            }
+
+            return templateHtml;
+        }
+
+        private string GetDisclosures(List<Disclosure> disclosures)
+        {
             var result = new StringBuilder();
 
             foreach (var disclosure in disclosures)
             {
                 var disclosureHtml = _markdownService.ToHtml(disclosure.Value);
 
-                result.AppendFormat("<p><span style=\"color: white;\">[initial|req|signer1]</span>{0}</p><br />",
-                    disclosureHtml);
+                result.AppendFormat("<p class=\"paragraph\">{0}</p>", disclosureHtml);
             }
 
-            return templateHtml.Replace(placeHolder, result.ToString());
+            return result.ToString();
         }
 
         private string GetTemplateHtml(string templateName)

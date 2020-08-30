@@ -22,13 +22,11 @@ namespace WhyNotEarth.Meredith.BrowTricks
         private readonly IPmuPdfService _pmuPdfService;
         private readonly PmuNotifications _pmuNotifications;
         private readonly TenantService _tenantService;
-        private readonly IUserService _userService;
 
-        public PmuService(IUserService userService, IDbContext dbContext, TenantService tenantService,
+        public PmuService(IDbContext dbContext, TenantService tenantService,
             IPmuPdfService pmuPdfService, PmuNotifications pmuNotifications,
             IBackgroundJobClient backgroundJobClient, ILoginTokenService loginTokenService)
         {
-            _userService = userService;
             _dbContext = dbContext;
             _tenantService = tenantService;
             _pmuPdfService = pmuPdfService;
@@ -48,7 +46,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
             var disclosures = await _dbContext.Disclosures.Where(item => item.TenantId == client.TenantId).ToListAsync();
 
-            return await _pmuPdfService.GetPngAsync(disclosures);
+            return await _pmuPdfService.GetPngAsync(client.Tenant, disclosures);
         }
 
         public async Task SignAsync(int clientId, User user)
