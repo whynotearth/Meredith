@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Volkswagen;
@@ -42,6 +43,8 @@ namespace WhyNotEarth.Meredith.Persistence
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
         public DbSet<ShortMessage> ShortMessages { get; set; } = null!;
+
+        public DbSet<LoginToken> LoginTokens { get; set; } = null!;
 
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; } = null!;

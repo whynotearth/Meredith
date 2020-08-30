@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Hotel;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Volkswagen;
@@ -49,6 +50,8 @@ namespace WhyNotEarth.Meredith
         public DbSet<User> Users { get; set; }
 
         public DbSet<Role> Roles { get; set; }
+
+        public DbSet<LoginToken> LoginTokens { get; set; }
 
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; }

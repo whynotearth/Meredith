@@ -17,6 +17,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class PmuService : IPmuService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly ILoginTokenService _loginTokenService;
         private readonly IDbContext _dbContext;
         private readonly IPmuPdfService _pmuPdfService;
         private readonly PmuNotifications _pmuNotifications;
@@ -25,7 +26,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public PmuService(IUserService userService, IDbContext dbContext, TenantService tenantService,
             IPmuPdfService pmuPdfService, PmuNotifications pmuNotifications,
-            IBackgroundJobClient backgroundJobClient)
+            IBackgroundJobClient backgroundJobClient, ILoginTokenService loginTokenService)
         {
             _userService = userService;
             _dbContext = dbContext;
@@ -33,6 +34,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
             _pmuPdfService = pmuPdfService;
             _pmuNotifications = pmuNotifications;
             _backgroundJobClient = backgroundJobClient;
+            _loginTokenService = loginTokenService;
         }
 
         public async Task<byte[]> GetPngAsync(int clientId, User user)
@@ -100,11 +102,11 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         private async Task<string> GetFormUrlAsync(string callbackUrl, User user)
         {
-            var jwtToken = await _userService.GenerateJwtTokenAsync(user);
+            var token = await _loginTokenService.GenerateTokenAsync(user);
 
             var finalUrl = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
             {
-                {"token", jwtToken}
+                {"token", token}
             });
 
             return finalUrl;

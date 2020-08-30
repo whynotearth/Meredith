@@ -47,7 +47,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IPmuPdfService, PmuPdfService>()
                 .AddScoped<ITwilioService, TwilioService>()
                 .AddScoped<IMarkdownService, MarkdownService>()
-                .AddScoped<IHtmlService, HtmlService>();
+                .AddScoped<IHtmlService, HtmlService>()
+                .AddScoped<ILoginTokenService, LoginTokenService>();
 
             // Hotel
             serviceCollection
