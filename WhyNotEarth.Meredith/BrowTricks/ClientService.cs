@@ -157,18 +157,57 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return client;
         }
 
-        private void ValidateOwnerOrSelf(Client client, User user)
+        public async Task<Client> ValidateOwnerOrSelf(int clientId, User user)
+        {
+            var client = await _dbContext.Clients
+                .Include(item => item.User)
+                .Include(item => item.Tenant)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            return ValidateOwnerOrSelf(client, user);
+        }
+
+        public async Task<Public.Tenant> ValidateOwnerOrClient(string tenantSlug, User user)
+        {
+            var tenant = await _dbContext.Tenants
+                .FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
+
+            if (tenant != null)
+            {
+                // It's the owner
+                return tenant;
+            }
+
+            var client = await _dbContext.Clients
+                .Include(item => item.Tenant)
+                .FirstOrDefaultAsync(item => item.Tenant.Slug == tenantSlug && item.UserId == user.Id);
+
+            if (client != null)
+            {
+                // It's one of the clients
+                return client.Tenant;
+            }
+
+            throw new ForbiddenException();
+        }
+
+        private Client ValidateOwnerOrSelf(Client client, User user)
         {
             if (client.UserId == user.Id)
             {
                 // It's the user itself
-                return;
+                return client;
             }
 
             if (client.Tenant.OwnerId == user.Id)
             {
                 // It's the owner
-                return;
+                return client;
             }
 
             throw new ForbiddenException();

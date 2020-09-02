@@ -17,6 +17,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
     internal class PmuService : IPmuService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IClientService _clientService;
         private readonly IDbContext _dbContext;
         private readonly ILoginTokenService _loginTokenService;
         private readonly PmuNotifications _pmuNotifications;
@@ -25,7 +26,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public PmuService(IDbContext dbContext, TenantService tenantService, IPmuPdfService pmuPdfService,
             PmuNotifications pmuNotifications, IBackgroundJobClient backgroundJobClient,
-            ILoginTokenService loginTokenService)
+            ILoginTokenService loginTokenService, IClientService clientService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
@@ -33,11 +34,21 @@ namespace WhyNotEarth.Meredith.BrowTricks
             _pmuNotifications = pmuNotifications;
             _backgroundJobClient = backgroundJobClient;
             _loginTokenService = loginTokenService;
+            _clientService = clientService;
+        }
+
+        public async Task<byte[]> GetPngAsync(string tenantSlug, User user)
+        {
+            var tenant = await _clientService.ValidateOwnerOrClient(tenantSlug, user);
+
+            var disclosures = await _dbContext.Disclosures.Where(item => item.TenantId == tenant.Id).ToListAsync();
+
+            return await _pmuPdfService.GetPngAsync(tenant, disclosures);
         }
 
         public async Task<byte[]> GetPngAsync(int clientId, User user)
         {
-            var client = await ValidateOwnerOrSelf(clientId, user);
+            var client = await _clientService.ValidateOwnerOrSelf(clientId, user);
 
             if (client.PmuStatus != PmuStatusType.Incomplete)
             {
@@ -52,7 +63,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public async Task SignAsync(int clientId, User user)
         {
-            var client = await ValidateOwnerOrSelf(clientId, user);
+            var client = await _clientService.ValidateOwnerOrSelf(clientId, user);
 
             if (client.PmuStatus != PmuStatusType.Incomplete)
             {
@@ -109,35 +120,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             });
 
             return finalUrl;
-        }
-
-        private async Task<Client> ValidateOwnerOrSelf(int clientId, User user)
-        {
-            var client = await _dbContext.Clients
-                .Include(item => item.User)
-                .Include(item => item.Tenant)
-                .FirstOrDefaultAsync(item => item.Id == clientId);
-
-            if (client is null)
-            {
-                throw new RecordNotFoundException($"client {clientId} not found");
-            }
-
-            if (client.UserId == user.Id)
-            {
-                // It's the user itself
-                return client;
-            }
-
-            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Id == client.TenantId);
-
-            if (tenant.OwnerId == user.Id)
-            {
-                // It's the owner
-                return client;
-            }
-
-            throw new ForbiddenException();
         }
     }
 }
