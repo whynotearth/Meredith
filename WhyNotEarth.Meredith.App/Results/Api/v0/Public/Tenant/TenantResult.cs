@@ -35,9 +35,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? PhoneNumber { get; }
 
+        public string? WhatsAppNumber { get; }
+
         public string? FacebookUrl { get; }
 
-        public string? WhatsAppNumber { get; }
+        public string? InstagramUrl { get; }
+
+        public string? YouTubeUrl { get; }
 
         public bool HasPromotion { get; }
 
@@ -57,9 +61,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             BusinessHours = tenant.BusinessHours?.Select(item => new BusinessHourResult(item))?.ToList();
             IsActive = tenant.IsActive;
             Address = new AddressResult(tenant.Address);
+            WhatsAppNumber = tenant.WhatsAppNumber;
             PhoneNumber = tenant.PhoneNumber;
             FacebookUrl = tenant.FacebookUrl;
-            WhatsAppNumber = tenant.WhatsAppNumber;
+            InstagramUrl = tenant.InstagramUrl;
+            YouTubeUrl = tenant.YouTubeUrl;
             HasPromotion = tenant.HasPromotion;
             PromotionPercent = tenant.PromotionPercent;
         }

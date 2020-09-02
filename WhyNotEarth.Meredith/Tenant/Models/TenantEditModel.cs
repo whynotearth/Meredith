@@ -5,6 +5,20 @@ namespace WhyNotEarth.Meredith.Tenant.Models
 {
     public class TenantEditModel : IValidatableObject
     {
+        public string? Name { get; set; }
+
+        public List<string>? Tags { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? InstagramUrl { get; set; }
+
+        public string? FacebookUrl { get; set; }
+
+        public string? YouTubeUrl { get; set; }
+
+        public string? WhatsAppNumber { get; set; }
+
         public bool? HasPromotion { get; set; }
 
         public int? PromotionPercent { get; set; }

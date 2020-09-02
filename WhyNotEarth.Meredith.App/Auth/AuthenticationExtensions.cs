@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using WhyNotEarth.Meredith.App.Configuration;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Persistence;
 using WhyNotEarth.Meredith.Public;

@@ -90,7 +90,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IClientSaveSignatureJob, ClientSaveSignatureJob>()
                 .AddScoped<ClientNoteService>()
                 .AddScoped<PmuNotifications>()
-                .AddScoped<IBrowTricksTenantService, BrowTricksTenantService>()
+                .AddScoped<IBrowTricksService, BrowTricksService>()
                 .AddScoped<IDisclosureService, DisclosureService>();
 
             return serviceCollection;

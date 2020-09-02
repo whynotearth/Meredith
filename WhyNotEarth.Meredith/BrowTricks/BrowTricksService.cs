@@ -7,15 +7,35 @@ using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
-    internal class BrowTricksTenantService : IBrowTricksTenantService
+    internal class BrowTricksService : IBrowTricksService
     {
         private readonly IDbContext _dbContext;
         private readonly TenantService _tenantService;
 
-        public BrowTricksTenantService(IDbContext dbContext, TenantService tenantService)
+        public BrowTricksService(IDbContext dbContext, TenantService tenantService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
+        }
+
+        public async Task<List<ClientImage>> GetAllImages(User user)
+        {
+            return await _dbContext.Images
+                .OfType<ClientImage>()
+                .Include(item => item.Client)
+                .ThenInclude(item => item!.Tenant)
+                .Where(item => item.Client!.Tenant.OwnerId == user.Id)
+                .ToListAsync();
+        }
+
+        public async Task<List<ClientVideo>> GetAllVideos(User user)
+        {
+            return await _dbContext.Videos
+                .OfType<ClientVideo>()
+                .Include(item => item.Client)
+                .ThenInclude(item => item!.Tenant)
+                .Where(item => item.Client!.Tenant.OwnerId == user.Id)
+                .ToListAsync();
         }
 
         public async Task<List<ClientImage>> GetAllImages(string tenantSlug, User user)

@@ -227,6 +227,41 @@ namespace WhyNotEarth.Meredith.Tenant
 
         private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
         {
+            if (model.Name != null)
+            {
+                tenant.Name = model.Name;
+            }
+
+            if (model.Tags != null)
+            {
+                tenant.Tags = model.Tags;
+            }
+
+            if (model.Description != null)
+            {
+                tenant.Description = model.Description;
+            }
+
+            if (model.InstagramUrl != null)
+            {
+                tenant.InstagramUrl = model.InstagramUrl;
+            }
+
+            if (model.FacebookUrl != null)
+            {
+                tenant.FacebookUrl = model.FacebookUrl;
+            }
+
+            if (model.YouTubeUrl != null)
+            {
+                tenant.YouTubeUrl = model.YouTubeUrl;
+            }
+
+            if (model.WhatsAppNumber != null)
+            {
+                tenant.WhatsAppNumber = model.WhatsAppNumber;
+            }
+
             if (model.HasPromotion.HasValue)
             {
                 tenant.HasPromotion = model.HasPromotion.Value;

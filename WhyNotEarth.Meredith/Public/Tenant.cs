@@ -46,9 +46,13 @@ namespace WhyNotEarth.Meredith.Public
 
         public string? PhoneNumber { get; set; }
 
+        public string? WhatsAppNumber { get; set; }
+
         public string? FacebookUrl { get; set; }
 
-        public string? WhatsAppNumber { get; set; }
+        public string? InstagramUrl { get; set; }
+
+        public string? YouTubeUrl { get; set; }
 
         public bool HasPromotion { get; set; }
 
