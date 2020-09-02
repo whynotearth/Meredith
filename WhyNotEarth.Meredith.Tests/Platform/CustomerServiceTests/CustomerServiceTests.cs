@@ -1,6 +1,7 @@
 namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
 {
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using WhyNotEarth.Meredith.Platform.Subscriptions;
     using WhyNotEarth.Meredith.Public;
@@ -29,7 +30,12 @@ namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
         [Fact]
         public async Task AddCard()
         {
-            await CreateCard();
+            var card = await CreateCard();
+            var databaseCard = await DbContext.PlatformCards.AsNoTracking().FirstOrDefaultAsync(c => c.Id == card.Id);
+            Assert.Equal("1111", databaseCard.Last4);
+            Assert.Equal(PaymentCard.Brands.Visa, databaseCard.Brand);
+            Assert.Equal(1, databaseCard.ExpirationMonth);
+            Assert.Equal(2050, databaseCard.ExpirationYear);
         }
 
         [Fact]

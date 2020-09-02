@@ -1,9 +1,5 @@
 namespace WhyNotEarth.Meredith.Public
 {
-    using System.Collections.Generic;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
     public class Subscription
     {
         public enum SubscriptionStatuses
@@ -19,7 +15,7 @@ namespace WhyNotEarth.Meredith.Public
 
         public int CustomerId { get; set; }
 
-        public Card Card { get; set; } = null!;
+        public PaymentCard Card { get; set; } = null!;
 
         public int CardId { get; set; }
 

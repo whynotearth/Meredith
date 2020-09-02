@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using WhyNotEarth.Meredith.Stripe;
 
 namespace WhyNotEarth.Meredith.Public
 {
@@ -15,5 +16,7 @@ namespace WhyNotEarth.Meredith.Public
         public ICollection<Page>? Pages { get; set; }
 
         public ICollection<Tenant>? Tenants { get; set; }
+
+        public StripeAccount? StripeAccount { get; set; }
     }
 }

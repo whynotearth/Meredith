@@ -3,9 +3,8 @@ namespace WhyNotEarth.Meredith.Tests.Platform
     using System.Linq;
     using System.Threading.Tasks;
     using Faker;
-    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.EntityFrameworkCore;
     using WhyNotEarth.Meredith.Public;
-    using WhyNotEarth.Meredith.Services;
     using WhyNotEarth.Meredith.Tests.Data;
 
     public class BasePlatformTests : DatabaseContextTest
@@ -14,9 +13,9 @@ namespace WhyNotEarth.Meredith.Tests.Platform
         {
         }
 
-        protected async Task<Tenant> CreateTenant()
+        protected async Task<Meredith.Public.Tenant> CreateTenant()
         {
-            var tenant = new Tenant
+            var tenant = new Meredith.Public.Tenant
             {
                 Owner = new User
                 {
@@ -32,7 +31,11 @@ namespace WhyNotEarth.Meredith.Tests.Platform
 
         protected async Task<Plan> GetPlan(string planName)
         {
-            return DbContext.PlatformPlans.FirstOrDefault(p => p.Name == planName);
+            return await DbContext.PlatformPlans
+                .Include(p => p.Platform)
+                .ThenInclude(p => p.Company)
+                .ThenInclude(c => c!.StripeAccount)
+                .FirstOrDefaultAsync(p => p.Name == planName);
         }
     }
 }

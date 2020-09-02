@@ -35,13 +35,17 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
                 throw new RecordNotFoundException($"No card found on Customer {customerId}");
             }
 
-            var plan = await _meredithDbContext.PlatformPlans.FindAsync(planId);
+            var plan = await _meredithDbContext.PlatformPlans
+                .Include(p => p.Platform)
+                .ThenInclude(p => p.Company)
+                .ThenInclude(c => c!.StripeAccount)
+                .FirstOrDefaultAsync(p => p.Id == planId);
             if (plan == null)
             {
                 throw new RecordNotFoundException($"Plan {planId} not found");
             }
 
-            var stripeSubscriptionId = await _stripeSubscriptionService.AddSubscriptionAsync(customer.StripeId, plan.StripeId, couponCode);
+            var stripeSubscriptionId = await _stripeSubscriptionService.AddSubscriptionAsync(customer.StripeId, plan.StripeId, couponCode, plan.Platform.SalesCut, plan.Platform.Company?.StripeAccount?.StripeUserId);
             var subscription = new Subscription
             {
                 CustomerId = customerId,
@@ -57,53 +61,55 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
 
         public async Task CancelSubscriptionAsync(int subscriptionId)
         {
-            var subscription = await _meredithDbContext.PlatformSubscriptions.FindAsync(subscriptionId);
-            if (subscription == null)
-            {
-                throw new RecordNotFoundException($"Subscription {subscriptionId} not found");
-            }
-
-            await _stripeSubscriptionService.CancelSubscriptionAsync(subscription.StripeId);
+            var subscription = await GetSubscriptionById(subscriptionId);
+            await _stripeSubscriptionService.CancelSubscriptionAsync(subscription.StripeId, subscription.Plan?.Platform?.Company?.StripeAccount?.StripeUserId);
             subscription.Status = SubscriptionStatuses.Cancelled;
             await _meredithDbContext.SaveChangesAsync();
         }
 
         public async Task ChangeSubscriptionCardAsync(int subscriptionId, int cardId)
         {
-            var subscription = await _meredithDbContext.PlatformSubscriptions.FindAsync(subscriptionId);
-            var card = await _meredithDbContext.PlatformCards.FindAsync(cardId);
-            if (subscription == null)
-            {
-                throw new RecordNotFoundException($"Subscription {subscriptionId} not found");
-            }
-
+            var subscription = await GetSubscriptionById(subscriptionId);
+            var card = await _meredithDbContext.PlatformCards
+                .FirstOrDefaultAsync(c => c.Id == cardId && c.CustomerId == subscription.CustomerId);
             if (card == null)
             {
                 throw new RecordNotFoundException($"Card {cardId} not found");
             }
 
-            await _stripeSubscriptionService.ChangeSubscriptionCardAsync(subscription.StripeId, card.StripeId);
+            await _stripeSubscriptionService.ChangeSubscriptionCardAsync(subscription.StripeId, card.StripeId, subscription.Plan?.Platform?.Company?.StripeAccount?.StripeUserId);
             subscription.CardId = card.Id;
             await _meredithDbContext.SaveChangesAsync();
         }
 
         public async Task ChangeSubscriptionPlanAsync(int subscriptionId, int planId)
         {
-            var subscription = await _meredithDbContext.PlatformSubscriptions.FindAsync(subscriptionId);
-            if (subscription == null)
-            {
-                throw new RecordNotFoundException($"Subscription {subscriptionId} not found");
-            }
-
+            var subscription = await GetSubscriptionById(subscriptionId);
             var plan = await _meredithDbContext.PlatformPlans.FindAsync(planId);
             if (plan == null)
             {
                 throw new RecordNotFoundException($"Plan {planId} not found");
             }
 
-            await _stripeSubscriptionService.ChangeSubscriptionPlanAsync(subscription.StripeId, plan.StripeId);
+            await _stripeSubscriptionService.ChangeSubscriptionPlanAsync(subscription.StripeId, plan.StripeId, subscription.Plan?.Platform?.SalesCut, subscription.Plan?.Platform?.Company?.StripeAccount?.StripeUserId);
             subscription.PlanId = plan.Id;
             await _meredithDbContext.SaveChangesAsync();
+        }
+
+        private async Task<Subscription> GetSubscriptionById(int id)
+        {
+            var subscription = await _meredithDbContext.PlatformSubscriptions
+                .Include(s => s.Plan)
+                .ThenInclude(p => p.Platform)
+                .ThenInclude(p => p.Company)
+                .ThenInclude(c => c!.StripeAccount)
+                .FirstOrDefaultAsync(s => s.Id == id);
+            if (subscription == null)
+            {
+                throw new RecordNotFoundException($"Subscription {id} not found");
+            }
+
+            return subscription;
         }
     }
 }

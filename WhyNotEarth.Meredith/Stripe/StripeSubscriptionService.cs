@@ -19,11 +19,12 @@ namespace WhyNotEarth.Meredith.Stripe
             MeredithDbContext = meredithDbContext;
         }
 
-        public async Task<string> AddSubscriptionAsync(string customerId, string planId, string? coupon)
+        public async Task<string> AddSubscriptionAsync(string customerId, string planId, string? coupon, decimal? feePercent, string? stripeAccountId)
         {
             var subscriptionService = new SubscriptionService();
             var stripeSubscription = await subscriptionService.CreateAsync(new SubscriptionCreateOptions
             {
+                ApplicationFeePercent = feePercent,
                 Customer = customerId,
                 Coupon = coupon,
                 Items = new List<SubscriptionItemOptions>
@@ -34,33 +35,34 @@ namespace WhyNotEarth.Meredith.Stripe
                     }
                 }
 
-            }, GetRequestOptions());
+            }, GetRequestOptions(stripeAccountId));
             return stripeSubscription.Id;
         }
 
-        public async Task CancelSubscriptionAsync(string subscriptionId)
+        public async Task CancelSubscriptionAsync(string subscriptionId, string? stripeAccountId)
         {
             var subscriptionService = new SubscriptionService();
-            await subscriptionService.CancelAsync(subscriptionId, null, GetRequestOptions());
+            await subscriptionService.CancelAsync(subscriptionId, null, GetRequestOptions(stripeAccountId));
         }
 
-        public async Task ChangeSubscriptionCardAsync(string subscriptionId, string cardId)
+        public async Task ChangeSubscriptionCardAsync(string subscriptionId, string cardId, string? stripeAccountId)
         {
             var subscriptionService = new SubscriptionService();
             await subscriptionService.UpdateAsync(subscriptionId, new SubscriptionUpdateOptions
             {
                 DefaultPaymentMethod = cardId
-            }, GetRequestOptions());
+            }, GetRequestOptions(stripeAccountId));
         }
 
-        public async Task ChangeSubscriptionPlanAsync(string subscriptionId, string planId)
+        public async Task ChangeSubscriptionPlanAsync(string subscriptionId, string planId, decimal? feePercent, string? stripeAccountId)
         {
             var subscriptionService = new SubscriptionService();
             var subscriptionItemService = new SubscriptionItemService();
-            var subscription = await subscriptionService.GetAsync(subscriptionId, null, GetRequestOptions());
+            var subscription = await subscriptionService.GetAsync(subscriptionId, null, GetRequestOptions(stripeAccountId));
             var itemToDeleteId = subscription.Items.First().Id;
             await subscriptionService.UpdateAsync(subscriptionId, new SubscriptionUpdateOptions
             {
+                ApplicationFeePercent = feePercent,
                 Items = new List<SubscriptionItemOptions>
                 {
                     new SubscriptionItemOptions
@@ -68,15 +70,21 @@ namespace WhyNotEarth.Meredith.Stripe
                         Plan = planId
                     }
                 },
-            }, GetRequestOptions());
-            await subscriptionItemService.DeleteAsync(itemToDeleteId, null, GetRequestOptions());
+            }, GetRequestOptions(stripeAccountId));
+            await subscriptionItemService.DeleteAsync(itemToDeleteId, null, GetRequestOptions(stripeAccountId));
         }
 
-        public async Task<string?> GetPriceByDescription(string description)
+        public async Task<string?> GetPriceByDescription(string description, string? stripeAccountId = null)
         {
             var priceService = new PriceService();
-            var prices = await priceService.ListAsync(null, GetRequestOptions());
-            return prices.FirstOrDefault(p => p.Nickname == description).Id;
+            var prices = await priceService.ListAsync(null, GetRequestOptions(stripeAccountId));
+            var price = prices.FirstOrDefault(p => p.Nickname == description);
+            if (price == null)
+            {
+                throw new Exception($"Price with description '{description}' could not be found on stripe account '{stripeAccountId}'");
+            }
+
+            return price.Id;
         }
     }
 }
