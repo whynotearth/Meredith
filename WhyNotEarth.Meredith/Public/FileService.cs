@@ -37,9 +37,9 @@ namespace WhyNotEarth.Meredith.Public
             await _googleStorageService.DownloadFileAsync(path, stream);
         }
 
-        public Task<string> GetPrivateUrlAsync(string path)
+        public string GetPrivateUrl(string path)
         {
-            return _googleStorageService.CreateSignedUrlAsync(path, 24);
+            return _googleStorageService.CreateSignedUrl(path, 24);
         }
 
         private string GetPath(string companySlug, IEnumerable<string> path)

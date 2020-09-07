@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
@@ -25,14 +23,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public List<ClientVideo>? Videos { get; set; }
 
-        public PmuStatusType PmuStatus { get; set; }
-
         public bool IsArchived { get; set; }
-
-        public string? PmuPdf { get; set; }
-
-        public DateTime? SignedAt { get; set; }
-
     }
 
     public class ClientImage : Image
@@ -47,17 +38,5 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
-    }
-
-    public enum PmuStatusType
-    {
-        [EnumMember(Value = "incomplete")]
-        Incomplete = 1,
-
-        [EnumMember(Value = "saving")]
-        Saving = 2,
-
-        [EnumMember(Value = "completed")]
-        Completed = 3
     }
 }

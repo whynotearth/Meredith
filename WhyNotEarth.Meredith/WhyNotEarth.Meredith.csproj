@@ -4,6 +4,9 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="BrowTricks/Templates/Pmu.html" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="BrowTricks/Templates/Pmu.html" />

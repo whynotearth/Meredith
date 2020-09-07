@@ -6,78 +6,122 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks;
-using WhyNotEarth.Meredith.Makrdown;
+using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
+using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Pdf;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
     internal class PmuPdfService : IPmuPdfService
     {
+        private readonly IFormTemplateService _formTemplateService;
         private readonly IHtmlService _htmlService;
-        private readonly IMarkdownService _markdownService;
 
-        public PmuPdfService(IHtmlService htmlService, IMarkdownService markdownService)
+        public PmuPdfService(IHtmlService htmlService, IFormTemplateService formTemplateService)
         {
             _htmlService = htmlService;
-            _markdownService = markdownService;
+            _formTemplateService = formTemplateService;
         }
 
-        public Task<byte[]> GetPdfAsync(Public.Tenant tenant, List<Disclosure> disclosures)
+        public string GetHtml(FormSignature formSignature)
         {
-            var templateHtml = GetTemplateHtml(tenant, disclosures);
+            var widgets = GetWidgets(formSignature);
 
-            return _htmlService.ToPdfAsync(templateHtml);
+            return BuildHtml(formSignature.Name, widgets);
         }
 
-        public Task<byte[]> GetPngAsync(Public.Tenant tenant, List<Disclosure> disclosures)
+        public async Task<byte[]> GetPngAsync(Public.Tenant tenant)
         {
-            var templateHtml = GetTemplateHtml(tenant, disclosures);
+            var formTemplate = await _formTemplateService.GetAsync(tenant, FormTemplateType.Disclosure);
 
-            return _htmlService.ToPngAsync(templateHtml);
+            var widgets = GetWidgets(formTemplate);
+
+            var html = BuildHtml(formTemplate.Name, widgets);
+
+            return await _htmlService.ToPngAsync(html);
         }
 
-        private string GetTemplateHtml(Public.Tenant tenant, List<Disclosure> disclosures)
+        private string BuildHtml(string name, List<IFormWidget> widgets)
         {
-            const string templateName = "Pmu.html";
+            var template = GetTemplate("Pmu.html");
 
-            var templateHtml = GetTemplateHtml(templateName);
+            var body = GetBody(widgets);
 
-            templateHtml = FillTheTemplate(templateHtml, tenant, disclosures);
-
-            return templateHtml;
-        }
-
-        private string FillTheTemplate(string templateHtml, Public.Tenant tenant, List<Disclosure> disclosures)
-        {
             var keyValues = new Dictionary<string, string>
             {
-                {"[_Disclosures_]", GetDisclosures(disclosures)},
-                {"[_TenantName_]", tenant.Name}
+                {"{title}", name},
+                {"{body}", body}
             };
 
             foreach (var keyValue in keyValues)
             {
-                templateHtml = templateHtml.Replace(keyValue.Key, keyValue.Value);
+                template = template.Replace(keyValue.Key, keyValue.Value);
             }
 
-            return templateHtml;
+            return template;
         }
 
-        private string GetDisclosures(List<Disclosure> disclosures)
+        private string GetBody(List<IFormWidget> formWidgets)
         {
             var result = new StringBuilder();
 
-            foreach (var disclosure in disclosures)
+            foreach (var formWidget in formWidgets)
             {
-                var disclosureHtml = _markdownService.ToHtml(disclosure.Value);
-
-                result.AppendFormat("<p class=\"paragraph\">{0}</p>", disclosureHtml);
+                result.Append(formWidget.Render());
             }
 
             return result.ToString();
         }
 
-        private string GetTemplateHtml(string templateName)
+        private List<IFormWidget> GetWidgets(FormTemplate formTemplate)
+        {
+            var result = new List<IFormWidget>();
+
+            foreach (var formItem in formTemplate.Items)
+            {
+                var formWidget = formItem.Type switch
+                {
+                    FormItemType.Text => new TextFormWidget(formItem),
+                    FormItemType.AgreementRequest => new TextFormWidget(formItem),
+                    FormItemType.TextResponse => new TextFormWidget(formItem),
+                    FormItemType.Checklist => new TextFormWidget(formItem),
+                    FormItemType.MultipleChoice => new TextFormWidget(formItem),
+                    FormItemType.Image => new TextFormWidget(formItem),
+                    FormItemType.Pdf => new TextFormWidget(formItem),
+                    _ => throw new NotSupportedException()
+                };
+
+                result.Add(formWidget);
+            }
+
+            return result;
+        }
+
+        private List<IFormWidget> GetWidgets(FormSignature formSignature)
+        {
+            var result = new List<IFormWidget>();
+
+            foreach (var answer in formSignature.Answers)
+            {
+                var formWidget = answer.Type switch
+                {
+                    FormItemType.Text => new TextFormWidget(answer),
+                    FormItemType.AgreementRequest => new TextFormWidget(answer),
+                    FormItemType.TextResponse => new TextFormWidget(answer),
+                    FormItemType.Checklist => new TextFormWidget(answer),
+                    FormItemType.MultipleChoice => new TextFormWidget(answer),
+                    FormItemType.Image => new TextFormWidget(answer),
+                    FormItemType.Pdf => new TextFormWidget(answer),
+                    _ => throw new NotSupportedException()
+                };
+
+                result.Add(formWidget);
+            }
+
+            return result;
+        }
+
+        private string GetTemplate(string templateName)
         {
             var assembly = typeof(PmuPdfService).GetTypeInfo().Assembly;
 

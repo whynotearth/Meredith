@@ -31,11 +31,11 @@ namespace WhyNotEarth.Meredith.GoogleCloud
             await storageClient.DownloadObjectAsync(_options.StorageBucket, objectName, stream);
         }
 
-        public Task<string> CreateSignedUrlAsync(string objectName, int hours)
+        public string CreateSignedUrl(string objectName, int hours)
         {
             var urlSigner = UrlSigner.FromServiceAccountCredential(GetServiceAccount());
 
-            return urlSigner.SignAsync(_options.StorageBucket, objectName, TimeSpan.FromHours(hours), HttpMethod.Get);
+            return urlSigner.Sign(_options.StorageBucket, objectName, TimeSpan.FromHours(hours), HttpMethod.Get);
         }
 
         private GoogleCredential GetCredential()

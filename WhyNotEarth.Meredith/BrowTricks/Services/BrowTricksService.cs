@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 
-namespace WhyNotEarth.Meredith.BrowTricks
+namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     internal class BrowTricksService : IBrowTricksService
     {

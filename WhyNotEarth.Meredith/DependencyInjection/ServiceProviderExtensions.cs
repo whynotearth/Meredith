@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Jobs;
+using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.GoogleCloud;
@@ -92,7 +93,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<ClientNoteService>()
                 .AddScoped<PmuNotifications>()
                 .AddScoped<IBrowTricksService, BrowTricksService>()
-                .AddScoped<IDisclosureService, DisclosureService>();
+                .AddScoped<IFormTemplateService, FormTemplateService>()
+                .AddScoped<IFormSignatureService, FormSignatureService>();
 
             return serviceCollection;
         }

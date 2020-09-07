@@ -8,7 +8,7 @@ using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 
-namespace WhyNotEarth.Meredith.BrowTricks
+namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public class ClientNoteService
     {

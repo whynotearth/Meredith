@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Public;
 
-namespace WhyNotEarth.Meredith.BrowTricks
+namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public interface IClientService
     {

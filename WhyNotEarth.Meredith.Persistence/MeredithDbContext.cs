@@ -101,7 +101,9 @@ namespace WhyNotEarth.Meredith.Persistence
         // BrowTricks
         public DbSet<Client> Clients { get; set; } = null!;
 
-        public DbSet<Disclosure> Disclosures { get; set; } = null!;
+        public DbSet<FormTemplate> FormTemplates { get; set; } = null!;
+
+        public DbSet<FormSignature> FormSignatures { get; set; } = null!;
 
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)
         {

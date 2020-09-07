@@ -60,9 +60,9 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
                 job.CreateForJumpStart(jumpStart.Id));
         }
 
-        public Task<string> CreatePdfUrlAsync(JumpStart jumpStart)
+        public string CreatePdfUrl(JumpStart jumpStart)
         {
-            return _googleStorageService.CreateSignedUrlAsync(GetName(jumpStart), 24);
+            return _googleStorageService.CreateSignedUrl(GetName(jumpStart), 24);
         }
 
         private async Task UploadPdfAsync(JumpStart jumpStart, byte[] pdfData)

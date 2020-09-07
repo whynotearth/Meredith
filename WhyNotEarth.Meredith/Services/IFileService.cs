@@ -12,6 +12,6 @@ namespace WhyNotEarth.Meredith.Services
 
         Task GetAsync(string path, Stream stream);
 
-        Task<string> GetPrivateUrlAsync(string path);
+        string GetPrivateUrl(string path);
     }
 }

@@ -4,11 +4,11 @@ using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.Persistence.Models.Modules.BrowTricks
 {
-    public class DisclosureEntityConfig : IEntityTypeConfiguration<Disclosure>
+    public class FormTemplateEntityConfig : IEntityTypeConfiguration<FormTemplate>
     {
-        public void Configure(EntityTypeBuilder<Disclosure> builder)
+        public void Configure(EntityTypeBuilder<FormTemplate> builder)
         {
-            builder.ToTable("Disclosures", "ModuleBrowTricks");
+            builder.ToTable("FormTemplates", "ModuleBrowTricks");
         }
     }
 }

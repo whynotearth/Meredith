@@ -12,19 +12,19 @@ namespace WhyNotEarth.Meredith.Tenant
 
         public string CreateTenantShopSchema(Public.Tenant tenant)
         {
-            var shopSchema = new Corporation()
+            var shopSchema = new Corporation
             {
                 Url = BuildUri(tenant.Company.Slug, "shop/" + tenant.Slug),
                 Logo = GetValidUri(tenant.Logo?.Url),
                 Name = tenant.Name + " | " + tenant.Company.Name,
                 Email = tenant.Owner.Email,
                 Image = GetValidUri(tenant.Logo?.Url),
-                SameAs = new List<Uri>()
+                SameAs = new List<Uri?>
                 {
                     GetValidUri(tenant.FacebookUrl),
                     GetValidUri(tenant.Owner?.InstagramUrl)
                 },
-                Address = new PostalAddress()
+                Address = new PostalAddress
                 {
                     AddressLocality = tenant.Address?.City,
                     AddressRegion = tenant.Address?.State,
@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 },
                 Telephone = tenant.PhoneNumber,
                 Description = tenant.Description,
-                ContactPoint = new ContactPoint()
+                ContactPoint = new ContactPoint
                 {
                     Url = BuildUri(tenant.Company.Slug, "contact"),
                     Email = ContactEmail,
@@ -47,12 +47,15 @@ namespace WhyNotEarth.Meredith.Tenant
             return shopSchema.ToString();
         }
 
-        private Uri? BuildUri(string? companySlug, string? websitePath, string? domainExtension = ".com")
+        private Uri BuildUri(string? companySlug, string? websitePath, string? domainExtension = ".com")
         {
-            var baseUri = new UriBuilder();
-            baseUri.Scheme = "https";
-            baseUri.Host = companySlug?.ToLower() + domainExtension;
-            baseUri.Path = websitePath?.ToLower();
+            var baseUri = new UriBuilder
+            {
+                Scheme = "https",
+                Host = companySlug?.ToLower() + domainExtension,
+                Path = websitePath?.ToLower()
+            };
+
             return baseUri.Uri;
         }
 
@@ -65,6 +68,7 @@ namespace WhyNotEarth.Meredith.Tenant
                     return new Uri(path);
                 }
             }
+
             return null;
         }
     }

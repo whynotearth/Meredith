@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Persistence;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Persistence;
 namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200907070302_AddFormTemplate")]
+    partial class AddFormTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,6 +136,15 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<byte>("NotificationType")
                         .HasColumnType("smallint");
 
+                    b.Property<string>("PmuPdf")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PmuStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SignedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("integer");
 
@@ -173,56 +184,15 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.ToTable("ClientNotes","ModuleBrowTricks");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormAnswer", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.Disclosure", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
 
-                    b.Property<string>("Answers")
-                        .HasColumnType("text");
-
-                    b.Property<int>("FormSignatureId")
+                    b.Property<int>("TenantId")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Options")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormSignatureId");
-
-                    b.ToTable("FormAnswers","ModuleBrowTricks");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("FormTemplateId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Options")
-                        .HasColumnType("text");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -230,42 +200,9 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FormTemplateId");
+                    b.HasIndex("TenantId");
 
-                    b.ToTable("FormItems","ModuleBrowTricks");
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormSignature", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Html")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PdfPath")
-                        .HasColumnType("text");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("FormSignatures","ModuleBrowTricks");
+                    b.ToTable("Disclosures","ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormTemplate", b =>
@@ -287,6 +224,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.Property<byte>("Type")
                         .HasColumnType("smallint");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -2075,29 +2016,11 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormAnswer", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.Disclosure", b =>
                 {
-                    b.HasOne("WhyNotEarth.Meredith.BrowTricks.FormSignature", "FormSignature")
-                        .WithMany("Answers")
-                        .HasForeignKey("FormSignatureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormItem", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.BrowTricks.FormTemplate", "FormTemplate")
-                        .WithMany("Items")
-                        .HasForeignKey("FormTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormSignature", b =>
-                {
-                    b.HasOne("WhyNotEarth.Meredith.BrowTricks.Client", "Client")
+                    b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
                         .WithMany()
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

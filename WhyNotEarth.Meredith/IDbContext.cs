@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WhyNotEarth.Meredith.BrowTricks;
@@ -108,13 +107,12 @@ namespace WhyNotEarth.Meredith
         // BrowTricks
         public DbSet<Client> Clients { get; set; }
 
-        public DbSet<Disclosure> Disclosures { get; set; }
+        public DbSet<FormTemplate> FormTemplates { get; set; }
 
-        public DatabaseFacade Database
-        {
-            get;
-        }
+        public DbSet<FormSignature> FormSignatures { get; set; }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        public DatabaseFacade Database { get; }
+
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

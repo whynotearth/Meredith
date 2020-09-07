@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
+using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Public;
 
-namespace WhyNotEarth.Meredith.BrowTricks
+namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public interface IPmuService
     {
@@ -9,7 +10,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         Task<byte[]> GetPngAsync(int clientId, User user);
 
-        Task SignAsync(int clientId, User user);
+        Task SignAsync(int clientId, PmuSignModel model, User user);
 
         Task SendConsentNotificationAsync(int clientId, User user, string callbackUrl);
     }

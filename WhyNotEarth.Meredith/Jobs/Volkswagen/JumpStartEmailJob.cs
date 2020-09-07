@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
-            var pdfUrl = await _jumpStartPdfJob.CreatePdfUrlAsync(jumpStart);
+            var pdfUrl = _jumpStartPdfJob.CreatePdfUrl(jumpStart);
             var emailTemplate = _jumpStartEmailTemplateService.GetEmailHtml(jumpStart.DateTime.Date, articles, pdfUrl);
 
             return new EmailMessage(company.Id, emails)

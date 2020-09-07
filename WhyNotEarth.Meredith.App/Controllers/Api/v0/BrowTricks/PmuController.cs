@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
-using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.BrowTricks.Models;
+using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Identity;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
@@ -56,11 +57,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns204]
         [HttpPost("{clientId}")]
-        public async Task<NoContentResult> Sign(int clientId)
+        public async Task<NoContentResult> Sign(int clientId, PmuSignModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _pmuService.SignAsync(clientId, user);
+            await _pmuService.SignAsync(clientId, model, user);
 
             return NoContent();
         }

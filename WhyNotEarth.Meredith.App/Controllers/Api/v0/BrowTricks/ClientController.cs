@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
+using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Services;
 
@@ -21,14 +23,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     {
         private readonly IClientService _clientService;
         private readonly IFileService _fileService;
+        private readonly IFormSignatureService _formSignatureService;
         private readonly IUserService _userService;
 
         public ClientController(IClientService clientService, IUserService userService,
-            IFileService fileService)
+            IFileService fileService, IFormSignatureService formSignatureService)
         {
             _clientService = clientService;
             _userService = userService;
             _fileService = fileService;
+            _formSignatureService = formSignatureService;
         }
 
         [Returns201]
@@ -65,21 +69,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var user = await GetCurrentUserAsync(_userService);
 
             var clients = await _clientService.GetListAsync(tenantSlug, user);
+            var dictionary = await _formSignatureService.GetAsync(clients, FormTemplateType.Disclosure);
 
-            var result = new List<ClientListResult>();
-            foreach (var client in clients)
-            {
-                string? pmuPdfUlr = null;
-
-                if (client.PmuPdf != null)
-                {
-                    pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
-                }
-
-                result.Add(new ClientListResult(client, pmuPdfUlr));
-            }
-
-            return Ok(result);
+            return Ok(dictionary.Select(item => new ClientListResult(item.Key, item.Value, _fileService)));
         }
 
         [Authorize]
@@ -91,15 +83,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var user = await GetCurrentUserAsync(_userService);
 
             var client = await _clientService.GetAsync(clientId, user);
+            var formSignature = await _formSignatureService.GetAsync(client, FormTemplateType.Disclosure);
 
-            string? pmuPdfUlr = null;
-
-            if (client.PmuPdf != null)
-            {
-                pmuPdfUlr = await _fileService.GetPrivateUrlAsync(client.PmuPdf);
-            }
-
-            return Ok(new ClientGetResult(client, pmuPdfUlr));
+            return Ok(new ClientGetResult(client, formSignature, _fileService));
         }
 
         [Returns204]

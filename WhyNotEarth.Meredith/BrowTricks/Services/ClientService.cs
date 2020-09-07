@@ -10,7 +10,7 @@ using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 
-namespace WhyNotEarth.Meredith.BrowTricks
+namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     internal class ClientService : IClientService
     {
@@ -33,7 +33,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             var client = await MapClientAsync(new Client(), model, tenant);
-            client.PmuStatus = PmuStatusType.Incomplete;
 
             _dbContext.Clients.Add(client);
             await _dbContext.SaveChangesAsync();
