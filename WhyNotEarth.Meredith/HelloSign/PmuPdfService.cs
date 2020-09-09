@@ -79,15 +79,15 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             foreach (var formItem in formTemplate.Items)
             {
-                var formWidget = formItem.Type switch
+                IFormWidget formWidget = formItem.Type switch
                 {
                     FormItemType.Text => new TextFormWidget(formItem),
-                    FormItemType.AgreementRequest => new TextFormWidget(formItem),
-                    FormItemType.TextResponse => new TextFormWidget(formItem),
-                    FormItemType.Checklist => new TextFormWidget(formItem),
-                    FormItemType.MultipleChoice => new TextFormWidget(formItem),
-                    FormItemType.Image => new TextFormWidget(formItem),
-                    FormItemType.Pdf => new TextFormWidget(formItem),
+                    FormItemType.AgreementRequest => new AgreementRequestFormWidget(formItem),
+                    FormItemType.TextResponse => new TextResponseFormWidget(formItem),
+                    FormItemType.Checklist => new ChecklistFormWidget(formItem),
+                    FormItemType.MultipleChoice => new MultipleChoiceFormWidget(formItem),
+                    FormItemType.Image => new ImageFormWidget(formItem),
+                    FormItemType.Pdf => new PdfFormWidget(formItem),
                     _ => throw new NotSupportedException()
                 };
 
@@ -103,15 +103,15 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             foreach (var answer in formSignature.Answers)
             {
-                var formWidget = answer.Type switch
+                IFormWidget formWidget = answer.Type switch
                 {
                     FormItemType.Text => new TextFormWidget(answer),
-                    FormItemType.AgreementRequest => new TextFormWidget(answer),
-                    FormItemType.TextResponse => new TextFormWidget(answer),
-                    FormItemType.Checklist => new TextFormWidget(answer),
-                    FormItemType.MultipleChoice => new TextFormWidget(answer),
-                    FormItemType.Image => new TextFormWidget(answer),
-                    FormItemType.Pdf => new TextFormWidget(answer),
+                    FormItemType.AgreementRequest => new AgreementRequestFormWidget(answer),
+                    FormItemType.TextResponse => new TextResponseFormWidget(answer),
+                    FormItemType.Checklist => new ChecklistFormWidget(answer),
+                    FormItemType.MultipleChoice => new MultipleChoiceFormWidget(answer),
+                    FormItemType.Image => new ImageFormWidget(answer),
+                    FormItemType.Pdf => new PdfFormWidget(answer),
                     _ => throw new NotSupportedException()
                 };
 
