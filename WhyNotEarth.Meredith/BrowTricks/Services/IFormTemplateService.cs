@@ -9,7 +9,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     {
         Task CreateAsync(string tenantSlug, FormTemplateModel model, User user);
 
-        Task EditAsync(string tenantSlug, int? formTemplateId, FormTemplateModel model, User user);
+        Task EditAsync(int formTemplateId, FormTemplateModel model, User user);
 
         Task<List<FormTemplate>> GetListAsync(string tenantSlug, User user);
 

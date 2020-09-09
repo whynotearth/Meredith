@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
     {
         [NotNull]
         [Mandatory]
-        public Guid? FormItemId { get; set; }
+        public int? FormItemId { get; set; }
 
         [NotNull]
         [Mandatory]

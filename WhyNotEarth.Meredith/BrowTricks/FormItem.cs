@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
     public class FormItem
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public int FormTemplateId { get; set; }
 

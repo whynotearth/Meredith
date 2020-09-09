@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
     public class FormItemResult
     {
-        public Guid Id { get; }
+        public int Id { get; }
 
         public FormItemType Type { get; }
 
