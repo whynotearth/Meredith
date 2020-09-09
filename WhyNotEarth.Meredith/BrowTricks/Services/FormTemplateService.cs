@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _dbContext = dbContext;
         }
 
-        public async Task CreateAsync(string tenantSlug, FormTemplateModel model, User user)
+        public async Task<int> CreateAsync(string tenantSlug, FormTemplateModel model, User user)
         {
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
@@ -33,8 +33,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             _dbContext.FormTemplates.Add(formTemplate);
             await _dbContext.SaveChangesAsync();
-        }
 
+            return formTemplate.Id;
+        }
 
         public async Task EditAsync(int formTemplateId, FormTemplateModel model, User user)
         {

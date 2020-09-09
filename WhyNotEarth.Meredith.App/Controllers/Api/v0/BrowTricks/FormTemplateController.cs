@@ -32,13 +32,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns201]
         [Returns404]
         [HttpPost("")]
-        public async Task<CreateResult> Create(string tenantSlug, FormTemplateModel model)
+        public async Task<CreateObjectResult> Create(string tenantSlug, FormTemplateModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _formTemplateService.CreateAsync(tenantSlug, model, user);
+            var id = await _formTemplateService.CreateAsync(tenantSlug, model, user);
 
-            return Created();
+            return Created(id);
         }
 
         [Returns204]
