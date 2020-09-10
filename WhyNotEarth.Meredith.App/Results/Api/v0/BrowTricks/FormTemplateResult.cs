@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public FormTemplateType Type { get; }
 
-        public List<FormItemResult> Items { get; }
+        public List<FormItemResult>? Items { get; }
 
         public DateTime? CreatedAt { get; }
 
@@ -22,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             Id = formTemplate.Id == default ? (int?)null : formTemplate.Id;
             Name = formTemplate.Name;
             Type = formTemplate.Type;
-            Items = formTemplate.Items.Select(item => new FormItemResult(item)).ToList();
+            Items = formTemplate.Items?.Select(item => new FormItemResult(item)).ToList();
             CreatedAt = formTemplate.CreatedAt;
         }
     }

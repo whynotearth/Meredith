@@ -143,14 +143,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 TenantId = tenantId,
                 Name = model.Name,
                 Type = model.Type.Value,
-                Items = model.Items.Select(Map).ToList()
+                Items = model.Items?.Select(Map).ToList()
             };
         }
 
         private FormTemplate MapEdit(FormTemplate formTemplate, FormTemplateModel model)
         {
             formTemplate.Name = model.Name;
-            formTemplate.Items = model.Items.Select(Map).ToList();
+            formTemplate.Items = model.Items?.Select(Map).ToList();
 
             return formTemplate;
         }

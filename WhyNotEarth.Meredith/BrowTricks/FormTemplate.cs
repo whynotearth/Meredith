@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public FormTemplateType Type { get; set; }
 
-        public List<FormItem> Items { get; set; } = null!;
+        public List<FormItem>? Items { get; set; }
 
         public DateTime? CreatedAt { get; set; }
     }

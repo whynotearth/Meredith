@@ -125,12 +125,17 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             foreach (var formAnswerModel in model.Answers)
             {
-                var formItem = formTemplate.Items.FirstOrDefault(item => item.Id == formAnswerModel.FormItemId);
+                var formItem = formTemplate.Items?.FirstOrDefault(item => item.Id == formAnswerModel.FormItemId);
 
                 if (formItem is null)
                 {
                     throw new InvalidActionException($"Invalid form item: {formAnswerModel.FormItemId}");
                 }
+            }
+
+            if (formTemplate.Items is null)
+            {
+                return result;
             }
 
             foreach (var formItem in formTemplate.Items)
