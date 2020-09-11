@@ -36,7 +36,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Type == FormItemType.Checklist || Type == FormItemType.MultipleChoice)
+            if (Type == FormItemType.Checklist || Type == FormItemType.MultipleChoice || Type == FormItemType.Image ||
+                Type == FormItemType.Pdf)
             {
                 if (Options is null)
                 {
