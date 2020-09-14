@@ -24,10 +24,27 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 
         public string Render()
         {
-            return
-                $"<img src=\"{_url}\">" +
-                $"<input type=\"checkbox\" checked=\"{_hasAnswer}\">" +
-                $"<p class=\"paragraph\">{_value}</p>";
+            if (_hasAnswer)
+            {
+                return $@"
+<section class=""section"">
+    <p class=""question mb-2"">{_value}</p>
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
+    <p class=""flex items-center"">
+        <img
+            class=""icon-boxtick mr-2""
+            src=""https://res.cloudinary.com/whynotearth/image/upload/v1600070035/BrowTricks/static_backend/boxtick_hxjopo.svg""
+            alt="""" />
+        <span>Accepted</span>
+    </p>
+</section>";
+            }
+
+            return $@"
+<section class=""section"">
+    <p class=""question mb-2"">{_value}</p>
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
+</section>";
         }
     }
 }

@@ -27,21 +27,35 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
         public string Render()
         {
             var result = new StringBuilder();
-            result.Append($"<p class=\"paragraph\">{_value}</p>");
+            result.Append("<section class=\"section\">");
+            result.Append($"<p class=\"question mb-2\">{_value}</p>");
 
             foreach (var option in _options)
             {
-                var id = Guid.NewGuid();
+                result.Append("<div class=\"flex items-center mb-1\">");
 
-                result.Append("<div>");
+                var isChecked = _values.Contains(option);
 
-                var isChecked = _values.Contains(option) ? "checked" : string.Empty;
-                result.Append($"<input type=\"checkbox\" id=\"{id}\" name=\"{option}\" {isChecked}>");
+                if (isChecked)
+                {
+                    result.Append(@"<img
+                    src=""https://res.cloudinary.com/whynotearth/image/upload/v1600070035/BrowTricks/static_backend/boxtick_hxjopo.svg""
+                    class=""icon-boxtick mr-2""
+                    alt="""" />");
+                }
+                else
+                {
+                    result.Append(@"<img
+                    src=""https://res.cloudinary.com/whynotearth/image/upload/v1600070035/BrowTricks/static_backend/checkbox_hhfv3l.svg""
+                    class=""icon-checkbox mr-2""
+                    alt="""" />");
+                }
 
-                result.Append($"<label for=\"{id}\">{option}</label>");
-
+                result.Append($"<span>{option}</span>");
                 result.Append("</div>");
             }
+
+            result.Append("</section>");
 
             return result.ToString();
         }

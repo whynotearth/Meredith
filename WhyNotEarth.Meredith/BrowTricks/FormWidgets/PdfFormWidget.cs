@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 {
@@ -25,10 +24,27 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 
         public string Render()
         {
-            return
-                $"<object data=\"{_url}\" type=\"application/pdf\" width=\"100%\" height=\"100%\">" +
-                $"<input type=\"checkbox\" checked=\"{_hasAnswer}\">" +
-                $"<p class=\"paragraph\">{_value}</p>";
+            if (_hasAnswer)
+            {
+                return $@"
+<section class=""section"">
+    <p class=""question mb-2"">{_value}</p>
+    <object class=""mb-2 mt-4"" data=""{_url}"" type=""application/pdf"" width=""100%"" height=""100%"" />
+    <p class=""flex items-center"">
+        <img
+            class=""icon-boxtick mr-2""
+            src=""https://res.cloudinary.com/whynotearth/image/upload/v1600070035/BrowTricks/static_backend/boxtick_hxjopo.svg""
+            alt="""" />
+        <span>Accepted</span>
+    </p>
+</section>";
+            }
+
+            return $@"
+<section class=""section"">
+    <p class=""question mb-2"">{_value}</p>
+    <object class=""mb-2 mt-4"" data=""{_url}"" type=""application/pdf"" width=""100%"" height=""100%"" />
+</section>";
         }
     }
 }

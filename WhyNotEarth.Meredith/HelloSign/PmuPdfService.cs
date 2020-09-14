@@ -27,7 +27,7 @@ namespace WhyNotEarth.Meredith.HelloSign
         {
             var widgets = GetWidgets(formSignature);
 
-            return BuildHtml(formSignature.Name, widgets);
+            return BuildHtml(formSignature.Name, widgets, true);
         }
 
         public async Task<byte[]> GetPngAsync(Public.Tenant tenant)
@@ -36,12 +36,12 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             var widgets = GetWidgets(formTemplate);
 
-            var html = BuildHtml(formTemplate.Name, widgets);
+            var html = BuildHtml(formTemplate.Name, widgets, false);
 
             return await _htmlService.ToPngAsync(html);
         }
 
-        private string BuildHtml(string name, List<IFormWidget> widgets)
+        private string BuildHtml(string name, List<IFormWidget> widgets, bool hasAnswers)
         {
             var template = GetTemplate("Pmu.html");
 
@@ -50,6 +50,7 @@ namespace WhyNotEarth.Meredith.HelloSign
             var keyValues = new Dictionary<string, string>
             {
                 {"{title}", name},
+                {"{bodyClasses}", hasAnswers ? "has-answers" : string.Empty},
                 {"{body}", body}
             };
 

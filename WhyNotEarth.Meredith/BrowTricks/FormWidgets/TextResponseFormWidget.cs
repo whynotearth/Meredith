@@ -26,10 +26,17 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
         {
             if (!_hasAnswer)
             {
-                return $"<p class=\"paragraph\">{_value}</p>";
+                return
+@$"<section class=""section"">
+    <p class=""question"">{_value}</p>
+    <p>{_answer}</p>
+</section>";
             }
 
-            return $"<p class=\"paragraph\">{_value}</p><p class=\"paragraph\">{_answer}</p>";
+            return
+@$"<section class=""section"">
+    <p class=""question"">{_value}</p>
+</section>";
         }
     }
 }

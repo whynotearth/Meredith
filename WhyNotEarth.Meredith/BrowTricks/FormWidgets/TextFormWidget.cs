@@ -16,7 +16,7 @@
 
         public string Render()
         {
-            return $"<p class=\"paragraph\">{_value}</p>";
+            return $"<section class=\"section\">{_value}</section>";
         }
     }
 }
