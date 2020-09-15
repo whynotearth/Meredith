@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -24,12 +25,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task<int> CreateAsync(string tenantSlug, FormTemplateModel model, User user)
         {
-            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+            var tenant = await ValidateAsync(model, user, tenantSlug, null);
 
-            await ValidateAsync(model, tenant);
-
-            var formTemplate = MapCreate(model, tenant.Id);
-            formTemplate.CreatedAt = DateTime.UtcNow;
+            var formTemplate = Map(new FormTemplate(), model, tenant.Id);
 
             _dbContext.FormTemplates.Add(formTemplate);
             await _dbContext.SaveChangesAsync();
@@ -37,7 +35,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return formTemplate.Id;
         }
 
-        public async Task EditAsync(int formTemplateId, FormTemplateModel model, User user)
+        public async Task EditAsync(string tenantSlug, int formTemplateId, FormTemplateModel model, User user)
         {
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
@@ -48,9 +46,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
+            await ValidateAsync(model, user, tenantSlug, formTemplate.Id);
 
-            formTemplate = MapEdit(formTemplate, model);
+            formTemplate = Map(formTemplate, model, formTemplate.TenantId);
 
             _dbContext.FormTemplates.Update(formTemplate);
             await _dbContext.SaveChangesAsync();
@@ -120,37 +118,44 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return formTemplate;
         }
 
-        private async Task ValidateAsync(FormTemplateModel model, Public.Tenant tenant)
+        private async Task<Public.Tenant> ValidateAsync(FormTemplateModel model, User user, string tenantSlug,
+            int? formTemplateId)
         {
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+
             if (model.Type == FormTemplateType.Custom)
             {
-                return;
+                return tenant;
             }
 
-            var hasThisType =
-                await _dbContext.FormTemplates.AnyAsync(item => item.TenantId == tenant.Id && item.Type == model.Type);
+            Expression<Func<FormTemplate, bool>> query;
+
+            if (formTemplateId.HasValue)
+            {
+                query = item => item.Id != formTemplateId && item.TenantId == tenant.Id && item.Type == model.Type;
+            }
+            else
+            {
+                query = item => item.TenantId == tenant.Id && item.Type == model.Type;
+            }
+
+            var hasThisType = await _dbContext.FormTemplates.AnyAsync(query);
 
             if (hasThisType)
             {
                 throw new InvalidActionException("You already have a form template with this type");
             }
+
+            return tenant;
         }
 
-        private FormTemplate MapCreate(FormTemplateModel model, int tenantId)
+        private FormTemplate Map(FormTemplate formTemplate, FormTemplateModel model, int tenantId)
         {
-            return new FormTemplate
-            {
-                TenantId = tenantId,
-                Name = model.Name,
-                Type = model.Type.Value,
-                Items = model.Items?.Select(Map).ToList()
-            };
-        }
-
-        private FormTemplate MapEdit(FormTemplate formTemplate, FormTemplateModel model)
-        {
+            formTemplate.TenantId = tenantId;
             formTemplate.Name = model.Name;
+            formTemplate.Type = model.Type.Value;
             formTemplate.Items = model.Items?.Select(Map).ToList();
+            formTemplate.CreatedAt ??= DateTime.UtcNow;
 
             return formTemplate;
         }

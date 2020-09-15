@@ -44,11 +44,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns204]
         [Returns404]
         [HttpPut("{templateId}")]
-        public async Task<NoContentResult> Edit(int templateId, FormTemplateModel model)
+        public async Task<NoContentResult> Edit(string tenantSlug, int templateId, FormTemplateModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _formTemplateService.EditAsync(templateId, model, user);
+            await _formTemplateService.EditAsync(tenantSlug, templateId, model, user);
 
             return NoContent();
         }
