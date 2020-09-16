@@ -16,5 +16,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public List<FormItem>? Items { get; set; }
 
         public DateTime? CreatedAt { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

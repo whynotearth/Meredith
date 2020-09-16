@@ -5,6 +5,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public interface IFormSignatureService
     {
-        Task<List<string>> GetSignatureUrlsAsync(Client client);
+        Task<Dictionary<int, string?>> GetSignatureUrlsAsync(Client client);
     }
 }

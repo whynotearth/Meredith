@@ -17,12 +17,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _fileService = fileService;
         }
 
-        public async Task<List<string>> GetSignatureUrlsAsync(Client client)
+        public async Task<Dictionary<int, string?>> GetSignatureUrlsAsync(Client client)
         {
             var formSignatures = await _dbContext.FormSignatures
-                .Where(item => item.ClientId == client.Id && item.PdfPath != null).ToListAsync();
+                .Where(item => item.ClientId == client.Id).ToListAsync();
 
-            return formSignatures.Select(item => _fileService.GetPrivateUrl(item.PdfPath!)).ToList();
+            return formSignatures.ToDictionary(item => item.FormTemplateId,
+                item => item.PdfPath != null ? _fileService.GetPrivateUrl(item.PdfPath) : null);
         }
     }
 }

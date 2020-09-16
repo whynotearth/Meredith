@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
+                .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
 
             if (formTemplate is null)
             {
@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             var formTemplates = await _dbContext.FormTemplates
                 .Include(item => item.Items)
-                .Where(item => item.TenantId == tenant.Id)
+                .Where(item => item.TenantId == tenant.Id && item.IsDeleted == false)
                 .ToListAsync();
 
             return formTemplates;
@@ -77,7 +77,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
 
-            _dbContext.FormTemplates.Remove(formTemplate);
+            formTemplate.IsDeleted = true;
+
+            _dbContext.FormTemplates.Update(formTemplate);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -85,7 +87,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
+                .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
 
             if (formTemplate is null)
             {

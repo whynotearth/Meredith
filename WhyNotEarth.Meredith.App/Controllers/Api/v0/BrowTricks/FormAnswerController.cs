@@ -32,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
-        [HttpGet("")]
+        [HttpGet("preview")]
         public async Task<IActionResult> Get(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
-        [HttpGet("{clientId}")]
+        [HttpGet("preview/{clientId}")]
         public async Task<IActionResult> GetByClient(int templateId, int clientId)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Authorize]
         [Returns204]
-        [HttpPost("{clientId}")]
+        [HttpPost("answer/{clientId}")]
         public async Task<NoContentResult> Submit(int templateId, int clientId, PmuSignModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns200]
         [Returns404]
-        [HttpPost("notify")]
+        [HttpPost("notify/{clientId}")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<string>> Notify(int templateId, int clientId, [FromQuery] string callbackUrl)
         {
