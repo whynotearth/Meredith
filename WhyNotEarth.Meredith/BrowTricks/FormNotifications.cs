@@ -3,7 +3,7 @@ using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
-    internal class PmuNotifications
+    internal class FormNotifications
     {
         public ShortMessage GetConsentNotification(Public.Tenant tenant, User user, string formUrl)
         {
@@ -12,7 +12,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 CompanyId = tenant.CompanyId,
                 TenantId = tenant.Id,
                 Body =
-                    $"{tenant.Name} needs the following paperwork to be completed before your appointment. It should take about 5 minutes.\r\n\r\n{formUrl}",
+                    $"{tenant.Name} needs the following paperwork to be completed. It should take about 5 minutes.\r\n\r\n{formUrl}",
                 To = user.PhoneNumber,
                 IsWhatsApp = false,
                 CreatedAt = DateTime.UtcNow
@@ -26,7 +26,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
                 CompanyId = tenant.CompanyId,
                 TenantId = tenant.Id,
                 Body =
-                    $"You have completed your PMU Consent form for {tenant.Name}. Click below to view your completed consent form.\r\n\r\n{pdfUrl}",
+                    $"You have completed your consent form for {tenant.Name}. Click below to view your completed consent form.\r\n\r\n{pdfUrl}",
                 To = user.PhoneNumber,
                 IsWhatsApp = false,
                 CreatedAt = DateTime.UtcNow

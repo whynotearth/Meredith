@@ -11,10 +11,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
         [Mandatory]
         public string? Name { get; set; }
 
-        [NotNull]
-        [Mandatory]
-        public FormTemplateType? Type { get; set; }
-
         public List<FormItemModel>? Items { get; set; }
     }
 

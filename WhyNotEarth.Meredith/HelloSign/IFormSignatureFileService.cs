@@ -3,9 +3,11 @@ using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
-    public interface IPmuPdfService
+    public interface IFormSignatureFileService
     {
-        public Task<byte[]> GetPngAsync(Public.Tenant tenant);
+        public Task<byte[]> GetPngAsync(FormTemplate formTemplate);
+
+        public Task<byte[]> GetPngAsync(FormSignature formTemplate);
 
         public string GetHtml(FormSignature formSignature);
     }

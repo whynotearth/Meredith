@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -25,7 +23,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task<int> CreateAsync(string tenantSlug, FormTemplateModel model, User user)
         {
-            var tenant = await ValidateAsync(model, user, tenantSlug, null);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             var formTemplate = Map(new FormTemplate(), model, tenant.Id);
 
@@ -46,7 +44,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await ValidateAsync(model, user, tenantSlug, formTemplate.Id);
+            await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             formTemplate = Map(formTemplate, model, formTemplate.TenantId);
 
@@ -99,61 +97,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return formTemplate;
         }
 
-        public async Task<FormTemplate> GetAsync(Public.Tenant tenant, FormTemplateType type)
-        {
-            if (type < FormTemplateType.Disclosure || type > FormTemplateType.Cancellation)
-            {
-                throw new InvalidEnumArgumentException();
-            }
-
-            var formTemplate = await _dbContext.FormTemplates
-                .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.TenantId == tenant.Id && item.Type == type);
-
-            if (formTemplate is null)
-            {
-                throw new RecordNotFoundException($"{type} form template not found");
-            }
-
-            return formTemplate;
-        }
-
-        private async Task<Public.Tenant> ValidateAsync(FormTemplateModel model, User user, string tenantSlug,
-            int? formTemplateId)
-        {
-            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
-
-            if (model.Type == FormTemplateType.Custom)
-            {
-                return tenant;
-            }
-
-            Expression<Func<FormTemplate, bool>> query;
-
-            if (formTemplateId.HasValue)
-            {
-                query = item => item.Id != formTemplateId && item.TenantId == tenant.Id && item.Type == model.Type;
-            }
-            else
-            {
-                query = item => item.TenantId == tenant.Id && item.Type == model.Type;
-            }
-
-            var hasThisType = await _dbContext.FormTemplates.AnyAsync(query);
-
-            if (hasThisType)
-            {
-                throw new InvalidActionException("You already have a form template with this type");
-            }
-
-            return tenant;
-        }
-
         private FormTemplate Map(FormTemplate formTemplate, FormTemplateModel model, int tenantId)
         {
             formTemplate.TenantId = tenantId;
             formTemplate.Name = model.Name;
-            formTemplate.Type = model.Type.Value;
             formTemplate.Items = model.Items?.Select(Map).ToList();
             formTemplate.CreatedAt ??= DateTime.UtcNow;
 

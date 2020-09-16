@@ -2,39 +2,27 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     internal class FormSignatureService : IFormSignatureService
     {
         private readonly IDbContext _dbContext;
+        private readonly IFileService _fileService;
 
-        public FormSignatureService(IDbContext dbContext)
+        public FormSignatureService(IDbContext dbContext, IFileService fileService)
         {
             _dbContext = dbContext;
+            _fileService = fileService;
         }
 
-        public Task<FormSignature?> GetAsync(Client client, FormTemplateType type)
+        public async Task<List<string>> GetSignatureUrlsAsync(Client client)
         {
-            return _dbContext.FormSignatures.FirstOrDefaultAsync(
-                item => item.ClientId == client.Id && item.Type == type)!;
-        }
+            var formSignatures = await _dbContext.FormSignatures
+                .Where(item => item.ClientId == client.Id && item.PdfPath != null).ToListAsync();
 
-        public async Task<Dictionary<Client, FormSignature?>> GetAsync(List<Client> clients, FormTemplateType type)
-        {
-            var ids = clients.Select(item => item.Id);
-
-            var formSignatures = await _dbContext.FormSignatures.Where(
-                item => ids.Contains(item.ClientId) && item.Type == type)!.ToListAsync();
-
-            var result = new Dictionary<Client, FormSignature?>();
-
-            foreach (var client in clients)
-            {
-                result.Add(client, formSignatures.FirstOrDefault(item => item.ClientId == client.Id));
-            }
-
-            return result;
+            return formSignatures.Select(item => _fileService.GetPrivateUrl(item.PdfPath!)).ToList();
         }
     }
 }

@@ -19,6 +19,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         Task<Client> ValidateOwnerOrSelf(int clientId, User user);
 
-        Task<Public.Tenant> ValidateOwnerOrClient(string tenantSlug, User user);
+        Task<Public.Tenant> ValidateOwnerOrClient(int tenantId, User user);
     }
 }

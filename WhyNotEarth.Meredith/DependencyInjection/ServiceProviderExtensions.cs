@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IFileService, FileService>()
                 .AddScoped<ICloudinaryService, CloudinaryService>()
-                .AddScoped<IPmuPdfService, PmuPdfService>()
+                .AddScoped<IFormSignatureFileService, FormSignatureFileService>()
                 .AddScoped<ITwilioService, TwilioService>()
                 .AddScoped<IMarkdownService, MarkdownService>()
                 .AddScoped<IHtmlService, HtmlService>()
@@ -88,10 +88,10 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             // BrowTricks
             serviceCollection
                 .AddScoped<IClientService, ClientService>()
-                .AddScoped<IPmuService, PmuService>()
+                .AddScoped<IFormAnswerService, FormAnswerService>()
                 .AddScoped<IClientSaveSignatureJob, ClientSaveSignatureJob>()
                 .AddScoped<ClientNoteService>()
-                .AddScoped<PmuNotifications>()
+                .AddScoped<FormNotifications>()
                 .AddScoped<IBrowTricksService, BrowTricksService>()
                 .AddScoped<IFormTemplateService, FormTemplateService>()
                 .AddScoped<IFormSignatureService, FormSignatureService>();

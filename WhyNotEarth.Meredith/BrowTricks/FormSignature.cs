@@ -7,11 +7,13 @@ namespace WhyNotEarth.Meredith.BrowTricks
     {
         public int Id { get; set; }
 
+        public int FormTemplateId { get; set; }
+
+        public FormTemplate FormTemplate { get; set; } = null!;
+
         public int ClientId { get; set; }
 
         public Client Client { get; set; } = null!;
-
-        public FormTemplateType Type { get; set; }
 
         public string Name { get; set; } = null!;
 

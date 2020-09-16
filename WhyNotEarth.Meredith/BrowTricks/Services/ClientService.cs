@@ -171,10 +171,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return ValidateOwnerOrSelf(client, user);
         }
 
-        public async Task<Public.Tenant> ValidateOwnerOrClient(string tenantSlug, User user)
+        public async Task<Public.Tenant> ValidateOwnerOrClient(int tenantId, User user)
         {
             var tenant = await _dbContext.Tenants
-                .FirstOrDefaultAsync(item => item.Slug == tenantSlug && item.OwnerId == user.Id);
+                .FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
 
             if (tenant != null)
             {
@@ -184,7 +184,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             var client = await _dbContext.Clients
                 .Include(item => item.Tenant)
-                .FirstOrDefaultAsync(item => item.Tenant.Slug == tenantSlug && item.UserId == user.Id);
+                .FirstOrDefaultAsync(item => item.TenantId == tenantId && item.UserId == user.Id);
 
             if (client != null)
             {

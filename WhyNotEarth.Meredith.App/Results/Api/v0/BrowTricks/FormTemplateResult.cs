@@ -11,17 +11,14 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public string Name { get; }
 
-        public FormTemplateType Type { get; }
-
         public List<FormItemResult>? Items { get; }
 
         public DateTime? CreatedAt { get; }
 
         public FormTemplateResult(FormTemplate formTemplate)
         {
-            Id = formTemplate.Id == default ? (int?)null : formTemplate.Id;
+            Id = formTemplate.Id;
             Name = formTemplate.Name;
-            Type = formTemplate.Type;
             Items = formTemplate.Items?.Select(item => new FormItemResult(item)).ToList();
             CreatedAt = formTemplate.CreatedAt;
         }

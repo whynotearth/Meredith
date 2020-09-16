@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
-using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 {
@@ -22,16 +20,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     public class ClientController : BaseController
     {
         private readonly IClientService _clientService;
-        private readonly IFileService _fileService;
         private readonly IFormSignatureService _formSignatureService;
         private readonly IUserService _userService;
 
         public ClientController(IClientService clientService, IUserService userService,
-            IFileService fileService, IFormSignatureService formSignatureService)
+            IFormSignatureService formSignatureService)
         {
             _clientService = clientService;
             _userService = userService;
-            _fileService = fileService;
             _formSignatureService = formSignatureService;
         }
 
@@ -69,9 +65,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var user = await GetCurrentUserAsync(_userService);
 
             var clients = await _clientService.GetListAsync(tenantSlug, user);
-            var dictionary = await _formSignatureService.GetAsync(clients, FormTemplateType.Disclosure);
 
-            return Ok(dictionary.Select(item => new ClientListResult(item.Key, item.Value, _fileService)));
+            return Ok(clients.Select(item => new ClientListResult(item)));
         }
 
         [Authorize]
@@ -83,9 +78,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var user = await GetCurrentUserAsync(_userService);
 
             var client = await _clientService.GetAsync(clientId, user);
-            var formSignature = await _formSignatureService.GetAsync(client, FormTemplateType.Disclosure);
+            var signatureUrls = await _formSignatureService.GetSignatureUrlsAsync(client);
 
-            return Ok(new ClientGetResult(client, formSignature, _fileService));
+            return Ok(new ClientGetResult(client, signatureUrls));
         }
 
         [Returns204]

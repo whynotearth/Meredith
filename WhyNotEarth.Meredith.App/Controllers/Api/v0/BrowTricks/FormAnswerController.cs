@@ -14,16 +14,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [Returns403]
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
-    [Route("api/v0/browtricks/tenants/{tenantSlug}/pmu")]
-    public class PmuController : BaseController
+    [Route("api/v0/browtricks/tenants/{tenantSlug}/formtemplates/{templateId}")]
+    public class FormAnswerController : BaseController
     {
-        private readonly IPmuService _pmuService;
-        private readonly IUserService _userService;
         private readonly IWebHostEnvironment _environment;
+        private readonly IFormAnswerService _formAnswerService;
+        private readonly IUserService _userService;
 
-        public PmuController(IPmuService pmuService, IUserService userService, IWebHostEnvironment environment)
+        public FormAnswerController(IFormAnswerService formAnswerService, IUserService userService,
+            IWebHostEnvironment environment)
         {
-            _pmuService = pmuService;
+            _formAnswerService = formAnswerService;
             _userService = userService;
             _environment = environment;
         }
@@ -32,11 +33,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns200]
         [Returns404]
         [HttpGet("")]
-        public async Task<IActionResult> Get(string tenantSlug)
+        public async Task<IActionResult> Get(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var data = await _pmuService.GetPngAsync(tenantSlug, user);
+            var data = await _formAnswerService.GetPngAsync(templateId, user);
 
             return Based64Png(data, _environment);
         }
@@ -45,11 +46,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns200]
         [Returns404]
         [HttpGet("{clientId}")]
-        public async Task<IActionResult> GetByClient(int clientId)
+        public async Task<IActionResult> GetByClient(int templateId, int clientId)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var data = await _pmuService.GetPngAsync(clientId, user);
+            var data = await _formAnswerService.GetPngAsync(templateId, clientId, user);
 
             return Based64Png(data, _environment);
         }
@@ -57,11 +58,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns204]
         [HttpPost("{clientId}")]
-        public async Task<NoContentResult> Sign(int clientId, PmuSignModel model)
+        public async Task<NoContentResult> Submit(int templateId, int clientId, PmuSignModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _pmuService.SignAsync(clientId, model, user);
+            await _formAnswerService.SubmitAsync(templateId, clientId, model, user);
 
             return NoContent();
         }
@@ -70,11 +71,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns404]
         [HttpPost("notify")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<string>> PmuSmsNotification(int clientId, [FromQuery] string callbackUrl)
+        public async Task<ActionResult<string>> Notify(int templateId, int clientId, [FromQuery] string callbackUrl)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            await _pmuService.SendConsentNotificationAsync(clientId, user, callbackUrl);
+            await _formAnswerService.SendNotificationAsync(templateId, clientId, user, callbackUrl);
 
             return Ok();
         }

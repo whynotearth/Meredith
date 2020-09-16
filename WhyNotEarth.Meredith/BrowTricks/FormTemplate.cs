@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
@@ -14,25 +13,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public string Name { get; set; } = null!;
 
-        public FormTemplateType Type { get; set; }
-
         public List<FormItem>? Items { get; set; }
 
         public DateTime? CreatedAt { get; set; }
-    }
-
-    public enum FormTemplateType : byte
-    {
-        [EnumMember(Value = "disclosure")]
-        Disclosure = 1,
-
-        [EnumMember(Value = "aftercare")]
-        Aftercare = 2,
-
-        [EnumMember(Value = "cancellation")]
-        Cancellation = 3,
-
-        [EnumMember(Value = "custom")]
-        Custom = 4
     }
 }

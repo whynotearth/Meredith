@@ -7,20 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
-using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Pdf;
 
 namespace WhyNotEarth.Meredith.HelloSign
 {
-    internal class PmuPdfService : IPmuPdfService
+    internal class FormSignatureFileService : IFormSignatureFileService
     {
-        private readonly IFormTemplateService _formTemplateService;
         private readonly IHtmlService _htmlService;
 
-        public PmuPdfService(IHtmlService htmlService, IFormTemplateService formTemplateService)
+        public FormSignatureFileService(IHtmlService htmlService)
         {
             _htmlService = htmlService;
-            _formTemplateService = formTemplateService;
         }
 
         public string GetHtml(FormSignature formSignature)
@@ -30,13 +27,20 @@ namespace WhyNotEarth.Meredith.HelloSign
             return BuildHtml(formSignature.Name, widgets, true);
         }
 
-        public async Task<byte[]> GetPngAsync(Public.Tenant tenant)
+        public async Task<byte[]> GetPngAsync(FormTemplate formTemplate)
         {
-            var formTemplate = await _formTemplateService.GetAsync(tenant, FormTemplateType.Disclosure);
-
             var widgets = GetWidgets(formTemplate);
 
             var html = BuildHtml(formTemplate.Name, widgets, false);
+
+            return await _htmlService.ToPngAsync(html);
+        }
+
+        public async Task<byte[]> GetPngAsync(FormSignature formSignature)
+        {
+            var widgets = GetWidgets(formSignature);
+
+            var html = BuildHtml(formSignature.Name, widgets, true);
 
             return await _htmlService.ToPngAsync(html);
         }
@@ -129,7 +133,7 @@ namespace WhyNotEarth.Meredith.HelloSign
 
         private string GetTemplate(string templateName)
         {
-            var assembly = typeof(PmuPdfService).GetTypeInfo().Assembly;
+            var assembly = typeof(FormSignatureFileService).GetTypeInfo().Assembly;
 
             var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
 

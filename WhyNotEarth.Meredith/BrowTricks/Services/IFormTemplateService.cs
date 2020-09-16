@@ -16,7 +16,5 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         Task DeleteAsync(int formTemplateId, User user);
 
         Task<FormTemplate> GetAsync(int formTemplateId, User user);
-
-        Task<FormTemplate> GetAsync(Public.Tenant tenant, FormTemplateType type);
     }
 }

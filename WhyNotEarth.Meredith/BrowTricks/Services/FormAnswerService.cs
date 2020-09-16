@@ -15,63 +15,66 @@ using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
-    internal class PmuService : IPmuService
+    internal class FormAnswerService : IFormAnswerService
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IClientService _clientService;
         private readonly IDbContext _dbContext;
-        private readonly IFormTemplateService _formTemplateService;
+        private readonly FormNotifications _formNotifications;
+        private readonly IFormSignatureFileService _formSignatureFileService;
         private readonly ILoginTokenService _loginTokenService;
-        private readonly PmuNotifications _pmuNotifications;
-        private readonly IPmuPdfService _pmuPdfService;
         private readonly TenantService _tenantService;
 
-        public PmuService(IDbContext dbContext, TenantService tenantService, IPmuPdfService pmuPdfService,
-            PmuNotifications pmuNotifications, IBackgroundJobClient backgroundJobClient,
-            ILoginTokenService loginTokenService, IClientService clientService,
-            IFormTemplateService formTemplateService)
+        public FormAnswerService(IDbContext dbContext, TenantService tenantService,
+            IFormSignatureFileService formSignatureFileService,
+            FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient,
+            ILoginTokenService loginTokenService, IClientService clientService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
-            _pmuPdfService = pmuPdfService;
-            _pmuNotifications = pmuNotifications;
+            _formSignatureFileService = formSignatureFileService;
+            _formNotifications = formNotifications;
             _backgroundJobClient = backgroundJobClient;
             _loginTokenService = loginTokenService;
             _clientService = clientService;
-            _formTemplateService = formTemplateService;
         }
 
-        public async Task<byte[]> GetPngAsync(string tenantSlug, User user)
+        public async Task<byte[]> GetPngAsync(int formTemplateId, User user)
         {
-            var tenant = await _clientService.ValidateOwnerOrClient(tenantSlug, user);
+            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
 
-            return await _pmuPdfService.GetPngAsync(tenant);
+            return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
-        public async Task<byte[]> GetPngAsync(int clientId, User user)
+        public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, User user)
         {
-            var client = await _clientService.ValidateOwnerOrSelf(clientId, user);
+            var formSignature = await ValidateOwnerOrClient(formTemplateId, clientId, user);
 
-            return await _pmuPdfService.GetPngAsync(client.Tenant);
+            return await _formSignatureFileService.GetPngAsync(formSignature);
         }
 
-        public async Task SignAsync(int clientId, PmuSignModel model, User user)
+        public async Task SubmitAsync(int formTemplateId, int clientId, PmuSignModel model, User user)
         {
-            var client = await _clientService.ValidateOwnerOrSelf(clientId, user);
+            await _clientService.ValidateOwnerOrSelf(clientId, user);
 
-            await ValidateAsync(clientId);
+            await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
-            var formTemplate = await _formTemplateService.GetAsync(client.Tenant, FormTemplateType.Disclosure);
+            var formTemplate = await _dbContext.FormTemplates.FirstOrDefaultAsync(item => item.Id == formTemplateId);
+
+            if (formTemplate is null)
+            {
+                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
+            }
 
             var answers = Map(formTemplate, model);
 
             var formSignature = new FormSignature
             {
-                Name = formTemplate.Name,
-                Type = FormTemplateType.Disclosure,
-                CreatedAt = DateTime.UtcNow,
+                FormTemplateId = formTemplateId,
                 ClientId = clientId,
-                Answers = answers
+                Name = formTemplate.Name,
+                Answers = answers,
+                CreatedAt = DateTime.UtcNow
             };
 
             _dbContext.FormSignatures.Add(formSignature);
@@ -81,7 +84,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 service.SaveSignature(formSignature.Id));
         }
 
-        public async Task SendConsentNotificationAsync(int clientId, User user, string callbackUrl)
+        public async Task SendNotificationAsync(int formTemplateId, int clientId, User user, string callbackUrl)
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
@@ -95,11 +98,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await _tenantService.CheckOwnerAsync(user, client.TenantId);
 
-            await ValidateAsync(clientId);
+            await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
             var formUrl = await GetFormUrlAsync(callbackUrl, client.User);
 
-            var shortMessage = _pmuNotifications.GetConsentNotification(client.Tenant, client.User, formUrl);
+            var shortMessage = _formNotifications.GetConsentNotification(client.Tenant, client.User, formUrl);
 
             _dbContext.ShortMessages.Add(shortMessage);
             await _dbContext.SaveChangesAsync();
@@ -108,14 +111,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 service.SendAsync(shortMessage.Id));
         }
 
-        private async Task ValidateAsync(int clientId)
+        private async Task ValidateFormDuplicateSignatureAsync(int formTemplateId, int clientId)
         {
-            var isSignedPmu = await _dbContext.FormSignatures.AnyAsync(item =>
-                item.ClientId == clientId && item.Type == FormTemplateType.Disclosure);
+            var isFormSigned = await _dbContext.FormSignatures.AnyAsync(item =>
+                item.FormTemplateId == formTemplateId && item.ClientId == clientId);
 
-            if (isSignedPmu)
+            if (isFormSigned)
             {
-                throw new InvalidActionException("This client is already signed their PMU form");
+                throw new InvalidActionException("This client is already signed this form");
             }
         }
 
@@ -170,6 +173,37 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             });
 
             return finalUrl;
+        }
+
+        private async Task<FormTemplate> ValidateOwnerOrClient(int formTemplateId, User user)
+        {
+            var formTemplate = await _dbContext.FormTemplates.FirstOrDefaultAsync(item => item.Id == formTemplateId);
+
+            if (formTemplate is null)
+            {
+                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
+            }
+
+            await _clientService.ValidateOwnerOrClient(formTemplate.TenantId, user);
+
+            return formTemplate;
+        }
+
+        private async Task<FormSignature> ValidateOwnerOrClient(int formTemplateId, int clientId, User user)
+        {
+            var formSignature = await _dbContext.FormSignatures
+                .Include(item => item.FormTemplate)
+                .FirstOrDefaultAsync(item => item.FormTemplateId == formTemplateId && item.ClientId == clientId);
+
+            if (formSignature is null)
+            {
+                throw new RecordNotFoundException(
+                    $"The form template {formTemplateId} for client {clientId} not found");
+            }
+
+            await _clientService.ValidateOwnerOrClient(formSignature.FormTemplate.TenantId, user);
+
+            return formSignature;
         }
     }
 }

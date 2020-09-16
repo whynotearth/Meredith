@@ -17,16 +17,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
         private readonly IDbContext _dbContext;
         private readonly IFileService _fileService;
         private readonly IHtmlService _htmlService;
-        private readonly PmuNotifications _pmuNotifications;
-        private readonly IPmuPdfService _pmuPdfService;
+        private readonly FormNotifications _formNotifications;
+        private readonly IFormSignatureFileService _formSignatureFileService;
 
-        public ClientSaveSignatureJob(IDbContext dbContext, IPmuPdfService pmuPdfService,
-            PmuNotifications pmuNotifications, IBackgroundJobClient backgroundJobClient, IFileService fileService,
+        public ClientSaveSignatureJob(IDbContext dbContext, IFormSignatureFileService formSignatureFileService,
+            FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient, IFileService fileService,
             IHtmlService htmlService)
         {
             _dbContext = dbContext;
-            _pmuPdfService = pmuPdfService;
-            _pmuNotifications = pmuNotifications;
+            _formSignatureFileService = formSignatureFileService;
+            _formNotifications = formNotifications;
             _backgroundJobClient = backgroundJobClient;
             _fileService = fileService;
             _htmlService = htmlService;
@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
                 throw new ArgumentException($"Invalid formSignatureId: {formSignatureId}", nameof(formSignatureId));
             }
 
-            var html = _pmuPdfService.GetHtml(formSignature);
+            var html = _formSignatureFileService.GetHtml(formSignature);
 
             var pdfData = await _htmlService.ToPdfAsync(html);
 
@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
             var pdfUrl = _fileService.GetPrivateUrl(formSignature.PdfPath!);
 
             var shortMessage =
-                _pmuNotifications.GetCompletionNotification(formSignature.Client.Tenant, formSignature.Client.User,
+                _formNotifications.GetCompletionNotification(formSignature.Client.Tenant, formSignature.Client.User,
                     pdfUrl);
 
             _dbContext.ShortMessages.Add(shortMessage);
@@ -87,7 +87,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
             return new List<string>
             {
                 "signatures",
-                formSignature.Type.ToString(),
+                formSignature.FormTemplateId.ToString(),
                 formSignature.Id.ToString()
             };
         }
