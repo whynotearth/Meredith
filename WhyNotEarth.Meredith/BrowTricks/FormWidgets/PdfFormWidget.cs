@@ -54,7 +54,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
                 return $@"
 <section class=""section"">
     <p class=""question mb-2"">{_value}</p>
-    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="""" />
     <p class=""flex items-center"">
         <img
             class=""icon-boxtick mr-2""
@@ -68,7 +68,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
             return $@"
 <section class=""section"">
     <p class=""question mb-2"">{_value}</p>
-    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="""" />
 </section>";
         }
     }

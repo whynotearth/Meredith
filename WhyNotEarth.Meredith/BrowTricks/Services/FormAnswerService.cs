@@ -113,7 +113,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             if (isFormSigned)
             {
-                throw new InvalidActionException("This client is already signed this form");
+                throw new InvalidActionException("You've already signed this form");
             }
         }
 
