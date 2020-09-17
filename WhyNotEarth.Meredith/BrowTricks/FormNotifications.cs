@@ -19,14 +19,14 @@ namespace WhyNotEarth.Meredith.BrowTricks
             };
         }
 
-        public ShortMessage GetCompletionNotification(Public.Tenant tenant, User user, string pdfUrl)
+        public ShortMessage GetCompletionNotification(Public.Tenant tenant, User user, string callbackUrl)
         {
             return new ShortMessage
             {
                 CompanyId = tenant.CompanyId,
                 TenantId = tenant.Id,
                 Body =
-                    $"You have completed your consent form for {tenant.Name}. Click below to view your completed consent form.\r\n\r\n{pdfUrl}",
+                    $"You have completed your consent form for {tenant.Name}. Click below to view your completed consent form.\r\n\r\n{callbackUrl}",
                 To = user.PhoneNumber,
                 IsWhatsApp = false,
                 CreatedAt = DateTime.UtcNow

@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
-        public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, PmuSignModel model, User user)
+        public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
             var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
 
@@ -59,7 +59,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return await _formSignatureFileService.GetPngAsync(formSignature);
         }
 
-        public async Task SubmitAsync(int formTemplateId, int clientId, PmuSignModel model, User user)
+        public async Task SubmitAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
             await _clientService.ValidateOwnerOrSelf(clientId, user);
 
@@ -121,7 +121,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
         }
 
-        private FormSignature Map(FormTemplate formTemplate, PmuSignModel model, int clientId, Client? client)
+        private FormSignature Map(FormTemplate formTemplate, FormSignatureModel model, int clientId, Client? client)
         {
             var answers = new List<FormAnswer>();
 
@@ -199,24 +199,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             await _clientService.ValidateOwnerOrClient(formTemplate.TenantId, user);
 
             return formTemplate;
-        }
-
-        private async Task<FormSignature> ValidateOwnerOrClient(int formTemplateId, int clientId, User user)
-        {
-            var formSignature = await _dbContext.FormSignatures
-                .Include(item => item.FormTemplate)
-                .Include(item => item.Answers)
-                .FirstOrDefaultAsync(item => item.FormTemplateId == formTemplateId && item.ClientId == clientId);
-
-            if (formSignature is null)
-            {
-                throw new RecordNotFoundException(
-                    $"The form template {formTemplateId} for client {clientId} not found");
-            }
-
-            await _clientService.ValidateOwnerOrClient(formSignature.FormTemplate.TenantId, user);
-
-            return formSignature;
         }
     }
 }

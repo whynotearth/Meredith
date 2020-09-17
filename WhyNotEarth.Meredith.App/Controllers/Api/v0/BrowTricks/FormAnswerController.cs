@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns200]
         [Returns404]
         [HttpPost("preview/{clientId}")]
-        public async Task<IActionResult> GetByClient(int templateId, int clientId, PmuSignModel model)
+        public async Task<IActionResult> GetByClient(int templateId, int clientId, FormSignatureModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns204]
         [HttpPost("answer/{clientId}")]
-        public async Task<NoContentResult> Submit(int templateId, int clientId, PmuSignModel model)
+        public async Task<NoContentResult> Submit(int templateId, int clientId, FormSignatureModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 

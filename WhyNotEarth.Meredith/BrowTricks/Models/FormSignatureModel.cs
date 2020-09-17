@@ -4,14 +4,16 @@ using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Models
 {
-    public class PmuSignModel
+    public class FormSignatureModel
     {
         [NotNull]
         [Mandatory]
-        public List<FormAnswerModel>? Answers { get; set; }
+        public List<FormSignatureItemModel>? Answers { get; set; }
+
+        public string? NotificationCallBackUrl { get; set; }
     }
 
-    public class FormAnswerModel
+    public class FormSignatureItemModel
     {
         [NotNull]
         [Mandatory]
