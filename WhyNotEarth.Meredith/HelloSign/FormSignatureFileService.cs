@@ -24,14 +24,15 @@ namespace WhyNotEarth.Meredith.HelloSign
         {
             var widgets = GetWidgets(formSignature);
 
-            return BuildHtml(formSignature.Name, widgets, true);
+            return BuildHtml(formSignature.Name, widgets, true, formSignature.Client.User.FullName,
+                formSignature.CreatedAt);
         }
 
         public async Task<byte[]> GetPngAsync(FormTemplate formTemplate)
         {
             var widgets = GetWidgets(formTemplate);
 
-            var html = BuildHtml(formTemplate.Name, widgets, false);
+            var html = BuildHtml(formTemplate.Name, widgets, false, null, null);
 
             return await _htmlService.ToPngAsync(html);
         }
@@ -40,12 +41,14 @@ namespace WhyNotEarth.Meredith.HelloSign
         {
             var widgets = GetWidgets(formSignature);
 
-            var html = BuildHtml(formSignature.Name, widgets, true);
+            var html = BuildHtml(formSignature.Name, widgets, true, formSignature.Client.User.FullName,
+                formSignature.CreatedAt);
 
             return await _htmlService.ToPngAsync(html);
         }
 
-        private string BuildHtml(string name, List<IFormWidget> widgets, bool hasAnswers)
+        private string BuildHtml(string tenantName, List<IFormWidget> widgets, bool hasAnswers, string? clientName,
+            DateTime? dateTime)
         {
             var template = GetTemplate("Pmu.html");
 
@@ -53,9 +56,10 @@ namespace WhyNotEarth.Meredith.HelloSign
 
             var keyValues = new Dictionary<string, string>
             {
-                {"{title}", name},
+                {"{title}", tenantName},
                 {"{bodyClasses}", hasAnswers ? "has-answers" : string.Empty},
-                {"{body}", body}
+                {"{body}", body},
+                {"{signature}", GetSignature(hasAnswers, clientName, dateTime)}
             };
 
             foreach (var keyValue in keyValues)
@@ -76,6 +80,25 @@ namespace WhyNotEarth.Meredith.HelloSign
             }
 
             return result.ToString();
+        }
+
+        private string GetSignature(bool hasAnswers, string? name, DateTime? dateTime)
+        {
+            if (!hasAnswers)
+            {
+                return string.Empty;
+            }
+
+            return $@"
+<section class=""section"">
+    <hr />
+</section>
+<section class=""section"">
+    <p class=""font-light mb-1"">
+        Signed by <span class=""font-normal"">{name}</span>
+    </p>
+    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
+</section>";
         }
 
         private List<IFormWidget> GetWidgets(FormTemplate formTemplate)

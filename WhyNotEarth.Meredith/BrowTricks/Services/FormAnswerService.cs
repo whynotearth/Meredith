@@ -50,7 +50,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
 
-            var formSignature = Map(formTemplate, model, clientId);
+            var client = await _dbContext.Clients
+                .Include(item => item.User)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
+
+            var formSignature = Map(formTemplate, model, clientId, client);
 
             return await _formSignatureFileService.GetPngAsync(formSignature);
         }
@@ -70,7 +74,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            var formSignature = Map(formTemplate, model, clientId);
+            var formSignature = Map(formTemplate, model, clientId, null);
 
             _dbContext.FormSignatures.Add(formSignature);
             await _dbContext.SaveChangesAsync();
@@ -117,7 +121,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
         }
 
-        private FormSignature Map(FormTemplate formTemplate, PmuSignModel model, int clientId)
+        private FormSignature Map(FormTemplate formTemplate, PmuSignModel model, int clientId, Client? client)
         {
             var answers = new List<FormAnswer>();
 
@@ -162,6 +166,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             {
                 FormTemplateId = formTemplate.Id,
                 ClientId = clientId,
+                Client = client!,
                 Name = formTemplate.Name,
                 Answers = answers,
                 CreatedAt = DateTime.UtcNow

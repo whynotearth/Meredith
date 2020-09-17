@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using CloudinaryDotNet;
-using Microsoft.Extensions.Options;
 
 namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 {
