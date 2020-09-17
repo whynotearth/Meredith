@@ -46,9 +46,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
-        public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, User user)
+        public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, PmuSignModel model, User user)
         {
-            var formSignature = await ValidateOwnerOrClient(formTemplateId, clientId, user);
+            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+
+            var formSignature = Map(formTemplate, model, clientId);
 
             return await _formSignatureFileService.GetPngAsync(formSignature);
         }
@@ -59,23 +61,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
-            var formTemplate = await _dbContext.FormTemplates.FirstOrDefaultAsync(item => item.Id == formTemplateId);
+            var formTemplate = await _dbContext.FormTemplates
+                .Include(item => item.Items)
+                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
 
             if (formTemplate is null)
             {
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            var answers = Map(formTemplate, model);
-
-            var formSignature = new FormSignature
-            {
-                FormTemplateId = formTemplateId,
-                ClientId = clientId,
-                Name = formTemplate.Name,
-                Answers = answers,
-                CreatedAt = DateTime.UtcNow
-            };
+            var formSignature = Map(formTemplate, model, clientId);
 
             _dbContext.FormSignatures.Add(formSignature);
             await _dbContext.SaveChangesAsync();
@@ -122,9 +117,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
         }
 
-        private List<FormAnswer> Map(FormTemplate formTemplate, PmuSignModel model)
+        private FormSignature Map(FormTemplate formTemplate, PmuSignModel model, int clientId)
         {
-            var result = new List<FormAnswer>();
+            var answers = new List<FormAnswer>();
 
             foreach (var formAnswerModel in model.Answers)
             {
@@ -136,31 +131,41 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 }
             }
 
-            if (formTemplate.Items is null)
+            if (formTemplate.Items != null)
             {
-                return result;
-            }
-
-            foreach (var formItem in formTemplate.Items)
-            {
-                var answer = model.Answers.FirstOrDefault(item => item.FormItemId == formItem.Id);
-
-                if (answer is null)
+                foreach (var formItem in formTemplate.Items)
                 {
-                    throw new InvalidActionException($"Missing form item: {formItem.Id}");
+                    var answer = model.Answers.FirstOrDefault(item => item.FormItemId == formItem.Id);
+
+                    if (answer is null)
+                    {
+                        if (formItem.IsRequired)
+                        {
+                            throw new InvalidActionException($"Missing answer for form item: {formItem.Id}");
+                        }
+
+                        continue;
+                    }
+
+                    answers.Add(new FormAnswer
+                    {
+                        Type = formItem.Type,
+                        Question = formItem.Value,
+                        IsRequired = formItem.IsRequired,
+                        Options = formItem.Options,
+                        Answers = answer.Value
+                    });
                 }
-
-                result.Add(new FormAnswer
-                {
-                    Type = formItem.Type,
-                    Question = formItem.Value,
-                    IsRequired = formItem.IsRequired,
-                    Options = formItem.Options,
-                    Answers = answer.Value
-                });
             }
 
-            return result;
+            return new FormSignature
+            {
+                FormTemplateId = formTemplate.Id,
+                ClientId = clientId,
+                Name = formTemplate.Name,
+                Answers = answers,
+                CreatedAt = DateTime.UtcNow
+            };
         }
 
         private async Task<string> GetFormUrlAsync(string callbackUrl, User user)
@@ -177,7 +182,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         private async Task<FormTemplate> ValidateOwnerOrClient(int formTemplateId, User user)
         {
-            var formTemplate = await _dbContext.FormTemplates.FirstOrDefaultAsync(item => item.Id == formTemplateId);
+            var formTemplate = await _dbContext.FormTemplates
+                .Include(item => item.Items)
+                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
 
             if (formTemplate is null)
             {
@@ -193,6 +200,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var formSignature = await _dbContext.FormSignatures
                 .Include(item => item.FormTemplate)
+                .Include(item => item.Answers)
                 .FirstOrDefaultAsync(item => item.FormTemplateId == formTemplateId && item.ClientId == clientId);
 
             if (formSignature is null)

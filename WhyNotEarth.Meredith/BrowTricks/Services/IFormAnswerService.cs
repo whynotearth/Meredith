@@ -8,7 +8,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     {
         Task<byte[]> GetPngAsync(int formTemplateId, User user);
 
-        Task<byte[]> GetPngAsync(int formTemplateId, int clientId, User user);
+        Task<byte[]> GetPngAsync(int formTemplateId, int clientId, PmuSignModel model, User user);
 
         Task SubmitAsync(int formTemplateId, int clientId, PmuSignModel model, User user);
 

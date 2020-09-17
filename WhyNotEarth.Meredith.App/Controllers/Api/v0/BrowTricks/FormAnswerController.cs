@@ -45,12 +45,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
-        [HttpGet("preview/{clientId}")]
-        public async Task<IActionResult> GetByClient(int templateId, int clientId)
+        [HttpPost("preview/{clientId}")]
+        public async Task<IActionResult> GetByClient(int templateId, int clientId, PmuSignModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var data = await _formAnswerService.GetPngAsync(templateId, clientId, user);
+            var data = await _formAnswerService.GetPngAsync(templateId, clientId, model, user);
 
             return Based64Png(data, _environment);
         }
