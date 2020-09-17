@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using CloudinaryDotNet;
+using Microsoft.Extensions.Options;
 
 namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 {
@@ -12,14 +15,36 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
         {
             _value = formItem.Value;
             _hasAnswer = false;
-            _url = formItem.Options?.FirstOrDefault() ?? string.Empty;
+            _url = ConvertUrl(formItem.Options?.FirstOrDefault());
         }
 
         public PdfFormWidget(FormAnswer formAnswer)
         {
             _value = formAnswer.Question;
             _hasAnswer = true;
-            _url = formAnswer.Options?.FirstOrDefault() ?? string.Empty;
+            _url = ConvertUrl(formAnswer.Options?.FirstOrDefault());
+        }
+
+        private string ConvertUrl(string? url)
+        {
+            // This seems very iffy
+            // I tried using the Cloudinary library but couldn't figure out how to do it
+            // It was just returning the PDF URL again
+            if (url is null)
+            {
+                return string.Empty;
+            }
+
+            url = url.ToLower();
+
+            var index = url.LastIndexOf(".pdf", StringComparison.Ordinal);
+
+            if (index == -1)
+            {
+                return url;
+            }
+
+            return url.Remove(index, ".pdf".Length).Insert(index, ".png");
         }
 
         public string Render()
@@ -29,7 +54,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
                 return $@"
 <section class=""section"">
     <p class=""question mb-2"">{_value}</p>
-    <object class=""mb-2 mt-4"" data=""{_url}"" type=""application/pdf"" width=""100%"" height=""100%"" />
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
     <p class=""flex items-center"">
         <img
             class=""icon-boxtick mr-2""
@@ -43,7 +68,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
             return $@"
 <section class=""section"">
     <p class=""question mb-2"">{_value}</p>
-    <object class=""mb-2 mt-4"" data=""{_url}"" type=""application/pdf"" width=""100%"" height=""100%"" />
+    <img class=""mb-2 mt-4"" src=""{_url}"" alt="" />
 </section>";
         }
     }
