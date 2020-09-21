@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -65,7 +67,7 @@ namespace WhyNotEarth.Meredith.App.Swagger
             services.AddSwaggerGenNewtonsoftSupport();
         }
 
-        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
+        public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app, IWebHostEnvironment environment)
         {
             app
                 .UseSwagger()
@@ -73,7 +75,11 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 {
                     c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
                     c.RoutePrefix = string.Empty;
-                    c.DocExpansion(DocExpansion.None);
+
+                    if (environment.IsDevelopment())
+                    {
+                        c.DocExpansion(DocExpansion.None);
+                    }
                 });
 
             return app;

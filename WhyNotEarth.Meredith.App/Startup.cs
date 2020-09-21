@@ -108,7 +108,7 @@ namespace WhyNotEarth.Meredith.App
 
             app.UseCustomLocalization();
 
-            app.UseCustomSwagger();
+            app.UseCustomSwagger(env);
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
