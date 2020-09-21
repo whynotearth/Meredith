@@ -66,7 +66,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             var clients = await _clientService.GetListAsync(tenantSlug, user);
 
-            return Ok(clients.Select(item => new ClientListResult(item)));
+            return clients.Select(item => new ClientListResult(item)).ToList();
         }
 
         [Authorize]
@@ -80,7 +80,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var client = await _clientService.GetAsync(clientId, user);
             var signatureUrls = await _formSignatureService.GetSignatureUrlsAsync(client);
 
-            return Ok(new ClientGetResult(client, signatureUrls));
+            return new ClientGetResult(client, signatureUrls);
         }
 
         [Returns204]

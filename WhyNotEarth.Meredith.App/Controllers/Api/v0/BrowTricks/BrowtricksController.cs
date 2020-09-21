@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
-using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Tenant;
@@ -39,7 +38,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var images = await _browTricksService.GetAllImages(user);
             var videos = await _browTricksService.GetAllVideos(user);
 
-            return Ok(new BrowtricksProfileResult(user, images, videos));
+            return new BrowtricksProfileResult(user, images, videos);
         }
 
         [Returns200]
@@ -53,7 +52,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             var images = await _browTricksService.GetAllImages(tenantSlug, user);
             var videos = await _browTricksService.GetAllVideos(tenantSlug, user);
 
-            return Ok(new BrowtricksTenantResult(tenant, images, videos));
+            return new BrowtricksTenantResult(tenant, images, videos);
         }
     }
 }

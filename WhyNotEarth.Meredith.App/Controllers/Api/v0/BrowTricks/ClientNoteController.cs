@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
-using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.BrowTricks.Services;
 using WhyNotEarth.Meredith.Identity;
@@ -63,7 +62,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             var notes = await _clientNoteService.ListAsync(clientId, user);
 
-            return Ok(notes?.Select(item => new ClientNoteResult(item)));
+            return notes?.Select(item => new ClientNoteResult(item)).ToList() ?? new List<ClientNoteResult>();
         }
     }
 }

@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             var formTemplates = await _formTemplateService.GetListAsync(tenantSlug, user);
 
-            return Ok(formTemplates.Select(item => new FormTemplateResult(item)));
+            return formTemplates.Select(item => new FormTemplateResult(item)).ToList();
         }
 
         [Returns200]
@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
             var formTemplate = await _formTemplateService.GetAsync(templateId, user);
 
-            return Ok(new FormTemplateResult(formTemplate));
+            return new FormTemplateResult(formTemplate);
         }
 
         [Returns204]

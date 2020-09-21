@@ -71,7 +71,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns404]
         [HttpPost("notify/{clientId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<string>> Notify(int templateId, int clientId, [FromQuery] string callbackUrl)
+        public async Task<ActionResult> Notify(int templateId, int clientId, [FromQuery] string callbackUrl)
         {
             var user = await GetCurrentUserAsync(_userService);
 
