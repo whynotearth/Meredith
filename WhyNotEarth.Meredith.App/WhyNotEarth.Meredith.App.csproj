@@ -9,7 +9,7 @@
     <Folder Include="wwwroot" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CloudinaryDotNet" Version="1.12.0" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.13.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.13" />
     <PackageReference Include="Hangfire.Core" Version="1.7.13" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
