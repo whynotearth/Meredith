@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using WhyNotEarth.Meredith.App.Localization;
 
 namespace WhyNotEarth.Meredith.App.Swagger
@@ -57,6 +58,8 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 });
 
                 c.OperationFilter<LocalizationHeaderParameter>();
+
+                c.OrderActionsBy(apiDesc => apiDesc.ActionDescriptor.DisplayName);
             });
 
             services.AddSwaggerGenNewtonsoftSupport();
@@ -70,6 +73,7 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 {
                     c.SwaggerEndpoint("/swagger/v0/swagger.json", "Interface API v0");
                     c.RoutePrefix = string.Empty;
+                    c.DocExpansion(DocExpansion.None);
                 });
 
             return app;
