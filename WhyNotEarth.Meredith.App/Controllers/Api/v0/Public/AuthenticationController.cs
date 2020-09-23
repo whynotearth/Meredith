@@ -8,10 +8,10 @@ using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WhyNotEarth.Meredith.App.Models.Api.v0.Authentication;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
 using WhyNotEarth.Meredith.Email;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 
@@ -22,11 +22,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class AuthenticationController : ControllerBase
     {
+        private readonly ILoginTokenService _loginTokenService;
         private readonly SendGridService _sendGridService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
-        private readonly ILoginTokenService _loginTokenService;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
             SendGridService sendGridService, IUserService userService, ILoginTokenService loginTokenService)
@@ -282,6 +282,37 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             }
 
             return Ok();
+        }
+
+        [Authorize]
+        [Returns204]
+        [Returns404]
+        [HttpPost("phonenumbertoken")]
+        public async Task<NoContentResult> SendPhoneNumberToken(SendPhoneNumberTokenModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _userService.SendPhoneNumberToken(user, model);
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [Returns204]
+        [Returns400]
+        [HttpPost("verifyphonenumber")]
+        public async Task<ActionResult> VerifyPhoneNumber([FromBody] string token)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var identityResult = await _userService.VerifyPhoneNumber(user, token);
+
+            if (!identityResult.Succeeded)
+            {
+                return BadRequest(identityResult.Errors);
+            }
+
+            return NoContent();
         }
 
         private async Task<ActionResult<string>> SignIn(User user)

@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.Validation
 {
     public class MandatoryAttribute : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             if (value is null)
             {

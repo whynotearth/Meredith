@@ -6,11 +6,11 @@ namespace WhyNotEarth.Meredith.Public
 {
     public class CompanyService
     {
-        protected IDbContext Context { get; }
+        private readonly IDbContext _dbContext;
 
-        public CompanyService(IDbContext IDbContext)
+        public CompanyService(IDbContext dbContext)
         {
-            Context = IDbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<Company> CreateCompanyAsync(string name, string slug)
@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.Public
                 throw new InvalidActionException("Name cannot be empty");
             }
 
-            var companyExists = await Context.Companies.AnyAsync(a => a.Name.Equals(name));
+            var companyExists = await _dbContext.Companies.AnyAsync(a => a.Name.Equals(name));
 
             if (companyExists)
             {
@@ -38,8 +38,20 @@ namespace WhyNotEarth.Meredith.Public
                 Slug = slug
             };
 
-            Context.Companies.Add(company);
-            await Context.SaveChangesAsync();
+            _dbContext.Companies.Add(company);
+            await _dbContext.SaveChangesAsync();
+
+            return company;
+        }
+
+        public async Task<Company> GetAsync(string companySlug)
+        {
+            var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Slug == companySlug.ToLower());
+
+            if (company is null)
+            {
+                throw new RecordNotFoundException($"Company {companySlug} not found");
+            }
 
             return company;
         }

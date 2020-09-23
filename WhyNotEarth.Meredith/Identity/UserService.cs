@@ -11,21 +11,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using WhyNotEarth.Meredith.Exceptions;
+using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.Identity
 {
     internal class UserService : IUserService
     {
+        private readonly CompanyService _companyService;
         private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
+        private readonly ITwilioService _twilioService;
         private readonly UserManager _userManager;
 
-        public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions)
+        public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions,
+            CompanyService companyService, ITwilioService twilioService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _companyService = companyService;
+            _twilioService = twilioService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -145,6 +153,35 @@ namespace WhyNotEarth.Meredith.Identity
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public Task<IdentityResult> VerifyPhoneNumber(User user, string token)
+        {
+            return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, token);
+        }
+
+        public async Task SendPhoneNumberToken(User user, SendPhoneNumberTokenModel model)
+        {
+            var company = await _companyService.GetAsync(model.CompanySlug);
+            var tenant = await GetTenantAsync(model.TenantSlug);
+
+            var phoneNumber = !string.IsNullOrEmpty(user.PhoneNumber) ? user.PhoneNumber : model.PhoneNumber;
+
+            if (phoneNumber is null)
+            {
+                throw new InvalidActionException("Please provide a phone number");
+            }
+
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+            await _twilioService.SendAsync(new ShortMessage
+            {
+                CompanyId = company.Id,
+                TenantId = tenant?.Id,
+                To = user.PhoneNumber,
+                Body = $"Code: {token}\r\n{company.Name} {tenant?.Name}",
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+
         private async Task<UserCreateResult> CreateAsync(User user, string? password)
         {
             IdentityResult identityResult;
@@ -215,6 +252,23 @@ namespace WhyNotEarth.Meredith.Identity
                 GoogleLocation = model.GoogleLocation,
                 TenantId = tenantId
             };
+        }
+
+        public async Task<Public.Tenant?> GetTenantAsync(string? tenantSlug)
+        {
+            if (tenantSlug is null)
+            {
+                return null;
+            }
+
+            var tenant = await _dbContext.Tenants.FirstOrDefaultAsync(item => item.Slug == tenantSlug);
+
+            if (tenant is null)
+            {
+                throw new RecordNotFoundException($"Tenant {tenantSlug} not found");
+            }
+
+            return tenant;
         }
     }
 }

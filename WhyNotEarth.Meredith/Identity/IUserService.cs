@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 
@@ -24,5 +25,9 @@ namespace WhyNotEarth.Meredith.Identity
         Task UpdateUserAsync(int userId, string email, string? firstName, string? lastName, string? phoneNumber);
 
         Task<string> GenerateJwtTokenAsync(User user);
+
+        Task SendPhoneNumberToken(User user, SendPhoneNumberTokenModel model);
+
+        Task<IdentityResult> VerifyPhoneNumber(User user, string token);
     }
 }
