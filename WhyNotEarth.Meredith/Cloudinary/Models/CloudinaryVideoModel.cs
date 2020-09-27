@@ -20,6 +20,10 @@ namespace WhyNotEarth.Meredith.Cloudinary.Models
         [NotNull]
         [Mandatory]
         public int? Height { get; set; }
+        
+        [NotNull]
+        [Mandatory]
+        public double FileSize { get; set; }
 
         [NotNull]
         [Mandatory]

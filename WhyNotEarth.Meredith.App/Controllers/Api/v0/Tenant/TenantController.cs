@@ -144,5 +144,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             return NoContent();
         }
+
+        
+        [Authorize]
+        [Returns204]
+        [Returns401]
+        [Returns403]
+        [HttpGet("status")]
+        public async Task<IActionResult> CheckTenantStatus()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var tenant = await _tenantService.GetTenant(user);
+
+            var status = await _tenantService.GetTenantStatus(tenant.Id);
+
+            return Ok(status);
+        }
     }
 }

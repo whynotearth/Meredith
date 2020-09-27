@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -271,6 +272,36 @@ namespace WhyNotEarth.Meredith.Tenant
             }
 
             return tenant;
+        }
+
+        /// <summary>
+        /// Checks the tenants subscription status and returns the information accordingly.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Object> GetTenantStatus(int tenantId)
+        {
+            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
+            double fileSizeSum = 0;
+
+            if(tenant == null)
+                throw new RecordNotFoundException($"Tenant {tenantId} not found");
+            
+            var clients = _dbContext.Clients.Include(x => x.Images)
+                .Include(x => x.Videos)
+                .Where(x => x.TenantId == tenantId).ToList();
+
+            // Sum up the image and video files sizes of all clients belonging to the tenant.
+            foreach (var client in clients)
+            {
+                fileSizeSum += client.Images.Sum(c => c.FileSize ?? 0);
+                fileSizeSum += client.Videos.Sum(c => c.FileSize ?? 0);
+            }
+            
+            // TODO: Check subscription status and add result to return object.
+            return new
+            {
+                FileSizeTotal = fileSizeSum
+            };
         }
     }
 }

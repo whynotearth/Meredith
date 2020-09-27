@@ -69,12 +69,16 @@ namespace WhyNotEarth.Meredith.Cloudinary
                 }
                 else
                 {
+                    // First fetch image details from cloudinary to retrieve filesize.
+                    var resource = GetCloudinaryResourcePerPublicId(model.PublicId, ResourceType.Image);
+
                     result.Add(new T
                     {
                         CloudinaryPublicId = model.PublicId,
                         Url = model.Url,
                         Width = model.Width,
-                        Height = model.Height
+                        Height = model.Height,
+                        FileSize = resource?.Bytes,
                     });
                 }
             }
@@ -114,18 +118,41 @@ namespace WhyNotEarth.Meredith.Cloudinary
                 }
                 else
                 {
+                    // First fetch video details from cloudinary to retrieve filesize.
+                    var resource = GetCloudinaryResourcePerPublicId(model.PublicId, ResourceType.Video);
+
                     result.Add(new T
                     {
                         CloudinaryPublicId = model.PublicId,
                         Url = model.Url,
                         Width = model.Width!.Value,
                         Height = model.Height!.Value,
+                        FileSize = resource?.Bytes,
                         Duration = model.Duration!.Value,
                         Format = model.Format,
                         ThumbnailUrl = model.ThumbnailUrl
                     });
                 }
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Queries the cloudinary api to get the resource per it's public id.
+        /// </summary>
+        /// <param name="publicId"></param>
+        /// <param name="resourceType">The resource type of the resource to fetch.</param>
+        /// <returns></returns>
+        private GetResourceResult GetCloudinaryResourcePerPublicId(string publicId, ResourceType resourceType)
+        {
+            var cloudinary = new CloudinaryDotNet.Cloudinary(new Account(_options.CloudName,
+                _options.ApiKey, _options.ApiSecret));
+
+            var par = new GetResourceParams(publicId);
+            par.ResourceType = resourceType;
+            
+            var result = cloudinary.GetResource(par);
 
             return result;
         }

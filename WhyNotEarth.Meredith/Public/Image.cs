@@ -17,5 +17,7 @@ namespace WhyNotEarth.Meredith.Public
         public int? Width { get; set; }
 
         public int? Height { get; set; }
+        
+        public double? FileSize { get; set; }
     }
 }
