@@ -23,6 +23,10 @@ namespace WhyNotEarth.Meredith.Cloudinary.Models
 
         [NotNull]
         [Mandatory]
+        public long FileSize { get; set; }
+
+        [NotNull]
+        [Mandatory]
         public double? Duration { get; set; }
 
         [NotNull]

@@ -12,6 +12,11 @@ namespace WhyNotEarth.Meredith.Public
 
         public int Height { get; set; }
 
+        /// <summary>
+        ///     File size in bytes
+        /// </summary>
+        public long? FileSize { get; set; }
+
         public double Duration { get; set; }
 
         public string Format { get; set; } = null!;

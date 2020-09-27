@@ -74,7 +74,8 @@ namespace WhyNotEarth.Meredith.Cloudinary
                         CloudinaryPublicId = model.PublicId,
                         Url = model.Url,
                         Width = model.Width,
-                        Height = model.Height
+                        Height = model.Height,
+                        FileSize = model.FileSize
                     });
                 }
             }
@@ -122,7 +123,8 @@ namespace WhyNotEarth.Meredith.Cloudinary
                         Height = model.Height!.Value,
                         Duration = model.Duration!.Value,
                         Format = model.Format,
-                        ThumbnailUrl = model.ThumbnailUrl
+                        ThumbnailUrl = model.ThumbnailUrl,
+                        FileSize = model.FileSize
                     });
                 }
             }
