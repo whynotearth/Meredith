@@ -5,11 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
 using WhyNotEarth.Meredith.Pdf;
 
-namespace WhyNotEarth.Meredith.HelloSign
+namespace WhyNotEarth.Meredith.BrowTricks
 {
     internal class FormSignatureFileService : IFormSignatureFileService
     {

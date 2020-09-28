@@ -13,7 +13,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Twilio;
 

@@ -5,9 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant.Models;
+using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.Tenant
 {

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using WhyNotEarth.Meredith.Public;
-using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Jobs.Volkswagen
+namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
     public class JumpStartJob
     {

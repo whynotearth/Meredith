@@ -8,7 +8,7 @@ using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Makrdown;
 using WhyNotEarth.Meredith.Services;
 
-namespace WhyNotEarth.Meredith.Email
+namespace WhyNotEarth.Meredith.Emails
 {
     public class EmailService : IEmailService
     {

@@ -3,12 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Emails.Jobs;
 using WhyNotEarth.Meredith.GoogleCloud;
-using WhyNotEarth.Meredith.Jobs.Public;
 using WhyNotEarth.Meredith.Pdf;
-using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Jobs.Volkswagen
+namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
     public class JumpStartPdfJob
     {

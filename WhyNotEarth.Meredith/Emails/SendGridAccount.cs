@@ -1,4 +1,6 @@
-namespace WhyNotEarth.Meredith.Public
+using WhyNotEarth.Meredith.Public;
+
+namespace WhyNotEarth.Meredith.Emails
 {
     public class SendGridAccount
     {

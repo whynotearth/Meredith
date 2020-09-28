@@ -3,10 +3,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Email
+namespace WhyNotEarth.Meredith.Emails
 {
     public class EmailRecipientService
     {
@@ -58,7 +57,7 @@ namespace WhyNotEarth.Meredith.Email
                 clickCount);
         }
 
-        private async Task<ListStats> GetStatsAsync(Expression<Func<Public.Email, bool>> condition)
+        private async Task<ListStats> GetStatsAsync(Expression<Func<Email, bool>> condition)
         {
             var info = await _dbContext.Emails
                 .Where(condition)
@@ -77,7 +76,7 @@ namespace WhyNotEarth.Meredith.Email
         }
 
         private async Task<EmailDetailStats> GetDetailStatsAsync<TProperty>(
-            Expression<Func<Public.Email, bool>> condition, Expression<Func<Public.Email, TProperty>> include)
+            Expression<Func<Email, bool>> condition, Expression<Func<Email, TProperty>> include)
         {
             var emailRecipients = await _dbContext.Emails
                 .Include(include)
@@ -90,7 +89,7 @@ namespace WhyNotEarth.Meredith.Email
             return new EmailDetailStats(notOpenedList, openedList);
         }
 
-        public Task<int> GetOpenCountAsync(DateTime date, Expression<Func<Public.Email, bool>> condition)
+        public Task<int> GetOpenCountAsync(DateTime date, Expression<Func<Email, bool>> condition)
         {
             return _dbContext.Emails
                 .Include(item => item.Events)
@@ -99,7 +98,7 @@ namespace WhyNotEarth.Meredith.Email
                 .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date == date);
         }
 
-        public Task<int> GetOpenCountUpToAsync(DateTime date, Expression<Func<Public.Email, bool>> condition)
+        public Task<int> GetOpenCountUpToAsync(DateTime date, Expression<Func<Email, bool>> condition)
         {
             return _dbContext.Emails
                 .Include(item => item.Events)
@@ -108,7 +107,7 @@ namespace WhyNotEarth.Meredith.Email
                 .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date <= date);
         }
 
-        public Task<int> GetClickCountAsync(DateTime date, Expression<Func<Public.Email, bool>> condition)
+        public Task<int> GetClickCountAsync(DateTime date, Expression<Func<Email, bool>> condition)
         {
             return _dbContext.Emails
                 .Include(item => item.Events)
@@ -117,7 +116,7 @@ namespace WhyNotEarth.Meredith.Email
                 .CountAsync(item => item.Type == EmailEventType.Clicked && item.DateTime.Date == date);
         }
 
-        public Task<int> GetClickCountUpToAsync(DateTime date, Expression<Func<Public.Email, bool>> condition)
+        public Task<int> GetClickCountUpToAsync(DateTime date, Expression<Func<Email, bool>> condition)
         {
             return _dbContext.Emails
                 .Include(item => item.Events)

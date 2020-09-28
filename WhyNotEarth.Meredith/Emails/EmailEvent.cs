@@ -1,8 +1,6 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace WhyNotEarth.Meredith.Public
+namespace WhyNotEarth.Meredith.Emails
 {
     public class EmailEvent
     {

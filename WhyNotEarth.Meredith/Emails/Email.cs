@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Public
+namespace WhyNotEarth.Meredith.Emails
 {
     public class Email
     {

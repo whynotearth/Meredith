@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Volkswagen.Jobs
@@ -50,7 +50,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailMessage> GetEmailInfoAsync(NewJumpStart newJumpStart, List<Public.Email> emails)
+        private async Task<EmailMessage> GetEmailInfoAsync(NewJumpStart newJumpStart, List<Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 
@@ -90,7 +90,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             return Convert.ToBase64String(bytes);
         }
 
-        private Task<List<Public.Email>> GetRecipientsAsync(int newJumpStartId)
+        private Task<List<Email>> GetRecipientsAsync(int newJumpStartId)
         {
             return _dbContext.Emails
                 .Where(item => item.NewJumpStartId == newJumpStartId && item.Status == EmailStatus.ReadyToSend)

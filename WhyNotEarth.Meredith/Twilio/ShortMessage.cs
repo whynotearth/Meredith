@@ -1,6 +1,7 @@
 ﻿using System;
+using WhyNotEarth.Meredith.Public;
 
-namespace WhyNotEarth.Meredith.Public
+namespace WhyNotEarth.Meredith.Twilio
 {
     public class ShortMessage
     {
@@ -12,7 +13,7 @@ namespace WhyNotEarth.Meredith.Public
 
         public int? TenantId { get; set; }
 
-        public Tenant? Tenant { get; set; }
+        public Public.Tenant? Tenant { get; set; }
 
         public string To { get; set; } = null!;
 

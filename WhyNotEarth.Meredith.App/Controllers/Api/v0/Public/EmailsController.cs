@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.SendGrid;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
@@ -72,16 +73,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [JsonProperty("EmailId")]
         public int? EmailId { get; set; }
 
-        [JsonProperty(nameof(Meredith.Public.Email.CompanyId))]
+        [JsonProperty(nameof(Emails.Email.CompanyId))]
         public int CompanyId { get; set; }
 
-        [JsonProperty(nameof(Meredith.Public.Email.MemoId))]
+        [JsonProperty(nameof(Emails.Email.MemoId))]
         public int? MemoId { get; set; }
 
-        [JsonProperty(nameof(Meredith.Public.Email.JumpStartId))]
+        [JsonProperty(nameof(Emails.Email.JumpStartId))]
         public int? JumpStartId { get; set; }
 
-        [JsonProperty(nameof(Meredith.Public.Email.NewJumpStartId))]
+        [JsonProperty(nameof(Emails.Email.NewJumpStartId))]
         public int? NewJumpStartId { get; set; }
 
         public int Timestamp { get; set; }
@@ -112,7 +113,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         public async Task Apply(IDbContext dbContext)
         {
-            Meredith.Public.Email email;
+            Email email;
 
             if (EmailId.HasValue)
             {
@@ -151,7 +152,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             Update(email);
         }
 
-        private void Update(Meredith.Public.Email email)
+        private void Update(Email email)
         {
             if (EventType != EmailEventType.None)
             {

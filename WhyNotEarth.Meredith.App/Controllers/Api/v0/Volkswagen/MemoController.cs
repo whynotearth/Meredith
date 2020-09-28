@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Models;

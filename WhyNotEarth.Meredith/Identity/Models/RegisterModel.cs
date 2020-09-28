@@ -1,7 +1,7 @@
 using Hangfire.Annotations;
 using WhyNotEarth.Meredith.Validation;
 
-namespace WhyNotEarth.Meredith.Models
+namespace WhyNotEarth.Meredith.Identity.Models
 {
     public class RegisterModel
     {

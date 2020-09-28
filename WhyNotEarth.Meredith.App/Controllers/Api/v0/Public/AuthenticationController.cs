@@ -9,10 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Identity.Models;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public

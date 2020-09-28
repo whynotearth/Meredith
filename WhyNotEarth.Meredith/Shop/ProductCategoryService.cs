@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Shop.Models;
 using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.Shop

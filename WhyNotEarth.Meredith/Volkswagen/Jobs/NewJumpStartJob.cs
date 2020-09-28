@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Jobs.Public;
+using WhyNotEarth.Meredith.Emails.Jobs;
 
 namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {

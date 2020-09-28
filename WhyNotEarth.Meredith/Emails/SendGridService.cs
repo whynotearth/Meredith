@@ -9,7 +9,7 @@ using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 
-namespace WhyNotEarth.Meredith.Email
+namespace WhyNotEarth.Meredith.Emails
 {
     public class SendGridService
     {
@@ -212,7 +212,7 @@ namespace WhyNotEarth.Meredith.Email
             Recipients = emails.Select(item => new EmailMessageRecipient(item)).ToList();
         }
 
-        public EmailMessage(int companyId, List<Public.Email> emails)
+        public EmailMessage(int companyId, List<Email> emails)
         {
             CompanyId = companyId;
             Recipients = emails.Select(item => new EmailMessageRecipient(item)).ToList();
@@ -230,7 +230,7 @@ namespace WhyNotEarth.Meredith.Email
             Info = info;
         }
 
-        public EmailMessageRecipient(Public.Email email)
+        public EmailMessageRecipient(Email email)
         {
             Info = new Tuple<string, string?>(email.EmailAddress, null);
             EmailId = email.Id;

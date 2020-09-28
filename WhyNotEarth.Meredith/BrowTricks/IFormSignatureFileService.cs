@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using WhyNotEarth.Meredith.BrowTricks;
 
-namespace WhyNotEarth.Meredith.HelloSign
+namespace WhyNotEarth.Meredith.BrowTricks
 {
     public interface IFormSignatureFileService
     {

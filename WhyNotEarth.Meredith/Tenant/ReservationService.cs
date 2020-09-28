@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant.Models;

@@ -4,12 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Jobs.Volkswagen;
-using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
 
-namespace WhyNotEarth.Meredith.Jobs.Public
+namespace WhyNotEarth.Meredith.Emails.Jobs
 {
     public class EmailRecipientJob
     {
@@ -73,14 +71,14 @@ namespace WhyNotEarth.Meredith.Jobs.Public
             _backgroundJobClient.Enqueue<NewJumpStartEmailJob>(job => job.SendAsync(newJumpStartId));
         }
 
-        private async Task Create(int companyId, List<string> distributionGroups, Func<Meredith.Public.Email, Meredith.Public.Email> keySetter)
+        private async Task Create(int companyId, List<string> distributionGroups, Func<Email, Email> keySetter)
         {
             var dateTime = DateTime.UtcNow;
             var recipients = await GetRecipients(distributionGroups);
 
             foreach (var batch in recipients.Batch(100))
             {
-                var memoRecipients = batch.Select(item => new Meredith.Public.Email
+                var memoRecipients = batch.Select(item => new Email
                 {
                     CompanyId = companyId,
                     EmailAddress = item.Email,

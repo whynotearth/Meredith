@@ -6,7 +6,7 @@ using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Models;
+using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 

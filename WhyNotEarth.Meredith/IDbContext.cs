@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
+using WhyNotEarth.Meredith.Stripe;
+using WhyNotEarth.Meredith.Twilio;
 using WhyNotEarth.Meredith.Volkswagen;
 using Product = WhyNotEarth.Meredith.Public.Product;
 using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
@@ -40,7 +43,7 @@ namespace WhyNotEarth.Meredith
 
         public DbSet<Setting> Settings { get; set; }
 
-        public DbSet<Public.Email> Emails { get; set; }
+        public DbSet<Email> Emails { get; set; }
 
         public DbSet<EmailEvent> EmailEvents { get; set; }
 

@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
+using WhyNotEarth.Meredith.Stripe;
+using WhyNotEarth.Meredith.Twilio;
 using WhyNotEarth.Meredith.Volkswagen;
 using Product = WhyNotEarth.Meredith.Public.Product;
 using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
@@ -38,7 +41,7 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<Setting> Settings { get; set; } = null!;
 
-        public DbSet<Public.Email> Emails { get; set; } = null!;
+        public DbSet<Email> Emails { get; set; } = null!;
 
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 

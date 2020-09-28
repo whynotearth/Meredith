@@ -6,11 +6,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Public;
-using WhyNotEarth.Meredith.Volkswagen;
 
-namespace WhyNotEarth.Meredith.Jobs.Volkswagen
+namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
     public class MemoJob
     {
@@ -45,7 +44,7 @@ namespace WhyNotEarth.Meredith.Jobs.Volkswagen
             await _dbContext.SaveChangesAsync();
         }
 
-        private async Task<EmailMessage> GetEmailInfoAsync(Memo memo, List<Meredith.Public.Email> emails)
+        private async Task<EmailMessage> GetEmailInfoAsync(Memo memo, List<Email> emails)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == VolkswagenCompany.Slug);
 

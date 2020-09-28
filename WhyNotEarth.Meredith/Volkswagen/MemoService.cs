@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using WhyNotEarth.Meredith.Email;
+using WhyNotEarth.Meredith.Emails;
+using WhyNotEarth.Meredith.Emails.Jobs;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.Jobs.Public;
 using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.Volkswagen

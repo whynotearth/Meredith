@@ -7,8 +7,8 @@ using WhyNotEarth.Meredith.App.Auth;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Shop;
 using WhyNotEarth.Meredith.Identity;
-using WhyNotEarth.Meredith.Models;
 using WhyNotEarth.Meredith.Shop;
+using WhyNotEarth.Meredith.Shop.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
 {
