@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Twilio
 {
@@ -46,14 +45,17 @@ namespace WhyNotEarth.Meredith.Twilio
             {
                 _dbContext.ShortMessages.Update(message);
             }
+
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task SendCoreAsync(ShortMessage message)
         {
-            TwilioClient.Init(_options.AccountSid, _options.AuthToken);
+            var credentials = await GetCredentialsAsync(message.CompanyId);
 
-            var from = GetPhoneNumber(_options.PhoneNumber, message.IsWhatsApp).ToString();
+            TwilioClient.Init(credentials.AccountSid, credentials.AuthToken);
+
+            var from = GetPhoneNumber(credentials.PhoneNumber, message.IsWhatsApp).ToString();
             message.To = GetPhoneNumber(message.To, message.IsWhatsApp).ToString();
 
             var result = await MessageResource.CreateAsync(
@@ -71,6 +73,19 @@ namespace WhyNotEarth.Meredith.Twilio
             }
 
             return new PhoneNumber(phoneNumber);
+        }
+
+        private async Task<(string AccountSid, string AuthToken, string PhoneNumber)> GetCredentialsAsync(int companyId)
+        {
+            var twilioAccount =
+                await _dbContext.TwilioAccounts.FirstOrDefaultAsync(item => item.CompanyId == companyId);
+
+            if (twilioAccount != null)
+            {
+                return (twilioAccount.AccountSid, twilioAccount.AuthToken, twilioAccount.PhoneNumber);
+            }
+
+            return (_options.AccountSid, _options.AuthToken, _options.PhoneNumber);
         }
     }
 }

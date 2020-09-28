@@ -55,6 +55,8 @@ namespace WhyNotEarth.Meredith
 
         public DbSet<LoginToken> LoginTokens { get; set; }
 
+        public DbSet<TwilioAccount> TwilioAccounts { get; set; }
+
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; }
 

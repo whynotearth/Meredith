@@ -49,6 +49,8 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<LoginToken> LoginTokens { get; set; } = null!;
 
+        public DbSet<TwilioAccount> TwilioAccounts { get; set; } = null!;
+
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; } = null!;
 
