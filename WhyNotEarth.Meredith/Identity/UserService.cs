@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -152,21 +153,30 @@ namespace WhyNotEarth.Meredith.Identity
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public Task<IdentityResult> VerifyPhoneNumber(User user, string token)
-        {
-            return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, token);
-        }
-
-        public async Task SendPhoneNumberToken(User user, SendPhoneNumberTokenModel model)
+        public async Task SendConfirmPhoneNumberTokenAsync(User user, ConfirmPhoneNumberTokenModel model)
         {
             var company = await _companyService.GetAsync(model.CompanySlug);
             var tenant = await GetTenantAsync(model.TenantSlug);
 
-            var phoneNumber = !string.IsNullOrEmpty(user.PhoneNumber) ? user.PhoneNumber : model.PhoneNumber;
+            if (user.PhoneNumberConfirmed)
+            {
+                throw new InvalidActionException("User already has a confirmed phone number");
+            }
 
-            if (phoneNumber is null)
+            if (user.PhoneNumber is null && model.PhoneNumber is null)
             {
                 throw new InvalidActionException("Please provide a phone number");
+            }
+
+            if (model.PhoneNumber != null)
+            {
+                user.PhoneNumber = model.PhoneNumber;
+                var identityResult = await _userManager.UpdateAsync(user);
+
+                if (!identityResult.Succeeded)
+                {
+                    throw new InvalidActionException(identityResult.Errors);
+                }
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
@@ -175,10 +185,15 @@ namespace WhyNotEarth.Meredith.Identity
             {
                 CompanyId = company.Id,
                 TenantId = tenant?.Id,
-                To = user.PhoneNumber,
+                To = user.PhoneNumber!,
                 Body = $"Code: {token}\r\n{company.Name} {tenant?.Name}",
                 CreatedAt = DateTime.UtcNow
             });
+        }
+
+        public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, string token)
+        {
+            return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, token);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

@@ -25,8 +25,8 @@ namespace WhyNotEarth.Meredith.Identity
 
         Task<string> GenerateJwtTokenAsync(User user);
 
-        Task SendPhoneNumberToken(User user, SendPhoneNumberTokenModel model);
+        Task SendConfirmPhoneNumberTokenAsync(User user, ConfirmPhoneNumberTokenModel model);
 
-        Task<IdentityResult> VerifyPhoneNumber(User user, string token);
+        Task<IdentityResult> ConfirmPhoneNumberAsync(User user, string token);
     }
 }

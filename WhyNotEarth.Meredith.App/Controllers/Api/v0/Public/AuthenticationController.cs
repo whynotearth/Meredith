@@ -286,12 +286,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Authorize]
         [Returns204]
         [Returns404]
-        [HttpPost("phonenumbertoken")]
-        public async Task<NoContentResult> SendPhoneNumberToken(SendPhoneNumberTokenModel model)
+        [HttpPost("confirmphonetoken")]
+        public async Task<NoContentResult> SendConfirmPhoneNumberToken(ConfirmPhoneNumberTokenModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            await _userService.SendPhoneNumberToken(user, model);
+            await _userService.SendConfirmPhoneNumberTokenAsync(user, model);
 
             return NoContent();
         }
@@ -299,12 +299,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Authorize]
         [Returns204]
         [Returns400]
-        [HttpPost("verifyphonenumber")]
-        public async Task<ActionResult> VerifyPhoneNumber([FromBody] string token)
+        [HttpPost("confirmphone")]
+        public async Task<ActionResult> ConfirmPhoneNumber([FromBody] string token)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var identityResult = await _userService.VerifyPhoneNumber(user, token);
+            var identityResult = await _userService.ConfirmPhoneNumberAsync(user, token);
 
             if (!identityResult.Succeeded)
             {

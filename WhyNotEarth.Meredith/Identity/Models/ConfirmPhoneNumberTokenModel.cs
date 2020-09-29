@@ -3,7 +3,7 @@ using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.Identity.Models
 {
-    public class SendPhoneNumberTokenModel
+    public class ConfirmPhoneNumberTokenModel
     {
         [NotNull]
         [Mandatory]
