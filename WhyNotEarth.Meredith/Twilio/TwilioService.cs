@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Twilio;
+using Twilio.Exceptions;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.Twilio
 {
@@ -58,11 +60,20 @@ namespace WhyNotEarth.Meredith.Twilio
             var from = GetPhoneNumber(credentials.PhoneNumber, message.IsWhatsApp).ToString();
             message.To = GetPhoneNumber(message.To, message.IsWhatsApp).ToString();
 
-            var result = await MessageResource.CreateAsync(
-                body: message.Body,
-                from: from,
-                to: message.To
-            );
+            try
+            {
+                var result = await MessageResource.CreateAsync(
+                    body: message.Body,
+                    from: from,
+                    to: message.To
+                );
+            }
+            // https://www.twilio.com/docs/api/errors/21614
+            // 'To' number is not a valid mobile number
+            catch (ApiException apiException) when (apiException.Code == 21614)
+            {
+                throw new InvalidActionException($"The number {message.To} is not a valid phone number.");
+            }
         }
 
         private PhoneNumber GetPhoneNumber(string phoneNumber, bool isWhatsApp)
