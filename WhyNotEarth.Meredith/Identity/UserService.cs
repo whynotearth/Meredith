@@ -56,6 +56,13 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
         {
+            if (model.Email is null)
+            {
+                var newUser = await MapUserAsync(model);
+
+                return await CreateAsync(newUser, model.Password);
+            }
+
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user is null)
@@ -224,11 +231,6 @@ namespace WhyNotEarth.Meredith.Identity
                 user.LastName = model.LastName;
             }
 
-            if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
-            {
-                user.PhoneNumber = model.PhoneNumber;
-            }
-
             if (!string.IsNullOrWhiteSpace(model.Address))
             {
                 user.Address = model.Address;
@@ -257,7 +259,7 @@ namespace WhyNotEarth.Meredith.Identity
 
             return new User
             {
-                UserName = model.Email,
+                UserName = model.UserName ?? model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 FirstName = model.FirstName,
