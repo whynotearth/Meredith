@@ -191,9 +191,9 @@ namespace WhyNotEarth.Meredith.Identity
             });
         }
 
-        public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, string token)
+        public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, ConfirmPhoneNumberModel model)
         {
-            return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, token);
+            return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, model.Token);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

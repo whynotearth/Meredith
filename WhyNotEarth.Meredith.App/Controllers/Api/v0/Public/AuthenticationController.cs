@@ -299,11 +299,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Returns204]
         [Returns400]
         [HttpPost("confirmphone")]
-        public async Task<ActionResult> ConfirmPhoneNumber([FromBody] string token)
+        public async Task<ActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var identityResult = await _userService.ConfirmPhoneNumberAsync(user, token);
+            var identityResult = await _userService.ConfirmPhoneNumberAsync(user, model);
 
             if (!identityResult.Succeeded)
             {
