@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Emails
 {

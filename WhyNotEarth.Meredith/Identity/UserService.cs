@@ -4,18 +4,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Public;
-using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -24,16 +24,16 @@ namespace WhyNotEarth.Meredith.Identity
         private readonly CompanyService _companyService;
         private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
-        private readonly ITwilioService _twilioService;
         private readonly UserManager _userManager;
+        private readonly IUserNotificationService _userNotificationService;
 
         public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions,
-            CompanyService companyService, ITwilioService twilioService)
+            CompanyService companyService, IUserNotificationService userNotificationService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _companyService = companyService;
-            _twilioService = twilioService;
+            _userNotificationService = userNotificationService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -187,20 +187,55 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+            var message = $"Code: {token}\r\n{company.Name} {tenant?.Name}";
 
-            await _twilioService.SendAsync(new ShortMessage
-            {
-                CompanyId = company.Id,
-                TenantId = tenant?.Id,
-                To = user.PhoneNumber!,
-                Body = $"Code: {token}\r\n{company.Name} {tenant?.Name}",
-                CreatedAt = DateTime.UtcNow
-            });
+            await _userNotificationService.NotifyAsync(user, NotificationType.Sms, new Notification(company, message));
         }
 
         public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, ConfirmPhoneNumberModel model)
         {
             return _userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, model.Token);
+        }
+
+        public async Task SendForgotPasswordAsync(ForgotPasswordModel model)
+        {
+            var company = await _companyService.GetAsync(model.CompanySlug);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                // Don't reveal that the user does not exist
+                return;
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var uriBuilder = new UriBuilder(model.ReturnUrl);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["email"] = user.Email;
+            query["token"] = token;
+            uriBuilder.Query = query.ToString();
+            var callbackUrl = uriBuilder.ToString();
+
+            var message =
+                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
+
+            await _userNotificationService.NotifyAsync(user, new Notification(company, message)
+            {
+                Subject = "Reset Password"
+            });
+        }
+
+        public async Task ForgotPasswordResetAsync(ForgotPasswordResetModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return;
+            }
+
+            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

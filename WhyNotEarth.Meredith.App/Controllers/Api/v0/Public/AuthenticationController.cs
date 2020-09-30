@@ -1,15 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication;
-using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Public;
@@ -22,17 +18,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class AuthenticationController : ControllerBase
     {
         private readonly ILoginTokenService _loginTokenService;
-        private readonly SendGridService _sendGridService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            SendGridService sendGridService, IUserService userService, ILoginTokenService loginTokenService)
+            IUserService userService, ILoginTokenService loginTokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _sendGridService = sendGridService;
             _userService = userService;
             _loginTokenService = loginTokenService;
         }
@@ -220,24 +214,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpPost("forgotpassword")]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null)
-            {
-                // Don't reveal that the user does not exist
-                return Ok();
-            }
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            var uriBuilder = new UriBuilder(model.ReturnUrl);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["email"] = user.Email;
-            query["token"] = token;
-            uriBuilder.Query = query.ToString();
-            var callbackUrl = uriBuilder.ToString();
-
-            await _sendGridService.SendAuthEmail(model.CompanySlug, user.Email, "Reset Password",
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            await _userService.SendForgotPasswordAsync(model);
 
             return Ok();
         }
@@ -245,14 +222,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpPost("forgotpasswordreset")]
         public async Task<ActionResult> ForgotPasswordReset(ForgotPasswordResetModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-            {
-                // Don't reveal that the user does not exist
-                return Ok();
-            }
-
-            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            await _userService.ForgotPasswordResetAsync(model);
 
             return Ok();
         }

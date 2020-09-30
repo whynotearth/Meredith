@@ -28,5 +28,9 @@ namespace WhyNotEarth.Meredith.Identity
         Task SendConfirmPhoneNumberTokenAsync(User user, ConfirmPhoneNumberTokenModel model);
 
         Task<IdentityResult> ConfirmPhoneNumberAsync(User user, ConfirmPhoneNumberModel model);
+
+        Task SendForgotPasswordAsync(ForgotPasswordModel model);
+
+        Task ForgotPasswordResetAsync(ForgotPasswordResetModel model);
     }
 }
