@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication
 
         public bool IsPhoneNumberConfirmed { get; }
 
+        public bool IsEmailConfirmed { get; }
+
         public List<string> LoginProviders { get; }
 
         public PingResult(User user, List<string> loginProviders)
@@ -22,6 +24,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication
             UserName = user.UserName;
             IsAuthenticated = true;
             IsPhoneNumberConfirmed = user.PhoneNumberConfirmed;
+            IsEmailConfirmed = user.EmailConfirmed;
             LoginProviders = loginProviders;
         }
     }
