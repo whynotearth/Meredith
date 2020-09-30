@@ -68,7 +68,7 @@ namespace WhyNotEarth.Meredith.App.Middleware
 
                 if (!_env.IsDevelopment())
                 {
-                    return new Response(statusCode, "Unexpected error :(");
+                    return new Response(statusCode, "Something went wrong, if problem persisted please contact chris@whynot.earth");
                 }
 
                 while (exception.InnerException != null)
