@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.Public
 
         public decimal DeliveryFee { get; set; }
 
-        public ICollection<BusinessHour> BusinessHours { get; set; } = null!;
+        public ICollection<BusinessHour>? BusinessHours { get; set; }
 
         public PaymentMethodType PaymentMethodType { get; set; }
 

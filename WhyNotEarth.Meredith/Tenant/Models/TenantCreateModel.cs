@@ -25,17 +25,11 @@ namespace WhyNotEarth.Meredith.Tenant.Models
 
         public string? LogoUrl { get; set; }
 
-        [NotNull]
-        [Mandatory]
         public List<PaymentMethodType>? PaymentMethodTypes { get; set; }
 
-        [NotNull]
-        [Mandatory]
         public List<NotificationType>? NotificationTypes { get; set; }
 
-        [NotNull]
-        [Mandatory]
-        public List<BusinessHourModel>? BusinessHours { get; set; }
+        public List<BusinessHourModel> BusinessHours { get; set; } = new List<BusinessHourModel>();
 
         public string? PhoneNumber { get; set; }
 

@@ -116,8 +116,13 @@ namespace WhyNotEarth.Meredith.Tenant
             return result;
         }
 
-        private List<BusinessHour> GetBusinessHours(List<BusinessHourModel> models)
+        private List<BusinessHour> GetBusinessHours(List<BusinessHourModel>? models)
         {
+            if (models is null)
+            {
+                return new List<BusinessHour>();
+            }
+
             return models.Select(item => new BusinessHour
             {
                 DayOfWeek = item.DayOfWeek!.Value,

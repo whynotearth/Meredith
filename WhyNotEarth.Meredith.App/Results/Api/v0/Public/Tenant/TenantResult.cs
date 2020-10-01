@@ -24,9 +24,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
 
         public string? Description { get; }
 
-        public List<PaymentMethodType> PaymentMethodTypes { get; }
+        public List<PaymentMethodType>? PaymentMethodTypes { get; }
 
-        public List<NotificationType> NotificationTypes { get; }
+        public List<NotificationType>? NotificationTypes { get; }
 
         public List<BusinessHourResult>? BusinessHours { get; }
 
@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant
             Description = tenant.Description;
             PaymentMethodTypes = tenant.PaymentMethodType.ToList();
             NotificationTypes = tenant.NotificationType.ToList();
-            BusinessHours = tenant.BusinessHours?.Select(item => new BusinessHourResult(item))?.ToList();
+            BusinessHours = tenant.BusinessHours?.Select(item => new BusinessHourResult(item)).ToList();
             IsActive = tenant.IsActive;
             Address = new AddressResult(tenant.Address);
             WhatsAppNumber = tenant.WhatsAppNumber;
