@@ -157,6 +157,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             else
             {
                 user = await _userManager.FindByEmailAsync(email);
+
+                user.EmailConfirmed = true;
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    return Error("Error updating user", updateResult.Errors);
+                }
             }
 
             if (user is null)
@@ -164,7 +171,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 user = new User
                 {
                     UserName = email,
-                    Email = email
+                    Email = email,
+                    EmailConfirmed = true
                 };
 
                 _userService.Map(user, info);
