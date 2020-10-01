@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Exceptions;
-using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Tenant.Models;
@@ -14,13 +13,11 @@ namespace WhyNotEarth.Meredith.Tenant
     {
         private readonly IDbContext _dbContext;
         private readonly SlugService _slugService;
-        private readonly IUserService _userService;
 
-        public TenantService(IDbContext dbContext, SlugService slugService, IUserService userService)
+        public TenantService(IDbContext dbContext, SlugService slugService)
         {
             _dbContext = dbContext;
             _slugService = slugService;
-            _userService = userService;
         }
 
         public async Task<string> CreateAsync(string companySlug, TenantCreateModel model, User user)
@@ -75,10 +72,9 @@ namespace WhyNotEarth.Meredith.Tenant
                 throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
-            var isExternalAccountConnected = await _userService.IsExternalAccountConnected(user);
-            if (!isExternalAccountConnected)
+            if (!user.EmailConfirmed && !user.PhoneNumberConfirmed)
             {
-                throw new InvalidActionException("You need to connect your Google or Facebook account");
+                throw new InvalidActionException("You need to confirm your email address or phone number");
             }
 
             return company;
