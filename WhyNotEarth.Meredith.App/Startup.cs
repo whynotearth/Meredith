@@ -32,20 +32,17 @@ namespace WhyNotEarth.Meredith.App
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _configuration = configuration;
+            _environment = environment;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o
-                .AddDefaultPolicy(builder => builder
-                    .SetIsOriginAllowed(origin => true)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()));
+            services.AddCustomCorsPolicy(_environment);
 
             services.AddRollbarWeb();
 
@@ -90,12 +87,12 @@ namespace WhyNotEarth.Meredith.App
                 );
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory,
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory,
             IRecurringJobManager recurringJobManager, IDbContext dbContext, IBackgroundJobClient backgroundJobClient)
         {
             app.UseForwardedHeaders();
 
-            if (env.IsDevelopment())
+            if (_environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -108,7 +105,7 @@ namespace WhyNotEarth.Meredith.App
 
             app.UseCustomLocalization();
 
-            app.UseCustomSwagger(env);
+            app.UseCustomSwagger(_environment);
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
