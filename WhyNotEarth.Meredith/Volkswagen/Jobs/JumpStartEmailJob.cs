@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Emails;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
@@ -45,7 +44,6 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
         private async Task SendEmailAsync(JumpStart jumpStart, List<Article> articles)
         {
             var emails = await GetRecipientsAsync(jumpStart.Id);
-            //var recipients = emails.Select(item => Tuple.Create(item.EmailAddress, (string?) null)).ToList();
 
             var emailInfo = await GetEmailInfoAsync(jumpStart, emails, articles);
 

@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.Emails;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Volkswagen.Jobs
 {
