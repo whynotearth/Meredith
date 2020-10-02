@@ -9,7 +9,7 @@ using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.App.Configuration
 {
-    public static class Options
+    public static class OptionsExtensions
     {
         public static void AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
