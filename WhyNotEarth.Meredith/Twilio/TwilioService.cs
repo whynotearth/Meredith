@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.Twilio
             }
             // https://www.twilio.com/docs/api/errors/21614
             // 'To' number is not a valid mobile number
-            catch (ApiException apiException) when (apiException.Code == 21614)
+            catch (ApiException apiException)
             {
                 // Temporary logging
                 var details = "";
