@@ -14,13 +14,13 @@ namespace WhyNotEarth.Meredith.App.Swagger
 {
     public static class SwaggerExtensions
     {
-        public static void AddSwagger(this IServiceCollection services)
+        public static void AddSwagger(this IServiceCollection services, IWebHostEnvironment environment)
         {
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v0", new OpenApiInfo
                 {
-                    Title = "Interface API",
+                    Title = $"{environment.EnvironmentName} Interface API",
                     Version = "v0",
                     Description =
                         "API designed for internal use only, will change and WILL break backwards compability as needed for our GUI"

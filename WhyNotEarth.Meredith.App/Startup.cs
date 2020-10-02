@@ -64,7 +64,7 @@ namespace WhyNotEarth.Meredith.App
                     options.KnownProxies.Clear();
                 });
 
-            services.AddSwagger();
+            services.AddSwagger(_environment);
 
             services.AddHangfire(c => c.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
