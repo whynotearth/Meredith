@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
@@ -13,11 +14,13 @@ namespace WhyNotEarth.Meredith.Tenant
     {
         private readonly IDbContext _dbContext;
         private readonly SlugService _slugService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public TenantService(IDbContext dbContext, SlugService slugService)
+        public TenantService(IDbContext dbContext, SlugService slugService, ICloudinaryService cloudinaryService)
         {
             _dbContext = dbContext;
             _slugService = slugService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<string> CreateAsync(string companySlug, TenantCreateModel model, User user)
@@ -216,6 +219,64 @@ namespace WhyNotEarth.Meredith.Tenant
 
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
+        }
+        
+                /// <summary>
+        /// Updates a tenants profile image (logo).
+        /// </summary>
+        /// <param name="tenantId">The id of the tenant to update the profile image for.</param>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        public async Task UpdateTenantProfileImage(int tenantId, TenantImage image)
+        {
+            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
+
+            if(tenant == null)
+                throw new RecordNotFoundException($"Tenant {tenantId} not found");
+
+            // Delete old profile image if already exists.
+            if (tenant.Logo != null)
+            {
+                await _cloudinaryService.DeleteByUrlAsync(tenant.Logo.Url);
+            }
+
+            var logo = _cloudinaryService.GetUpdatedImageParameters(image);
+
+            tenant.Logo = new TenantImage(logo);
+            
+            await _dbContext.SaveChangesAsync();
+        }
+        
+        /// <summary>
+        /// Deletes a tenants profile image (logo).
+        /// </summary>
+        /// <param name="tenantId">The id of the tenant to delete the profile image for.</param>
+        /// <returns></returns>
+        public async Task DeleteProfileImage(int tenantId)
+        {
+            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
+
+            if(tenant == null)
+                throw new RecordNotFoundException($"Tenant {tenantId} not found");
+
+            tenant.Logo = null; 
+            
+            await _dbContext.SaveChangesAsync();
+        }
+        
+        /// <summary>
+        /// Deletes a tenants profile image (logo).
+        /// </summary>
+        /// <param name="tenantId">The id of the tenant to delete the profile image for.</param>
+        /// <returns></returns>
+        public TenantImage FetchTenantProfileImage(int tenantId)
+        {
+            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
+
+            if(tenant == null)
+                throw new RecordNotFoundException($"Tenant {tenantId} not found");
+
+            return tenant?.Logo;
         }
 
         public async Task EditAsync(string tenantSlug, TenantEditModel model, User user)
