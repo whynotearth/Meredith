@@ -230,11 +230,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [HttpPost("forgotpasswordreset")]
-        public async Task<ActionResult> ForgotPasswordReset(ForgotPasswordResetModel model)
+        public async Task<IActionResult> ForgotPasswordReset(ForgotPasswordResetModel model)
         {
-            await _userService.ForgotPasswordResetAsync(model);
+            var identityResult = await _userService.ForgotPasswordResetAsync(model);
 
-            return Ok();
+            return IdentityResult(identityResult);
         }
 
         [Authorize]
@@ -316,6 +316,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             user = _userService.Map(user, externalLoginInfo);
 
             await _userManager.UpdateAsync(user);
+        }
+
+        private IActionResult IdentityResult(IdentityResult identityResult)
+        {
+            if (identityResult.Succeeded)
+            {
+                return Ok();
+            }
+
+            return BadRequest(identityResult.Errors);
         }
 
         private UnauthorizedObjectResult Error(string message, IEnumerable<IdentityError> identityErrors)

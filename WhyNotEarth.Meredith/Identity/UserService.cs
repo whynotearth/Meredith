@@ -257,7 +257,7 @@ namespace WhyNotEarth.Meredith.Identity
             });
         }
 
-        public async Task ForgotPasswordResetAsync(ForgotPasswordResetModel model)
+        public async Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model)
         {
             User user;
             if (model.Email != null)
@@ -272,10 +272,10 @@ namespace WhyNotEarth.Meredith.Identity
             if (user is null)
             {
                 // Don't reveal that the user does not exist
-                return;
+                return IdentityResult.Success;
             }
 
-            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            return await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

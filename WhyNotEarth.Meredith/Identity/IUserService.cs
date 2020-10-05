@@ -31,6 +31,6 @@ namespace WhyNotEarth.Meredith.Identity
 
         Task SendForgotPasswordAsync(ForgotPasswordModel model);
 
-        Task ForgotPasswordResetAsync(ForgotPasswordResetModel model);
+        Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model);
     }
 }
