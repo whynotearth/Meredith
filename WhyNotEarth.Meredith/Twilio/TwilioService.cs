@@ -65,23 +65,22 @@ namespace WhyNotEarth.Meredith.Twilio
 
             try
             {
-                var result = await MessageResource.CreateAsync(
-                    body: message.Body,
-                    from: from,
-                    to: message.To
-                );
+                var messageResource = await MessageResource.CreateAsync(body: message.Body, from: from, to: message.To);
             }
-            // https://www.twilio.com/docs/api/errors/21614
-            // 'To' number is not a valid mobile number
             catch (ApiException apiException)
             {
                 // Temporary logging
-                var details = "";
-                foreach (var detail in apiException.Details)
+                var details = string.Empty;
+                if (apiException.Details != null)
                 {
-                    details += $"{detail.Key}:{detail.Value}";
+                    foreach (var detail in apiException.Details)
+                    {
+                        details += $"{detail.Key}:{detail.Value}";
+                    }
                 }
+                
                 _logger.LogError(apiException, $"ApiException code:{apiException.Code} status:{apiException.Status} moreInfo: {apiException.MoreInfo} details:{details}");
+
                 throw new InvalidActionException($"The number {message.To} is not a valid phone number.");
             }
         }
