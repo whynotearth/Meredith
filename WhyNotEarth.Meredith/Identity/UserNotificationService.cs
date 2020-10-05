@@ -37,7 +37,7 @@ namespace WhyNotEarth.Meredith.Identity
             if (type == NotificationType.Email)
             {
                 return EmailAsync(notification.Company.Slug, user.Email, notification.Subject ?? string.Empty,
-                    notification.Message);
+                    notification.GetMessage(type));
             }
 
             if (type == NotificationType.Sms)
@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.Identity
                 {
                     CompanyId = notification.Company.Id,
                     To = user.PhoneNumber!,
-                    Body = notification.Message,
+                    Body = notification.GetMessage(type),
                     CreatedAt = DateTime.UtcNow
                 });
             }

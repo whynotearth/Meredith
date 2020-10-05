@@ -133,18 +133,23 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         private async Task<Client> MapClientAsync(Client client, ClientModel model,
             Public.Tenant? tenant = null)
         {
-            if (client.User is null)
+            if (client.User is null!)
             {
                 var user = await GetOrCreateUserAsync(model);
                 client.UserId = user.Id;
             }
             else
             {
-                await _userService.UpdateUserAsync(client.User.Id, model.Email, model.FirstName, model.LastName,
-                    model.PhoneNumber);
+                await _userService.UpdateUserAsync(client.User, new ProfileModel
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber
+                });
             }
 
-            if (client.Tenant is null)
+            if (client.Tenant is null!)
             {
                 client.Tenant = tenant!;
             }

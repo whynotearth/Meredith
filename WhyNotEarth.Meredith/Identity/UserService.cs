@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -15,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
+using WhyNotEarth.Meredith.Identity.Notifications;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Identity
@@ -114,18 +114,39 @@ namespace WhyNotEarth.Meredith.Identity
             return user;
         }
 
-        public async Task UpdateUserAsync(int userId, string email, string? firstName, string? lastName,
-            string? phoneNumber)
+        public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
-            user.Email = email;
-            user.UserName = user.Email;
-            user.FirstName = firstName;
-            user.LastName = lastName;
-            user.PhoneNumber = phoneNumber;
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
 
-            await _userManager.UpdateAsync(user);
+            var shouldUpdateUsername = user.UserName == user.Email;
+            identityResult = await _userManager.SetEmailAsync(user, model.Email);
+
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
+
+            if (shouldUpdateUsername)
+            {
+                identityResult = await _userManager.SetUserNameAsync(user, model.Email);
+            }
+
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Address = model.Address;
+            user.GoogleLocation = model.GoogleLocation;
+
+            return await _userManager.UpdateAsync(user);
         }
 
         public async Task<string> GenerateJwtTokenAsync(User user)
@@ -185,9 +206,9 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-            var message = $"Code: {token}\r\n{company.Name} {tenant?.Name}";
 
-            await _userNotificationService.NotifyAsync(user, NotificationType.Sms, new Notification(company, message));
+            await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
+                new ConfirmPhoneNumberNotification(company, tenant, token));
         }
 
         public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, ConfirmPhoneNumberModel model)
@@ -199,7 +220,22 @@ namespace WhyNotEarth.Meredith.Identity
         {
             var company = await _companyService.GetAsync(model.CompanySlug);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            User user;
+            string unique;
+            string uniqueValue;
+            if (model.Email != null)
+            {
+                user = await _userManager.FindByEmailAsync(model.Email);
+                unique = "email";
+                uniqueValue = model.Email;
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(model.UserName);
+                unique = "username";
+                uniqueValue = model.UserName!;
+            }
+
             if (user is null)
             {
                 // Don't reveal that the user does not exist
@@ -210,30 +246,36 @@ namespace WhyNotEarth.Meredith.Identity
 
             var uriBuilder = new UriBuilder(model.ReturnUrl);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["email"] = user.Email;
+            query[unique] = uniqueValue;
             query["token"] = token;
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
-            var message =
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
-
-            await _userNotificationService.NotifyAsync(user, new Notification(company, message)
+            await _userNotificationService.NotifyAsync(user, new ForgotPasswordNotification(company, callbackUrl)
             {
                 Subject = "Reset Password"
             });
         }
 
-        public async Task ForgotPasswordResetAsync(ForgotPasswordResetModel model)
+        public async Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            User user;
+            if (model.Email != null)
             {
-                // Don't reveal that the user does not exist
-                return;
+                user = await _userManager.FindByEmailAsync(model.Email);
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(model.UserName);
             }
 
-            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (user is null)
+            {
+                // Don't reveal that the user does not exist
+                return IdentityResult.Success;
+            }
+
+            return await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         }
 
         private async Task<UserCreateResult> CreateAsync(User user, string? password)

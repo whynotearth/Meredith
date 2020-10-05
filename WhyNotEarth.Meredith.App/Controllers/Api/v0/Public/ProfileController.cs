@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
+using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Public;
 
@@ -18,10 +19,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class ProfileController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
 
-        public ProfileController(UserManager<User> userManager)
+        public ProfileController(UserManager<User> userManager, IUserService userService)
         {
             _userManager = userManager;
+            _userService = userService;
         }
 
         [Returns200]
@@ -39,13 +42,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var user = await _userManager.GetUserAsync(User);
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Address = model.Address;
-            user.GoogleLocation = model.GoogleLocation;
-
-            var identityResult = await _userManager.UpdateAsync(user);
+            var identityResult = await _userService.UpdateUserAsync(user, model);
 
             if (!identityResult.Succeeded)
             {
