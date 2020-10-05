@@ -1,7 +1,21 @@
-﻿namespace WhyNotEarth.Meredith.Tenant.Models
+﻿using WhyNotEarth.Meredith.Public;
+
+namespace WhyNotEarth.Meredith.Tenant.Models
 {
     public class TenantImageModel
     {
+        public TenantImageModel(TenantImage image)
+        {
+            Height = image.Height;
+            Width = image.Width;
+            Order = image.Order;
+            Title = image.Title;
+            Url = image.Url;
+            AltText = image.AltText;
+            FileSize = image.FileSize;
+            CloudinaryPublicId = image.CloudinaryPublicId;
+        }
+        
         public int Id { get; set; }
 
         public string? CloudinaryPublicId { get; set; }

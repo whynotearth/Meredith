@@ -29,6 +29,23 @@ namespace WhyNotEarth.Meredith.Tenant
 
             var tenant = Map(model, company, user);
 
+            if (tenant.Logo != null)
+            {
+                var image = _cloudinaryService.GetUpdatedImageParameters(new Image()
+                {
+                    Height = tenant.Logo.Height,
+                    Width = tenant.Logo.Width,
+                    Order = tenant.Logo.Order,
+                    Title = tenant.Logo.Title,
+                    AltText = tenant.Logo.AltText,
+                    Url = tenant.Logo.Url,
+                    FileSize = tenant.Logo.FileSize,
+                    CloudinaryPublicId = tenant.Logo.CloudinaryPublicId
+                });
+
+                tenant.Logo = new TenantImage(image);
+            }
+
             _dbContext.Tenants.Add(tenant);
             await _dbContext.SaveChangesAsync();
 
@@ -230,9 +247,26 @@ namespace WhyNotEarth.Meredith.Tenant
             {
                 await _cloudinaryService.DeleteByUrlAsync(tenant.Logo.Url);
             }
+
+            if (tenant.Logo != null)
+            {
+                var image = _cloudinaryService.GetUpdatedImageParameters(new Image()
+                {
+                    Height = tenant.Logo.Height,
+                    Width = tenant.Logo.Width,
+                    Order = tenant.Logo.Order,
+                    Title = tenant.Logo.Title,
+                    AltText = tenant.Logo.AltText,
+                    Url = tenant.Logo.Url,
+                    FileSize = tenant.Logo.FileSize,
+                    CloudinaryPublicId = tenant.Logo.CloudinaryPublicId
+                });
+
+                tenant.Logo = new TenantImage(image);
+            }
             
             tenant = Map(tenant, model);
-
+            
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
         }
