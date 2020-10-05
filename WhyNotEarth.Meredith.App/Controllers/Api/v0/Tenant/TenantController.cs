@@ -105,7 +105,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             var user = await _userManager.GetUserAsync(User);
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
-            return Ok(tenant != null);
+            return Ok(tenant != null!);
         }
 
         [Returns200]

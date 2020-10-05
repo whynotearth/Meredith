@@ -125,7 +125,7 @@ namespace WhyNotEarth.Meredith.Identity
 
             var shouldUpdateUsername = user.UserName == user.Email;
             identityResult = await _userManager.SetEmailAsync(user, model.Email);
-            
+
             if (!identityResult.Succeeded)
             {
                 return identityResult;
@@ -220,7 +220,22 @@ namespace WhyNotEarth.Meredith.Identity
         {
             var company = await _companyService.GetAsync(model.CompanySlug);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            User user;
+            string unique;
+            string uniqueValue;
+            if (model.Email != null)
+            {
+                user = await _userManager.FindByEmailAsync(model.Email);
+                unique = "email";
+                uniqueValue = model.Email;
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(model.UserName);
+                unique = "username";
+                uniqueValue = model.UserName!;
+            }
+
             if (user is null)
             {
                 // Don't reveal that the user does not exist
@@ -231,7 +246,7 @@ namespace WhyNotEarth.Meredith.Identity
 
             var uriBuilder = new UriBuilder(model.ReturnUrl);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["email"] = user.Email;
+            query[unique] = uniqueValue;
             query["token"] = token;
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
@@ -247,8 +262,17 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task ForgotPasswordResetAsync(ForgotPasswordResetModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            User user;
+            if (model.Email != null)
+            {
+                user = await _userManager.FindByEmailAsync(model.Email);
+            }
+            else
+            {
+                user = await _userManager.FindByNameAsync(model.UserName);
+            }
+
+            if (user is null)
             {
                 // Don't reveal that the user does not exist
                 return;
