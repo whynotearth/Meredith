@@ -220,76 +220,24 @@ namespace WhyNotEarth.Meredith.Tenant
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
         }
-        
-                /// <summary>
-        /// Updates a tenants profile image (logo).
-        /// </summary>
-        /// <param name="tenantId">The id of the tenant to update the profile image for.</param>
-        /// <param name="image"></param>
-        /// <returns></returns>
-        public async Task UpdateTenantProfileImage(int tenantId, TenantImage image)
-        {
-            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
-
-            if(tenant == null)
-                throw new RecordNotFoundException($"Tenant {tenantId} not found");
-
-            // Delete old profile image if already exists.
-            if (tenant.Logo != null)
-            {
-                await _cloudinaryService.DeleteByUrlAsync(tenant.Logo.Url);
-            }
-
-            var logo = _cloudinaryService.GetUpdatedImageParameters(image);
-
-            tenant.Logo = new TenantImage(logo);
-            
-            await _dbContext.SaveChangesAsync();
-        }
-        
-        /// <summary>
-        /// Deletes a tenants profile image (logo).
-        /// </summary>
-        /// <param name="tenantId">The id of the tenant to delete the profile image for.</param>
-        /// <returns></returns>
-        public async Task DeleteProfileImage(int tenantId)
-        {
-            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
-
-            if(tenant == null)
-                throw new RecordNotFoundException($"Tenant {tenantId} not found");
-
-            tenant.Logo = null; 
-            
-            await _dbContext.SaveChangesAsync();
-        }
-        
-        /// <summary>
-        /// Deletes a tenants profile image (logo).
-        /// </summary>
-        /// <param name="tenantId">The id of the tenant to delete the profile image for.</param>
-        /// <returns></returns>
-        public TenantImage FetchTenantProfileImage(int tenantId)
-        {
-            var tenant = _dbContext.Tenants.FirstOrDefault(t => t.Id == tenantId);
-
-            if(tenant == null)
-                throw new RecordNotFoundException($"Tenant {tenantId} not found");
-
-            return tenant?.Logo;
-        }
 
         public async Task EditAsync(string tenantSlug, TenantEditModel model, User user)
         {
             var tenant = await CheckOwnerAsync(user, tenantSlug);
 
+            // Delete old profile image if already exists and is different than the updated one.
+            if (tenant.Logo != null && tenant.Logo.CloudinaryPublicId != model.Logo.CloudinaryPublicId)
+            {
+                await _cloudinaryService.DeleteByUrlAsync(tenant.Logo.Url);
+            }
+            
             tenant = Map(tenant, model);
 
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
         }
-
-        private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
+        
+       private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
         {
             if (model.Name != null)
             {
@@ -332,6 +280,28 @@ namespace WhyNotEarth.Meredith.Tenant
                 tenant.PromotionPercent = model.PromotionPercent!.Value;
             }
 
+            if (model.Logo != null)
+            {
+                if (tenant.Logo.CloudinaryPublicId != model.Logo.CloudinaryPublicId)
+                {
+                    tenant.Logo = new TenantImage()
+                    {
+                        Height = model.Logo.Height,
+                        Width = model.Logo.Width,
+                        Order = model.Logo.Order,
+                        Title = model.Logo.Title,
+                        Url = model.Logo.Url,
+                        AltText = model.Logo.AltText,
+                        FileSize = model.Logo.FileSize,
+                        CloudinaryPublicId = model.Logo.CloudinaryPublicId,
+                    };
+                }
+            }
+            else
+            {
+                tenant.Logo = null;
+            }
+            
             return tenant;
         }
     }

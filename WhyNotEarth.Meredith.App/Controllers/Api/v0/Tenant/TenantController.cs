@@ -145,55 +145,5 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             return NoContent();
         }
-        
-        [Authorize]
-        [Returns204]
-        [Returns401]
-        [Returns403]
-        [HttpPut("profileImage")]
-        public async Task<IActionResult> UpdateProfileImage(TenantImage profileImage)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var tenant = await _tenantService.GetTenant(user);
-
-            await _tenantService.UpdateTenantProfileImage(tenant.Id, profileImage);
-
-            return NoContent();
-        }
-        
-        [Authorize]
-        [Returns204]
-        [Returns401]
-        [Returns403]
-        [HttpGet("profileImage")]
-        public async Task<IActionResult> FetchProfileImage()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var tenant = await _tenantService.GetTenant(user);
-
-            var profileImage = _tenantService.FetchTenantProfileImage(tenant.Id);
-
-            if (profileImage == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(profileImage);
-        }
-        
-        [Authorize]
-        [Returns204]
-        [Returns401]
-        [Returns403]
-        [HttpDelete("profileImage")]
-        public async Task<IActionResult> DeleteProfileImage()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var tenant = await _tenantService.GetTenant(user);
-
-            await _tenantService.DeleteProfileImage(tenant.Id);
-            
-            return NoContent();
-        }
     }
 }

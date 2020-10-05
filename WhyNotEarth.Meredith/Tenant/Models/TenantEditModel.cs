@@ -6,6 +6,8 @@ namespace WhyNotEarth.Meredith.Tenant.Models
     public class TenantEditModel : IValidatableObject
     {
         public string? Name { get; set; }
+        
+        public TenantImageModel? Logo { get; set; }
 
         public List<string>? Tags { get; set; }
 
