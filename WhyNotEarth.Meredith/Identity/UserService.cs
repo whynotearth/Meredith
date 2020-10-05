@@ -114,18 +114,39 @@ namespace WhyNotEarth.Meredith.Identity
             return user;
         }
 
-        public async Task UpdateUserAsync(int userId, string email, string? firstName, string? lastName,
-            string? phoneNumber)
+        public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
-            user.Email = email;
-            user.UserName = user.Email;
-            user.FirstName = firstName;
-            user.LastName = lastName;
-            user.PhoneNumber = phoneNumber;
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
 
-            await _userManager.UpdateAsync(user);
+            var shouldUpdateUsername = user.UserName == user.Email;
+            identityResult = await _userManager.SetEmailAsync(user, model.Email);
+            
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
+
+            if (shouldUpdateUsername)
+            {
+                identityResult = await _userManager.SetUserNameAsync(user, model.Email);
+            }
+
+            if (!identityResult.Succeeded)
+            {
+                return identityResult;
+            }
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Address = model.Address;
+            user.GoogleLocation = model.GoogleLocation;
+
+            return await _userManager.UpdateAsync(user);
         }
 
         public async Task<string> GenerateJwtTokenAsync(User user)
