@@ -4,7 +4,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -15,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
+using WhyNotEarth.Meredith.Identity.Notifications;
 using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Identity
@@ -206,9 +206,9 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
-            var message = $"Code: {token}\r\n{company.Name} {tenant?.Name}";
 
-            await _userNotificationService.NotifyAsync(user, NotificationType.Sms, new Notification(company, message));
+            await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
+                new ConfirmPhoneNumberNotification(company, tenant, token));
         }
 
         public Task<IdentityResult> ConfirmPhoneNumberAsync(User user, ConfirmPhoneNumberModel model)
@@ -251,10 +251,7 @@ namespace WhyNotEarth.Meredith.Identity
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
-            var message =
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
-
-            await _userNotificationService.NotifyAsync(user, new Notification(company, message)
+            await _userNotificationService.NotifyAsync(user, new ForgotPasswordNotification(company, callbackUrl)
             {
                 Subject = "Reset Password"
             });

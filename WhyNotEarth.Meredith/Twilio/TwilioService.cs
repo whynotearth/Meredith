@@ -78,8 +78,9 @@ namespace WhyNotEarth.Meredith.Twilio
                         details += $"{detail.Key}:{detail.Value}";
                     }
                 }
-                
-                _logger.LogError(apiException, $"ApiException code:{apiException.Code} status:{apiException.Status} moreInfo: {apiException.MoreInfo} details:{details}");
+
+                _logger.LogError(apiException,
+                    $"ApiException code:{apiException.Code} status:{apiException.Status} moreInfo: {apiException.MoreInfo} details:{details}");
 
                 throw new InvalidActionException($"The number {message.To} is not a valid phone number.");
             }

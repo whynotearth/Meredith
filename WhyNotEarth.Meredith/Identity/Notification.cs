@@ -2,18 +2,17 @@
 
 namespace WhyNotEarth.Meredith.Identity
 {
-    public class Notification
+    public abstract class Notification
     {
         public Company Company { get; }
 
         public string? Subject { get; set; }
 
-        public string Message { get; }
-
-        public Notification(Company company, string message)
+        protected Notification(Company company)
         {
             Company = company;
-            Message = message;
         }
+
+        public abstract string GetMessage(NotificationType notificationType);
     }
 }
