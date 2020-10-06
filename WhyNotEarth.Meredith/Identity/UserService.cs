@@ -116,6 +116,8 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
+            user = await _userManager.FindByIdAsync(user.Id.ToString());
+
             var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
             if (!identityResult.Succeeded)
