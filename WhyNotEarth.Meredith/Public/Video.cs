@@ -22,5 +22,7 @@ namespace WhyNotEarth.Meredith.Public
         public string Format { get; set; } = null!;
 
         public string ThumbnailUrl { get; set; } = null!;
+
+        public string? Description { get; set; }
     }
 }

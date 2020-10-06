@@ -29,8 +29,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
-
-        public string? Description { get; set; }
     }
 
     public class ClientVideo : Video
@@ -38,7 +36,5 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
-
-        public string? Description { get; set; }
     }
 }

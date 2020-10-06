@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 
         public int? Height { get; }
 
+        public string? Description { get; }
+
         public ImageResult(Image image)
         {
             PublicId = image.CloudinaryPublicId;
@@ -21,6 +23,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
             Order = image.Order;
             Width = image.Width;
             Height = image.Height;
+            Description = image.Description;
         }
     }
 }

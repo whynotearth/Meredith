@@ -18,6 +18,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 
         public string ThumbnailUrl { get; }
 
+        public string? Description { get; }
+
         public VideoResult(Video video)
         {
             PublicId = video.CloudinaryPublicId;
@@ -27,6 +29,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
             Duration = video.Duration;
             Format = video.Format;
             ThumbnailUrl = video.ThumbnailUrl;
+            Description = video.Description;
         }
     }
 }
