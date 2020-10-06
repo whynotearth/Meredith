@@ -89,15 +89,15 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             return $@"
-<section class=""section"">
-    <hr />
-</section>
-<section class=""section"">
-    <p class=""font-light mb-1"">
-        Signed by <span class=""font-normal"">{name}</span>
-    </p>
-    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
-</section>";
+                <section class=""section"">
+                    <hr />
+                </section>
+                <section class=""section"">
+                    <p class=""font-light mb-1"">
+                        Signed by <span class=""font-normal"">{name}</span>
+                    </p>
+                    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
+                </section>";
         }
 
         private List<IFormWidget> GetWidgets(FormTemplate formTemplate)
