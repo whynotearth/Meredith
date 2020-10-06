@@ -23,7 +23,7 @@ Meredith comes with all the backend functionalities needed to build a full web a
 * E-commerce integration for business solutions
 * Authentication for Google/Facebook interfaces
 
-## We'd love your help, and open to [![hacktoberfest] contributions!
+## We'd love your help
 
 There are a lot of ways you can contribute to making meredith-core better! You can report issues, feature requests and suggestions, or ideally become an participant in the meredith-core Project community and contribute code to the open source project.
 
