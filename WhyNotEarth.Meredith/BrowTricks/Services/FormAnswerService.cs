@@ -60,7 +60,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task SubmitAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
-            await _clientService.ValidateOwnerOrSelf(clientId, user);
+            await _clientService.ValidateOwnerOrSelfAsync(clientId, user);
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
@@ -195,7 +195,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await _clientService.ValidateOwnerOrClient(formTemplate.TenantId, user);
+            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
 
             return formTemplate;
         }

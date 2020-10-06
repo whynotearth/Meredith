@@ -15,8 +15,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public User User { get; set; } = null!;
 
-        public NotificationType NotificationType { get; set; }
-
         public List<ClientNote>? Notes { get; set; }
 
         public List<ClientImage>? Images { get; set; }
@@ -31,6 +29,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
+
+        public string? Description { get; set; }
     }
 
     public class ClientVideo : Video
@@ -38,5 +38,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
+
+        public string? Description { get; set; }
     }
 }

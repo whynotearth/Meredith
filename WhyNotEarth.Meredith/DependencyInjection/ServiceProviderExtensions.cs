@@ -93,7 +93,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<FormNotifications>()
                 .AddScoped<IBrowTricksService, BrowTricksService>()
                 .AddScoped<IFormTemplateService, FormTemplateService>()
-                .AddScoped<IFormSignatureService, FormSignatureService>();
+                .AddScoped<IFormSignatureService, FormSignatureService>()
+                .AddScoped<IClientMediaService, ClientMediaService>();
 
             return serviceCollection;
         }
