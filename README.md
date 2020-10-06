@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/5694308/67922376-2e05ff80-fbdd-11e9-8e9e-58b52ca151b9.png" alt="Why Not Earth" width="60" align="right">
+<img src="https://user-images.githubusercontent.com/5694308/67922376-2e05ff80-fbdd-11e9-8e9e-58b52ca151b9.png" alt="meredith-core" width="60" align="right">
 
 # Meredith Core 
 [![discord](https://img.shields.io/discord/453020970354081812.svg)](https://discord.gg/EBpyFM3)
@@ -23,13 +23,13 @@ Meredith comes with all the backend functionalities needed to build a full web a
 * E-commerce integration for business solutions
 * Authentication for Google/Facebook interfaces
 
-## We'd love your help
+## We'd love your help, and open to [![hacktoberfest] contributions!
 
-There are a lot of ways you can contribute to making WHY NOT EARTH better! You can report issues, feature requests and suggestions, or ideally become an participant in the WHY NOT EARTH Project community and contribute code to the open source project.
+There are a lot of ways you can contribute to making meredith-core better! You can report issues, feature requests and suggestions, or ideally become an participant in the meredith-core Project community and contribute code to the open source project.
 
-We enthusiastically welcome new contributors to the WHY NOT EARTH Projects **_even if you have no experience being part of an open source project_**.  
+We enthusiastically welcome new contributors to the meredith-core Projects **_even if you have no experience being part of an open source project_**.  
 
-If you're new to **contributing to the WHY NOT EARTH open source project**, sign up for our [Discord](https://discord.gg/EBpyFM3) and say Hi! Check out our [wiki](https://github.com/whynotearth/whynot.earth/wiki) for more info about our team and what we do!
+If you're new to **contributing to the meredith-core open source project**, sign up for our [Discord](https://discord.gg/EBpyFM3) and say Hi! Check out our [wiki](https://github.com/whynotearth/whynot.earth/wiki) for more info about our team and what we do!
 
 ## License
 
