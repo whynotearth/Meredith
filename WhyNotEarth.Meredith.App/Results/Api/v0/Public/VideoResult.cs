@@ -4,6 +4,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 {
     public class VideoResult
     {
+        public int Id { get; }
+
         public string? PublicId { get; }
 
         public string Url { get; }
@@ -22,6 +24,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 
         public VideoResult(Video video)
         {
+            Id = video.Id;
             PublicId = video.CloudinaryPublicId;
             Url = video.Url;
             Width = video.Width;
