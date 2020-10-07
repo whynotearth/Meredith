@@ -56,13 +56,6 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
         {
-            if (model.Email is null)
-            {
-                var newUser = await MapUserAsync(model);
-
-                return await CreateAsync(newUser, model.Password);
-            }
-
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user is null)
