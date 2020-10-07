@@ -79,7 +79,7 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             return new UserCreateResult(
-                IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email)), null);
+                IdentityResult.Failed(new IdentityErrorDescriber().DuplicateEmail(model.Email)), null);
         }
 
         public async Task<bool> IsExternalAccountConnected(User user)
