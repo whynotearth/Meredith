@@ -2,7 +2,6 @@
 using System.Linq;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public;
 using WhyNotEarth.Meredith.BrowTricks;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {
@@ -17,8 +16,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
         public string? LastName { get; }
 
         public string? PhoneNumber { get; }
-
-        public List<NotificationType> NotificationTypes { get; }
 
         public string? AvatarUrl { get; }
 
@@ -35,7 +32,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             FirstName = client.User.FirstName;
             LastName = client.User.LastName;
             PhoneNumber = client.User.PhoneNumber;
-            NotificationTypes = client.NotificationType.ToList();
             AvatarUrl = client.User.ImageUrl;
             Signatures = signatureUrls.Select(item => new FormSignatureResult(item.Key, item.Value)).ToList();
             Images = client.Images?.Select(item => new ImageResult(item)).ToList();

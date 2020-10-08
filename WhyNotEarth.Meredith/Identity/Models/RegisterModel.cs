@@ -1,10 +1,14 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.Identity.Models
 {
-    public class RegisterModel : IValidatableObject
+    public class RegisterModel
     {
+        [NotNull]
+        [Mandatory]
+        [EmailAddress]
         public string? Email { get; set; }
 
         public string? UserName { get; set; }
@@ -22,20 +26,5 @@ namespace WhyNotEarth.Meredith.Identity.Models
         public string? GoogleLocation { get; set; }
 
         public string? TenantSlug { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (Email is null && UserName is null)
-            {
-                yield return new ValidationResult("Provide email or username",
-                    new[] { nameof(Email), nameof(UserName) });
-            }
-
-            if (Email is null && PhoneNumber is null)
-            {
-                yield return new ValidationResult("Provide email or phone number",
-                    new[] { nameof(Email), nameof(PhoneNumber) });
-            }
-        }
     }
 }

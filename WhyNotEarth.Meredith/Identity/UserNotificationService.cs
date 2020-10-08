@@ -36,7 +36,7 @@ namespace WhyNotEarth.Meredith.Identity
         {
             if (type == NotificationType.Email)
             {
-                return EmailAsync(notification.Company.Slug, user.Email, notification.Subject ?? string.Empty,
+                return EmailAsync(notification.Company.Slug, user.Email, notification.GetSubject(),
                     notification.GetMessage(type));
             }
 

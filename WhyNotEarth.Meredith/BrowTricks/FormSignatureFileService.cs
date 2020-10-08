@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
 using WhyNotEarth.Meredith.Pdf;
+using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
     internal class FormSignatureFileService : IFormSignatureFileService
     {
         private readonly IHtmlService _htmlService;
+        private readonly IResourceService _resourceService;
 
-        public FormSignatureFileService(IHtmlService htmlService)
+        public FormSignatureFileService(IHtmlService htmlService, IResourceService resourceService)
         {
             _htmlService = htmlService;
+            _resourceService = resourceService;
         }
 
         public string GetHtml(FormSignature formSignature)
@@ -36,12 +37,20 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return await _htmlService.ToPngAsync(html);
         }
 
-        public async Task<byte[]> GetPngAsync(FormSignature formSignature)
+        public async Task<byte[]> GetPdfAsync(FormTemplate formTemplate)
+        {
+            var widgets = GetWidgets(formTemplate);
+
+            var html = BuildHtml(formTemplate.Name, widgets, false, null, null);
+
+            return await _htmlService.ToPdfAsync(html);
+        }
+
+        public async Task<byte[]> GetPngAsync(FormSignature formSignature, User user)
         {
             var widgets = GetWidgets(formSignature);
 
-            var html = BuildHtml(formSignature.Name, widgets, true, formSignature.Client.User.FullName,
-                formSignature.CreatedAt);
+            var html = BuildHtml(formSignature.Name, widgets, true, user.FullName, formSignature.CreatedAt);
 
             return await _htmlService.ToPngAsync(html);
         }
@@ -49,7 +58,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         private string BuildHtml(string tenantName, List<IFormWidget> widgets, bool hasAnswers, string? clientName,
             DateTime? dateTime)
         {
-            var template = GetTemplate("Pmu.html");
+            var template = _resourceService.Get("Pmu.html");
 
             var body = GetBody(widgets);
 
@@ -89,15 +98,15 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             return $@"
-<section class=""section"">
-    <hr />
-</section>
-<section class=""section"">
-    <p class=""font-light mb-1"">
-        Signed by <span class=""font-normal"">{name}</span>
-    </p>
-    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
-</section>";
+                <section class=""section"">
+                    <hr />
+                </section>
+                <section class=""section"">
+                    <p class=""font-light mb-1"">
+                        Signed by <span class=""font-normal"">{name}</span>
+                    </p>
+                    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
+                </section>";
         }
 
         private List<IFormWidget> GetWidgets(FormTemplate formTemplate)
@@ -151,29 +160,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             return result;
-        }
-
-        private string GetTemplate(string templateName)
-        {
-            var assembly = typeof(FormSignatureFileService).GetTypeInfo().Assembly;
-
-            var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
-
-            if (name is null)
-            {
-                throw new Exception($"Missing {templateName} resource.");
-            }
-
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream is null)
-            {
-                throw new Exception($"Missing {templateName} resource.");
-            }
-
-            var reader = new StreamReader(stream);
-
-            return reader.ReadToEnd();
         }
     }
 }

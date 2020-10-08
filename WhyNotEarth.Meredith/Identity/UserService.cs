@@ -16,6 +16,7 @@ using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Identity.Notifications;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -24,16 +25,19 @@ namespace WhyNotEarth.Meredith.Identity
         private readonly CompanyService _companyService;
         private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
+        private readonly IResourceService _resourceService;
         private readonly UserManager _userManager;
         private readonly IUserNotificationService _userNotificationService;
 
         public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions,
-            CompanyService companyService, IUserNotificationService userNotificationService)
+            CompanyService companyService, IUserNotificationService userNotificationService,
+            IResourceService resourceService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _companyService = companyService;
             _userNotificationService = userNotificationService;
+            _resourceService = resourceService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -56,13 +60,6 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
         {
-            if (model.Email is null)
-            {
-                var newUser = await MapUserAsync(model);
-
-                return await CreateAsync(newUser, model.Password);
-            }
-
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user is null)
@@ -86,7 +83,7 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             return new UserCreateResult(
-                IdentityResult.Failed(new IdentityErrorDescriber().DuplicateUserName(model.Email)), null);
+                IdentityResult.Failed(new IdentityErrorDescriber().DuplicateEmail(model.Email)), null);
         }
 
         public async Task<bool> IsExternalAccountConnected(User user)
@@ -116,6 +113,8 @@ namespace WhyNotEarth.Meredith.Identity
 
         public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
+            user = await _userManager.FindByIdAsync(user.Id.ToString());
+
             var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
             if (!identityResult.Succeeded)
@@ -251,10 +250,8 @@ namespace WhyNotEarth.Meredith.Identity
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
-            await _userNotificationService.NotifyAsync(user, new ForgotPasswordNotification(company, callbackUrl)
-            {
-                Subject = "Reset Password"
-            });
+            await _userNotificationService.NotifyAsync(user,
+                new ForgotPasswordNotification(company, callbackUrl, user, _resourceService));
         }
 
         public async Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model)

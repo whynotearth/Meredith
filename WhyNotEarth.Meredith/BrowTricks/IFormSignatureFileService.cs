@@ -1,13 +1,16 @@
 ﻿using System.Threading.Tasks;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
     public interface IFormSignatureFileService
     {
-        public Task<byte[]> GetPngAsync(FormTemplate formTemplate);
+        Task<byte[]> GetPngAsync(FormTemplate formTemplate);
 
-        public Task<byte[]> GetPngAsync(FormSignature formTemplate);
+        Task<byte[]> GetPdfAsync(FormTemplate formTemplate);
 
-        public string GetHtml(FormSignature formSignature);
+        Task<byte[]> GetPngAsync(FormSignature formTemplate, User user);
+
+        string GetHtml(FormSignature formSignature);
     }
 }

@@ -15,8 +15,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public User User { get; set; } = null!;
 
-        public NotificationType NotificationType { get; set; }
-
         public List<ClientNote>? Notes { get; set; }
 
         public List<ClientImage>? Images { get; set; }

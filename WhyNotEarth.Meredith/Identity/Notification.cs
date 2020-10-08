@@ -6,13 +6,13 @@ namespace WhyNotEarth.Meredith.Identity
     {
         public Company Company { get; }
 
-        public string? Subject { get; set; }
-
         protected Notification(Company company)
         {
             Company = company;
         }
 
         public abstract string GetMessage(NotificationType notificationType);
+
+        public abstract string GetSubject();
     }
 }

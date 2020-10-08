@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Twilio;
 using Twilio.Exceptions;
@@ -14,13 +13,11 @@ namespace WhyNotEarth.Meredith.Twilio
     internal class TwilioService : ITwilioService
     {
         private readonly IDbContext _dbContext;
-        private readonly ILogger<TwilioService> _logger;
         private readonly TwilioOptions _options;
 
-        public TwilioService(IOptions<TwilioOptions> options, IDbContext dbContext, ILogger<TwilioService> logger)
+        public TwilioService(IOptions<TwilioOptions> options, IDbContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
             _options = options.Value;
         }
 
@@ -67,22 +64,11 @@ namespace WhyNotEarth.Meredith.Twilio
             {
                 var messageResource = await MessageResource.CreateAsync(body: message.Body, from: from, to: message.To);
             }
-            catch (ApiException apiException)
+            // Invalid 'To' Phone Number
+            // https://www.twilio.com/docs/api/errors/21211
+            catch (ApiException apiException) when (apiException.Code == 21211)
             {
-                // Temporary logging
-                var details = string.Empty;
-                if (apiException.Details != null)
-                {
-                    foreach (var detail in apiException.Details)
-                    {
-                        details += $"{detail.Key}:{detail.Value}";
-                    }
-                }
-
-                _logger.LogError(apiException,
-                    $"ApiException code:{apiException.Code} status:{apiException.Status} moreInfo: {apiException.MoreInfo} details:{details}");
-
-                throw new InvalidActionException($"The number {message.To} is not a valid phone number.");
+                throw new InvalidActionException($"The number {message.To} is not a valid phone number");
             }
         }
 

@@ -234,13 +234,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var identityResult = await _userService.ForgotPasswordResetAsync(model);
 
-            return IdentityResult(identityResult);
+            return OkIdentityResult(identityResult);
         }
 
         [Authorize]
         [Returns400]
         [HttpPost("changepassword")]
-        public async Task<ActionResult> ChangePassword(ChangePasswordModel model)
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -254,12 +254,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 identityResult = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             }
 
-            if (!identityResult.Succeeded)
-            {
-                return BadRequest(identityResult.Errors);
-            }
-
-            return Ok();
+            return OkIdentityResult(identityResult);
         }
 
         [Authorize]
@@ -279,18 +274,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [Returns204]
         [Returns400]
         [HttpPost("confirmphone")]
-        public async Task<ActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberModel model)
+        public async Task<IActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
             var identityResult = await _userService.ConfirmPhoneNumberAsync(user, model);
 
-            if (!identityResult.Succeeded)
-            {
-                return BadRequest(identityResult.Errors);
-            }
-
-            return NoContent();
+            return NoContentIdentityResult(identityResult);
         }
 
         private async Task<ActionResult<string>> SignIn(User user)
@@ -318,11 +308,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             await _userManager.UpdateAsync(user);
         }
 
-        private IActionResult IdentityResult(IdentityResult identityResult)
+        private IActionResult OkIdentityResult(IdentityResult identityResult)
         {
             if (identityResult.Succeeded)
             {
                 return Ok();
+            }
+
+            return BadRequest(identityResult.Errors);
+        }
+
+        private IActionResult NoContentIdentityResult(IdentityResult identityResult)
+        {
+            if (identityResult.Succeeded)
+            {
+                return NoContent();
             }
 
             return BadRequest(identityResult.Errors);
