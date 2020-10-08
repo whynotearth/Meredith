@@ -7,6 +7,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
     {
         Task<byte[]> GetPngAsync(FormTemplate formTemplate);
 
+        Task<byte[]> GetPdfAsync(FormTemplate formTemplate);
+
         Task<byte[]> GetPngAsync(FormSignature formTemplate, User user);
 
         string GetHtml(FormSignature formSignature);

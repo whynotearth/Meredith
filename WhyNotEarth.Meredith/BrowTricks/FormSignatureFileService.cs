@@ -37,6 +37,15 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return await _htmlService.ToPngAsync(html);
         }
 
+        public async Task<byte[]> GetPdfAsync(FormTemplate formTemplate)
+        {
+            var widgets = GetWidgets(formTemplate);
+
+            var html = BuildHtml(formTemplate.Name, widgets, false, null, null);
+
+            return await _htmlService.ToPdfAsync(html);
+        }
+
         public async Task<byte[]> GetPngAsync(FormSignature formSignature, User user)
         {
             var widgets = GetWidgets(formSignature);

@@ -32,14 +32,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
-        [HttpGet("preview")]
-        public async Task<IActionResult> Preview(int templateId)
+        [HttpGet("preview/png")]
+        public async Task<IActionResult> PreviewPng(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);
 
             var data = await _formAnswerService.GetPngAsync(templateId, user);
 
             return Based64Png(data, _environment);
+        }
+
+        [Authorize]
+        [Returns200]
+        [Returns404]
+        [HttpGet("preview/pdf")]
+        public async Task<IActionResult> PreviewPdf(int templateId)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            var data = await _formAnswerService.GetPdfAsync(templateId, user);
+
+            return Based64Pdf(data, _environment);
         }
 
         [Authorize]

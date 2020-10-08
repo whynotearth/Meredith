@@ -45,6 +45,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
+        public async Task<byte[]> GetPdfAsync(int formTemplateId, User user)
+        {
+            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+
+            return await _formSignatureFileService.GetPdfAsync(formTemplate);
+        }
+
         public async Task<byte[]> GetPngAsync(int formTemplateId, FormSignatureModel model, User user)
         {
             var formTemplate = await ValidateOwner(formTemplateId, user);

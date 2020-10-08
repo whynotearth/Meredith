@@ -8,6 +8,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     {
         Task<byte[]> GetPngAsync(int formTemplateId, User user);
 
+        Task<byte[]> GetPdfAsync(int formTemplateId, User user);
+
         Task<byte[]> GetPngAsync(int formTemplateId, FormSignatureModel model, User user);
 
         Task<byte[]> GetPngAsync(int formTemplateId, int clientId, FormSignatureModel model, User user);
