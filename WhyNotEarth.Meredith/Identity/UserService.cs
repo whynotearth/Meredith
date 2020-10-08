@@ -16,6 +16,7 @@ using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Identity.Notifications;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -24,16 +25,19 @@ namespace WhyNotEarth.Meredith.Identity
         private readonly CompanyService _companyService;
         private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
+        private readonly IResourceService _resourceService;
         private readonly UserManager _userManager;
         private readonly IUserNotificationService _userNotificationService;
 
         public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions,
-            CompanyService companyService, IUserNotificationService userNotificationService)
+            CompanyService companyService, IUserNotificationService userNotificationService,
+            IResourceService resourceService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _companyService = companyService;
             _userNotificationService = userNotificationService;
+            _resourceService = resourceService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -246,10 +250,8 @@ namespace WhyNotEarth.Meredith.Identity
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
-            await _userNotificationService.NotifyAsync(user, new ForgotPasswordNotification(company, callbackUrl)
-            {
-                Subject = "Reset Password"
-            });
+            await _userNotificationService.NotifyAsync(user,
+                new ForgotPasswordNotification(company, callbackUrl, user, _resourceService));
         }
 
         public async Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model)

@@ -4,12 +4,11 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="BrowTricks/Templates/Pmu.html" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="BrowTricks/Templates/Pmu.html" />
+    <EmbeddedResource Include="Identity/Templates/browtricks-reset-password.html" />
+    <EmbeddedResource Include="Identity/Templates/reset-password.html" />
     <EmbeddedResource Include="Tenant/ReservationWhatsAppMessageTemplate.txt" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column-pdf.html" />

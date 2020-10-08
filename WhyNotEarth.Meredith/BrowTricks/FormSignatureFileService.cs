@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
 using WhyNotEarth.Meredith.Pdf;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
     internal class FormSignatureFileService : IFormSignatureFileService
     {
         private readonly IHtmlService _htmlService;
+        private readonly IResourceService _resourceService;
 
-        public FormSignatureFileService(IHtmlService htmlService)
+        public FormSignatureFileService(IHtmlService htmlService, IResourceService resourceService)
         {
             _htmlService = htmlService;
+            _resourceService = resourceService;
         }
 
         public string GetHtml(FormSignature formSignature)
@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         private string BuildHtml(string tenantName, List<IFormWidget> widgets, bool hasAnswers, string? clientName,
             DateTime? dateTime)
         {
-            var template = GetTemplate("Pmu.html");
+            var template = _resourceService.Get("Pmu.html");
 
             var body = GetBody(widgets);
 
@@ -160,29 +160,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             return result;
-        }
-
-        private string GetTemplate(string templateName)
-        {
-            var assembly = typeof(FormSignatureFileService).GetTypeInfo().Assembly;
-
-            var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
-
-            if (name is null)
-            {
-                throw new Exception($"Missing {templateName} resource.");
-            }
-
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream is null)
-            {
-                throw new Exception($"Missing {templateName} resource.");
-            }
-
-            var reader = new StreamReader(stream);
-
-            return reader.ReadToEnd();
         }
     }
 }
