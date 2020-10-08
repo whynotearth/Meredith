@@ -132,23 +132,5 @@ namespace WhyNotEarth.Meredith.Cloudinary
 
             return result;
         }
-        
-        /// <summary>
-        /// Queries the cloudinary api to get properties for the given image and returns the updated image.
-        /// </summary>
-        /// <returns></returns>
-        public Image GetUpdatedImageParameters(Image image)
-        {
-            var cloudinary = new CloudinaryDotNet.Cloudinary(new Account(_options.CloudName,
-                _options.ApiKey, _options.ApiSecret));
-
-            var par = new GetResourceParams(image.CloudinaryPublicId) { ResourceType = ResourceType.Image };
-
-            var result = cloudinary.GetResource(par);
-            
-            image.FileSize = result.Bytes;
-
-            return image;
-        }
     }
 }

@@ -61,21 +61,5 @@ namespace WhyNotEarth.Meredith.Public
 
     public class TenantImage : Image
     {
-        public TenantImage()
-        {
-        }
-        
-        public TenantImage(Image image)
-        {
-            Id = image.Id;
-            Height = image.Height;
-            Width = image.Width;
-            Order = image.Order;
-            Title = image.Title;
-            Url = image.Url;
-            AltText = image.AltText;
-            FileSize = image.FileSize;
-            CloudinaryPublicId = image.CloudinaryPublicId;
-        }
     }
 }
