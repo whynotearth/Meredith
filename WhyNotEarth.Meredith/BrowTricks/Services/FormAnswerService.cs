@@ -168,6 +168,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 Client = client!,
                 Name = formTemplate.Name,
                 Answers = answers,
+                NotificationCallBackUrl = model.NotificationCallBackUrl,
                 CreatedAt = DateTime.UtcNow
             };
         }
