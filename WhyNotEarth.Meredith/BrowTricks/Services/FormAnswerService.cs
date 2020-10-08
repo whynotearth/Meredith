@@ -227,7 +227,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await _clientService.ValidateOwnerAsync(formTemplate.TenantId, user);
+            await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
 
             return formTemplate;
         }
