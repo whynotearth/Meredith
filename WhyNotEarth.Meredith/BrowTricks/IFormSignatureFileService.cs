@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
@@ -6,7 +7,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
     {
         Task<byte[]> GetPngAsync(FormTemplate formTemplate);
 
-        Task<byte[]> GetPngAsync(FormSignature formTemplate);
+        Task<byte[]> GetPngAsync(FormSignature formTemplate, User user);
 
         string GetHtml(FormSignature formSignature);
     }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
 using WhyNotEarth.Meredith.Pdf;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks
 {
@@ -36,12 +37,11 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return await _htmlService.ToPngAsync(html);
         }
 
-        public async Task<byte[]> GetPngAsync(FormSignature formSignature)
+        public async Task<byte[]> GetPngAsync(FormSignature formSignature, User user)
         {
             var widgets = GetWidgets(formSignature);
 
-            var html = BuildHtml(formSignature.Name, widgets, true, formSignature.Client.User.FullName,
-                formSignature.CreatedAt);
+            var html = BuildHtml(formSignature.Name, widgets, true, user.FullName, formSignature.CreatedAt);
 
             return await _htmlService.ToPngAsync(html);
         }
