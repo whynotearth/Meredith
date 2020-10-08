@@ -45,6 +45,22 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
+        public async Task<byte[]> GetPdfAsync(int formTemplateId, User user)
+        {
+            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+
+            return await _formSignatureFileService.GetPdfAsync(formTemplate);
+        }
+
+        public async Task<byte[]> GetPngAsync(int formTemplateId, FormSignatureModel model, User user)
+        {
+            var formTemplate = await ValidateOwner(formTemplateId, user);
+
+            var formSignature = Map(formTemplate, model, null);
+
+            return await _formSignatureFileService.GetPngAsync(formSignature, user);
+        }
+
         public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
             var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
@@ -53,14 +69,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 .Include(item => item.User)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
-            var formSignature = Map(formTemplate, model, clientId, client);
+            var formSignature = Map(formTemplate, model, clientId);
 
-            return await _formSignatureFileService.GetPngAsync(formSignature);
+            return await _formSignatureFileService.GetPngAsync(formSignature, client.User);
         }
 
         public async Task SubmitAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
-            await _clientService.ValidateOwnerOrSelf(clientId, user);
+            await _clientService.ValidateOwnerOrSelfAsync(clientId, user);
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
@@ -73,7 +89,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            var formSignature = Map(formTemplate, model, clientId, null);
+            var formSignature = Map(formTemplate, model, clientId);
 
             _dbContext.FormSignatures.Add(formSignature);
             await _dbContext.SaveChangesAsync();
@@ -120,7 +136,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
         }
 
-        private FormSignature Map(FormTemplate formTemplate, FormSignatureModel model, int clientId, Client? client)
+        private FormSignature Map(FormTemplate formTemplate, FormSignatureModel model, int? clientId)
         {
             var answers = new List<FormAnswer>();
 
@@ -164,10 +180,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return new FormSignature
             {
                 FormTemplateId = formTemplate.Id,
-                ClientId = clientId,
-                Client = client!,
+                ClientId = clientId ?? default,
                 Name = formTemplate.Name,
                 Answers = answers,
+                NotificationCallBackUrl = model.NotificationCallBackUrl,
                 CreatedAt = DateTime.UtcNow
             };
         }
@@ -195,7 +211,23 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await _clientService.ValidateOwnerOrClient(formTemplate.TenantId, user);
+            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
+
+            return formTemplate;
+        }
+
+        private async Task<FormTemplate> ValidateOwner(int formTemplateId, User user)
+        {
+            var formTemplate = await _dbContext.FormTemplates
+                .Include(item => item.Items)
+                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
+
+            if (formTemplate is null)
+            {
+                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
+            }
+
+            await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
 
             return formTemplate;
         }

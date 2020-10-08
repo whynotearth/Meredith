@@ -22,5 +22,7 @@ namespace WhyNotEarth.Meredith.Public
         ///     File size in bytes
         /// </summary>
         public long? FileSize { get; set; }
+
+        public string? Description { get; set; }
     }
 }

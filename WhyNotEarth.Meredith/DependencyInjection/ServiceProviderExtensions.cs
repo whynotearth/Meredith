@@ -48,7 +48,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IMarkdownService, MarkdownService>()
                 .AddScoped<IHtmlService, HtmlService>()
                 .AddScoped<ILoginTokenService, LoginTokenService>()
-                .AddScoped<IUserNotificationService, UserNotificationService>();
+                .AddScoped<IUserNotificationService, UserNotificationService>()
+                .AddScoped<IResourceService, ResourceService>();
 
             // Hotel
             serviceCollection
@@ -93,7 +94,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<FormNotifications>()
                 .AddScoped<IBrowTricksService, BrowTricksService>()
                 .AddScoped<IFormTemplateService, FormTemplateService>()
-                .AddScoped<IFormSignatureService, FormSignatureService>();
+                .AddScoped<IFormSignatureService, FormSignatureService>()
+                .AddScoped<IClientMediaService, ClientMediaService>();
 
             return serviceCollection;
         }

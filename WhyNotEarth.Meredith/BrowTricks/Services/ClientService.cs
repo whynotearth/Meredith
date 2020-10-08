@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
-using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Identity.Models;
@@ -14,18 +13,15 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     internal class ClientService : IClientService
     {
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IDbContext _dbContext;
         private readonly TenantService _tenantService;
         private readonly IUserService _userService;
 
-        public ClientService(IUserService userService, IDbContext dbContext, TenantService tenantService,
-            ICloudinaryService cloudinaryService)
+        public ClientService(IUserService userService, IDbContext dbContext, TenantService tenantService)
         {
             _userService = userService;
             _dbContext = dbContext;
             _tenantService = tenantService;
-            _cloudinaryService = cloudinaryService;
         }
 
         public async Task CreateAsync(string tenantSlug, ClientModel model, User user)
@@ -154,14 +150,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 client.Tenant = tenant!;
             }
 
-            client.NotificationType = model.NotificationTypes.ToFlag();
-            client.Images = await _cloudinaryService.GetUpdatedValueAsync(client.Images, model.Images);
-            client.Videos = await _cloudinaryService.GetUpdatedValueAsync(client.Videos, model.Videos);
-
             return client;
         }
 
-        public async Task<Client> ValidateOwnerOrSelf(int clientId, User user)
+        public async Task<Client> ValidateOwnerOrSelfAsync(int clientId, User user)
         {
             var client = await _dbContext.Clients
                 .Include(item => item.User)
@@ -176,7 +168,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return ValidateOwnerOrSelf(client, user);
         }
 
-        public async Task<Public.Tenant> ValidateOwnerOrClient(int tenantId, User user)
+        public async Task<Public.Tenant> ValidateOwnerOrClientAsync(int tenantId, User user)
         {
             var tenant = await _dbContext.Tenants
                 .FirstOrDefaultAsync(item => item.Id == tenantId && item.OwnerId == user.Id);
@@ -198,6 +190,25 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
 
             throw new ForbiddenException();
+        }
+
+        public async Task<Client> ValidateOwnerAsync(int clientId, User user)
+        {
+            var client = await _dbContext.Clients
+                .Include(item => item.Tenant)
+                .FirstOrDefaultAsync(item => item.Id == clientId);
+
+            if (client is null)
+            {
+                throw new RecordNotFoundException($"client {clientId} not found");
+            }
+
+            if (client.Tenant.OwnerId != user.Id)
+            {
+                throw new ForbiddenException();
+            }
+
+            return client;
         }
 
         private Client ValidateOwnerOrSelf(Client client, User user)

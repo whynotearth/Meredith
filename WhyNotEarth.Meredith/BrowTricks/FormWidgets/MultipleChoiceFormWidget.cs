@@ -31,11 +31,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
         {
             if (_hasAnswer)
             {
-                return
-@$"<section class=""section"">
-    <p class=""question"">{_value}</p>
-    <p>{_values.FirstOrDefault()}</p>
-</section>";
+                return $@"<section class=""section"">
+                        <p class=""question"">{_value}</p>
+                        <p>{_values.FirstOrDefault()}</p>
+                        </section>";
             }
 
             var result = new StringBuilder();

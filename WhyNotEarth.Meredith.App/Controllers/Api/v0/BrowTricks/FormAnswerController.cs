@@ -32,8 +32,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
-        [HttpGet("preview")]
-        public async Task<IActionResult> Get(int templateId)
+        [HttpGet("preview/png")]
+        public async Task<IActionResult> PreviewPng(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);
 
@@ -45,8 +45,34 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Authorize]
         [Returns200]
         [Returns404]
+        [HttpGet("preview/pdf")]
+        public async Task<IActionResult> PreviewPdf(int templateId)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            var data = await _formAnswerService.GetPdfAsync(templateId, user);
+
+            return Based64Pdf(data, _environment);
+        }
+
+        [Authorize]
+        [Returns200]
+        [Returns404]
+        [HttpPost("answer/preview")]
+        public async Task<IActionResult> PreviewAnswer(int templateId, FormSignatureModel model)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            var data = await _formAnswerService.GetPngAsync(templateId, model, user);
+
+            return Based64Png(data, _environment);
+        }
+
+        [Authorize]
+        [Returns200]
+        [Returns404]
         [HttpPost("preview/{clientId}")]
-        public async Task<IActionResult> GetByClient(int templateId, int clientId, FormSignatureModel model)
+        public async Task<IActionResult> PreviewClientAnswer(int templateId, int clientId, FormSignatureModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 

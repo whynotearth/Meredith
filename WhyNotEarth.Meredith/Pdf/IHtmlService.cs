@@ -4,8 +4,8 @@ namespace WhyNotEarth.Meredith.Pdf
 {
     public interface IHtmlService
     {
-        public Task<byte[]> ToPdfAsync(string html);
+        Task<byte[]> ToPdfAsync(string html);
 
-        public Task<byte[]> ToPngAsync(string html);
+        Task<byte[]> ToPngAsync(string html);
     }
 }

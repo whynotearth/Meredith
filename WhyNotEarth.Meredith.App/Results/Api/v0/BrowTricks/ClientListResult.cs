@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using WhyNotEarth.Meredith.BrowTricks;
-using WhyNotEarth.Meredith.Public;
+﻿using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {
@@ -16,8 +14,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public string? PhoneNumber { get; }
 
-        public List<NotificationType> NotificationTypes { get; }
-
         public string? AvatarUrl { get; }
 
         public ClientListResult(Client client)
@@ -27,7 +23,6 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
             FirstName = client.User.FirstName;
             LastName = client.User.LastName;
             PhoneNumber = client.User.PhoneNumber;
-            NotificationTypes = client.NotificationType.ToList();
             AvatarUrl = client.User.ImageUrl;
         }
     }

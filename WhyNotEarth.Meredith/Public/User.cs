@@ -25,5 +25,20 @@ namespace WhyNotEarth.Meredith.Public
         public int? TenantId { get; set; }
 
         public Tenant? Tenant { get; set; }
+
+        public string GetDisplayName()
+        {
+            if (FirstName != null || LastName != null)
+            {
+                return FullName;
+            }
+
+            if (UserName != null)
+            {
+                return UserName;
+            }
+
+            return Email;
+        }
     }
 }
