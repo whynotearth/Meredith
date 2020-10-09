@@ -250,7 +250,7 @@ namespace WhyNotEarth.Meredith.Identity
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
-            await _userNotificationService.NotifyAsync(user,
+            await _userNotificationService.NotifyAsync(user, NotificationType.Email,
                 new ForgotPasswordNotification(company, callbackUrl, user, _resourceService));
         }
 
