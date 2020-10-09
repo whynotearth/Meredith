@@ -66,7 +66,7 @@ namespace WhyNotEarth.Meredith.Identity
             var user = await _userManager.FindByEmailAsync(model.Email);
             
             // Check whether the phone number the user entered is already associated with another account.
-            if (_dbContext.Users.FirstOrDefault(usr => usr.PhoneNumber.Equals(model.PhoneNumber)) != null)
+            if (_dbContext.Users.Any(usr => usr.PhoneNumber.Equals(model.PhoneNumber)))
             {
                 return new UserCreateResult(
                     IdentityResult.Failed(new IdentityError
@@ -128,8 +128,7 @@ namespace WhyNotEarth.Meredith.Identity
             
             // Check whether the phone number the user entered is already associated with another account.
             // The comparison per user id is necessary, so a user itself can change to the same number as before.
-            var userPerNewPhoneNumber = _dbContext.Users.FirstOrDefault(usr => usr.PhoneNumber.Equals(model.PhoneNumber));
-            if (userPerNewPhoneNumber != null && !userPerNewPhoneNumber.Id.Equals(user.Id))
+            if (_dbContext.Users.Any(usr => usr.PhoneNumber.Equals(model.PhoneNumber) && !usr.Id.Equals(user.Id)))
             {
                 return
                     IdentityResult.Failed(new IdentityError
