@@ -64,6 +64,14 @@ namespace WhyNotEarth.Meredith.Identity
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            
+            // Check whether the phone number the user entered is already associated with another account.
+            if (_dbContext.Users.FirstOrDefault(usr => usr.PhoneNumber.Equals(model.PhoneNumber)) != null)
+            {
+                return new UserCreateResult(
+                    IdentityResult.Failed(new IdentityError
+                        { Description = "The entered phone number is already associated with an existing account." }), null);
+            }
 
             if (user is null)
             {
@@ -117,6 +125,16 @@ namespace WhyNotEarth.Meredith.Identity
         public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
             user = await _userManager.FindByIdAsync(user.Id.ToString());
+            
+            // Check whether the phone number the user entered is already associated with another account.
+            // The comparison per user id is necessary, so a user itself can change to the same number as before.
+            var userPerNewPhoneNumber = _dbContext.Users.FirstOrDefault(usr => usr.PhoneNumber.Equals(model.PhoneNumber));
+            if (userPerNewPhoneNumber != null && !userPerNewPhoneNumber.Id.Equals(user.Id))
+            {
+                return
+                    IdentityResult.Failed(new IdentityError
+                        { Description = "The entered phone number is already associated with an existing account." });
+            }
 
             var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
