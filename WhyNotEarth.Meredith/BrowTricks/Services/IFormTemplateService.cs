@@ -7,6 +7,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public interface IFormTemplateService
     {
+        Task CreateDefaultsAsync(string tenantSlug, User user);
+
         Task<int> CreateAsync(string tenantSlug, FormTemplateModel model, User user);
 
         Task EditAsync(string tenantSlug, int formTemplateId, FormTemplateModel model, User user);
