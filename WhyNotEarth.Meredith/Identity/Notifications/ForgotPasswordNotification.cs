@@ -44,7 +44,7 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
         {
             var templateName = _company.Slug == BrowTricksCompany.Slug
                 ? "browtricks-reset-password.html"
-                : "reset-password.html";
+                : "general-reset-password.html";
 
             var template = _resourceService.Get(templateName);
 
