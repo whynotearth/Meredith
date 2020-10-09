@@ -8,6 +8,7 @@ using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Twilio;
+using WhyNotEarth.Meredith.UrlShortener;
 using WhyNotEarth.Meredith.Volkswagen;
 using Product = WhyNotEarth.Meredith.Public.Product;
 using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
@@ -50,6 +51,8 @@ namespace WhyNotEarth.Meredith.Persistence
         public DbSet<LoginToken> LoginTokens { get; set; } = null!;
 
         public DbSet<TwilioAccount> TwilioAccounts { get; set; } = null!;
+
+        public DbSet<ShortUrl> ShortUrls { get; set; } = null!;
 
         // Shop
         public DbSet<Public.Tenant> Tenants { get; set; } = null!;

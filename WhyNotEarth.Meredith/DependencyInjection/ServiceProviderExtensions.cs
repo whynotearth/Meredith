@@ -17,6 +17,7 @@ using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Stripe;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Twilio;
+using WhyNotEarth.Meredith.UrlShortener;
 using WhyNotEarth.Meredith.Volkswagen;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
 using ReservationService = WhyNotEarth.Meredith.Hotel.ReservationService;
@@ -49,7 +50,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<IHtmlService, HtmlService>()
                 .AddScoped<ILoginTokenService, LoginTokenService>()
                 .AddScoped<IUserNotificationService, UserNotificationService>()
-                .AddScoped<IResourceService, ResourceService>();
+                .AddScoped<IResourceService, ResourceService>()
+                .AddScoped<IUrlShortenerService, UrlShortenerService>();
 
             // Hotel
             serviceCollection

@@ -17,6 +17,7 @@ using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Identity.Notifications;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
+using WhyNotEarth.Meredith.UrlShortener;
 
 namespace WhyNotEarth.Meredith.Identity
 {
@@ -26,18 +27,20 @@ namespace WhyNotEarth.Meredith.Identity
         private readonly IDbContext _dbContext;
         private readonly JwtOptions _jwtOptions;
         private readonly IResourceService _resourceService;
+        private readonly IUrlShortenerService _urlShortenerService;
         private readonly UserManager _userManager;
         private readonly IUserNotificationService _userNotificationService;
 
         public UserService(UserManager userManager, IDbContext dbContext, IOptions<JwtOptions> jwtOptions,
             CompanyService companyService, IUserNotificationService userNotificationService,
-            IResourceService resourceService)
+            IResourceService resourceService, IUrlShortenerService urlShortenerService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _companyService = companyService;
             _userNotificationService = userNotificationService;
             _resourceService = resourceService;
+            _urlShortenerService = urlShortenerService;
             _jwtOptions = jwtOptions.Value;
         }
 
@@ -243,14 +246,9 @@ namespace WhyNotEarth.Meredith.Identity
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var uriBuilder = new UriBuilder(model.ReturnUrl);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query[unique] = uniqueValue;
-            query["token"] = token;
-            uriBuilder.Query = query.ToString();
-            var callbackUrl = uriBuilder.ToString();
+            var callbackUrl = await GetForgotPasswordUrlAsync(model.ReturnUrl, unique, uniqueValue, token);
 
-            await _userNotificationService.NotifyAsync(user, NotificationType.Email,
+            await _userNotificationService.NotifyAsync(user,
                 new ForgotPasswordNotification(company, callbackUrl, user, _resourceService));
         }
 
@@ -342,7 +340,7 @@ namespace WhyNotEarth.Meredith.Identity
             };
         }
 
-        public async Task<Public.Tenant?> GetTenantAsync(string? tenantSlug)
+        private async Task<Public.Tenant?> GetTenantAsync(string? tenantSlug)
         {
             if (tenantSlug is null)
             {
@@ -357,6 +355,20 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             return tenant;
+        }
+
+        private async Task<string> GetForgotPasswordUrlAsync(string returnUrl, string unique, string uniqueValue, string token)
+        {
+            var uriBuilder = new UriBuilder(returnUrl);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query[unique] = uniqueValue;
+            query["token"] = token;
+            uriBuilder.Query = query.ToString();
+            var callbackUrl = uriBuilder.ToString();
+
+            var shortUrl = await _urlShortenerService.AddAsync(callbackUrl);
+
+            return shortUrl.Url;
         }
     }
 }
