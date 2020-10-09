@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using WhyNotEarth.Meredith.BrowTricks;
@@ -27,7 +28,7 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
         {
             if (notificationType == NotificationType.Email)
             {
-                return GetHtmlTemplate(_user, _callbackUrl);
+                return GetHtmlTemplate(_callbackUrl);
             }
 
             return
@@ -39,7 +40,7 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
             return $"{_user.GetDisplayName()}, we've made it easy to get back on {_company.Name}";
         }
 
-        private string GetHtmlTemplate(User user, string url)
+        private string GetHtmlTemplate(string url)
         {
             var templateName = _company.Slug == BrowTricksCompany.Slug
                 ? "browtricks-reset-password.html"
@@ -49,8 +50,7 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
 
             template = Replace(template, new Dictionary<string, string>
             {
-                {"{{company}}", _company.Name},
-                {"{{username}}", user.GetDisplayName()},
+                {"{{company}}", _company.Name.First().ToString().ToUpper() + _company.Name.Substring(1)},
                 {"{{url}}", HtmlEncoder.Default.Encode(url)}
             });
 
