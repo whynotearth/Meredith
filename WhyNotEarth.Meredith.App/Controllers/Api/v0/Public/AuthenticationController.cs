@@ -36,7 +36,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginModel model)
         {
-            var userName = model.UserName ?? model.Email;
+            User? user = null;
+            var userName = model.UserName;
+
+            if (model.UserName is null)
+            {
+                user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user is null)
+                {
+                    return Unauthorized(new { error = "You have entered an invalid username or password" });
+                }
+
+                userName = user.UserName;
+            }
 
             var result = await _signInManager.PasswordSignInAsync(userName, model.Password, true, false);
             if (!result.Succeeded)
@@ -44,7 +57,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 return Unauthorized(new { error = "You have entered an invalid username or password" });
             }
 
-            var user = await _userManager.FindByNameAsync(userName);
+            if (user is null)
+            {
+                user = await _userManager.FindByNameAsync(userName);
+            }
 
             return Ok(await _userService.GenerateJwtTokenAsync(user));
         }
