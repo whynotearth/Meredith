@@ -11,6 +11,7 @@ using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Twilio;
+using WhyNotEarth.Meredith.UrlShortener;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
@@ -18,6 +19,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IClientService _clientService;
+        private readonly IUrlShortenerService _urlShortenerService;
         private readonly IDbContext _dbContext;
         private readonly FormNotifications _formNotifications;
         private readonly IFormSignatureFileService _formSignatureFileService;
@@ -27,7 +29,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         public FormAnswerService(IDbContext dbContext, TenantService tenantService,
             IFormSignatureFileService formSignatureFileService,
             FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient,
-            ILoginTokenService loginTokenService, IClientService clientService)
+            ILoginTokenService loginTokenService, IClientService clientService, IUrlShortenerService urlShortenerService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
@@ -36,6 +38,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _backgroundJobClient = backgroundJobClient;
             _loginTokenService = loginTokenService;
             _clientService = clientService;
+            _urlShortenerService = urlShortenerService;
         }
 
         public async Task<byte[]> GetPngAsync(int formTemplateId, User user)
@@ -192,12 +195,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var token = await _loginTokenService.GenerateTokenAsync(user);
 
-            var finalUrl = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
+            var url = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
             {
                 {"token", token}
             });
 
-            return finalUrl;
+            var shortUrl = await _urlShortenerService.AddAsync(url);
+
+            return shortUrl.Url;
         }
 
         private async Task<FormTemplate> ValidateOwnerOrClient(int formTemplateId, User user)
