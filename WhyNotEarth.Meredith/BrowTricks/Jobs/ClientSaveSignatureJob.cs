@@ -9,6 +9,7 @@ using WhyNotEarth.Meredith.Pdf;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Twilio;
+using WhyNotEarth.Meredith.UrlShortener;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 {
@@ -19,12 +20,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
         private readonly IFileService _fileService;
         private readonly IHtmlService _htmlService;
         private readonly ILoginTokenService _loginTokenService;
+        private readonly IUrlShortenerService _urlShortenerService;
         private readonly FormNotifications _formNotifications;
         private readonly IFormSignatureFileService _formSignatureFileService;
 
         public ClientSaveSignatureJob(IDbContext dbContext, IFormSignatureFileService formSignatureFileService,
             FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient, IFileService fileService,
-            IHtmlService htmlService, ILoginTokenService loginTokenService)
+            IHtmlService htmlService, ILoginTokenService loginTokenService, IUrlShortenerService urlShortenerService)
         {
             _dbContext = dbContext;
             _formSignatureFileService = formSignatureFileService;
@@ -33,6 +35,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
             _fileService = fileService;
             _htmlService = htmlService;
             _loginTokenService = loginTokenService;
+            _urlShortenerService = urlShortenerService;
         }
 
         public async Task SaveSignature(int formSignatureId)
@@ -95,14 +98,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
         {
             var token = await _loginTokenService.GenerateTokenAsync(user);
 
-            var result = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
+            var url = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
             {
                 {"token", token},
                 {"tenantSlug", tenantSlug},
                 {"FormTemplateId", formTemplateId.ToString()}
             });
 
-            return result;
+            var shortUrl = await _urlShortenerService.AddAsync(url);
+
+            return shortUrl.Url;
         }
 
         private List<string> GetFilePath(FormSignature formSignature)
