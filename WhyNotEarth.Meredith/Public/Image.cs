@@ -1,3 +1,5 @@
+using System;
+
 namespace WhyNotEarth.Meredith.Public
 {
     public class Image
@@ -24,5 +26,7 @@ namespace WhyNotEarth.Meredith.Public
         public long? FileSize { get; set; }
 
         public string? Description { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }

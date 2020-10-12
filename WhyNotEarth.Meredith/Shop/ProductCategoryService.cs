@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -100,7 +101,8 @@ namespace WhyNotEarth.Meredith.Shop
             {
                 category.Image = new CategoryImage
                 {
-                    Url = model.ImageUrl
+                    Url = model.ImageUrl,
+                    CreatedAt = DateTime.UtcNow
                 };
             }
 

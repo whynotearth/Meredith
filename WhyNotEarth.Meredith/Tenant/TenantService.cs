@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -105,7 +106,8 @@ namespace WhyNotEarth.Meredith.Tenant
             {
                 result.Logo = new TenantImage
                 {
-                    Url = model.LogoUrl
+                    Url = model.LogoUrl,
+                    CreatedAt = DateTime.UtcNow
                 };
             }
 

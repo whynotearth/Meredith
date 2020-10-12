@@ -1,4 +1,5 @@
-﻿using WhyNotEarth.Meredith.Public;
+﻿using System;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 {
@@ -18,6 +19,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 
         public string? Description { get; }
 
+        public DateTime CreatedAt { get; }
+
         public ImageResult(Image image)
         {
             Id = image.Id;
@@ -27,6 +30,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
             Width = image.Width;
             Height = image.Height;
             Description = image.Description;
+            CreatedAt = image.CreatedAt;
         }
     }
 }

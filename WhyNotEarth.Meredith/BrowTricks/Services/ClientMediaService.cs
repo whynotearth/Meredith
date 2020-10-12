@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 Width = model.Image.Width,
                 Height = model.Image.Height,
                 FileSize = model.Image.FileSize,
-                Description = model.Description
+                Description = model.Description,
+                CreatedAt = DateTime.UtcNow
             });
 
             _dbContext.Clients.Update(client);
@@ -82,7 +84,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 Duration = model.Video.Duration.Value,
                 Format = model.Video.Format,
                 ThumbnailUrl = model.Video.ThumbnailUrl,
-                Description = model.Description
+                Description = model.Description,
+                CreatedAt = DateTime.UtcNow
             });
 
             _dbContext.Clients.Update(client);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,7 +76,8 @@ namespace WhyNotEarth.Meredith.Cloudinary
                         Url = model.Url,
                         Width = model.Width,
                         Height = model.Height,
-                        FileSize = model.FileSize
+                        FileSize = model.FileSize,
+                        CreatedAt = DateTime.UtcNow
                     });
                 }
             }
@@ -124,7 +126,8 @@ namespace WhyNotEarth.Meredith.Cloudinary
                         Duration = model.Duration!.Value,
                         Format = model.Format,
                         ThumbnailUrl = model.ThumbnailUrl,
-                        FileSize = model.FileSize
+                        FileSize = model.FileSize,
+                        CreatedAt = DateTime.UtcNow
                     });
                 }
             }
