@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
@@ -13,11 +14,13 @@ namespace WhyNotEarth.Meredith.Tenant
     {
         private readonly IDbContext _dbContext;
         private readonly SlugService _slugService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public TenantService(IDbContext dbContext, SlugService slugService)
+        public TenantService(IDbContext dbContext, SlugService slugService, ICloudinaryService cloudinaryService)
         {
             _dbContext = dbContext;
             _slugService = slugService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<string> CreateAsync(string companySlug, TenantCreateModel model, User user)
@@ -101,11 +104,18 @@ namespace WhyNotEarth.Meredith.Tenant
                 WhatsAppNumber = model.WhatsAppNumber
             };
 
-            if (model.LogoUrl != null)
+            if (model.Logo != null)
             {
-                result.Logo = new TenantImage
+                result.Logo = new TenantImage()
                 {
-                    Url = model.LogoUrl
+                    Height = model.Logo.Height,
+                    Width = model.Logo.Width,
+                    Order = model.Logo.Order,
+                    Title = model.Logo.Title,
+                    Url = model.Logo.Url,
+                    AltText = model.Logo.AltText,
+                    FileSize = model.Logo.FileSize,
+                    CloudinaryPublicId = model.Logo.CloudinaryPublicId,
                 };
             }
 
@@ -222,13 +232,19 @@ namespace WhyNotEarth.Meredith.Tenant
         {
             var tenant = await CheckOwnerAsync(user, tenantSlug);
 
-            tenant = Map(tenant, model);
+            // Delete old profile image if already exists and is different than the updated one.
+            if (tenant.Logo != null && tenant.Logo.CloudinaryPublicId != model.Logo.CloudinaryPublicId)
+            {
+                await _cloudinaryService.DeleteByUrlAsync(tenant.Logo.Url);
+            }
 
+            tenant = Map(tenant, model);
+            
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync();
         }
-
-        private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
+        
+       private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
         {
             if (model.Name != null)
             {
@@ -271,6 +287,28 @@ namespace WhyNotEarth.Meredith.Tenant
                 tenant.PromotionPercent = model.PromotionPercent!.Value;
             }
 
+            if (model.Logo != null)
+            {
+                if (tenant.Logo.CloudinaryPublicId != model.Logo.CloudinaryPublicId)
+                {
+                    tenant.Logo = new TenantImage()
+                    {
+                        Height = model.Logo.Height,
+                        Width = model.Logo.Width,
+                        Order = model.Logo.Order,
+                        Title = model.Logo.Title,
+                        Url = model.Logo.Url,
+                        AltText = model.Logo.AltText,
+                        FileSize = model.Logo.FileSize,
+                        CloudinaryPublicId = model.Logo.CloudinaryPublicId,
+                    };
+                }
+            }
+            else
+            {
+                tenant.Logo = null;
+            }
+            
             return tenant;
         }
     }

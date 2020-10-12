@@ -7,6 +7,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;
 using WhyNotEarth.Meredith.Cloudinary.Models;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Tenant.Models;
 using Video = WhyNotEarth.Meredith.Public.Video;
 
 namespace WhyNotEarth.Meredith.Cloudinary

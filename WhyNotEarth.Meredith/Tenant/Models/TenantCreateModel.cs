@@ -14,6 +14,8 @@ namespace WhyNotEarth.Meredith.Tenant.Models
         [NotNull]
         [Mandatory]
         public string? Name { get; set; }
+        
+        public TenantImageModel? Logo { get; set; }
 
         public string? Description { get; set; }
 

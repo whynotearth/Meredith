@@ -7,6 +7,7 @@ using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Tenant.Models;
 
