@@ -7,6 +7,7 @@ namespace WhyNotEarth.Meredith.Identity.Models
 {
     public class ForgotPasswordResetModel : IValidatableObject
     {
+        [EmailAddress]
         public string? Email { get; set; }
 
         public string? UserName { get; set; }
