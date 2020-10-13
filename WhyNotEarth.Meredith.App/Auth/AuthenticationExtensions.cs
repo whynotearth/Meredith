@@ -30,7 +30,8 @@ namespace WhyNotEarth.Meredith.App.Auth
                 .AddUserManager<UserManager>()
                 .AddRoleManager<RoleManager>()
                 .AddEntityFrameworkStores<MeredithDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddErrorDescriber<CustomIdentityErrorDescriber>();
 
             services
                 .AddAuthentication(o =>
@@ -80,8 +81,8 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.Fields.Add("picture");
                     options.Events.OnCreatingTicket = context =>
                     {
-                        //var profileImg = context.User["picture"]["data"].Value<string>("url");
-                        var picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url").GetString();
+                        var picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url")
+                            .GetString();
 
                         context.Identity.AddClaim(new Claim("picture", picture));
 
@@ -100,8 +101,7 @@ namespace WhyNotEarth.Meredith.App.Auth
 
         public static IApplicationBuilder UseCustomAuthentication(this IApplicationBuilder app)
         {
-            app.UseAuthentication().
-                Use(async (context, next) =>
+            app.UseAuthentication().Use(async (context, next) =>
             {
                 // If the default identity failed to authenticate (cookies)
                 if (context.User.Identities.All(i => !i.IsAuthenticated))
@@ -127,6 +127,14 @@ namespace WhyNotEarth.Meredith.App.Auth
             context.HandleResponse();
 
             return Task.FromResult(0);
+        }
+    }
+
+    public class CustomIdentityErrorDescriber : IdentityErrorDescriber
+    {
+        public override IdentityError InvalidToken()
+        {
+            return new IdentityError { Code = nameof(InvalidToken), Description = "The code is wrong." };
         }
     }
 }
