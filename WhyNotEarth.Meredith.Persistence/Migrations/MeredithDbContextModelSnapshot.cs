@@ -1107,6 +1107,9 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
                     b.ToTable("Tenants");
                 });
 
