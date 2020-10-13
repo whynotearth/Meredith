@@ -17,22 +17,30 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public List<ClientNote>? Notes { get; set; }
 
-        public List<ClientImage>? Images { get; set; }
+        public List<BrowTricksImage> Images { get; set; } = new List<BrowTricksImage>();
 
-        public List<ClientVideo>? Videos { get; set; }
+        public List<BrowTricksVideo> Videos { get; set; } = new List<BrowTricksVideo>();
 
         public bool IsArchived { get; set; }
     }
 
-    public class ClientImage : Image
+    public class BrowTricksImage : Image
     {
+        public int TenantId { get; set; }
+
+        public Public.Tenant? Tenant { get; set; }
+
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }
     }
 
-    public class ClientVideo : Video
+    public class BrowTricksVideo : Video
     {
+        public int TenantId { get; set; }
+
+        public Public.Tenant? Tenant { get; set; }
+
         public int? ClientId { get; set; }
 
         public Client? Client { get; set; }

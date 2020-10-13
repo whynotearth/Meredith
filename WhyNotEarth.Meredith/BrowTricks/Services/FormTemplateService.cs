@@ -21,6 +21,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _dbContext = dbContext;
         }
 
+        public async Task CreateDefaultsAsync(string tenantSlug, User user)
+        {
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
+
+            var formTemplates = GetDefaultTemplates(tenant.Id);
+
+            _dbContext.FormTemplates.AddRange(formTemplates);
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<int> CreateAsync(string tenantSlug, FormTemplateModel model, User user)
         {
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
@@ -117,6 +127,54 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 IsRequired = model.IsRequired.Value,
                 Value = model.Value,
                 Options = model.Options
+            };
+        }
+
+        private List<FormTemplate> GetDefaultTemplates(int tenantId)
+        {
+            return new List<FormTemplate>
+            {
+                new FormTemplate
+                {
+                    Name = "Pre and Post Care Agreement",
+                    CreatedAt = DateTime.UtcNow,
+                    TenantId = tenantId,
+                    Items = new List<FormItem>
+                    {
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.Pdf,
+                            Value =
+                                "I have read, or had read to me, the above Pre and Post Care instructions and expectations. I agree to follow the above directions and understand that how I heal depends on how closely I follow said directions. I understand a touchup appointment will be needed to complete the process.",
+                            Options = new List<string>
+                            {
+                                "https://res.cloudinary.com/whynotearth/image/upload/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.pdf"
+                            }
+                        }
+                    }
+                },
+                new FormTemplate
+                {
+                    Name = "Booking Fee and Cancellation Policy",
+                    CreatedAt = DateTime.UtcNow,
+                    TenantId = tenantId,
+                    Items = new List<FormItem>
+                    {
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.AgreementRequest,
+                            Value = @"Upon booking your first appointment, a $50 non- refundable deposit is charged to secure your appointment. The deposit will be deducted from the total cost of your initial procedure; the remaining balance will be due on your appointment day.  Your booking fee is non refundable, non transferable, and can only be applied to the scheduled service for the date and time secured. Please be sure about your appointment day and time before booking. 
+
+If you need to reschedule, you may do so with Cancellation fee within 48 hours of your appointment.  A new booking fee will be charged for the new appointment date.  If you are unable to make your appointment, you MUST give a 48 hour notice to avoid a Cancellation Fee.  In this instance, 20% of the appointment is charged.  This pays for the time that was set aside for you and your appointment.  Your Booking Fee in this case is applied to the 25% charge, and a new Booking Fee must be paid to reschedule.  
+All lost booking fees and cancellation fees may be waived at the discretion of owner on a case by case basis. 
+
+I fully understand the Booking Fee and Cancellation Fee Policy, and hereby forfeit my Booking Fee to secure my appointment spot. 
+I will also give 48 hour notice or pay 20% for my appointment reservation."
+                        }
+                    }
+                }
             };
         }
     }

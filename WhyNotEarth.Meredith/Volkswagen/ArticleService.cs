@@ -117,7 +117,8 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 {
                     Url = imageUrl,
                     Width = imageWidth,
-                    Height = imageHeight
+                    Height = imageHeight,
+                    CreatedAt = DateTime.UtcNow
                 };
             }
         }

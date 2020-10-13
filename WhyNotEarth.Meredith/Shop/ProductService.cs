@@ -205,7 +205,8 @@ namespace WhyNotEarth.Meredith.Shop
                 {
                     product.Image = new ProductImage
                     {
-                        Url = model.ImageUrl
+                        Url = model.ImageUrl,
+                        CreatedAt = DateTime.UtcNow
                     };
                 }
             }

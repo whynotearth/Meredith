@@ -4,15 +4,13 @@ using WhyNotEarth.Meredith.Validation;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Models
 {
-    public class ClientImageModel
+    public class BrowTricksVideoModel
     {
-        [NotNull]
-        [Mandatory]
         public int? ClientId { get; set; }
 
         [NotNull]
         [Mandatory]
-        public CloudinaryImageModel? Image { get; set; }
+        public CloudinaryVideoModel? Video { get; set; }
 
         public string? Description { get; set; }
     }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Persistence;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Persistence;
 namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201013080340_ConnectMediaToTenantInsteadOfClient")]
+    partial class ConnectMediaToTenantInsteadOfClient
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1089,9 +1091,6 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Tags")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TempPhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("WhatsAppNumber")

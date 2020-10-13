@@ -1,4 +1,5 @@
-﻿using WhyNotEarth.Meredith.Public;
+﻿using System;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 {
@@ -22,6 +23,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
 
         public string? Description { get; }
 
+        public DateTime CreatedAt { get; }
+
         public VideoResult(Video video)
         {
             Id = video.Id;
@@ -33,6 +36,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public
             Format = video.Format;
             ThumbnailUrl = video.ThumbnailUrl;
             Description = video.Description;
+            CreatedAt = video.CreatedAt;
         }
     }
 }

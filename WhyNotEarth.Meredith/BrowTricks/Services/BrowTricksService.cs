@@ -18,45 +18,43 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _tenantService = tenantService;
         }
 
-        public async Task<List<ClientImage>> GetAllImages(User user)
+        public async Task<List<BrowTricksImage>> GetAllImages(User user)
         {
             return await _dbContext.Images
-                .OfType<ClientImage>()
-                .Include(item => item.Client)
-                .ThenInclude(item => item!.Tenant)
-                .Where(item => item.Client!.Tenant.OwnerId == user.Id)
+                .OfType<BrowTricksImage>()
+                .Include(item => item.Tenant)
+                .Where(item => item.Tenant!.OwnerId == user.Id)
                 .ToListAsync();
         }
 
-        public async Task<List<ClientVideo>> GetAllVideos(User user)
+        public async Task<List<BrowTricksVideo>> GetAllVideos(User user)
         {
             return await _dbContext.Videos
-                .OfType<ClientVideo>()
-                .Include(item => item.Client)
-                .ThenInclude(item => item!.Tenant)
-                .Where(item => item.Client!.Tenant.OwnerId == user.Id)
+                .OfType<BrowTricksVideo>()
+                .Include(item => item.Tenant)
+                .Where(item => item.Tenant!.OwnerId == user.Id)
                 .ToListAsync();
         }
 
-        public async Task<List<ClientImage>> GetAllImages(string tenantSlug, User user)
+        public async Task<List<BrowTricksImage>> GetAllImages(string tenantSlug, User user)
         {
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             return await _dbContext.Images
-                .OfType<ClientImage>()
-                .Include(item => item.Client)
-                .Where(item => item.Client!.TenantId == tenant.Id)
+                .OfType<BrowTricksImage>()
+                .Include(item => item.Tenant)
+                .Where(item => item.TenantId == tenant.Id)
                 .ToListAsync();
         }
 
-        public async Task<List<ClientVideo>> GetAllVideos(string tenantSlug, User user)
+        public async Task<List<BrowTricksVideo>> GetAllVideos(string tenantSlug, User user)
         {
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             return await _dbContext.Videos
-                .OfType<ClientVideo>()
-                .Include(item => item.Client)
-                .Where(item => item.Client!.TenantId == tenant.Id)
+                .OfType<BrowTricksVideo>()
+                .Include(item => item.Tenant)
+                .Where(item => item.TenantId == tenant.Id)
                 .ToListAsync();
         }
     }
