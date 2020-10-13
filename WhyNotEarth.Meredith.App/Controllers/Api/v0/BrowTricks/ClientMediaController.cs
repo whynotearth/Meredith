@@ -29,11 +29,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns201]
         [Returns404]
         [HttpPost("images")]
-        public async Task<CreateResult> CreateImage(ClientImageModel model)
+        public async Task<CreateResult> CreateImage(string tenantSlug, BrowTricksImageModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.CreateImageAsync(model, user);
+            await _clientMediaService.CreateImageAsync(tenantSlug, model, user);
 
             return Created();
         }
@@ -53,11 +53,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns201]
         [Returns404]
         [HttpPost("videos")]
-        public async Task<CreateResult> CreateVideo(ClientVideoModel model)
+        public async Task<CreateResult> CreateVideo(string tenantSlug, BrowTricksVideoModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.CreateVideoAsync(model, user);
+            await _clientMediaService.CreateVideoAsync(tenantSlug, model, user);
 
             return Created();
         }

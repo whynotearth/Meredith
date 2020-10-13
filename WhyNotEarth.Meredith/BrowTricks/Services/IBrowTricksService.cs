@@ -6,12 +6,12 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     public interface IBrowTricksService
     {
-        Task<List<ClientImage>> GetAllImages(User user);
+        Task<List<BrowTricksImage>> GetAllImages(User user);
 
-        Task<List<ClientImage>> GetAllImages(string tenantSlug, User user);
+        Task<List<BrowTricksImage>> GetAllImages(string tenantSlug, User user);
 
-        Task<List<ClientVideo>> GetAllVideos(User user);
+        Task<List<BrowTricksVideo>> GetAllVideos(User user);
 
-        Task<List<ClientVideo>> GetAllVideos(string tenantSlug, User user);
+        Task<List<BrowTricksVideo>> GetAllVideos(string tenantSlug, User user);
     }
 }
