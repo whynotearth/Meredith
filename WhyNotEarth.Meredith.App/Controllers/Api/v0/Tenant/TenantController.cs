@@ -2,11 +2,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Tenant;
+using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Identity;
+using WhyNotEarth.Meredith.Identity.Models;
 using WhyNotEarth.Meredith.Tenant;
 using WhyNotEarth.Meredith.Tenant.Models;
 
@@ -20,12 +23,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         private readonly TenantService _tenantService;
         private readonly SeoSchemaService _seoSchemaService;
         private readonly UserManager _userManager;
+        private readonly IUserService _userService;
 
-        public TenantController(UserManager userManager, TenantService tenantService, SeoSchemaService seoSchemaService)
+        public TenantController(UserManager userManager, TenantService tenantService, SeoSchemaService seoSchemaService, IUserService userService)
         {
             _userManager = userManager;
             _tenantService = tenantService;
             _seoSchemaService = seoSchemaService;
+            _userService = userService;
         }
 
         [Authorize]
@@ -143,6 +148,49 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             await _tenantService.EditAsync(tenantSlug, model, user);
 
             return NoContent();
+        }
+        
+        [Authorize]
+        [Returns204]
+        [Returns400]
+        [HttpPost("confirmphone")]
+        public async Task<IActionResult> ConfirmTempPhoneNumber(ConfirmTempPhoneNumberModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var tenant = await _tenantService.CheckOwnerAsync(user, model.TenantSlug);
+            
+            var identityResult = await _userService.ConfirmPhoneNumberAsync(user, new ConfirmPhoneNumberModel() { Token = model.Token });
+
+            // If change on user was successful, we can change the phone number onf the tenant.
+            if (identityResult.Succeeded)
+            {
+                await _tenantService.ConfirmTempPhoneNumber(tenant.Slug, user);
+            }
+
+            return NoContentIdentityResult(identityResult);
+        }
+        
+        [Authorize]
+        [Returns204]
+        [Returns404]
+        [HttpPost("confirmphonetoken")]
+        public async Task<NoContentResult> SendConfirmPhoneNumberToken(ConfirmPhoneNumberTokenModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _userService.SendConfirmPhoneNumberTokenAsync(user, model);
+
+            return NoContent();
+        }
+
+        private IActionResult NoContentIdentityResult(IdentityResult identityResult)
+        {
+            if (identityResult.Succeeded)
+            {
+                return NoContent();
+            }
+
+            return BadRequest(identityResult.Errors);
         }
     }
 }

@@ -228,6 +228,17 @@ namespace WhyNotEarth.Meredith.Tenant
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task ConfirmTempPhoneNumber(string tenantSlug, User user)
+        {
+            var tenant = await CheckOwnerAsync(user, tenantSlug);
+
+            tenant.PhoneNumber = tenant.TempPhoneNumber;
+            tenant.TempPhoneNumber = null;
+            
+            _dbContext.Tenants.Update(tenant);
+            await _dbContext.SaveChangesAsync();
+        }
+
         private Public.Tenant Map(Public.Tenant tenant, TenantEditModel model)
         {
             if (model.Name != null)
@@ -263,6 +274,11 @@ namespace WhyNotEarth.Meredith.Tenant
             if (model.WhatsAppNumber != null)
             {
                 tenant.WhatsAppNumber = model.WhatsAppNumber;
+            }
+
+            if (model.TempPhoneNumber != null)
+            {
+                tenant.TempPhoneNumber = model.TempPhoneNumber;
             }
 
             if (model.HasPromotion.HasValue)

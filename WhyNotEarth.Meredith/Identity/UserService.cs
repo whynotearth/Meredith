@@ -66,7 +66,7 @@ namespace WhyNotEarth.Meredith.Identity
             var user = await _userManager.FindByEmailAsync(model.Email);
             
             // Check whether the phone number the user entered is already associated with another account.
-            if (_dbContext.Users.Any(usr => usr.PhoneNumber.Equals(model.PhoneNumber)))
+            if (await _dbContext.Users.AnyAsync(usr => usr.PhoneNumber.Equals(model.PhoneNumber)))
             {
                 return new UserCreateResult(
                     IdentityResult.Failed(new IdentityError
@@ -128,7 +128,7 @@ namespace WhyNotEarth.Meredith.Identity
             
             // Check whether the phone number the user entered is already associated with another account.
             // The comparison per user id is necessary, so a user itself can change to the same number as before.
-            if (_dbContext.Users.Any(usr => usr.PhoneNumber.Equals(model.PhoneNumber) && !usr.Id.Equals(user.Id)))
+            if (await _dbContext.Users.AnyAsync(usr => usr.PhoneNumber.Equals(model.PhoneNumber) && !usr.Id.Equals(user.Id)))
             {
                 return
                     IdentityResult.Failed(new IdentityError
@@ -225,6 +225,29 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+            await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
+                new ConfirmPhoneNumberNotification(company, tenant, token));
+        }
+        
+        /// <summary>
+        /// Sends a verification token to the tenants tempPhoneNumber to confirm the change.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidActionException"></exception>
+        public async Task SendConfirmTempPhoneNumberTokenAsync(User user, ConfirmPhoneNumberTokenModel model)
+        {
+            var company = await _companyService.GetAsync(model.CompanySlug);
+            var tenant = await GetTenantAsync(model.TenantSlug);
+
+            if (tenant.TempPhoneNumber == null)
+            {
+                throw new InvalidActionException("Tenant has no temporary phone number.");
+            }
+
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, tenant.TempPhoneNumber);
 
             await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
                 new ConfirmPhoneNumberNotification(company, tenant, token));
