@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -6,73 +6,91 @@ using WhyNotEarth.Meredith.BrowTricks.Models;
 using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
+using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
     internal class ClientMediaService : IClientMediaService
     {
         private readonly IClientService _clientService;
+        private readonly TenantService _tenantService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IDbContext _dbContext;
 
         public ClientMediaService(IDbContext dbContext, ICloudinaryService cloudinaryService,
-            IClientService clientService)
+            IClientService clientService, TenantService tenantService)
         {
             _dbContext = dbContext;
             _cloudinaryService = cloudinaryService;
             _clientService = clientService;
+            _tenantService = tenantService;
         }
 
-        public async Task CreateImageAsync(ClientImageModel model, User user)
+        public async Task CreateImageAsync(string tenantSlug, BrowTricksImageModel model, User user)
         {
-            var client = await _clientService.ValidateOwnerAsync(model.ClientId.Value, user);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
-            client.Images ??= new List<ClientImage>();
+            if (model.ClientId.HasValue)
+            {
+                var client = await _clientService.ValidateOwnerAsync(model.ClientId.Value, user);
 
-            client.Images.Add(new ClientImage
+                if (client.TenantId != tenant.Id)
+                {
+                    throw new ForbiddenException();
+                }
+            }
+
+            _dbContext.Images.Add(new BrowTricksImage
             {
                 CloudinaryPublicId = model.Image.PublicId,
                 Url = model.Image.Url,
                 Width = model.Image.Width,
                 Height = model.Image.Height,
                 FileSize = model.Image.FileSize,
-                Description = model.Description
+                Description = model.Description,
+                CreatedAt = DateTime.UtcNow
             });
 
-            _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteImageAsync(int imageId, User user)
         {
-            var clientImage = await _dbContext.Images.OfType<ClientImage>()
-                .Include(item => item.Client)
-                .ThenInclude(item => item!.Tenant)
+            var image = await _dbContext.Images.OfType<BrowTricksImage>()
+                .Include(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == imageId);
 
-            if (clientImage is null)
+            if (image is null)
             {
                 throw new RecordNotFoundException($"Image {imageId} not found");
             }
 
-            if (clientImage.Client?.Tenant.OwnerId != user.Id)
+            if (image.Tenant!.OwnerId != user.Id)
             {
                 throw new ForbiddenException("You don't own this tenant");
             }
 
-            await _cloudinaryService.DeleteAsync(clientImage.CloudinaryPublicId!);
+            await _cloudinaryService.DeleteAsync(image.CloudinaryPublicId!);
 
-            _dbContext.Images.Remove(clientImage);
+            _dbContext.Images.Remove(image);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task CreateVideoAsync(ClientVideoModel model, User user)
+        public async Task CreateVideoAsync(string tenantSlug, BrowTricksVideoModel model, User user)
         {
-            var client = await _clientService.ValidateOwnerAsync(model.ClientId.Value, user);
+            var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
-            client.Videos ??= new List<ClientVideo>();
+            if (model.ClientId.HasValue)
+            {
+                var client = await _clientService.ValidateOwnerAsync(model.ClientId.Value, user);
 
-            client.Videos.Add(new ClientVideo
+                if (client.TenantId != tenant.Id)
+                {
+                    throw new ForbiddenException();
+                }
+            }
+
+            _dbContext.Videos.Add(new BrowTricksVideo
             {
                 CloudinaryPublicId = model.Video.PublicId,
                 Url = model.Video.Url,
@@ -82,33 +100,32 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 Duration = model.Video.Duration.Value,
                 Format = model.Video.Format,
                 ThumbnailUrl = model.Video.ThumbnailUrl,
-                Description = model.Description
+                Description = model.Description,
+                CreatedAt = DateTime.UtcNow
             });
 
-            _dbContext.Clients.Update(client);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteVideoAsync(int videoId, User user)
         {
-            var clientVideo = await _dbContext.Videos.OfType<ClientVideo>()
-                .Include(item => item.Client)
-                .ThenInclude(item => item!.Tenant)
+            var video = await _dbContext.Videos.OfType<BrowTricksVideo>()
+                .Include(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == videoId);
 
-            if (clientVideo is null)
+            if (video is null)
             {
                 throw new RecordNotFoundException($"Video {videoId} not found");
             }
 
-            if (clientVideo.Client?.Tenant.OwnerId != user.Id)
+            if (video.Tenant!.OwnerId != user.Id)
             {
                 throw new ForbiddenException("You don't own this tenant");
             }
 
-            await _cloudinaryService.DeleteAsync(clientVideo.CloudinaryPublicId!);
+            await _cloudinaryService.DeleteAsync(video.CloudinaryPublicId!);
 
-            _dbContext.Videos.Remove(clientVideo);
+            _dbContext.Videos.Remove(video);
             await _dbContext.SaveChangesAsync();
         }
     }

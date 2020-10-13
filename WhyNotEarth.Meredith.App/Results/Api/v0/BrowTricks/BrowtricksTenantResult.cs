@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public List<VideoResult>? Videos { get; }
 
-        public BrowtricksTenantResult(Meredith.Public.Tenant tenant, List<ClientImage> images, List<ClientVideo> videos)
+        public BrowtricksTenantResult(Meredith.Public.Tenant tenant, List<BrowTricksImage> images, List<BrowTricksVideo> videos)
         {
             Tenant = new TenantResult(tenant);
             Images = images.Select(item => new ImageResult(item)).ToList();

@@ -41,6 +41,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created(id);
         }
 
+        [Returns201]
+        [Returns404]
+        [HttpPost("defaults")]
+        public async Task<CreateResult> CreateDefaults(string tenantSlug)
+        {
+            var user = await GetCurrentUserAsync(_userService);
+
+            await _formTemplateService.CreateDefaultsAsync(tenantSlug, user);
+
+            return Created();
+        }
+
         [Returns204]
         [Returns404]
         [HttpPut("{templateId}")]

@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         public async Task RunAsync()
         {
-            var images = await _dbContext.Images.OfType<ClientImage>()
+            var images = await _dbContext.Images.OfType<BrowTricksImage>()
                 .Where(item => item.CloudinaryPublicId != null && item.FileSize == null).ToListAsync();
 
             foreach (var clientImage in images)
@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
             await _dbContext.SaveChangesAsync();
 
-            var videos = await _dbContext.Videos.OfType<ClientVideo>()
+            var videos = await _dbContext.Videos.OfType<BrowTricksVideo>()
                 .Where(item => item.FileSize == null).ToListAsync();
 
             foreach (var clientVideo in videos)

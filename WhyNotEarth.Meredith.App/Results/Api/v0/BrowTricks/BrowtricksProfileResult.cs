@@ -14,7 +14,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public List<VideoResult>? Videos { get; }
 
-        public BrowtricksProfileResult(User user, List<ClientImage> images, List<ClientVideo> videos)
+        public BrowtricksProfileResult(User user, List<BrowTricksImage> images, List<BrowTricksVideo> videos)
         {
             Name = user.FullName;
             Images = images.Select(item => new ImageResult(item)).ToList();
