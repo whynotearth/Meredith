@@ -4,7 +4,7 @@ using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
-    public interface IClientMediaService
+    public interface ITenantMediaService
     {
         Task CreateImageAsync(string tenantSlug, BrowTricksImageModel model, User user);
 

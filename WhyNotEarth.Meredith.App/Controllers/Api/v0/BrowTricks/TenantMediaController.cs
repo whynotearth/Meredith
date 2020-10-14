@@ -15,14 +15,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageTenant)]
     [Route("api/v0/browtricks/tenants/{tenantSlug}/media")]
-    public class ClientMediaController : BaseController
+    public class TenantMediaController : BaseController
     {
-        private readonly IClientMediaService _clientMediaService;
+        private readonly ITenantMediaService _tenantMediaService;
         private readonly IUserService _userService;
 
-        public ClientMediaController(IClientMediaService clientMediaService, IUserService userService)
+        public TenantMediaController(ITenantMediaService tenantMediaService, IUserService userService)
         {
-            _clientMediaService = clientMediaService;
+            _tenantMediaService = tenantMediaService;
             _userService = userService;
         }
 
@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.CreateImageAsync(tenantSlug, model, user);
+            await _tenantMediaService.CreateImageAsync(tenantSlug, model, user);
 
             return Created();
         }
@@ -45,7 +45,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.DeleteImageAsync(imageId, user);
+            await _tenantMediaService.DeleteImageAsync(imageId, user);
 
             return NoContent();
         }
@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.CreateVideoAsync(tenantSlug, model, user);
+            await _tenantMediaService.CreateVideoAsync(tenantSlug, model, user);
 
             return Created();
         }
@@ -69,7 +69,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientMediaService.DeleteVideoAsync(videoId, user);
+            await _tenantMediaService.DeleteVideoAsync(videoId, user);
 
             return NoContent();
         }

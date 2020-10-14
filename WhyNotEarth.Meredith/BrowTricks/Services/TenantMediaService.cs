@@ -10,14 +10,14 @@ using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.BrowTricks.Services
 {
-    internal class ClientMediaService : IClientMediaService
+    internal class TenantMediaService : ITenantMediaService
     {
         private readonly IClientService _clientService;
         private readonly TenantService _tenantService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IDbContext _dbContext;
 
-        public ClientMediaService(IDbContext dbContext, ICloudinaryService cloudinaryService,
+        public TenantMediaService(IDbContext dbContext, ICloudinaryService cloudinaryService,
             IClientService clientService, TenantService tenantService)
         {
             _dbContext = dbContext;
@@ -43,6 +43,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _dbContext.Images.Add(new BrowTricksImage
             {
                 CloudinaryPublicId = model.Image.PublicId,
+                TenantId = tenant.Id,
                 Url = model.Image.Url,
                 Width = model.Image.Width,
                 Height = model.Image.Height,
@@ -93,6 +94,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _dbContext.Videos.Add(new BrowTricksVideo
             {
                 CloudinaryPublicId = model.Video.PublicId,
+                TenantId = tenant.Id,
                 Url = model.Video.Url,
                 Width = model.Video.Width.Value,
                 Height = model.Video.Height.Value,
