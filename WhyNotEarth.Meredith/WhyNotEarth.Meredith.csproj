@@ -7,7 +7,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="BrowTricks/Templates/Pmu.html" />
+    <EmbeddedResource Include="Identity/Templates/browtricks-email-confirm.html" />
     <EmbeddedResource Include="Identity/Templates/browtricks-reset-password.html" />
+    <EmbeddedResource Include="Identity/Templates/general-email-confirm.html" />
     <EmbeddedResource Include="Identity/Templates/general-reset-password.html" />
     <EmbeddedResource Include="Tenant/ReservationWhatsAppMessageTemplate.txt" />
     <EmbeddedResource Include="Volkswagen/Templates/three-column.html" />

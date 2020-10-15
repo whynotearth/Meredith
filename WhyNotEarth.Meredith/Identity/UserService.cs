@@ -273,6 +273,28 @@ namespace WhyNotEarth.Meredith.Identity
             return await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
         }
 
+        public async Task SendConfirmEmailTokenAsync(User user, ConfirmEmailTokenModel model)
+        {
+            var company = await _companyService.GetAsync(model.CompanySlug);
+
+            if (user.EmailConfirmed)
+            {
+                throw new InvalidActionException("User already confirmed email");
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var callbackUrl = GetEmailConfirmationUrl(model.ReturnUrl, token);
+
+            await _userNotificationService.NotifyAsync(user, NotificationType.Email,
+                new ConfirmEmailNotification(company, user, callbackUrl, _resourceService));
+        }
+
+        public Task<IdentityResult> ConfirmEmailAsync(User user, ConfirmEmailModel model)
+        {
+            return _userManager.ConfirmEmailAsync(user, model.Token);
+        }
+
         private async Task<UserCreateResult> CreateAsync(User user, string? password)
         {
             IdentityResult identityResult;
@@ -369,6 +391,17 @@ namespace WhyNotEarth.Meredith.Identity
             var shortUrl = await _urlShortenerService.AddAsync(callbackUrl);
 
             return shortUrl.Url;
+        }
+
+        private string GetEmailConfirmationUrl(string returnUrl, string token)
+        {
+            var uriBuilder = new UriBuilder(returnUrl);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["token"] = token;
+            uriBuilder.Query = query.ToString();
+            var callbackUrl = uriBuilder.ToString();
+
+            return callbackUrl;
         }
     }
 }

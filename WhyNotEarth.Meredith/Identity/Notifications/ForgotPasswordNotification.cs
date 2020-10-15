@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Public;
@@ -46,27 +45,13 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
                 ? "browtricks-reset-password.html"
                 : "general-reset-password.html";
 
-            var template = _resourceService.Get(templateName);
-
-            template = Replace(template, new Dictionary<string, string>
+            var template = _resourceService.Get(templateName, new Dictionary<string, string>
             {
                 {"{{company}}", _company.Name.First().ToString().ToUpper() + _company.Name.Substring(1)},
                 {"{{url}}", HtmlEncoder.Default.Encode(url)}
             });
 
             return template;
-        }
-
-        private string Replace(string source, Dictionary<string, string> values)
-        {
-            var stringBuilder = new StringBuilder(source);
-
-            foreach (var keyValue in values)
-            {
-                stringBuilder.Replace(keyValue.Key, keyValue.Value);
-            }
-
-            return stringBuilder.ToString();
         }
     }
 }

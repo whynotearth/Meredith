@@ -299,6 +299,32 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return NoContentIdentityResult(identityResult);
         }
 
+        [Authorize]
+        [Returns204]
+        [Returns404]
+        [HttpPost("confirmemailtoken")]
+        public async Task<NoContentResult> SendConfirmEmailToken(ConfirmEmailTokenModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            await _userService.SendConfirmEmailTokenAsync(user, model);
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [Returns204]
+        [Returns400]
+        [HttpPost("confirmemail")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var identityResult = await _userService.ConfirmEmailAsync(user, model);
+
+            return NoContentIdentityResult(identityResult);
+        }
+
         private async Task<ActionResult<string>> SignIn(User user)
         {
             await _signInManager.SignInAsync(user, true);

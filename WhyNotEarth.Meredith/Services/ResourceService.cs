@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace WhyNotEarth.Meredith.Services
 {
@@ -28,6 +30,27 @@ namespace WhyNotEarth.Meredith.Services
             var reader = new StreamReader(stream);
 
             return reader.ReadToEnd();
+        }
+
+        public string Get(string resourceName, Dictionary<string, string> replaceValues)
+        {
+            var template = Get(resourceName);
+
+            template = Replace(template, replaceValues);
+
+            return template;
+        }
+
+        private string Replace(string source, Dictionary<string, string> values)
+        {
+            var stringBuilder = new StringBuilder(source);
+
+            foreach (var keyValue in values)
+            {
+                stringBuilder.Replace(keyValue.Key, keyValue.Value);
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }
