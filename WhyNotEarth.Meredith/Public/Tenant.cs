@@ -46,6 +46,8 @@ namespace WhyNotEarth.Meredith.Public
 
         public string? PhoneNumber { get; set; }
 
+        public string? TempPhoneNumber { get; set; }
+
         public string? WhatsAppNumber { get; set; }
 
         public string? FacebookUrl { get; set; }

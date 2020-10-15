@@ -281,7 +281,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var user = await _userManager.GetUserAsync(User);
 
-            await _userService.SendConfirmPhoneNumberTokenAsync(user, model);
+            await _userService.SendConfirmTempPhoneNumberTokenAsync(user, model);
 
             return NoContent();
         }

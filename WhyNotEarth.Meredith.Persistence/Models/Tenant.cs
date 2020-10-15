@@ -17,6 +17,8 @@ namespace WhyNotEarth.Meredith.Persistence.Models
                 .HasConversion(
                     v => string.Join(",", v ?? new List<string>()),
                     v => v.Split(",", StringSplitOptions.None).ToList());
+
+            builder.HasIndex(u => u.PhoneNumber).IsUnique();
         }
     }
 }

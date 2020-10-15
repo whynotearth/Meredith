@@ -18,11 +18,13 @@ namespace WhyNotEarth.Meredith.Tenant.Models
         public string? YouTubeUrl { get; set; }
 
         public string? WhatsAppNumber { get; set; }
+        
+        public string? TempPhoneNumber { get; set; }
 
         public bool? HasPromotion { get; set; }
 
         public int? PromotionPercent { get; set; }
-
+        
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!HasPromotion.HasValue && PromotionPercent.HasValue)

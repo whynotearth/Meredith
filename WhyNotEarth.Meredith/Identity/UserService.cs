@@ -64,6 +64,14 @@ namespace WhyNotEarth.Meredith.Identity
         public async Task<UserCreateResult> CreateAsync(RegisterModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            
+            // Check whether the phone number the user entered is already associated with another account.
+            if (await _dbContext.Users.AnyAsync(usr => usr.PhoneNumber.Equals(model.PhoneNumber)))
+            {
+                return new UserCreateResult(
+                    IdentityResult.Failed(new IdentityError
+                        { Description = "The entered phone number is already associated with an existing account." }), null);
+            }
 
             if (user is null)
             {
@@ -117,6 +125,15 @@ namespace WhyNotEarth.Meredith.Identity
         public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
         {
             user = await _userManager.FindByIdAsync(user.Id.ToString());
+            
+            // Check whether the phone number the user entered is already associated with another account.
+            // The comparison per user id is necessary, so a user itself can change to the same number as before.
+            if (await _dbContext.Users.AnyAsync(usr => usr.PhoneNumber.Equals(model.PhoneNumber) && !usr.Id.Equals(user.Id)))
+            {
+                return
+                    IdentityResult.Failed(new IdentityError
+                        { Description = "The entered phone number is already associated with an existing account." });
+            }
 
             var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
@@ -208,6 +225,29 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
+
+            await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
+                new ConfirmPhoneNumberNotification(company, tenant, token));
+        }
+        
+        /// <summary>
+        /// Sends a verification token to the tenants tempPhoneNumber to confirm the change.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidActionException"></exception>
+        public async Task SendConfirmTempPhoneNumberTokenAsync(User user, ConfirmPhoneNumberTokenModel model)
+        {
+            var company = await _companyService.GetAsync(model.CompanySlug);
+            var tenant = await GetTenantAsync(model.TenantSlug);
+
+            if (tenant.TempPhoneNumber == null)
+            {
+                throw new InvalidActionException("Tenant has no temporary phone number.");
+            }
+
+            var token = await _userManager.GenerateChangePhoneNumberTokenAsync(user, tenant.TempPhoneNumber);
 
             await _userNotificationService.NotifyAsync(user, NotificationType.Sms,
                 new ConfirmPhoneNumberNotification(company, tenant, token));

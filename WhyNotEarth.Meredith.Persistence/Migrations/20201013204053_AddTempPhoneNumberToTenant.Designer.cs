@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WhyNotEarth.Meredith.Persistence;
@@ -9,9 +10,10 @@ using WhyNotEarth.Meredith.Persistence;
 namespace WhyNotEarth.Meredith.Persistence.Migrations
 {
     [DbContext(typeof(MeredithDbContext))]
-    partial class MeredithDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201013204053_AddTempPhoneNumberToTenant")]
+    partial class AddTempPhoneNumberToTenant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -779,9 +781,6 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<string>("CloudinaryPublicId")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -1221,9 +1220,6 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<string>("CloudinaryPublicId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -1751,16 +1747,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
             modelBuilder.Entity("WhyNotEarth.Meredith.UrlShortener.ShortUrl", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<string>("LongUrl")
@@ -1978,21 +1965,16 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasDiscriminator().HasValue("ArticleCategory");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.BrowTricksImage", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientImage", b =>
                 {
                     b.HasBaseType("WhyNotEarth.Meredith.Public.Image");
 
                     b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer");
-
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("TenantId");
-
-                    b.HasDiscriminator().HasValue("BrowTricksImage");
+                    b.HasDiscriminator().HasValue("ClientImage");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.CategoryImage", b =>
@@ -2040,21 +2022,16 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasDiscriminator().HasValue("ArticleImage");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.BrowTricksVideo", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientVideo", b =>
                 {
                     b.HasBaseType("WhyNotEarth.Meredith.Public.Video");
 
                     b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("integer");
-
                     b.HasIndex("ClientId");
 
-                    b.HasIndex("TenantId");
-
-                    b.HasDiscriminator().HasValue("BrowTricksVideo");
+                    b.HasDiscriminator().HasValue("ClientVideo");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelPrice", b =>
@@ -2676,18 +2653,12 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.BrowTricksImage", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientImage", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.BrowTricks.Client", "Client")
                         .WithMany("Images")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.PageImage", b =>
@@ -2704,18 +2675,12 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ProductId");
                 });
 
-            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.BrowTricksVideo", b =>
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientVideo", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.BrowTricks.Client", "Client")
                         .WithMany("Videos")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelPrice", b =>
