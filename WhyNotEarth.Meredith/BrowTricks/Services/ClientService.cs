@@ -136,7 +136,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
             else
             {
-                await _userService.UpdateUserAsync(client.User, new ProfileModel
+                await _userService.UpdateUserAsync(client.User.Id.ToString(), new ProfileModel
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,

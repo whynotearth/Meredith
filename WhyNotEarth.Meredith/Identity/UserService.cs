@@ -114,18 +114,23 @@ namespace WhyNotEarth.Meredith.Identity
             return user;
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model)
+        public async Task<IdentityResult> UpdateUserAsync(string userId, ProfileModel model)
         {
-            user = await _userManager.FindByIdAsync(user.Id.ToString());
+            var user = await _userManager.FindByIdAsync(userId);
 
-            var identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+            IdentityResult identityResult;
 
-            if (!identityResult.Succeeded)
+            if (model.UserName != null && model.UserName != user.UserName)
             {
-                return identityResult;
+                identityResult = await _userManager.SetUserNameAsync(user, model.UserName);
+
+                if (!identityResult.Succeeded)
+                {
+                    return identityResult;
+                }
             }
 
-            var shouldUpdateUsername = user.UserName == user.Email;
+            var shouldUpdateUsernameWithEmail = user.UserName == user.Email;
             identityResult = await _userManager.SetEmailAsync(user, model.Email);
 
             if (!identityResult.Succeeded)
@@ -133,10 +138,17 @@ namespace WhyNotEarth.Meredith.Identity
                 return identityResult;
             }
 
-            if (shouldUpdateUsername)
+            if (shouldUpdateUsernameWithEmail)
             {
                 identityResult = await _userManager.SetUserNameAsync(user, model.Email);
+
+                if (!identityResult.Succeeded)
+                {
+                    return identityResult;
+                }
             }
+
+            identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
 
             if (!identityResult.Succeeded)
             {

@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Identity
 
         User Map(User user, ExternalLoginInfo externalLoginInfo);
 
-        Task<IdentityResult> UpdateUserAsync(User user, ProfileModel model);
+        Task<IdentityResult> UpdateUserAsync(string userId, ProfileModel model);
 
         Task<string> GenerateJwtTokenAsync(User user);
 

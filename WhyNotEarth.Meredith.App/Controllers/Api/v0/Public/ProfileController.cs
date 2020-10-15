@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var identityResult = await _userService.UpdateUserAsync(user, model);
+            var identityResult = await _userService.UpdateUserAsync(user.Id.ToString(), model);
 
             if (!identityResult.Succeeded)
             {
