@@ -99,16 +99,7 @@ namespace WhyNotEarth.Meredith.Identity
         public User Map(User user, ExternalLoginInfo externalLoginInfo)
         {
             user.FirstName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.GivenName);
-
-            if (externalLoginInfo.LoginProvider == GoogleDefaults.AuthenticationScheme)
-            {
-                user.LastName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Name);
-            }
-            else if (externalLoginInfo.LoginProvider == FacebookDefaults.AuthenticationScheme)
-            {
-                user.LastName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Surname);
-            }
-
+            user.LastName = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Surname);
             user.ImageUrl = externalLoginInfo.Principal.FindFirstValue("picture");
 
             return user;
