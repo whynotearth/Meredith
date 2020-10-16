@@ -173,13 +173,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             else
             {
                 user = await _userManager.FindByEmailAsync(email);
-
-                user.EmailConfirmed = true;
-                var updateResult = await _userManager.UpdateAsync(user);
-                if (!updateResult.Succeeded)
-                {
-                    return Error("Error updating user", updateResult.Errors);
-                }
             }
 
             if (user is null)
@@ -197,6 +190,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 if (!createResult.Succeeded)
                 {
                     return Error("Error creating user", createResult.Errors);
+                }
+            }
+            else if (!user.EmailConfirmed)
+            {
+                user.EmailConfirmed = true;
+
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    return Error("Error updating user", updateResult.Errors);
                 }
             }
 
