@@ -415,7 +415,7 @@ namespace WhyNotEarth.Meredith.Identity
             var uriBuilder = new UriBuilder(returnUrl);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
             query[unique] = uniqueValue;
-            query["token"] = token;
+            query["forgot_password_token"] = token;
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
@@ -428,7 +428,7 @@ namespace WhyNotEarth.Meredith.Identity
         {
             var uriBuilder = new UriBuilder(returnUrl);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query["token"] = token;
+            query["email_confirm_token"] = token;
             uriBuilder.Query = query.ToString();
             var callbackUrl = uriBuilder.ToString();
 
