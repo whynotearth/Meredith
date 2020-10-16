@@ -294,6 +294,11 @@ namespace WhyNotEarth.Meredith.Identity
                 throw new InvalidActionException("User already confirmed email");
             }
 
+            if (user.Email is null)
+            {
+                throw new InvalidActionException("User doesn't have any email address");
+            }
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             var callbackUrl = GetEmailConfirmationUrl(model.ReturnUrl, token);
