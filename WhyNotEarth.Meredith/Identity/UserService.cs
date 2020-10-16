@@ -118,6 +118,7 @@ namespace WhyNotEarth.Meredith.Identity
         {
             var user = await _userManager.FindByIdAsync(userId);
 
+            var shouldUpdateUsernameWithEmail = user.UserName == user.Email;
             IdentityResult identityResult;
 
             if (model.UserName != null && model.UserName != user.UserName)
@@ -130,29 +131,41 @@ namespace WhyNotEarth.Meredith.Identity
                 }
             }
 
-            var shouldUpdateUsernameWithEmail = user.UserName == user.Email;
-            identityResult = await _userManager.SetEmailAsync(user, model.Email);
-
-            if (!identityResult.Succeeded)
+            if (model.Email != null && model.Email != user.Email)
             {
-                return identityResult;
-            }
-
-            if (shouldUpdateUsernameWithEmail)
-            {
-                identityResult = await _userManager.SetUserNameAsync(user, model.Email);
+                try
+                {
+                    identityResult = await _userManager.SetEmailAsync(user, model.Email);
+                }
+                catch (InvalidOperationException e) when (e.Message == "Sequence contains more than one element")
+                {
+                    return IdentityResult.Failed(new IdentityErrorDescriber().DuplicateEmail(model.Email));
+                }
 
                 if (!identityResult.Succeeded)
                 {
                     return identityResult;
                 }
+
+                if (shouldUpdateUsernameWithEmail)
+                {
+                    identityResult = await _userManager.SetUserNameAsync(user, model.Email);
+
+                    if (!identityResult.Succeeded)
+                    {
+                        return identityResult;
+                    }
+                }
             }
 
-            identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-
-            if (!identityResult.Succeeded)
+            if (model.PhoneNumber != null && model.PhoneNumber != user.PhoneNumber)
             {
-                return identityResult;
+                identityResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+
+                if (!identityResult.Succeeded)
+                {
+                    return identityResult;
+                }
             }
 
             user.FirstName = model.FirstName;
@@ -396,7 +409,8 @@ namespace WhyNotEarth.Meredith.Identity
             return tenant;
         }
 
-        private async Task<string> GetForgotPasswordUrlAsync(string returnUrl, string unique, string uniqueValue, string token)
+        private async Task<string> GetForgotPasswordUrlAsync(string returnUrl, string unique, string uniqueValue,
+            string token)
         {
             var uriBuilder = new UriBuilder(returnUrl);
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);
