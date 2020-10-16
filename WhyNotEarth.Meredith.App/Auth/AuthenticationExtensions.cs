@@ -132,12 +132,4 @@ namespace WhyNotEarth.Meredith.App.Auth
             return Task.FromResult(0);
         }
     }
-
-    public class CustomIdentityErrorDescriber : IdentityErrorDescriber
-    {
-        public override IdentityError InvalidToken()
-        {
-            return new IdentityError { Code = nameof(InvalidToken), Description = "The code is wrong." };
-        }
-    }
 }
