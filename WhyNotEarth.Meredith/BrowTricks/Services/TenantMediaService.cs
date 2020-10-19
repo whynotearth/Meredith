@@ -44,6 +44,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             {
                 CloudinaryPublicId = model.Image.PublicId,
                 TenantId = tenant.Id,
+                ClientId = model.ClientId,
                 Url = model.Image.Url,
                 Width = model.Image.Width,
                 Height = model.Image.Height,
@@ -95,6 +96,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             {
                 CloudinaryPublicId = model.Video.PublicId,
                 TenantId = tenant.Id,
+                ClientId = model.ClientId,
                 Url = model.Video.Url,
                 Width = model.Video.Width.Value,
                 Height = model.Video.Height.Value,
