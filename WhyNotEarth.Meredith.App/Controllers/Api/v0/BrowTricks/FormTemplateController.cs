@@ -16,7 +16,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
     [Returns403]
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
-    [Authorize(Policy = Policies.ManageTenant)]
     [Route("api/v0/browtricks/tenants/{tenantSlug}/formtemplates")]
     public class FormTemplateController : BaseController
     {
@@ -32,6 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns201]
         [Returns404]
         [HttpPost("")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<CreateObjectResult> Create(string tenantSlug, FormTemplateModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -44,6 +44,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns201]
         [Returns404]
         [HttpPost("defaults")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<CreateResult> CreateDefaults(string tenantSlug)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -56,6 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns204]
         [Returns404]
         [HttpPut("{templateId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<NoContentResult> Edit(string tenantSlug, int templateId, FormTemplateModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -67,6 +69,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns200]
         [HttpGet("")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<ActionResult<List<FormTemplateResult>>> List(string tenantSlug)
         {
             var user = await GetCurrentUserAsync(_userService);
@@ -76,6 +79,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return formTemplates.Select(item => new FormTemplateResult(item)).ToList();
         }
 
+        [Authorize]
         [Returns200]
         [Returns404]
         [HttpGet("{templateId}")]
@@ -91,6 +95,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         [Returns204]
         [Returns404]
         [HttpDelete("{templateId}")]
+        [Authorize(Policy = Policies.ManageTenant)]
         public async Task<NoContentResult> Delete(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);

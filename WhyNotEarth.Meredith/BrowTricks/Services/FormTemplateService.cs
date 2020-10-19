@@ -13,12 +13,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     internal class FormTemplateService : IFormTemplateService
     {
         private readonly IDbContext _dbContext;
+        private readonly IClientService _clientService;
         private readonly TenantService _tenantService;
 
-        public FormTemplateService(TenantService tenantService, IDbContext dbContext)
+        public FormTemplateService(TenantService tenantService, IDbContext dbContext, IClientService clientService)
         {
             _tenantService = tenantService;
             _dbContext = dbContext;
+            _clientService = clientService;
         }
 
         public async Task CreateDefaultsAsync(string tenantSlug, User user)
@@ -98,6 +100,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
                 .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
+
+            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
 
             if (formTemplate is null)
             {
