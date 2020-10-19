@@ -21,6 +21,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         public async Task RunAsync()
         {
+            var formTemplates = await _dbContext.FormTemplates.Where(item => item.Name == "Pre and Post Care Agreement").ToListAsync();
+
+            _dbContext.FormTemplates.RemoveRange(formTemplates);
+            await _dbContext.SaveChangesAsync();
+
             var images = await _dbContext.Images.OfType<BrowTricksImage>()
                 .Where(item => item.CloudinaryPublicId != null && item.FileSize == null).ToListAsync();
 

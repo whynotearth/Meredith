@@ -151,7 +151,10 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                                 "I have read, or had read to me, the above Pre and Post Care instructions and expectations. I agree to follow the above directions and understand that how I heal depends on how closely I follow said directions. I understand a touchup appointment will be needed to complete the process.",
                             Options = new List<string>
                             {
-                                "https://res.cloudinary.com/whynotearth/image/upload/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.pdf"
+                                "https://res.cloudinary.com/whynotearth/image/upload/pg_1/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.png",
+                                "https://res.cloudinary.com/whynotearth/image/upload/pg_2/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.png",
+                                "https://res.cloudinary.com/whynotearth/image/upload/pg_3/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.png",
+                                "https://res.cloudinary.com/whynotearth/image/upload/pg_4/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.png"
                             }
                         }
                     }
