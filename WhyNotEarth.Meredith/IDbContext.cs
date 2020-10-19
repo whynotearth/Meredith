@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WhyNotEarth.Meredith.BrowTricks;
@@ -17,7 +18,7 @@ using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
 
 namespace WhyNotEarth.Meredith
 {
-    public interface IDbContext : IAsyncDisposable
+    public interface IDbContext : IAsyncDisposable, IDataProtectionKeyContext
     {
         DbSet<Card> Cards { get; set; }
 
@@ -52,6 +53,8 @@ namespace WhyNotEarth.Meredith
         DbSet<User> Users { get; set; }
 
         DbSet<Role> Roles { get; set; }
+
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
         DbSet<TwilioAccount> TwilioAccounts { get; set; }
 

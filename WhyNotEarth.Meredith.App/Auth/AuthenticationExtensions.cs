@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -20,16 +23,14 @@ namespace WhyNotEarth.Meredith.App.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration,
+            IWebHostEnvironment environment)
         {
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services
-                .AddIdentity<User, Role>(o =>
-                {
-                    o.User.RequireUniqueEmail = true;
-                })
+                .AddIdentity<User, Role>(o => { o.User.RequireUniqueEmail = true; })
                 .AddUserManager<UserManager>()
                 .AddRoleManager<RoleManager>()
                 .AddEntityFrameworkStores<MeredithDbContext>()
@@ -100,6 +101,8 @@ namespace WhyNotEarth.Meredith.App.Auth
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.LoginPath = null;
             });
+
+            services.AddDataProtection().PersistKeysToDbContext<MeredithDbContext>();
         }
 
         public static IApplicationBuilder UseCustomAuthentication(this IApplicationBuilder app)
