@@ -54,8 +54,6 @@ namespace WhyNotEarth.Meredith
 
         DbSet<Role> Roles { get; set; }
 
-        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
-
         DbSet<TwilioAccount> TwilioAccounts { get; set; }
 
         DbSet<ShortUrl> ShortUrls { get; set; }
