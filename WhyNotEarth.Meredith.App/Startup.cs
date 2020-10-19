@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddHangfireServer();
 
-            services.AddCustomAuthentication(_configuration, _environment);
+            services.AddCustomAuthentication(_configuration);
 
             services.AddCustomAuthorization();
 
