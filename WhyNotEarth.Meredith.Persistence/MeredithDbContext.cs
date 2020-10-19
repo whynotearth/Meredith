@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks;
 using WhyNotEarth.Meredith.Emails;
 using WhyNotEarth.Meredith.Hotel;
-using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop;
 using WhyNotEarth.Meredith.Stripe;
@@ -47,8 +46,6 @@ namespace WhyNotEarth.Meredith.Persistence
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
         public DbSet<ShortMessage> ShortMessages { get; set; } = null!;
-
-        public DbSet<LoginToken> LoginTokens { get; set; } = null!;
 
         public DbSet<TwilioAccount> TwilioAccounts { get; set; } = null!;
 

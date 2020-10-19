@@ -19,26 +19,26 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly IClientService _clientService;
-        private readonly IUrlShortenerService _urlShortenerService;
         private readonly IDbContext _dbContext;
         private readonly FormNotifications _formNotifications;
         private readonly IFormSignatureFileService _formSignatureFileService;
-        private readonly ILoginTokenService _loginTokenService;
         private readonly TenantService _tenantService;
+        private readonly IUrlShortenerService _urlShortenerService;
+        private readonly IUserService _userService;
 
         public FormAnswerService(IDbContext dbContext, TenantService tenantService,
-            IFormSignatureFileService formSignatureFileService,
-            FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient,
-            ILoginTokenService loginTokenService, IClientService clientService, IUrlShortenerService urlShortenerService)
+            IFormSignatureFileService formSignatureFileService, FormNotifications formNotifications,
+            IBackgroundJobClient backgroundJobClient, IClientService clientService,
+            IUrlShortenerService urlShortenerService, IUserService userService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
             _formSignatureFileService = formSignatureFileService;
             _formNotifications = formNotifications;
             _backgroundJobClient = backgroundJobClient;
-            _loginTokenService = loginTokenService;
             _clientService = clientService;
             _urlShortenerService = urlShortenerService;
+            _userService = userService;
         }
 
         public async Task<byte[]> GetPngAsync(int formTemplateId, User user)
@@ -193,7 +193,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         private async Task<string> GetFormUrlAsync(string callbackUrl, User user)
         {
-            var token = await _loginTokenService.GenerateTokenAsync(user);
+            var token = await _userService.GenerateJwtTokenAsync(user);
 
             var url = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
             {

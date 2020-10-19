@@ -19,14 +19,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
         private readonly IDbContext _dbContext;
         private readonly IFileService _fileService;
         private readonly IHtmlService _htmlService;
-        private readonly ILoginTokenService _loginTokenService;
         private readonly IUrlShortenerService _urlShortenerService;
+        private readonly IUserService _userService;
         private readonly FormNotifications _formNotifications;
         private readonly IFormSignatureFileService _formSignatureFileService;
 
         public ClientSaveSignatureJob(IDbContext dbContext, IFormSignatureFileService formSignatureFileService,
             FormNotifications formNotifications, IBackgroundJobClient backgroundJobClient, IFileService fileService,
-            IHtmlService htmlService, ILoginTokenService loginTokenService, IUrlShortenerService urlShortenerService)
+            IHtmlService htmlService, IUrlShortenerService urlShortenerService, IUserService userService)
         {
             _dbContext = dbContext;
             _formSignatureFileService = formSignatureFileService;
@@ -34,8 +34,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
             _backgroundJobClient = backgroundJobClient;
             _fileService = fileService;
             _htmlService = htmlService;
-            _loginTokenService = loginTokenService;
             _urlShortenerService = urlShortenerService;
+            _userService = userService;
         }
 
         public async Task SaveSignature(int formSignatureId)
@@ -96,7 +96,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         private async Task<string> GetCallbackUrlAsync(string callbackUrl, User user, string tenantSlug, int formTemplateId)
         {
-            var token = await _loginTokenService.GenerateTokenAsync(user);
+            var token = await _userService.GenerateJwtTokenAsync(user);
 
             var url = UrlHelper.AddQueryString(callbackUrl, new Dictionary<string, string>
             {

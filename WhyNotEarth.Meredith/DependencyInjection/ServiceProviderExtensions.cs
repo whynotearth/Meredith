@@ -48,7 +48,6 @@ namespace WhyNotEarth.Meredith.DependencyInjection
                 .AddScoped<ITwilioService, TwilioService>()
                 .AddScoped<IMarkdownService, MarkdownService>()
                 .AddScoped<IHtmlService, HtmlService>()
-                .AddScoped<ILoginTokenService, LoginTokenService>()
                 .AddScoped<IUserNotificationService, UserNotificationService>()
                 .AddScoped<IResourceService, ResourceService>()
                 .AddScoped<IUrlShortenerService, UrlShortenerService>();

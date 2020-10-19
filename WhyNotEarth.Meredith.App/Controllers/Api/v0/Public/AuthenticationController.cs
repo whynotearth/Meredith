@@ -17,18 +17,16 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     [ProducesErrorResponseType(typeof(void))]
     public class AuthenticationController : ControllerBase
     {
-        private readonly ILoginTokenService _loginTokenService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
 
         public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IUserService userService, ILoginTokenService loginTokenService)
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userService = userService;
-            _loginTokenService = loginTokenService;
         }
 
         [Returns200]
@@ -60,21 +58,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             if (user is null)
             {
                 user = await _userManager.FindByNameAsync(userName);
-            }
-
-            return Ok(await _userService.GenerateJwtTokenAsync(user));
-        }
-
-        [Returns200]
-        [Returns401]
-        [HttpPost("tokenlogin")]
-        public async Task<ActionResult<string>> TokenLogin(TokenLoginModel model)
-        {
-            var user = await _loginTokenService.ValidateTokenAsync(model.Token);
-
-            if (user is null)
-            {
-                return Unauthorized(new { error = "You have entered an invalid token" });
             }
 
             return Ok(await _userService.GenerateJwtTokenAsync(user));
