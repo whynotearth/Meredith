@@ -101,14 +101,12 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 .Include(item => item.Items)
                 .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
 
-            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
-
             if (formTemplate is null)
             {
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
+            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
 
             return formTemplate;
         }
