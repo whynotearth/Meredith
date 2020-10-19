@@ -111,6 +111,8 @@ namespace WhyNotEarth.Meredith.Persistence
 
         public DbSet<FormTemplate> FormTemplates { get; set; } = null!;
 
+        public DbSet<FormItem> FormItems { get; set; } = null!;
+
         public DbSet<FormSignature> FormSignatures { get; set; } = null!;
 
         public MeredithDbContext(DbContextOptions<MeredithDbContext> options) : base(options)

@@ -117,6 +117,8 @@ namespace WhyNotEarth.Meredith
 
         DbSet<FormTemplate> FormTemplates { get; set; }
 
+        DbSet<FormItem> FormItems { get; set; }
+
         DbSet<FormSignature> FormSignatures { get; set; }
 
         DatabaseFacade Database { get; }

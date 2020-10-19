@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
@@ -21,9 +22,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         public async Task RunAsync()
         {
-            var formTemplates = await _dbContext.FormTemplates.Where(item => item.Name == "Pre and Post Care Agreement").ToListAsync();
+            var formItems = await _dbContext.FormItems
+                .Include(item => item.FormTemplate)
+                .Where(item => item.Type == FormItemType.Pdf &&
+                               item.Options == new List<string>
+                               {
+                                   "https://res.cloudinary.com/whynotearth/image/upload/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.pdf"
+                               })
+                .ToListAsync();
 
-            _dbContext.FormTemplates.RemoveRange(formTemplates);
+            _dbContext.FormTemplates.RemoveRange(formItems.Select(item => item.FormTemplate));
             await _dbContext.SaveChangesAsync();
 
             var images = await _dbContext.Images.OfType<BrowTricksImage>()
