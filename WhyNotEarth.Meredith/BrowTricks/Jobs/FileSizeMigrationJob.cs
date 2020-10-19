@@ -22,17 +22,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
 
         public async Task RunAsync()
         {
-            var formItems = await _dbContext.FormItems
-                .Include(item => item.FormTemplate)
-                .Where(item => item.Type == FormItemType.Pdf &&
-                               item.Options == new List<string>
-                               {
-                                   "https://res.cloudinary.com/whynotearth/image/upload/v1602252454/BrowTricks/backend/Pre_and_Post_Care_Agreement_djswql.pdf"
-                               })
-                .ToListAsync();
-
-            _dbContext.FormTemplates.RemoveRange(formItems.Select(item => item.FormTemplate));
-            await _dbContext.SaveChangesAsync();
 
             var images = await _dbContext.Images.OfType<BrowTricksImage>()
                 .Where(item => item.CloudinaryPublicId != null && item.FileSize == null).ToListAsync();
