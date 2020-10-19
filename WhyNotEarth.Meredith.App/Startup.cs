@@ -21,7 +21,6 @@ using WhyNotEarth.Meredith.App.DbContext;
 using WhyNotEarth.Meredith.App.Localization;
 using WhyNotEarth.Meredith.App.Middleware;
 using WhyNotEarth.Meredith.App.Swagger;
-using WhyNotEarth.Meredith.BrowTricks.Jobs;
 using WhyNotEarth.Meredith.DependencyInjection;
 using WhyNotEarth.Meredith.Persistence;
 using WhyNotEarth.Meredith.Volkswagen.Jobs;
@@ -138,9 +137,6 @@ namespace WhyNotEarth.Meredith.App
             recurringJobManager.AddOrUpdate<NewJumpStartJob>(NewJumpStartJob.Id,
                 job => job.SendAsync(),
                 NewJumpStartJob.CronExpression, TimeZoneInfo.Utc);
-
-            backgroundJobClient.Enqueue<FileSizeMigrationJob>(job =>
-                job.RunAsync());
         }
     }
 }
