@@ -12,9 +12,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     {
         private readonly IDbContext _dbContext;
 
-        public CardController(IDbContext IDbContext)
+        public CardController(IDbContext dbContext)
         {
-            _dbContext = IDbContext;
+            _dbContext = dbContext;
         }
 
         [Returns200]
