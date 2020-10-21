@@ -73,6 +73,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 .Where(item => item.TenantId == tenant.Id && item.IsDeleted == false)
                 .ToListAsync();
 
+            foreach (var formTemplate in formTemplates)
+            {
+                formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
+            }
+
             return formTemplates;
         }
 
@@ -107,6 +112,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
 
             await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
+
+            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
 
             return formTemplate;
         }

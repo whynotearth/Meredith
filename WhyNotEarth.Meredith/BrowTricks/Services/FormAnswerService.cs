@@ -83,14 +83,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
-            var formTemplate = await _dbContext.FormTemplates
-                .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
-
-            if (formTemplate is null)
-            {
-                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
-            }
+            var formTemplate = await GetFormTemplate(formTemplateId);
 
             var formSignature = Map(formTemplate, model, clientId);
 
@@ -126,6 +119,22 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             _backgroundJobClient.Enqueue<ITwilioService>(service =>
                 service.SendAsync(shortMessage.Id));
+        }
+
+        private async Task<FormTemplate> GetFormTemplate(int formTemplateId)
+        {
+            var formTemplate = await _dbContext.FormTemplates
+                            .Include(item => item.Items)
+                            .FirstOrDefaultAsync(item => item.Id == formTemplateId);
+
+            if (formTemplate is null)
+            {
+                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
+            }
+
+            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
+
+            return formTemplate;
         }
 
         private async Task ValidateFormDuplicateSignatureAsync(int formTemplateId, int clientId)
@@ -218,6 +227,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
 
+            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
+
             return formTemplate;
         }
 
@@ -233,6 +244,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
 
             await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
+
+            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
 
             return formTemplate;
         }
