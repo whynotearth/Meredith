@@ -75,7 +75,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(formSignature.Client.User.PhoneNumber))
+            if (string.IsNullOrWhiteSpace(formSignature.Client.PhoneNumber))
             {
                 return;
             }
@@ -84,7 +84,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Jobs
                 formSignature.Client.Tenant.Slug, formSignature.FormTemplateId);
 
             var shortMessage =
-                _formNotifications.GetCompletionNotification(formSignature.Client.Tenant, formSignature.Client.User,
+                _formNotifications.GetCompletionNotification(formSignature.Client.Tenant, formSignature.Client,
                     callbackUrl);
 
             _dbContext.ShortMessages.Add(shortMessage);

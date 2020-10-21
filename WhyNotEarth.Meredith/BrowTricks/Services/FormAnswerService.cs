@@ -71,12 +71,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             var formTemplate = await _formTemplateService.GetAsync(formTemplateId, user);
 
             var client = await _dbContext.Clients
-                .Include(item => item.User)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
             var formSignature = Map(formTemplate, model, clientId);
 
-            return await _formSignatureFileService.GetPngAsync(formSignature, client.User.FullName);
+            return await _formSignatureFileService.GetPngAsync(formSignature, client.FullName);
         }
 
         public async Task SubmitAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
@@ -112,9 +111,14 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
+            if (client.PhoneNumber is null)
+            {
+                throw new InvalidActionException("Client does not have a phone number");
+            }
+
             var formUrl = await GetFormUrlAsync(callbackUrl, client.User);
 
-            var shortMessage = _formNotifications.GetConsentNotification(client.Tenant, client.User, formUrl);
+            var shortMessage = _formNotifications.GetConsentNotification(client.Tenant, client, formUrl);
 
             _dbContext.ShortMessages.Add(shortMessage);
             await _dbContext.SaveChangesAsync();

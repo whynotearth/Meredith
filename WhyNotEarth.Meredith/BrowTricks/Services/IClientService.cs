@@ -17,7 +17,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         Task<Client> GetAsync(int clientId, User user);
 
-        Task<Client> ValidateOwnerOrSelfAsync(int clientId, User user);
+        Task ValidateOwnerOrSelfAsync(int clientId, User user);
 
         Task<Public.Tenant> ValidateOwnerOrClientAsync(int tenantId, User user);
 

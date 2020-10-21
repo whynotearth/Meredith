@@ -19,11 +19,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
         public ClientListResult(Client client)
         {
             Id = client.Id;
-            Email = client.User.Email;
-            FirstName = client.User.FirstName;
-            LastName = client.User.LastName;
-            PhoneNumber = client.User.PhoneNumber;
-            AvatarUrl = client.User.ImageUrl;
+            Email = client.Email;
+            FirstName = client.FirstName;
+            LastName = client.LastName;
+            PhoneNumber = client.PhoneNumber;
+            AvatarUrl = client.AvatarUrl;
         }
     }
 }

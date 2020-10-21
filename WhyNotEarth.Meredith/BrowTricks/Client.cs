@@ -15,6 +15,18 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public User User { get; set; } = null!;
 
+        public string Email { get; set; } = null!;
+
+        public string? FirstName { get; set; }
+
+        public string? LastName { get; set; }
+
+        public string FullName => string.Join(' ', FirstName, LastName);
+
+        public string? PhoneNumber { get; set; }
+
+        public string? AvatarUrl { get; set; }
+
         public List<ClientNote>? Notes { get; set; }
 
         public List<BrowTricksImage> Images { get; set; } = new List<BrowTricksImage>();

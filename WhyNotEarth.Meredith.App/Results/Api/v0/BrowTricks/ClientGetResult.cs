@@ -28,11 +28,11 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
         public ClientGetResult(Client client, Dictionary<int, string?> signatureUrls)
         {
             Id = client.Id;
-            Email = client.User.Email;
-            FirstName = client.User.FirstName;
-            LastName = client.User.LastName;
-            PhoneNumber = client.User.PhoneNumber;
-            AvatarUrl = client.User.ImageUrl;
+            Email = client.Email;
+            FirstName = client.FirstName;
+            LastName = client.LastName;
+            PhoneNumber = client.PhoneNumber;
+            AvatarUrl = client.AvatarUrl;
             Signatures = signatureUrls.Select(item => new FormSignatureResult(item.Key, item.Value)).ToList();
             Images = client.Images?.Select(item => new ImageResult(item)).ToList();
             Videos = client.Videos?.Select(item => new VideoResult(item)).ToList();

@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using WhyNotEarth.Meredith.BrowTricks.FormWidgets;
 using WhyNotEarth.Meredith.Pdf;
-using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 
 namespace WhyNotEarth.Meredith.BrowTricks
@@ -24,7 +23,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             var widgets = GetWidgets(formSignature);
 
-            return BuildHtml(formSignature.Name, widgets, true, formSignature.Client.User.FullName,
+            return BuildHtml(formSignature.Name, widgets, true, formSignature.Client.FullName,
                 formSignature.CreatedAt);
         }
 

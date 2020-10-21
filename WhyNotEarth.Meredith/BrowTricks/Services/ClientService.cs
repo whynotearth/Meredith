@@ -37,7 +37,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         public async Task EditAsync(int clientId, ClientModel model, User user)
         {
             var client = await _dbContext.Clients
-                .Include(item => item.User)
                 .Include(item => item.Images)
                 .Include(item => item.Videos)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
@@ -60,7 +59,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             return await _dbContext.Clients
-                .Include(item => item.User)
                 .Where(item => item.TenantId == tenant.Id && item.IsArchived == false)
                 .ToListAsync();
         }
@@ -85,7 +83,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         public async Task<Client> GetAsync(int clientId, User user)
         {
             var client = await _dbContext.Clients
-                .Include(item => item.User)
                 .Include(item => item.Images)
                 .Include(item => item.Videos)
                 .Include(item => item.Tenant)
@@ -129,21 +126,16 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         private async Task<Client> MapClientAsync(Client client, ClientModel model,
             Public.Tenant? tenant = null)
         {
-            if (client.User is null!)
+            if (client.UserId == default)
             {
                 var user = await GetOrCreateUserAsync(model);
                 client.UserId = user.Id;
             }
-            else
-            {
-                await _userService.UpdateUserAsync(client.User.Id.ToString(), new ProfileModel
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
-                });
-            }
+
+            client.FirstName = model.FirstName;
+            client.LastName = model.LastName;
+            client.Email = model.Email;
+            client.PhoneNumber = model.PhoneNumber;
 
             if (client.Tenant is null!)
             {
@@ -153,10 +145,9 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return client;
         }
 
-        public async Task<Client> ValidateOwnerOrSelfAsync(int clientId, User user)
+        public async Task ValidateOwnerOrSelfAsync(int clientId, User user)
         {
             var client = await _dbContext.Clients
-                .Include(item => item.User)
                 .Include(item => item.Tenant)
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
@@ -165,7 +156,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"client {clientId} not found");
             }
 
-            return ValidateOwnerOrSelf(client, user);
+            ValidateOwnerOrSelf(client, user);
         }
 
         public async Task<Public.Tenant> ValidateOwnerOrClientAsync(int tenantId, User user)
@@ -211,18 +202,18 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return client;
         }
 
-        private Client ValidateOwnerOrSelf(Client client, User user)
+        private void ValidateOwnerOrSelf(Client client, User user)
         {
             if (client.UserId == user.Id)
             {
                 // It's the user itself
-                return client;
+                return;
             }
 
             if (client.Tenant.OwnerId == user.Id)
             {
                 // It's the owner
-                return client;
+                return;
             }
 
             throw new ForbiddenException();
