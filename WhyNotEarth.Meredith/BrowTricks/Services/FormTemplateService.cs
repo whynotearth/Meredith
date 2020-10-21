@@ -186,6 +186,109 @@ I fully understand the Booking Fee and Cancellation Fee Policy, and hereby forfe
 I will also give 48 hour notice or pay 20% for my appointment reservation."
                         }
                     }
+                },
+                new FormTemplate
+                {
+                    Name = "Disclosure and Consent for Intradermal Cosmetic Procedure",
+                    CreatedAt = DateTime.UtcNow,
+                    TenantId = tenantId,
+                    Items = new List<FormItem>
+                    {
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = "Your Full Name"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I have requested information below relating to the procedure of Intradermal Cosmetics so that I may make an informed decision as to whether or not to undergo the procedure.
+
+Micropigmentation is the process of implanting micro pockets of pigment into the epidermis and upper dermal layer of the skin. This is a form of tattooing used for permanent cosmetics. I voluntarily request my intradermal technician to perform the following procedures:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I hereby authorize photographs of the work performed to be taken both before and after treatment, and that said photographs may be used for purposes of advertising and/or training purposes. I may request full face photos to be approved before posting.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"Are you under the care of a physician? If yes, please state the medical treatments, medications, and procedures you are being treated for or have in the past.
+
+Please also list your Physician's Name and Phone Number. We must have this information to make sure any conditions will not affect the healing of your tattoo, or if it involves possible allergies to dye, pigment, or numbing agents."
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I have been told that there may be known and unknown risks and hazards related to the performance of the planned procedure and I understand that no warranty or guarantees have been made as to the results.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I acknowledge the manufacturers of the pigment and numbing agents require spot testing and specifically disclaims any responsibility for adverse reaction to applied products. I understand spot testing may identify individuals who develop immediate allergic reactions, however spot testing does not identify individuals who may have a delayed allergic reaction to pigment.
+
+I have been told that this procedure may involve discomfort. I also understand that I can ask for more additional numbing as needed, but that the more numbing that is applied, the higher the risk of having an adverse reaction.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I understand the markings are permanent and that there is the possibility of hyperpigmentation resulting from a procedure, especially to individuals prone to hyperpigmentation from scars or other injuries. The pigment also has the risk of fanning or spreading, also known as pigment migration.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I understand that a follow up touchup procedure will most likely be needed. As little as 50% of the pigment may remain after healing.  Pigment will need to be re-implanted for a fully finished look. I also understand that annual touchups may also be needed. Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I understand other risks involved may include, but are not limited to:
+allergic and other reactions to products applied during and after the procedure, skin irritation, swelling, and discomfort.  When reactions occur, they are generally from numbing products, pigment, or aftercare ointments. I understand opting for numbing cream increases the change of a reaction, and will notify my technician if I do not want it used. I understand a test patch is recommended by most manufacturers.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I have read, or have had read to me, and have received a copy of the Post Procedure Instructions and I understand its content. I understand that as with any procedure that opens the skin, infections can also rarely occur; following aftercare properly will greatly reduce this risk. I understand picking my scabs can cause scarring, and therefore will not do so.  I understand my tattoo is not permanent in my skin until it has fully healed.  I will do my best to follow after care instructions to the best of my ability.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I accept full responsibility for any and all, present and future, medical treatments and expenses I may incur in the event I need to seek treatments for any known or unknown reason associated with this procedure.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I have been given an opportunity to ask questions about the procedures to be done and the risks and hazards involved, and I believe that I have sufficient information to give informed consent.
+Initial Here:"
+                        },
+                        new FormItem
+                        {
+                            IsRequired = true,
+                            Type = FormItemType.TextResponse,
+                            Value = @"I certify that I have read, or had read to me, the content of this consent, and I fully understand its contents.
+Initial Here:"
+                        },
+                    }
                 }
             };
         }
