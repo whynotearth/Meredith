@@ -137,8 +137,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
                 var currentUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
-                await UpdateUserAsync(info, currentUser);
-
                 return await RedirectWithJwtAsync(currentUser, returnUrl);
             }
 
@@ -327,13 +325,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             });
 
             return Redirect(finalReturnUrl);
-        }
-
-        private async Task UpdateUserAsync(ExternalLoginInfo externalLoginInfo, User user)
-        {
-            user = _userService.Map(user, externalLoginInfo);
-
-            await _userManager.UpdateAsync(user);
         }
 
         private IActionResult OkIdentityResult(IdentityResult identityResult)
