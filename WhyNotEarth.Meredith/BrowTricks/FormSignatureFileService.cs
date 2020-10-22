@@ -46,11 +46,11 @@ namespace WhyNotEarth.Meredith.BrowTricks
             return await _htmlService.ToPdfAsync(html);
         }
 
-        public async Task<byte[]> GetPngAsync(FormSignature formSignature, User user)
+        public async Task<byte[]> GetPngAsync(FormSignature formSignature, string fullName)
         {
             var widgets = GetWidgets(formSignature);
 
-            var html = BuildHtml(formSignature.Name, widgets, true, user.FullName, formSignature.CreatedAt);
+            var html = BuildHtml(formSignature.Name, widgets, true, fullName, formSignature.CreatedAt);
 
             return await _htmlService.ToPngAsync(html);
         }

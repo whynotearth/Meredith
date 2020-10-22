@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             var formSignature = Map(formTemplate, model, null);
 
-            return await _formSignatureFileService.GetPngAsync(formSignature, user);
+            return await _formSignatureFileService.GetPngAsync(formSignature, user.FullName);
         }
 
         public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
@@ -74,7 +74,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             var formSignature = Map(formTemplate, model, clientId);
 
-            return await _formSignatureFileService.GetPngAsync(formSignature, client.User);
+            return await _formSignatureFileService.GetPngAsync(formSignature, client.User.FullName);
         }
 
         public async Task SubmitAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
