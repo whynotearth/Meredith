@@ -24,7 +24,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.FormWidgets
 
         public string Render()
         {
-            if (!_hasAnswer)
+            if (_hasAnswer)
             {
                 return $@"<section class=""section"">
                 <p class=""question"">{_value}</p>
