@@ -25,11 +25,12 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         private readonly TenantService _tenantService;
         private readonly IUrlShortenerService _urlShortenerService;
         private readonly IUserService _userService;
+        private readonly IFormTemplateService _formTemplateService;
 
         public FormAnswerService(IDbContext dbContext, TenantService tenantService,
             IFormSignatureFileService formSignatureFileService, FormNotifications formNotifications,
-            IBackgroundJobClient backgroundJobClient, IClientService clientService,
-            IUrlShortenerService urlShortenerService, IUserService userService)
+            IBackgroundJobClient backgroundJobClient, IClientService clientService, IUrlShortenerService urlShortenerService,
+            IUserService userService, IFormTemplateService formTemplateService)
         {
             _dbContext = dbContext;
             _tenantService = tenantService;
@@ -39,18 +40,19 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _clientService = clientService;
             _urlShortenerService = urlShortenerService;
             _userService = userService;
+            _formTemplateService = formTemplateService;
         }
 
         public async Task<byte[]> GetPngAsync(int formTemplateId, User user)
         {
-            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+            var formTemplate = await _formTemplateService.GetAsync(formTemplateId, user);
 
             return await _formSignatureFileService.GetPngAsync(formTemplate);
         }
 
         public async Task<byte[]> GetPdfAsync(int formTemplateId, User user)
         {
-            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+            var formTemplate = await _formTemplateService.GetAsync(formTemplateId, user);
 
             return await _formSignatureFileService.GetPdfAsync(formTemplate);
         }
@@ -66,7 +68,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task<byte[]> GetPngAsync(int formTemplateId, int clientId, FormSignatureModel model, User user)
         {
-            var formTemplate = await ValidateOwnerOrClient(formTemplateId, user);
+            var formTemplate = await _formTemplateService.GetAsync(formTemplateId, user);
 
             var client = await _dbContext.Clients
                 .Include(item => item.User)
@@ -83,7 +85,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             await ValidateFormDuplicateSignatureAsync(formTemplateId, clientId);
 
-            var formTemplate = await GetFormTemplate(formTemplateId);
+            var formTemplate = await _formTemplateService.GetAsync(formTemplateId);
 
             var formSignature = Map(formTemplate, model, clientId);
 
@@ -119,22 +121,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             _backgroundJobClient.Enqueue<ITwilioService>(service =>
                 service.SendAsync(shortMessage.Id));
-        }
-
-        private async Task<FormTemplate> GetFormTemplate(int formTemplateId)
-        {
-            var formTemplate = await _dbContext.FormTemplates
-                            .Include(item => item.Items)
-                            .FirstOrDefaultAsync(item => item.Id == formTemplateId);
-
-            if (formTemplate is null)
-            {
-                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
-            }
-
-            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
-
-            return formTemplate;
         }
 
         private async Task ValidateFormDuplicateSignatureAsync(int formTemplateId, int clientId)
@@ -214,38 +200,11 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return shortUrl.Url;
         }
 
-        private async Task<FormTemplate> ValidateOwnerOrClient(int formTemplateId, User user)
-        {
-            var formTemplate = await _dbContext.FormTemplates
-                .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
-
-            if (formTemplate is null)
-            {
-                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
-            }
-
-            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
-
-            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
-
-            return formTemplate;
-        }
-
         private async Task<FormTemplate> ValidateOwner(int formTemplateId, User user)
         {
-            var formTemplate = await _dbContext.FormTemplates
-                .Include(item => item.Items)
-                .FirstOrDefaultAsync(item => item.Id == formTemplateId);
-
-            if (formTemplate is null)
-            {
-                throw new RecordNotFoundException($"Form template {formTemplateId} not found");
-            }
+            var formTemplate = await _formTemplateService.GetAsync(formTemplateId);
 
             await _tenantService.CheckOwnerAsync(user, formTemplate.TenantId);
-
-            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
 
             return formTemplate;
         }

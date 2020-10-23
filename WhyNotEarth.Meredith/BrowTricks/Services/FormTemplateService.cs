@@ -47,6 +47,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task EditAsync(string tenantSlug, int formTemplateId, FormTemplateModel model, User user)
         {
+            await _tenantService.CheckOwnerAsync(user, tenantSlug);
+
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
                 .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
@@ -55,8 +57,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             {
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
-
-            await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
             formTemplate = Map(formTemplate, model, formTemplate.TenantId);
 
@@ -102,6 +102,15 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         public async Task<FormTemplate> GetAsync(int formTemplateId, User user)
         {
+            var formTemplate = await GetAsync(formTemplateId);
+
+            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
+
+            return formTemplate;
+        }
+
+        public async Task<FormTemplate> GetAsync(int formTemplateId)
+        {
             var formTemplate = await _dbContext.FormTemplates
                 .Include(item => item.Items)
                 .FirstOrDefaultAsync(item => item.Id == formTemplateId && item.IsDeleted == false);
@@ -110,8 +119,6 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             {
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
-
-            await _clientService.ValidateOwnerOrClientAsync(formTemplate.TenantId, user);
 
             formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
 
