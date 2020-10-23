@@ -61,7 +61,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             var formTemplate = await ValidateOwner(formTemplateId, user);
 
-            var formSignature = Map(formTemplate, model, null);
+            var formSignature = Map(formTemplate, model, null, false);
 
             return await _formSignatureFileService.GetPngAsync(formSignature, user.FullName);
         }
@@ -73,7 +73,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             var client = await _dbContext.Clients
                 .FirstOrDefaultAsync(item => item.Id == clientId);
 
-            var formSignature = Map(formTemplate, model, clientId);
+            var formSignature = Map(formTemplate, model, clientId, false);
 
             return await _formSignatureFileService.GetPngAsync(formSignature, client.FullName);
         }
@@ -86,7 +86,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             var formTemplate = await _formTemplateService.GetAsync(formTemplateId);
 
-            var formSignature = Map(formTemplate, model, clientId);
+            var formSignature = Map(formTemplate, model, clientId, true);
 
             _dbContext.FormSignatures.Add(formSignature);
             await _dbContext.SaveChangesAsync();
@@ -138,8 +138,13 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             }
         }
 
-        private FormSignature Map(FormTemplate formTemplate, FormSignatureModel model, int? clientId)
+        private FormSignature Map(FormTemplate formTemplate, FormSignatureModel model, int? clientId, bool isSignatureImageRequired)
         {
+            if (isSignatureImageRequired && model.SignatureImage is null)
+            {
+                throw new InvalidActionException("The signatureImage field is required.");
+            }
+
             var answers = new List<FormAnswer>();
 
             foreach (var formAnswerModel in model.Answers)
