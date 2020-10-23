@@ -185,6 +185,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 ClientId = clientId ?? default,
                 Name = formTemplate.Name,
                 Answers = answers,
+                SignatureImage = model.SignatureImage ?? string.Empty,
                 NotificationCallBackUrl = model.NotificationCallBackUrl,
                 CreatedAt = DateTime.UtcNow
             };

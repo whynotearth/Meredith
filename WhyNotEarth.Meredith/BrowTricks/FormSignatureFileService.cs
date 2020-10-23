@@ -24,14 +24,14 @@ namespace WhyNotEarth.Meredith.BrowTricks
             var widgets = GetWidgets(formSignature);
 
             return BuildHtml(formSignature.Name, widgets, true, formSignature.Client.FullName,
-                formSignature.CreatedAt);
+                formSignature.CreatedAt, formSignature.SignatureImage);
         }
 
         public async Task<byte[]> GetPngAsync(FormTemplate formTemplate)
         {
             var widgets = GetWidgets(formTemplate);
 
-            var html = BuildHtml(formTemplate.Name, widgets, false, null, null);
+            var html = BuildHtml(formTemplate.Name, widgets, false, null, null, null);
 
             return await _htmlService.ToPngAsync(html);
         }
@@ -40,7 +40,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             var widgets = GetWidgets(formTemplate);
 
-            var html = BuildHtml(formTemplate.Name, widgets, false, null, null);
+            var html = BuildHtml(formTemplate.Name, widgets, false, null, null, null);
 
             return await _htmlService.ToPdfAsync(html);
         }
@@ -49,30 +49,29 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             var widgets = GetWidgets(formSignature);
 
-            var html = BuildHtml(formSignature.Name, widgets, true, fullName, formSignature.CreatedAt);
+            var html = BuildHtml(formSignature.Name, widgets, true, fullName, formSignature.CreatedAt,
+                formSignature.SignatureImage);
 
             return await _htmlService.ToPngAsync(html);
         }
 
         private string BuildHtml(string tenantName, List<IFormWidget> widgets, bool hasAnswers, string? clientName,
-            DateTime? dateTime)
+            DateTime? dateTime, string? signatureImage)
         {
-            var template = _resourceService.Get("Pmu.html");
-
             var body = GetBody(widgets);
 
-            var keyValues = new Dictionary<string, string>
+            var replaceValues = new Dictionary<string, string>
             {
-                {"{title}", tenantName},
-                {"{bodyClasses}", hasAnswers ? "has-answers" : string.Empty},
-                {"{body}", body},
-                {"{signature}", GetSignature(hasAnswers, clientName, dateTime)}
+                {"{{title}}", tenantName},
+                {"{{bodyClasses}}", hasAnswers ? "has-answers" : string.Empty},
+                {"{{body}}", body},
+                {"{{has_signature}}", hasAnswers ? string.Empty : "style=\"display: none;\""},
+                {"{{signature_image}}", signatureImage ?? string.Empty},
+                {"{{signature_name}}", clientName ?? string.Empty},
+                {"{{signature_date}}", dateTime?.ToString("d MMM, yyyy") ?? string.Empty},
             };
 
-            foreach (var keyValue in keyValues)
-            {
-                template = template.Replace(keyValue.Key, keyValue.Value);
-            }
+            var template = _resourceService.Get("Pmu.html", replaceValues);
 
             return template;
         }
@@ -87,25 +86,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
             }
 
             return result.ToString();
-        }
-
-        private string GetSignature(bool hasAnswers, string? name, DateTime? dateTime)
-        {
-            if (!hasAnswers)
-            {
-                return string.Empty;
-            }
-
-            return $@"
-                <section class=""section"">
-                    <hr />
-                </section>
-                <section class=""section"">
-                    <p class=""font-light mb-1"">
-                        Signed by <span class=""font-normal"">{name}</span>
-                    </p>
-                    <p class=""font-light"">{dateTime!.Value:d MMM, yyyy}</p>
-                </section>";
         }
 
         private List<IFormWidget> GetWidgets(FormTemplate formTemplate)

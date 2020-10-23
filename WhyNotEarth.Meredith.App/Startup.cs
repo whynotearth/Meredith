@@ -86,8 +86,8 @@ namespace WhyNotEarth.Meredith.App
                 );
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory,
-            IRecurringJobManager recurringJobManager, IDbContext dbContext, IBackgroundJobClient backgroundJobClient)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IRecurringJobManager recurringJobManager,
+            IDbContext dbContext)
         {
             app.UseForwardedHeaders();
 

@@ -86,6 +86,14 @@
             height: 20px;
         }
 
+        .w-40 {
+            width: 160px;
+        }
+
+        .content-placeholder {
+            bottom: 8px;
+        }
+
         @page {
             size: A4 portrait;
             margin: 0.5in 0.5in;
@@ -93,14 +101,35 @@
     </style>
 </head>
 <body>
-<div class="wrapper {bodyClasses}">
-    <h1 class="h1 mb-4">
-        {title}
-    </h1>
+    <div class="wrapper {{bodyClasses}}">
+        <h1 class="h1 mb-4">{{title}}</h1>
 
-    {body}
-    
-    {signature}
-</div>
+        {{body}}
+
+        <section class="section pt-16" {{has_signature}}>
+            <!-- sig row -->
+            <div class="flex items-end">
+                <p class="">Signature:</p>
+                <div class="border-b border-black w-40 ml-2 relative content-placeholder">
+                    <img class="mb-1" src="{{signature_image}}" alt="" />
+                </div>
+                <span class="ml-1">.</span>
+            </div>
+
+            <!-- name row -->
+            <p class="mb-5">
+                Signed by: <span class="font-normal">{{signature_name}}</span>
+            </p>
+
+            <!-- date row -->
+            <div class="mb-1 flex">
+                <p class="">Date:</p>
+                <div class="border-b border-black w-40 ml-2 relative content-placeholder text-center">
+                    {{signature_date}}
+                </div>
+                <span class="ml-1">.</span>
+            </div>
+        </section>
+    </div>
 </body>
 </html>

@@ -19,6 +19,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public List<FormAnswer> Answers { get; set; } = new List<FormAnswer>();
 
+        public string SignatureImage { get; set; } = null!;
+
         public string? NotificationCallBackUrl { get; set; }
 
         public string? Html { get; set; }

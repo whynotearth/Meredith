@@ -10,6 +10,8 @@ namespace WhyNotEarth.Meredith.BrowTricks.Models
         [Mandatory]
         public List<FormSignatureItemModel>? Answers { get; set; }
 
+        public string? SignatureImage { get; set; }
+
         public string? NotificationCallBackUrl { get; set; }
     }
 
