@@ -32,6 +32,15 @@ dotnet_style_qualification_for_method=false:suggestion
 dotnet_style_qualification_for_property=false:suggestion
 dotnet_style_require_accessibility_modifiers=for_non_interface_members:suggestion
 
+# private fields should be _camelCase
+dotnet_naming_rule.camel_case_for_private_fields.severity = suggestion
+dotnet_naming_rule.camel_case_for_private_fields.symbols  = private_fields
+dotnet_naming_rule.camel_case_for_private_fields.style    = camel_case_underscore_style
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+
 # ReSharper properties
 resharper_braces_for_for=required
 resharper_braces_for_foreach=required
