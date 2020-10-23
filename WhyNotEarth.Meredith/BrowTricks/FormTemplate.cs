@@ -13,7 +13,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public string Name { get; set; } = null!;
 
-        public List<FormItem>? Items { get; set; }
+        public List<FormItem> Items { get; set; } = new List<FormItem>();
 
         public DateTime? CreatedAt { get; set; }
 

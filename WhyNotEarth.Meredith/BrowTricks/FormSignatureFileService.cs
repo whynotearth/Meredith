@@ -113,11 +113,6 @@ namespace WhyNotEarth.Meredith.BrowTricks
         {
             var result = new List<IFormWidget>();
 
-            if (formTemplate.Items is null)
-            {
-                return result;
-            }
-
             foreach (var formItem in formTemplate.Items)
             {
                 IFormWidget formWidget = formItem.Type switch

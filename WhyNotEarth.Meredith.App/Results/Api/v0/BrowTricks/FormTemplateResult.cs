@@ -19,7 +19,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
         {
             Id = formTemplate.Id;
             Name = formTemplate.Name;
-            Items = formTemplate.Items?.Select(item => new FormItemResult(item)).ToList();
+            Items = formTemplate.Items.Select(item => new FormItemResult(item)).ToList();
             CreatedAt = formTemplate.CreatedAt;
         }
     }

@@ -122,7 +122,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
         {
             formTemplate.TenantId = tenantId;
             formTemplate.Name = model.Name;
-            formTemplate.Items = model.Items?.Select(Map).ToList();
+            formTemplate.Items = model.Items?.Select(Map).ToList() ?? new List<FormItem>();
             formTemplate.CreatedAt ??= DateTime.UtcNow;
 
             return formTemplate;
