@@ -50,7 +50,7 @@ namespace WhyNotEarth.Meredith.GoogleCloud
                 ProjectId = _options.ProjectId
             };
 
-            return new ServiceAccountCredential(initializer.FromPrivateKey(_options.PrivateKey));
+            return new ServiceAccountCredential(initializer.FromPrivateKey(_options.PrivateKey.Replace("\\n", "\n")));
         }
     }
 }
