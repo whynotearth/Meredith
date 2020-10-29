@@ -6,9 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="wwwroot" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.13.1" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.15" />
     <PackageReference Include="Hangfire.Core" Version="1.7.15" />
@@ -35,4 +32,8 @@
     <ProjectReference Include="..\WhyNotEarth.Meredith.Persistence\WhyNotEarth.Meredith.Persistence.csproj" />
     <ProjectReference Include="..\WhyNotEarth.Meredith\WhyNotEarth.Meredith.csproj" />
   </ItemGroup>
+  
+  <Target Name="CreateEmptyFolder" AfterTargets="AfterPublish">
+    <MakeDir Directories="$(PublishDir).local-chromium" Condition="!Exists('$(PublishDir).local-chromium')" /> 
+  </Target>
 </Project>
