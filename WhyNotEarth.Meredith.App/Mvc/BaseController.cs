@@ -21,12 +21,6 @@ namespace WhyNotEarth.Meredith.App.Mvc
         }
 
         [NonAction]
-        protected CreateObjectResult Created(object value)
-        {
-            return new CreateObjectResult(value);
-        }
-
-        [NonAction]
         protected async Task<IActionResult> Csv<T>(IEnumerable<T> records, bool isDevelopment)
         {
             var csvData = await GetCsvData(records);

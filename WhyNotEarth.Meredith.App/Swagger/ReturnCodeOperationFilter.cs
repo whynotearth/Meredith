@@ -21,12 +21,6 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 operation.Responses.TryAdd("201", new OpenApiResponse { Description = "Success" });
                 operation.Responses.Remove("200");
             }
-            else if (context.MethodInfo.ReturnType == typeof(Task<CreateObjectResult>))
-            {
-                // TODO: Define the object schema
-                operation.Responses.TryAdd("201", new OpenApiResponse { Description = "Success" });
-                operation.Responses.Remove("200");
-            }
             else if (context.MethodInfo.ReturnType == typeof(Task<NoContentResult>))
             {
                 operation.Responses.TryAdd("204", new OpenApiResponse { Description = "Success" });

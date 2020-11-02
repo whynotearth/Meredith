@@ -30,13 +30,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [HttpPost("")]
-        public async Task<CreateObjectResult> Create(string companySlug, TenantCreateModel model)
+        [ProducesResponseType(typeof(string), 201)]
+        public async Task<string> Create(string companySlug, TenantCreateModel model)
         {
             var user = await _userManager.GetUserAsync(User);
 
             var tenantSlug = await _tenantService.CreateAsync(companySlug, model, user);
 
-            return Created(tenantSlug);
+            return tenantSlug;
         }
 
         [Authorize]

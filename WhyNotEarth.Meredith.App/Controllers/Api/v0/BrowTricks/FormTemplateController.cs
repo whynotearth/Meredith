@@ -28,14 +28,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns404]
         [HttpPost("")]
+        [ProducesResponseType(typeof(int), 201)]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<CreateObjectResult> Create(string tenantSlug, FormTemplateModel model)
+        public async Task<int> Create(string tenantSlug, FormTemplateModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
             var id = await _formTemplateService.CreateAsync(tenantSlug, model, user);
 
-            return Created(id);
+            return id;
         }
 
         [Returns404]
