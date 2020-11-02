@@ -9,8 +9,6 @@ using WhyNotEarth.Meredith.Identity;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 {
-    [Returns401]
-    [Returns403]
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageTenant)]

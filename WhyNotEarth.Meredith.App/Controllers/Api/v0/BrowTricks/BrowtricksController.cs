@@ -10,8 +10,6 @@ using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 {
-    [Returns401]
-    [Returns403]
     [ApiVersion("0")]
     [Route("api/v0/browtricks/")]
     [ProducesErrorResponseType(typeof(void))]

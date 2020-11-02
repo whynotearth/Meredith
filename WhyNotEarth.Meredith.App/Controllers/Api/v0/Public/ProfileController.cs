@@ -12,7 +12,6 @@ using WhyNotEarth.Meredith.Public;
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
     [Authorize]
-    [Returns401]
     [ApiVersion("0")]
     [Route("/api/v0/profile")]
     [ProducesErrorResponseType(typeof(void))]

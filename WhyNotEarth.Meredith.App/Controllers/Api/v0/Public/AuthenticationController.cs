@@ -211,7 +211,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [Authorize]
         [Returns200]
-        [Returns401]
         [HttpGet("ping")]
         public async Task<ActionResult<List<PingResult>>> Ping()
         {

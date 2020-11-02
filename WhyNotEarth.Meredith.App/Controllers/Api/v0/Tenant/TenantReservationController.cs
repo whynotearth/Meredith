@@ -25,7 +25,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [Authorize]
         [Returns200]
         [Returns400]
-        [Returns401]
         [Returns404]
         [HttpPost("reservations")]
         public async Task<IActionResult> Reserve(string tenantSlug, TenantReservationModel model)

@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using WhyNotEarth.Meredith.App.Localization;
 
 namespace WhyNotEarth.Meredith.App.Swagger
 {
@@ -59,7 +58,8 @@ namespace WhyNotEarth.Meredith.App.Swagger
                     }
                 });
 
-                c.OperationFilter<LocalizationHeaderParameter>();
+                c.OperationFilter<AcceptLanguageOperationFilter>();
+                c.OperationFilter<AuthorizeOperationFilter>();
 
                 c.OrderActionsBy(apiDesc => apiDesc.ActionDescriptor.DisplayName);
             });

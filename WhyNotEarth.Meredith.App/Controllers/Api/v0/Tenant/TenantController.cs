@@ -30,8 +30,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns201]
-        [Returns401]
-        [Returns403]
         [HttpPost("")]
         public async Task<CreateObjectResult> Create(string companySlug, TenantCreateModel model)
         {
@@ -44,8 +42,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns204]
-        [Returns401]
-        [Returns403]
         [HttpPost("{tenantSlug}/active")]
         public async Task<NoContentResult> SetActivity(string tenantSlug, TenantActivityModel model)
         {
@@ -67,7 +63,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns200]
-        [Returns401]
         [HttpGet("mytenants")]
         public async Task<ActionResult<List<TenantListResult>>> GetAllTenantsByUser(string companySlug)
         {
@@ -96,7 +91,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns200]
-        [Returns401]
         [HttpGet("owns/{tenantSlug}")]
         // I tried my best to not let this become a thing but my best simply wasn't good enough
         // Atharva asked for it and Paulchrisluke signed off on it
@@ -119,8 +113,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns201]
-        [Returns401]
-        [Returns403]
         [HttpPost("{tenantSlug}/address")]
         public async Task<CreateResult> SetAddress(string tenantSlug, AddressModel model)
         {
@@ -133,8 +125,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
         [Authorize]
         [Returns204]
-        [Returns401]
-        [Returns403]
         [HttpPatch("{tenantSlug}")]
         public async Task<NoContentResult> Edit(string tenantSlug, TenantEditModel model)
         {

@@ -15,8 +15,6 @@ using WhyNotEarth.Meredith.Volkswagen.Models;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 {
-    [Returns401]
-    [Returns403]
     [ApiVersion("0")]
     [Route("api/v0/volkswagen/newjumpstart")]
     [ProducesErrorResponseType(typeof(void))]

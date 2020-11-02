@@ -12,8 +12,6 @@ using WhyNotEarth.Meredith.Tenant;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 {
-    [Returns401]
-    [Returns403]
     [ApiVersion("0")]
     [ProducesErrorResponseType(typeof(void))]
     [Authorize(Policy = Policies.ManageTenant)]

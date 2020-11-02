@@ -27,8 +27,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns200]
-        [Returns401]
-        [Returns403]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<CreateResult> Create(int categoryId, ProductModel model)
@@ -41,8 +39,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns204]
-        [Returns401]
-        [Returns403]
         [Returns404]
         [HttpPut("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]
@@ -56,8 +52,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         }
 
         [Returns204]
-        [Returns401]
-        [Returns403]
         [Returns404]
         [HttpDelete("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]

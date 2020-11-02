@@ -4,16 +4,13 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace WhyNotEarth.Meredith.App.Localization
+namespace WhyNotEarth.Meredith.App.Swagger
 {
-    internal class LocalizationHeaderParameter : IOperationFilter
+    internal class AcceptLanguageOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (operation.Parameters == null)
-            {
-                operation.Parameters = new List<OpenApiParameter>();
-            }
+            operation.Parameters ??= new List<OpenApiParameter>();
 
             operation.Parameters.Add(new OpenApiParameter
             {
@@ -24,7 +21,7 @@ namespace WhyNotEarth.Meredith.App.Localization
                 {
                     Default = new OpenApiString("en"),
                     Type = "string",
-                    Enum = Localization.SupportedCultures
+                    Enum = Localization.Localization.SupportedCultures
                         .Select(c => OpenApiAnyFactory.CreateFor(new OpenApiSchema { Type = "string" }, c)).ToList()
                 },
                 Required = false
