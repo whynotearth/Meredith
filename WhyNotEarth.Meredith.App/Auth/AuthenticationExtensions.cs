@@ -29,7 +29,11 @@ namespace WhyNotEarth.Meredith.App.Auth
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services
-                .AddIdentity<User, Role>(o => { o.User.RequireUniqueEmail = true; })
+                .AddIdentity<User, Role>(o =>
+                {
+                    o.User.RequireUniqueEmail = true;
+                    o.Password.RequireNonAlphanumeric = false;
+                })
                 .AddUserManager<UserManager>()
                 .AddRoleManager<RoleManager>()
                 .AddEntityFrameworkStores<MeredithDbContext>()
