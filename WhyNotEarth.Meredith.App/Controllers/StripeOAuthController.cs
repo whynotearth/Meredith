@@ -1,30 +1,27 @@
-// ReSharper disable InconsistentNaming
-
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Models.StripeOAuth;
+using WhyNotEarth.Meredith.Stripe;
 
 namespace WhyNotEarth.Meredith.App.Controllers
 {
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Cors;
-    using Microsoft.AspNetCore.Mvc;
-    using Stripe;
-
     [Route("/stripe/oauth")]
     [DisableCors]
     public class StripeOAuthController : ControllerBase
     {
-        protected StripeOAuthService StripeOAuthServices { get; }
+        private readonly StripeOAuthService _stripeOAuthServices;
 
         public StripeOAuthController(StripeOAuthService stripeOAuthServices)
         {
-            StripeOAuthServices = stripeOAuthServices;
+            _stripeOAuthServices = stripeOAuthServices;
         }
 
         [Route("register/{requestId}")]
         public IActionResult Register(Guid requestId)
         {
-            return Redirect(StripeOAuthServices.GetOAuthRegisterUrl(requestId));
+            return Redirect(_stripeOAuthServices.GetOAuthRegisterUrl(requestId));
         }
 
         [Route("authorize")]
@@ -35,7 +32,7 @@ namespace WhyNotEarth.Meredith.App.Controllers
                 throw new Exception($"Error while authorizing stripe, {model.Error} - {model.ErrorDescription}");
             }
 
-            await StripeOAuthServices.Register(Guid.Parse(model.State), model.Code);
+            await _stripeOAuthServices.Register(Guid.Parse(model.State), model.Code);
 
             return Ok("Your Stripe account has been connected with Meredith, you can now close your browser.");
         }
