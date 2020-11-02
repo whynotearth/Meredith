@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 
 // ReSharper disable once CheckNamespace
 namespace WhyNotEarth.Meredith.App
 {
-    public class Returns400Attribute : ProducesResponseTypeAttribute
+    public class Returns400Attribute : Attribute
     {
-        public Returns400Attribute() : base(typeof(void), StatusCodes.Status400BadRequest)
-        {
-        }
     }
 }

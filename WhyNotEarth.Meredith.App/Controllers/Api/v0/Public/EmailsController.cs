@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.SendGrid;
 using WhyNotEarth.Meredith.Emails;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {

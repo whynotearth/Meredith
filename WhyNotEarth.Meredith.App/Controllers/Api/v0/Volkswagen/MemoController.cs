@@ -44,19 +44,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [Returns200]
         [HttpGet("stats")]
-        public async Task<ActionResult<List<MemoStatResult>>> Stats()
+        public async Task<List<MemoStatResult>> Stats()
         {
             var stats = await _memoService.GetStatsAsync();
 
-            return Ok(stats.Select(item => new MemoStatResult(item)));
+            return stats.Select(item => new MemoStatResult(item)).ToList();
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("{memoId}/stats")]
-        public async Task<ActionResult<List<MemoStatDetailResult>>> DetailStats(int memoId)
+        public async Task<MemoStatDetailResult> DetailStats(int memoId)
         {
             var memoInfo = await _memoService.GetStatsAsync(memoId);
             var result = new MemoStatDetailResult(memoInfo);
@@ -67,22 +65,19 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             result.Opened.AddRange(detailStats.OpenedList.Select(item => new EmailRecipientResult(item)));
 
-            return Ok(result);
+            return result;
         }
 
-        [Returns200]
         [HttpGet("overallstats")]
-        public async Task<ActionResult<OverAllStatsResult>> OverallStats([FromQuery] DateTime? fromDate,
-            [FromQuery] DateTime? toDate)
+        public async Task<OverAllStatsResult> OverallStats([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
             var (from, to) = Validate(fromDate, toDate);
 
             var stats = await _memoService.GetStatsAsync(from, to);
 
-            return Ok(new OverAllStatsResult(stats));
+            return new OverAllStatsResult(stats);
         }
 
-        [Returns200]
         [HttpGet("overallstats/export")]
         public async Task<IActionResult> ExportOverallStats([FromQuery] DateTime? fromDate,
             [FromQuery] DateTime? toDate)

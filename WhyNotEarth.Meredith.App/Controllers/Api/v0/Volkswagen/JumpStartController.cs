@@ -36,16 +36,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _env = env;
         }
 
-        [Returns200]
         [HttpGet("dailyplan")]
-        public async Task<ActionResult<List<JumpStartPlanResult>>> DailyPlan()
+        public async Task<List<JumpStartPlanResult>> DailyPlan()
         {
             var dailyPlan = await _jumpStartPlanService.GetAsync();
 
-            return Ok(dailyPlan.Select(item => new JumpStartPlanResult(item)));
+            return dailyPlan.Select(item => new JumpStartPlanResult(item)).ToList();
         }
 
-        [Returns200]
         [HttpGet("{date}/preview")]
         public async Task<IActionResult> Preview(DateTime date, [FromQuery] List<int> articleIds)
         {
@@ -69,19 +67,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("stats")]
-        public async Task<ActionResult<List<JumpStartStatResult>>> Stats()
+        public async Task<List<JumpStartStatResult>> Stats()
         {
             var stats = await _jumpStartService.GetStatsAsync();
 
-            return Ok(stats.Select(item => new JumpStartStatResult(item)));
+            return stats.Select(item => new JumpStartStatResult(item)).ToList();
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("{jumpStartId}/stats")]
-        public async Task<ActionResult<List<JumpStartStatDetailResult>>> DetailStats(int jumpStartId)
+        public async Task<JumpStartStatDetailResult> DetailStats(int jumpStartId)
         {
             var memoInfo = await _jumpStartService.GetStatsAsync(jumpStartId);
             var result = new JumpStartStatDetailResult(memoInfo);
@@ -92,7 +88,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
 
             result.Opened.AddRange(detailStats.OpenedList.Select(item => new EmailRecipientResult(item)));
 
-            return Ok(result);
+            return result;
         }
     }
 }

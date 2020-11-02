@@ -17,10 +17,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _urlShortenerService = urlShortenerService;
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ShortUrlResult>> Get(string id)
+        public async Task<ShortUrlResult> Get(string id)
         {
             var shortUrl = await _urlShortenerService.GetAsync(id);
 

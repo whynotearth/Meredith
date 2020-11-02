@@ -31,13 +31,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _environment = environment;
         }
 
-        [Returns200]
         [HttpGet("stats")]
-        public async Task<ActionResult<DistributionGroupStatResult>> Stats()
+        public async Task<List<DistributionGroupStatResult>> Stats()
         {
             var stats = await _recipientService.GetDistributionGroupStatsAsync();
 
-            return Ok(stats.Select(item => new DistributionGroupStatResult(item)));
+            return stats.Select(item => new DistributionGroupStatResult(item)).ToList();
         }
 
         [Returns204]
@@ -49,24 +48,18 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<string>>> List()
+        public async Task<List<string>> List()
         {
-            var result = await _recipientService.GetDistributionGroupsAsync();
-
-            return Ok(result);
+            return await _recipientService.GetDistributionGroupsAsync();
         }
 
-        [Returns200]
         [HttpGet("{distributionGroupName}/recipients")]
-        public async Task<ActionResult<List<RecipientResult>>> ListRecipients(string distributionGroupName)
+        public async Task<List<RecipientResult>> ListRecipients(string distributionGroupName)
         {
             var recipients = await _recipientService.GetRecipientsAsync(distributionGroupName);
 
-            var result = recipients.Select(item => new RecipientResult(item)).ToList();
-
-            return Ok(result);
+            return recipients.Select(item => new RecipientResult(item)).ToList();
         }
 
         [Returns204]
@@ -98,7 +91,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("{distributionGroupName}/export")]
         public async Task<IActionResult> Export(string distributionGroupName)
         {
@@ -108,19 +100,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
                 _environment.IsDevelopment());
         }
 
-        [Returns200]
         [HttpGet("{distributionGroupName}/stats")]
-        public async Task<ActionResult<OverAllStatsResult>> OverallStats(string distributionGroupName,
+        public async Task<OverAllStatsResult> OverallStats(string distributionGroupName,
             [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
             var (from, to) = Validate(fromDate, toDate);
 
             var stats = await _recipientService.GetStatsAsync(from, to, distributionGroupName);
 
-            return Ok(new OverAllStatsResult(stats));
+            return new OverAllStatsResult(stats);
         }
 
-        [Returns200]
         [HttpGet("{distributionGroupName}/stats/export")]
         public async Task<IActionResult> ExportOverallUserStats(string distributionGroupName,
             [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)

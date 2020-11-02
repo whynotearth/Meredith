@@ -26,13 +26,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _userService = userService;
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<ProfileResult>> Get()
+        public async Task<ProfileResult> Get()
         {
             var user = await _userManager.GetUserAsync(User);
 
-            return Ok(new ProfileResult(user));
+            return new ProfileResult(user);
         }
 
         [Returns204]

@@ -26,22 +26,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             _userService = userService;
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<ProductCategoryResult>>> List(string tenantSlug)
+        public async Task<List<ProductCategoryResult>> List(string tenantSlug)
         {
             var categories = await _productCategoryService.ListAsync(tenantSlug);
 
-            return Ok(categories.Select(item => new ProductCategoryResult(item)));
+            return categories.Select(item => new ProductCategoryResult(item)).ToList();
         }
 
-        [Returns200]
         [HttpGet("{categoryId}")]
-        public async Task<ActionResult<ProductCategoryResult>> Get(int categoryId)
+        public async Task<ProductCategoryResult> Get(int categoryId)
         {
             var category = await _productCategoryService.GetAsync(categoryId);
 
-            return Ok(new ProductCategoryResult(category));
+            return new ProductCategoryResult(category);
         }
 
         [Returns201]
@@ -56,11 +54,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return Created();
         }
 
-        [Returns200]
         [Returns404]
         [HttpDelete("{categoryId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult> Delete(int categoryId)
+        public async Task<NoContentResult> Delete(int categoryId)
         {
             var user = await _userService.GetUserAsync(User);
 
@@ -73,7 +70,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
         [Returns404]
         [HttpPut("{categoryId}")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult> Edit(string tenantSlug, int categoryId, ProductCategoryModel model)
+        public async Task<NoContentResult> Edit(string tenantSlug, int categoryId, ProductCategoryModel model)
         {
             var user = await _userService.GetUserAsync(User);
 

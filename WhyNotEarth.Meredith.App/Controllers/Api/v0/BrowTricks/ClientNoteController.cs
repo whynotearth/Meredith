@@ -51,10 +51,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("")]
-        public async Task<ActionResult<List<ClientNoteResult>>> ListNote(int clientId)
+        public async Task<List<ClientNoteResult>> ListNote(int clientId)
         {
             var user = await _userService.GetUserAsync(User);
 

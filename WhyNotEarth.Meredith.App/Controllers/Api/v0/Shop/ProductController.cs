@@ -26,7 +26,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             _userService = userService;
         }
 
-        [Returns200]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<CreateResult> Create(int categoryId, ProductModel model)
@@ -64,23 +63,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return NoContent();
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("{productId}")]
-        public async Task<ActionResult<ShopProductResult>> Get(int productId)
+        public async Task<ShopProductResult> Get(int productId)
         {
             var product = await _productService.GetAsync(productId);
 
-            return Ok(new ShopProductResult(product));
+            return new ShopProductResult(product);
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<ShopProductResult>>> List(int categoryId)
+        public async Task<List<ShopProductResult>> List(int categoryId)
         {
             var products = await _productService.ListAsync(categoryId);
 
-            return Ok(products.Select(item => new ShopProductResult(item)).ToList());
+            return products.Select(item => new ShopProductResult(item)).ToList();
         }
     }
 }

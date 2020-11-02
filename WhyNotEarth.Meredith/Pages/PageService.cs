@@ -15,14 +15,14 @@ namespace WhyNotEarth.Meredith.Pages
             _dbContext = dbContext;
         }
 
-        public async Task<Page> GetPageAsync(string companySlug, string pageSlug)
+        public async Task<Page?> GetPageAsync(string companySlug, string pageSlug)
         {
             return await Include().FirstOrDefaultAsync(p =>
                 p.Company.Slug.ToLower() == companySlug.ToLower()
                 && p.Slug!.ToLower() == pageSlug.ToLower());
         }
 
-        public async Task<Page> GetPageAsync(string companySlug, string tenantSlug, string pageSlug)
+        public async Task<Page?> GetPageAsync(string companySlug, string tenantSlug, string pageSlug)
         {
             return await Include().FirstOrDefaultAsync(p =>
                 p.Company.Slug.ToLower() == companySlug.ToLower()
@@ -74,7 +74,7 @@ namespace WhyNotEarth.Meredith.Pages
                 .Include(p => p.Images);
         }
 
-        public async Task<Page> GetLandingPageAsync(string companySlug, string pageSlug)
+        public async Task<Page?> GetLandingPageAsync(string companySlug, string pageSlug)
         {
             var page = await _dbContext.Pages.FirstOrDefaultAsync(p =>
                 p.Company.Slug.ToLower() == companySlug.ToLower() && p.Slug!.ToLower() == pageSlug.ToLower());

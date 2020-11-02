@@ -15,9 +15,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         private readonly IDbContext _dbContext;
         private readonly StripeOptions _stripeOptions;
 
-        public CompanyController(IDbContext IDbContext, IOptions<StripeOptions> stripeOptions)
+        public CompanyController(IDbContext dbContext, IOptions<StripeOptions> stripeOptions)
         {
-            _dbContext = IDbContext;
+            _dbContext = dbContext;
             _stripeOptions = stripeOptions.Value;
         }
 

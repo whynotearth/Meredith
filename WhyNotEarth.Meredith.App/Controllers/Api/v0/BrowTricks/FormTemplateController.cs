@@ -65,10 +65,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<ActionResult<List<FormTemplateResult>>> List(string tenantSlug)
+        public async Task<List<FormTemplateResult>> List(string tenantSlug)
         {
             var user = await GetCurrentUserAsync(_userService);
 
@@ -78,10 +77,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         }
 
         [Authorize]
-        [Returns200]
         [Returns404]
         [HttpGet("{templateId}")]
-        public async Task<ActionResult<FormTemplateResult>> Get(int templateId)
+        public async Task<FormTemplateResult> Get(int templateId)
         {
             var user = await GetCurrentUserAsync(_userService);
 

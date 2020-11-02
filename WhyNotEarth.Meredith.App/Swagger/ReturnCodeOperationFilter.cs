@@ -14,10 +14,19 @@ namespace WhyNotEarth.Meredith.App.Swagger
             var attributes = context.MethodInfo.DeclaringType?.GetCustomAttributes(true).ToList() ?? new List<object>();
             attributes.AddRange(context.MethodInfo.GetCustomAttributes(true));
 
+            if (attributes.OfType<Returns400Attribute>().Any())
+            {
+                operation.Responses.TryAdd("400", new OpenApiResponse { Description = "Bad Request" });
+            }
+
             if (attributes.OfType<AuthorizeAttribute>().Any())
             {
                 operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
                 operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
+            }
+            else if (attributes.OfType<Returns401Attribute>().Any())
+            {
+                operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
             }
 
             if (attributes.OfType<Returns404Attribute>().Any())

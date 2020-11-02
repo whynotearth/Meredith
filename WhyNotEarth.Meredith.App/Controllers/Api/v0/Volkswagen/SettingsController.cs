@@ -24,16 +24,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _dbContext = dbContext;
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<VolkswagenSettingsResult>> Get()
+        public async Task<VolkswagenSettingsResult> Get()
         {
             var settings = await _settingsService.GetValueAsync<VolkswagenSettings>(VolkswagenCompany.Slug);
 
             var result = new VolkswagenSettingsResult(await settings.GetDistributionGroupAsync(_dbContext),
                 settings.EnableAutoSend, settings.SendTime);
 
-            return Ok(result);
+            return result;
         }
 
         [Returns204]

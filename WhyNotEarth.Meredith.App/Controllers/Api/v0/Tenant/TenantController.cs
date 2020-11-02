@@ -52,30 +52,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<TenantListResult>>> List(string companySlug)
+        public async Task<List<TenantResult>> List(string companySlug)
         {
             var tenants = await _tenantService.ListAsync(companySlug);
 
-            return Ok(tenants.Select(item => new TenantResult(item)).ToList());
+            return tenants.Select(item => new TenantResult(item)).ToList();
         }
 
         [Authorize]
-        [Returns200]
         [HttpGet("mytenants")]
-        public async Task<ActionResult<List<TenantListResult>>> GetAllTenantsByUser(string companySlug)
+        public async Task<List<TenantResult>> GetAllTenantsByUser(string companySlug)
         {
             var user = await _userManager.GetUserAsync(User);
             var tenants = await _tenantService.GetAllTenantsByUser(user, companySlug);
 
-            return Ok(tenants.Select(item => new TenantResult(item)).ToList());
+            return tenants.Select(item => new TenantResult(item)).ToList();
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("{tenantSlug}")]
-        public async Task<ActionResult<TenantResult>> Get(string tenantSlug)
+        public async Task<TenantResult> Get(string tenantSlug)
         {
             var tenant = await _tenantService.GeAsync(tenantSlug);
 
@@ -86,29 +83,27 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
 
             var schema = _seoSchemaService.CreateTenantShopSchema(tenant);
 
-            return Ok(new TenantResult(tenant, schema));
+            return new TenantResult(tenant, schema);
         }
 
         [Authorize]
-        [Returns200]
         [HttpGet("owns/{tenantSlug}")]
         // I tried my best to not let this become a thing but my best simply wasn't good enough
         // Atharva asked for it and Paulchrisluke signed off on it
-        public async Task<ActionResult<bool>> DoesUserOwnTenant(string tenantSlug)
+        public async Task<bool> DoesUserOwnTenant(string tenantSlug)
         {
             var user = await _userManager.GetUserAsync(User);
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
 
-            return Ok(tenant != null!);
+            return tenant != null!;
         }
 
-        [Returns200]
         [HttpGet("{tenantSlug}/address")]
-        public async Task<ActionResult<AddressResult>> GetAddress(string tenantSlug)
+        public async Task<AddressResult> GetAddress(string tenantSlug)
         {
             var address = await _tenantService.GetAddressAsync(tenantSlug);
 
-            return Ok(new AddressResult(address));
+            return new AddressResult(address);
         }
 
         [Authorize]

@@ -23,11 +23,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
-        [Returns200]
         [Returns400]
         [Returns404]
         [HttpPost("reservations")]
-        public async Task<IActionResult> Reserve(string tenantSlug, TenantReservationModel model)
+        public async Task<OkResult> Reserve(string tenantSlug, TenantReservationModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 

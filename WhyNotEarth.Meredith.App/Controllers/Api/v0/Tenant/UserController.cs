@@ -27,9 +27,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             _userService = userService;
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<UserResult>>> List()
+        public async Task<List<UserListResult>> List()
         {
             var tenant = await GetCurrentTenantAsync();
 
@@ -39,7 +38,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 .ThenBy(item => item.FirstName)
                 .GroupBy(item => item.LastName?.ToUpper()[0]).ToList();
 
-            return Ok(list.Select(item => new UserListResult(item.Key, item)).ToList());
+            return list.Select(item => new UserListResult(item.Key, item)).ToList();
         }
 
         private async Task<Meredith.Public.Tenant> GetCurrentTenantAsync()

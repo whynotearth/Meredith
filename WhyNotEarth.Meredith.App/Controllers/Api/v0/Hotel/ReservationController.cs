@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Reservation;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Hotel.Reservation;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Hotel;
 using WhyNotEarth.Meredith.Identity;
 
@@ -63,23 +64,22 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
         }
 
         [Authorize]
-        [Returns200]
         [Returns404]
         [HttpPost("{reservationId}/pay")]
-        public async Task<ActionResult<PayReservationResult>> PayReservation(int reservationId, PayModel model)
+        public async Task<PayReservationResult> PayReservation(int reservationId, PayModel model)
         {
             var reservation =
                 await _dbContext.Reservations.FirstOrDefaultAsync(item => item.Id == reservationId);
 
             if (reservation is null)
             {
-                return NotFound();
+                throw new RecordNotFoundException();
             }
 
             var clientSecret =
                 await _reservationService.PayReservation(reservationId, reservation.Amount, model.Metadata);
 
-            return Ok(new PayReservationResult(clientSecret));
+            return new PayReservationResult(clientSecret);
         }
 
         [Authorize]

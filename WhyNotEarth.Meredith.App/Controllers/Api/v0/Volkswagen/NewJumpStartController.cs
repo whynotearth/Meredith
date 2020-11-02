@@ -39,13 +39,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Created();
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<NewJumpStartResult>>> List()
+        public async Task<List<NewJumpStartResult>> List()
         {
             var newJumpStarts = await _newJumpStartService.ListAsync();
 
-            return Ok(newJumpStarts.Select(item => new NewJumpStartResult(item)));
+            return newJumpStarts.Select(item => new NewJumpStartResult(item)).ToList();
         }
 
         [Returns204]
@@ -57,19 +56,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns200]
         [HttpGet("stats")]
-        public async Task<ActionResult<NewJumpStartOverAllStatsResult>> Stats([FromQuery] DateTime? fromDate,
+        public async Task<NewJumpStartOverAllStatsResult> Stats([FromQuery] DateTime? fromDate,
             [FromQuery] DateTime? toDate)
         {
             var (from, to) = Validate(fromDate, toDate);
 
             var stats = await _newJumpStartService.GetStatsAsync(from, to);
 
-            return Ok(new NewJumpStartOverAllStatsResult(stats));
+            return new NewJumpStartOverAllStatsResult(stats);
         }
 
-        [Returns200]
         [HttpGet("stats/export")]
         public async Task<IActionResult> ExportStats([FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {
@@ -82,19 +79,17 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return await Csv(result, _environment.IsDevelopment());
         }
 
-        [Returns200]
         [HttpGet("{id}/stats")]
-        public async Task<ActionResult<NewJumpStartSingleStatsResult>> Stats(int id, [FromQuery] DateTime? fromDate,
+        public async Task<NewJumpStartSingleStatsResult> Stats(int id, [FromQuery] DateTime? fromDate, 
             [FromQuery] DateTime? toDate)
         {
             var (from, to) = Validate(fromDate, toDate);
 
             var stats = await _newJumpStartService.GetStatsAsync(from, to, id);
 
-            return Ok(new NewJumpStartSingleStatsResult(stats));
+            return new NewJumpStartSingleStatsResult(stats);
         }
 
-        [Returns200]
         [HttpGet("{id}/stats/export")]
         public async Task<IActionResult> StatsExport(int id, [FromQuery] DateTime? fromDate, [FromQuery] DateTime? toDate)
         {

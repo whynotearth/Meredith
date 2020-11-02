@@ -23,14 +23,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _dbContext = dbContext;
         }
 
-        [Returns200]
         [HttpGet("")]
-        public async Task<ActionResult<List<ArticleCategoryResult>>> List()
+        public async Task<List<ArticleCategoryResult>> List()
         {
             var categories = await _dbContext.Categories.Include(item => item.Image).OfType<ArticleCategory>()
                 .ToListAsync();
 
-            return Ok(categories.Select(item => new ArticleCategoryResult(item)));
+            return categories.Select(item => new ArticleCategoryResult(item)).ToList();
         }
     }
 }

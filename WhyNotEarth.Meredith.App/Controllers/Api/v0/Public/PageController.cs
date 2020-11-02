@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Pages;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
@@ -20,22 +21,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _pageService = pageService;
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("slug/{companySlug}/{pageSlug}")]
-        public async Task<ActionResult<PageResult>> Get(string companySlug, string pageSlug)
+        public async Task<PageResult> Get(string companySlug, string pageSlug)
         {
             var page = await _pageService.GetPageAsync(companySlug, pageSlug);
 
             if (page is null)
             {
-                return NotFound();
+                throw new RecordNotFoundException();
             }
 
-            return Ok(new PageResult(page, GetCulture()));
+            return new PageResult(page, GetCulture());
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("slug/{companySlug}/{tenantSlug}/{pageSlug}")]
         public async Task<ActionResult<PageResult>> GetTenant(string companySlug, string tenantSlug, string pageSlug)
@@ -44,61 +43,58 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             if (page is null)
             {
-                return NotFound();
+                throw new RecordNotFoundException();
             }
 
-            return Ok(new PageResult(page, GetCulture()));
+            return new PageResult(page, GetCulture());
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("slug/{companySlug}")]
-        public async Task<ActionResult<List<PageResult>>> GetPages(string companySlug)
+        public async Task<List<PageResult>> GetPages(string companySlug)
         {
             var pages = await _pageService.GetPagesAsync(companySlug);
 
             if (pages.Count == 0)
             {
-                return NotFound();
+                throw new RecordNotFoundException();
             }
 
             var culture = GetCulture();
             var result = pages.Select(item => new PageResult(item, culture)).ToList();
 
-            return Ok(result);
+            return result;
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("slug/{companySlug}/categories/by-name/{categoryName}")]
-        public async Task<ActionResult<List<PageResult>>> ByCompanyByCategoryName(string companySlug, string categoryName)
+        public async Task<List<PageResult>> ByCompanyByCategoryName(string companySlug, string categoryName)
         {
             var pages = await _pageService.GetPagesAsync(companySlug, categoryName);
 
             if (pages.Count == 0)
             {
-                return NotFound();
+                throw new RecordNotFoundException();
             }
 
             var culture = GetCulture();
             var result = pages.Select(item => new PageResult(item, culture)).ToList();
 
-            return Ok(result);
+            return result;
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("slug/{companySlug}/{pageSlug}/landingpage")]
-        public async Task<ActionResult<string>> GetLandingPageData(string companySlug, string pageSlug)
+        public async Task<string> GetLandingPageData(string companySlug, string pageSlug)
         {
             var page = await _pageService.GetLandingPageAsync(companySlug, pageSlug);
 
             if (page is null)
             {
-                return NotFound($"Page {pageSlug} in company {companySlug} not found");
+                throw new RecordNotFoundException($"Page {pageSlug} in company {companySlug} not found");
             }
 
-            return Ok(page.LandingPageData);
+            return page.LandingPageData ?? string.Empty;
         }
 
         private string GetCulture()

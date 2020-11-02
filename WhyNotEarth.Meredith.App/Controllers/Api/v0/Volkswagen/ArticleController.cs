@@ -20,10 +20,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _articleService = articleService;
         }
 
-        [Returns200]
         [Returns404]
         [HttpPost("")]
-        public async Task<IActionResult> Create(ArticleModel model)
+        public async Task<OkResult> Create(ArticleModel model)
         {
             await _articleService.CreateAsync(model.CategorySlug, model.Date!.Value.Date, model.Headline,
                 model.Description, model.Excerpt, model.EventDate, model.Image?.Url, model.Image?.Width,
