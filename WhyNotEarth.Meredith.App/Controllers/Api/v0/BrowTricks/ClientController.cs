@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +30,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _formSignatureService = formSignatureService;
         }
 
-        [Returns201]
         [Returns404]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]

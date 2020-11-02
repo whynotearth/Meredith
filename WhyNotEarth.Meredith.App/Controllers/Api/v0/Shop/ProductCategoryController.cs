@@ -42,7 +42,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return new ProductCategoryResult(category);
         }
 
-        [Returns201]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
         public async Task<CreateResult> Create(string tenantSlug, ProductCategoryModel model)

@@ -29,7 +29,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
-        [Returns201]
         [HttpPost("")]
         public async Task<CreateObjectResult> Create(string companySlug, TenantCreateModel model)
         {
@@ -107,7 +106,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
-        [Returns201]
         [HttpPost("{tenantSlug}/address")]
         public async Task<CreateResult> SetAddress(string tenantSlug, AddressModel model)
         {

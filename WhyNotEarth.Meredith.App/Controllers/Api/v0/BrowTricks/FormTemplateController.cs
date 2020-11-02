@@ -26,7 +26,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _userService = userService;
         }
 
-        [Returns201]
         [Returns404]
         [HttpPost("")]
         [Authorize(Policy = Policies.ManageTenant)]
@@ -39,7 +38,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created(id);
         }
 
-        [Returns201]
         [Returns404]
         [HttpPost("defaults")]
         [Authorize(Policy = Policies.ManageTenant)]

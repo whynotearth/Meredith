@@ -30,7 +30,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             _environment = environment;
         }
 
-        [Returns201]
         [HttpPost("")]
         public async Task<CreateResult> Create(NewJumpStartModel model)
         {

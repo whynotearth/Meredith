@@ -24,7 +24,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _userService = userService;
         }
 
-        [Returns201]
         [Returns404]
         [HttpPost("images")]
         public async Task<CreateResult> CreateImage(string tenantSlug, BrowTricksImageModel model)
@@ -48,7 +47,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
-        [Returns201]
         [Returns404]
         [HttpPost("videos")]
         public async Task<CreateResult> CreateVideo(string tenantSlug, BrowTricksVideoModel model)

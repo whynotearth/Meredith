@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using WhyNotEarth.Meredith.App.Mvc;
 
 namespace WhyNotEarth.Meredith.App.Swagger
 {
@@ -13,6 +14,18 @@ namespace WhyNotEarth.Meredith.App.Swagger
         {
             var attributes = context.MethodInfo.DeclaringType?.GetCustomAttributes(true).ToList() ?? new List<object>();
             attributes.AddRange(context.MethodInfo.GetCustomAttributes(true));
+
+            if (context.MethodInfo.ReturnType == typeof(Task<CreateResult>))
+            {
+                operation.Responses.TryAdd("201", new OpenApiResponse { Description = "Success" });
+                operation.Responses.Remove("200");
+            }
+            else if (context.MethodInfo.ReturnType == typeof(Task<CreateObjectResult>))
+            {
+                // TODO: Define the object schema
+                operation.Responses.TryAdd("201", new OpenApiResponse { Description = "Success" });
+                operation.Responses.Remove("200");
+            }
 
             if (attributes.OfType<Returns400Attribute>().Any())
             {
