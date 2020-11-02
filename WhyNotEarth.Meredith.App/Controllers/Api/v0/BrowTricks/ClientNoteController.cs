@@ -27,7 +27,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _userService = userService;
         }
 
-        [Returns204]
         [Returns404]
         [HttpPost("")]
         public async Task<NoContentResult> SaveNote(int clientId, ClientNoteModel model)
@@ -39,7 +38,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("{noteId}")]
         public async Task<NoContentResult> DeleteNote(int clientId, int noteId)

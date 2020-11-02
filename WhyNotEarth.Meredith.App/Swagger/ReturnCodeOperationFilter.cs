@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WhyNotEarth.Meredith.App.Mvc;
@@ -24,6 +25,11 @@ namespace WhyNotEarth.Meredith.App.Swagger
             {
                 // TODO: Define the object schema
                 operation.Responses.TryAdd("201", new OpenApiResponse { Description = "Success" });
+                operation.Responses.Remove("200");
+            }
+            else if (context.MethodInfo.ReturnType == typeof(Task<NoContentResult>))
+            {
+                operation.Responses.TryAdd("204", new OpenApiResponse { Description = "Success" });
                 operation.Responses.Remove("200");
             }
 

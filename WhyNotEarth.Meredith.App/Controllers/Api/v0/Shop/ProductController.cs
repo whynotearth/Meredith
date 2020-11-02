@@ -37,7 +37,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return Created();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]
@@ -50,7 +49,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("{productId}")]
         [Authorize(Policy = Policies.ManageTenant)]

@@ -57,7 +57,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok("data:image/png;base64," + Convert.ToBase64String(previewData));
         }
 
-        [Returns204]
         [HttpPost("")]
         public async Task<NoContentResult> CreateOrEdit(JumpStartModel model)
         {

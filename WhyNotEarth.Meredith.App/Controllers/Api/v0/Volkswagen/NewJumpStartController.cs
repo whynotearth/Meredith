@@ -46,9 +46,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return newJumpStarts.Select(item => new NewJumpStartResult(item)).ToList();
         }
 
-        [Returns204]
         [HttpPut("{id}")]
-        public async Task<ActionResult<NewJumpStartResult>> Edit(int id, NewJumpStartModel model)
+        public async Task<NoContentResult> Edit(int id, NewJumpStartModel model)
         {
             await _newJumpStartService.EditAsync(id, model);
 

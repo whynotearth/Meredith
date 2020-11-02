@@ -39,9 +39,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return stats.Select(item => new DistributionGroupStatResult(item)).ToList();
         }
 
-        [Returns204]
         [HttpPut("")]
-        public async Task<IActionResult> Import(IFormFile file)
+        public async Task<NoContentResult> Import(IFormFile file)
         {
             await _recipientService.ImportAsync(file.OpenReadStream());
 
@@ -62,7 +61,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return recipients.Select(item => new RecipientResult(item)).ToList();
         }
 
-        [Returns204]
         [HttpPost("{distributionGroupName}/recipients")]
         public async Task<NoContentResult> Add(string distributionGroupName, RecipientModel model)
         {
@@ -71,7 +69,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{distributionGroupName}/recipients/{recipientId}")]
         public async Task<NoContentResult> Edit(int recipientId, RecipientModel model)
@@ -81,7 +78,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("{distributionGroupName}/recipients/{recipientId}")]
         public async Task<NoContentResult> Delete(int recipientId)

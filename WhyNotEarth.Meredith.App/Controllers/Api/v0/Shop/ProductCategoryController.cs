@@ -65,7 +65,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Shop
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{categoryId}")]
         [Authorize(Policy = Policies.ManageTenant)]

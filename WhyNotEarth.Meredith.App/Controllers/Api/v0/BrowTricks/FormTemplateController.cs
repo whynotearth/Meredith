@@ -50,7 +50,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{templateId}")]
         [Authorize(Policy = Policies.ManageTenant)]
@@ -86,7 +85,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return new FormTemplateResult(formTemplate);
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("{templateId}")]
         [Authorize(Policy = Policies.ManageTenant)]

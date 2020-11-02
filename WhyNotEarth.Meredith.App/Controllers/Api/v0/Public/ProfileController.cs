@@ -34,7 +34,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return new ProfileResult(user);
         }
 
-        [Returns204]
         [HttpPut("")]
         public async Task<IActionResult> Update(ProfileModel model)
         {

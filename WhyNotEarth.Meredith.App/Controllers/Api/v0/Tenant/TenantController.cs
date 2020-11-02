@@ -40,7 +40,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
-        [Returns204]
         [HttpPost("{tenantSlug}/active")]
         public async Task<NoContentResult> SetActivity(string tenantSlug, TenantActivityModel model)
         {
@@ -117,7 +116,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [Authorize]
-        [Returns204]
         [HttpPatch("{tenantSlug}")]
         public async Task<NoContentResult> Edit(string tenantSlug, TenantEditModel model)
         {

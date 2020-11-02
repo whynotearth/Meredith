@@ -256,7 +256,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Authorize]
-        [Returns204]
         [Returns404]
         [HttpPost("confirmphonetoken")]
         public async Task<NoContentResult> SendConfirmPhoneNumberToken(ConfirmPhoneNumberTokenModel model)
@@ -269,7 +268,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Authorize]
-        [Returns204]
         [Returns400]
         [HttpPost("confirmphone")]
         public async Task<IActionResult> ConfirmPhoneNumber(ConfirmPhoneNumberModel model)
@@ -282,7 +280,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Authorize]
-        [Returns204]
         [Returns404]
         [HttpPost("confirmemailtoken")]
         public async Task<NoContentResult> SendConfirmEmailToken(ConfirmEmailTokenModel model)
@@ -295,7 +292,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [Authorize]
-        [Returns204]
         [Returns400]
         [HttpPost("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel model)

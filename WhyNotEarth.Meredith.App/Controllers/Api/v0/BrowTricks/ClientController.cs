@@ -42,7 +42,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{clientId}")]
         [Authorize(Policy = Policies.ManageTenant)]
@@ -79,7 +78,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return new ClientGetResult(client, signatureUrls);
         }
 
-        [Returns204]
         [Returns404]
         [HttpPost("{clientId}/archive")]
         [Authorize(Policy = Policies.ManageTenant)]

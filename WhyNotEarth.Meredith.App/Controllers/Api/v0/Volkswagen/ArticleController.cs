@@ -31,7 +31,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return Ok();
         }
 
-        [Returns204]
         [Returns404]
         [HttpPut("{articleId}")]
         public async Task<NoContentResult> Edit(int articleId, ArticleModel model)
@@ -43,7 +42,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return NoContent();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("{articleId}")]
         public async Task<NoContentResult> Delete(int articleId)

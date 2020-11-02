@@ -35,7 +35,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("images/{imageId}")]
         public async Task<NoContentResult> DeleteImage(int imageId)
@@ -58,7 +57,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return Created();
         }
 
-        [Returns204]
         [Returns404]
         [HttpDelete("videos/{videoId}")]
         public async Task<NoContentResult> DeleteVideo(int videoId)

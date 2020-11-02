@@ -76,7 +76,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         }
 
         [Authorize]
-        [Returns204]
         [HttpPost("answer/{clientId}")]
         public async Task<NoContentResult> Submit(int templateId, int clientId, FormSignatureModel model)
         {

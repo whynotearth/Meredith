@@ -35,7 +35,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
             return result;
         }
 
-        [Returns204]
         [HttpPost("")]
         public async Task<NoContentResult> Set(VolkswagenSettingsModel model)
         {
