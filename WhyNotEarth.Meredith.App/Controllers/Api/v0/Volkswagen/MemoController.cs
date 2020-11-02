@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using WhyNotEarth.Meredith.App.Auth;
@@ -36,11 +35,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [HttpPost("")]
-        public async Task<StatusCodeResult> Create(MemoModel model)
+        public async Task<CreateResult> Create(MemoModel model)
         {
             await _memoService.CreateAsync(model);
 
-            return new StatusCodeResult(StatusCodes.Status201Created);
+            return Created();
         }
 
         [HttpGet("stats")]

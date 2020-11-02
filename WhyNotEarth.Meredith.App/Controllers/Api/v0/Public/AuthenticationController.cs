@@ -31,6 +31,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [Returns401]
         [HttpPost("login")]
+        // TODO: Replace the Unauthorized with exception so we can return the Task<string> from action
         public async Task<IActionResult> Login(LoginModel model)
         {
             User? user = null;
@@ -331,6 +332,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return BadRequest(identityResult.Errors);
         }
 
+        // TODO: Switch the BadRequest to exception so we can return NoContentResult from the action
         private IActionResult NoContentIdentityResult(IdentityResult identityResult)
         {
             if (identityResult.Succeeded)

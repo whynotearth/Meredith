@@ -3,6 +3,7 @@
     public class EmailStatsResult
     {
         public int MonthlyActiveUsers { get; }
+
         public int MonthlySentEmails { get; }
 
         public EmailStatsResult(int monthlyActiveUsers, int monthlySentEmails)

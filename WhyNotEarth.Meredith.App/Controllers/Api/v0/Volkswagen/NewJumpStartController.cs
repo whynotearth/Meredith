@@ -78,7 +78,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Volkswagen
         }
 
         [HttpGet("{id}/stats")]
-        public async Task<NewJumpStartSingleStatsResult> Stats(int id, [FromQuery] DateTime? fromDate, 
+        public async Task<NewJumpStartSingleStatsResult> Stats(int id, [FromQuery] DateTime? fromDate,
             [FromQuery] DateTime? toDate)
         {
             var (from, to) = Validate(fromDate, toDate);

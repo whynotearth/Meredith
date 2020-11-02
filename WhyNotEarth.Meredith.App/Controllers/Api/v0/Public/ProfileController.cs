@@ -35,6 +35,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [HttpPut("")]
+        // Return NoContentResult from the action
         public async Task<IActionResult> Update(ProfileModel model)
         {
             var user = await _userManager.GetUserAsync(User);

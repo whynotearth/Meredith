@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.SendGrid;
 using WhyNotEarth.Meredith.Emails;
+using WhyNotEarth.Meredith.Exceptions;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 {
@@ -41,13 +42,13 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
         [Returns404]
         [HttpGet("{companySlug}/stats")]
-        public async Task<ActionResult<EmailStatsResult>> Stats(string companySlug)
+        public async Task<EmailStatsResult> Stats(string companySlug)
         {
             var company = await _dbContext.Companies.FirstOrDefaultAsync(item => item.Name == companySlug.ToLower());
 
             if (company is null)
             {
-                return NotFound($"Company '{companySlug}' not found.");
+                throw new RecordNotFoundException($"Company '{companySlug}' not found.");
             }
 
             var lastMonth = DateTime.UtcNow.AddMonths(-1);
@@ -62,7 +63,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
                 .Distinct()
                 .CountAsync();
 
-            return Ok(new EmailStatsResult(monthlyActiveUsers, monthlySentEmails));
+            return new EmailStatsResult(monthlyActiveUsers, monthlySentEmails);
         }
     }
 
