@@ -27,9 +27,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             _tenantService = tenantService;
         }
 
-        [Returns200]
         [HttpGet("profile")]
-        public async Task<ActionResult<BrowtricksProfileResult>> GetProfile()
+        public async Task<BrowtricksProfileResult> GetProfile()
         {
             var user = await GetCurrentUserAsync(_userService);
 
@@ -39,10 +38,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
             return new BrowtricksProfileResult(user, images, videos);
         }
 
-        [Returns200]
         [Returns404]
         [HttpGet("tenants/{tenantSlug}")]
-        public async Task<ActionResult<BrowtricksTenantResult>> GetTenant(string tenantSlug)
+        public async Task<BrowtricksTenantResult> GetTenant(string tenantSlug)
         {
             var user = await GetCurrentUserAsync(_userService);
 

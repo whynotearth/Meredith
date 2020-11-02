@@ -59,7 +59,7 @@ namespace WhyNotEarth.Meredith.App.Swagger
                 });
 
                 c.OperationFilter<AcceptLanguageOperationFilter>();
-                c.OperationFilter<AuthorizeOperationFilter>();
+                c.OperationFilter<ReturnCodeOperationFilter>();
 
                 c.OrderActionsBy(apiDesc => apiDesc.ActionDescriptor.DisplayName);
             });
