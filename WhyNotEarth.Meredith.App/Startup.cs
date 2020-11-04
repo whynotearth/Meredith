@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App
             services.AddCustomOptions(_configuration);
 
             services.AddDbContext<MeredithDbContext>(o => o.UseNpgsql(_configuration.GetConnectionString("Default"),
-                options => options.SetPostgresVersion(new Version(9, 6))));
+                options => options.SetPostgresVersion(new Version(13, 0))));
 
             services.AddMeredith();
             services.AddPersistence();
