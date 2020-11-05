@@ -11,6 +11,8 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public FormTemplate FormTemplate { get; set; } = null!;
 
+        public int Order { get; set; }
+
         public FormItemType Type { get; set; }
 
         public bool IsRequired { get; set; }

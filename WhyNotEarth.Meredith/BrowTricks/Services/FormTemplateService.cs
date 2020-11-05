@@ -75,7 +75,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
             foreach (var formTemplate in formTemplates)
             {
-                formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
+                formTemplate.Items = formTemplate.Items.OrderBy(item => item.Order).ToList();
             }
 
             return formTemplates;
@@ -120,7 +120,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
                 throw new RecordNotFoundException($"Form template {formTemplateId} not found");
             }
 
-            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Id).ToList();
+            formTemplate.Items = formTemplate.Items.OrderBy(item => item.Order).ToList();
 
             return formTemplate;
         }
@@ -135,11 +135,12 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             return formTemplate;
         }
 
-        private FormItem Map(FormItemModel model)
+        private FormItem Map(FormItemModel model, int index)
         {
             return new FormItem
             {
                 Type = model.Type.Value,
+                Order = index,
                 IsRequired = model.IsRequired.Value,
                 Value = model.Value,
                 Options = model.Options
