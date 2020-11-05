@@ -23,8 +23,6 @@ namespace WhyNotEarth.Meredith.App.Auth
     {
         public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDataProtection().PersistKeysToDbContext<MeredithDbContext>();
-
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 

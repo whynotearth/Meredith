@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using WhyNotEarth.Meredith.BrowTricks;
@@ -18,7 +17,7 @@ using ShoppingProduct = WhyNotEarth.Meredith.Shop.Product;
 
 namespace WhyNotEarth.Meredith
 {
-    public interface IDbContext : IAsyncDisposable, IDataProtectionKeyContext
+    public interface IDbContext : IAsyncDisposable
     {
         DbSet<Card> Cards { get; set; }
 

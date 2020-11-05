@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks;
@@ -47,8 +46,6 @@ namespace WhyNotEarth.Meredith.Persistence
         public DbSet<EmailEvent> EmailEvents { get; set; } = null!;
 
         public DbSet<ShortMessage> ShortMessages { get; set; } = null!;
-
-        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
         public DbSet<TwilioAccount> TwilioAccounts { get; set; } = null!;
 
