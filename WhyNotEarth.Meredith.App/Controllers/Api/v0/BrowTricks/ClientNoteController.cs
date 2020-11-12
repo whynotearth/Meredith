@@ -29,18 +29,29 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [Returns404]
         [HttpPost("")]
-        public async Task<NoContentResult> SaveNote(int clientId, ClientNoteModel model)
+        public async Task<NoContentResult> Create(int clientId, ClientNoteModel model)
         {
             var user = await _userService.GetUserAsync(User);
 
-            await _clientNoteService.SaveAsync(clientId, model, user);
+            await _clientNoteService.CreateAsync(clientId, model, user);
+
+            return NoContent();
+        }
+
+        [Returns404]
+        [HttpPut("{noteId}")]
+        public async Task<NoContentResult> Create(int clientId, int noteId, ClientNoteModel model)
+        {
+            var user = await _userService.GetUserAsync(User);
+
+            await _clientNoteService.EditAsync(clientId, noteId, model, user);
 
             return NoContent();
         }
 
         [Returns404]
         [HttpDelete("{noteId}")]
-        public async Task<NoContentResult> DeleteNote(int clientId, int noteId)
+        public async Task<NoContentResult> Delete(int clientId, int noteId)
         {
             var user = await _userService.GetUserAsync(User);
 
@@ -50,14 +61,25 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         }
 
         [Returns404]
+        [HttpGet("{noteId}")]
+        public async Task<ClientNoteResult> Get(int clientId, int noteId)
+        {
+            var user = await _userService.GetUserAsync(User);
+
+            var note = await _clientNoteService.GetAsync(clientId, noteId, user);
+
+            return new ClientNoteResult(note);
+        }
+
+        [Returns404]
         [HttpGet("")]
-        public async Task<List<ClientNoteResult>> ListNote(int clientId)
+        public async Task<List<ClientNoteResult>> List(int clientId)
         {
             var user = await _userService.GetUserAsync(User);
 
             var notes = await _clientNoteService.ListAsync(clientId, user);
 
-            return notes?.Select(item => new ClientNoteResult(item)).ToList() ?? new List<ClientNoteResult>();
+            return notes?.Select(item => new ClientNoteResult(item, 500)).ToList() ?? new List<ClientNoteResult>();
         }
     }
 }

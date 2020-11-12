@@ -27,7 +27,7 @@ namespace WhyNotEarth.Meredith.BrowTricks
 
         public string? AvatarUrl { get; set; }
 
-        public List<ClientNote>? Notes { get; set; }
+        public List<ClientNote> Notes { get; set; } = new List<ClientNote>();
 
         public List<BrowTricksImage> Images { get; set; } = new List<BrowTricksImage>();
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -21,66 +20,65 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             _tenantService = tenantService;
         }
 
-        public async Task SaveAsync(int clientId, ClientNoteModel model, User user)
+        public async Task CreateAsync(int clientId, ClientNoteModel model, User user)
         {
-            var client = await ValidateAsync(user, clientId);
+            await ValidateAsync(user, clientId);
 
-            client = Map(model, client);
+            var note = Map(new ClientNote(), model, clientId);
 
-            _dbContext.Clients.Update(client);
+            note.CreatedAt = DateTime.UtcNow;
+
+            _dbContext.ClientsNotes.Add(note);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int clientId, int noteId, User user)
         {
-            var client = await ValidateAsync(user, clientId);
+            var note = await GetAsync(clientId, noteId, user);
 
-            var clientNote = client.Notes.FirstOrDefault(item => item.Id == noteId);
-
-            if (clientNote is null)
-            {
-                throw new RecordNotFoundException($"Note {noteId} not found");
-            }
-
-            client.Notes = client.Notes.Where(item => item.Id != noteId).ToList();
-
-            _dbContext.Clients.Update(client);
+            _dbContext.ClientsNotes.Remove(note);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<ClientNote>?> ListAsync(int clientId, User user)
+        public async Task<List<ClientNote>> ListAsync(int clientId, User user)
         {
             var client = await ValidateAsync(user, clientId);
 
             return client.Notes;
         }
 
-        private Client Map(ClientNoteModel model, Client client)
+        public async Task EditAsync(int clientId, int noteId, ClientNoteModel model, User user)
         {
-            if (model.Id.HasValue)
+            var note = await GetAsync(clientId, noteId, user);
+
+            note = Map(note, model, clientId);
+
+            _dbContext.ClientsNotes.Update(note);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<ClientNote> GetAsync(int clientId, int noteId, User user)
+        {
+            var note = await _dbContext.ClientsNotes
+                .Include(item => item.Client)
+                .FirstOrDefaultAsync(item => item.Id == noteId && item.ClientId == clientId);
+
+            if (note is null)
             {
-                var clientNote = client.Notes.FirstOrDefault(item => item.Id == model.Id);
-
-                if (clientNote is null)
-                {
-                    throw new RecordNotFoundException($"Note {model.Id.Value} not found");
-                }
-
-                clientNote.Note = model.Note;
-                clientNote.CreatedAt = DateTime.UtcNow;
-            }
-            else
-            {
-                client.Notes ??= new List<ClientNote>();
-
-                client.Notes.Add(new ClientNote
-                {
-                    Note = model.Note,
-                    CreatedAt = DateTime.UtcNow
-                });
+                throw new RecordNotFoundException($"note {noteId} not found");
             }
 
-            return client;
+            await _tenantService.CheckOwnerAsync(user, note.Client.TenantId);
+
+            return note;
+        }
+
+        private ClientNote Map(ClientNote note, ClientNoteModel model, int clientId)
+        {
+            note.Note = model.Note;
+            note.ClientId = clientId;
+
+            return note;
         }
 
         private async Task<Client> ValidateAsync(User user, int clientId)

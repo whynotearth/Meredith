@@ -112,6 +112,8 @@ namespace WhyNotEarth.Meredith
         // BrowTricks
         DbSet<Client> Clients { get; set; }
 
+        DbSet<ClientNote> ClientsNotes { get; set; }
+
         DbSet<FormTemplate> FormTemplates { get; set; }
 
         DbSet<FormItem> FormItems { get; set; }

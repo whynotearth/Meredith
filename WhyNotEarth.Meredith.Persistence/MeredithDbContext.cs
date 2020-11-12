@@ -106,6 +106,8 @@ namespace WhyNotEarth.Meredith.Persistence
         // BrowTricks
         public DbSet<Client> Clients { get; set; } = null!;
 
+        public DbSet<ClientNote> ClientsNotes { get; set; } = null!;
+
         public DbSet<FormTemplate> FormTemplates { get; set; } = null!;
 
         public DbSet<FormItem> FormItems { get; set; } = null!;

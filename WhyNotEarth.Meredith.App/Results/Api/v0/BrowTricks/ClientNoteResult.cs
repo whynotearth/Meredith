@@ -11,11 +11,29 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 
         public DateTime CreatedAt { get; }
 
+        public ClientNoteResult(ClientNote clientNote, int maxLength)
+        {
+            Id = clientNote.Id;
+            Note = Truncate(clientNote.Note, maxLength);
+            CreatedAt = clientNote.CreatedAt;
+        }
+
         public ClientNoteResult(ClientNote clientNote)
         {
             Id = clientNote.Id;
             Note = clientNote.Note;
             CreatedAt = clientNote.CreatedAt;
+        }
+
+
+        private string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
         }
     }
 }
