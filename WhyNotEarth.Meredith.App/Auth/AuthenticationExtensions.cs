@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -138,7 +137,7 @@ namespace WhyNotEarth.Meredith.App.Auth
             {
                 context.Response.Redirect(context.Properties.RedirectUri);
             }
-            
+
             context.HandleResponse();
 
             return Task.FromResult(0);

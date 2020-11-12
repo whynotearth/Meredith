@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.Twilio
 {

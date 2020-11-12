@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Twilio;
 
 namespace WhyNotEarth.Meredith.Persistence.Models

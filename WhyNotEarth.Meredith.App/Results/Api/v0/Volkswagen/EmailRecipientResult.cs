@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using WhyNotEarth.Meredith.Emails;
-using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
 {

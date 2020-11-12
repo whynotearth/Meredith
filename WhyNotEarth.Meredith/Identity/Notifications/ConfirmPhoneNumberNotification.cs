@@ -20,6 +20,9 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
             return $"Code: {_token}\r\n{_company.Name} {_tenant?.Name}";
         }
 
-        public override string GetSubject() => string.Empty;
+        public override string GetSubject()
+        {
+            return string.Empty;
+        }
     }
 }

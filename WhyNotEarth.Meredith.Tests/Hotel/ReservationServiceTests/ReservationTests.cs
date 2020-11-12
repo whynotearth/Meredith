@@ -47,13 +47,18 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
                 Name = "Test"
             };
             for (var i = 0; i < days; i++)
+            {
                 roomType.Prices.Add(new HotelPrice
                 {
                     Amount = 10,
                     Date = Start.AddDays(i)
                 });
+            }
 
-            for (var i = 0; i < 1; i++) roomType.Rooms.Add(new Room { Number = i.ToString() });
+            for (var i = 0; i < 1; i++)
+            {
+                roomType.Rooms.Add(new Room { Number = i.ToString() });
+            }
 
             dbContext.RoomTypes.Add(roomType);
             await dbContext.SaveChangesAsync();

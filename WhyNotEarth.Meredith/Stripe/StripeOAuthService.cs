@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
-using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Stripe.Data;
 
 namespace WhyNotEarth.Meredith.Stripe

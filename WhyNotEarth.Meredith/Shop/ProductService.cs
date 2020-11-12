@@ -7,7 +7,6 @@ using WhyNotEarth.Meredith.Cloudinary;
 using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Shop.Models;
-using Product = WhyNotEarth.Meredith.Shop.Product;
 
 namespace WhyNotEarth.Meredith.Shop
 {

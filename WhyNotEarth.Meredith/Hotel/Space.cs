@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace WhyNotEarth.Meredith.Hotel
 {
     public class Space

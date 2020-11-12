@@ -28,7 +28,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
 
         private void Walk(MarkdownObject markdownObject)
         {
-            foreach (MarkdownObject child in markdownObject.Descendants())
+            foreach (var child in markdownObject.Descendants())
             {
                 if (child is ParagraphBlock paragraphBlock)
                 {
