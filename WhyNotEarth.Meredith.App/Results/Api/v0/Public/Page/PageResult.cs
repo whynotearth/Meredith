@@ -47,23 +47,22 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             Id = page.Id;
             Brand = page.Company.Slug;
             Tenant = page.Tenant?.Slug;
-            Name = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Name;
-            Title = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Title;
-            Description = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Description;
-            H2 = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Header;
+            Name = page.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.Name;
+            Title = page.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.Title;
+            Description = page.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.Description;
+            H2 = page.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.Header;
             BackgroundImage = page.BackgroundImage;
-            CtaText = page.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.CallToAction;
+            CtaText = page.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.CallToAction;
             CtaLink = page.CallToActionLink;
             Custom = page.Custom is null ? null : JsonConvert.DeserializeObject<dynamic>(page.Custom);
             FeaturedImage = page.FeaturedImage;
             Slug = page.Slug;
 
-            var imageResults = page.Images.OrderBy(i => i.Order).Select(i => new ImageResult(i));
+            var imageResults = page.Images?.OrderBy(i => i.Order).Select(i => new ImageResult(i)) ?? new List<ImageResult>();
             Images.AddRange(imageResults);
 
-            var storyResults = page.Cards.OrderBy(c => c.Order).Select(c => new StoryResult(c.Id, c.Text,
-                c.CallToAction,
-                c.CallToActionUrl, c.BackgroundUrl, c.PosterUrl, c.CardType));
+            var storyResults = page.Cards?.OrderBy(c => c.Order).Select(c => new StoryResult(c.Id, c.Text,
+                c.CallToAction, c.CallToActionUrl, c.BackgroundUrl, c.PosterUrl, c.CardType)) ?? new List<StoryResult>();
             Stories.AddRange(storyResults);
 
             if (page.Category != null)
@@ -84,19 +83,19 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Page
             var hotelModule = new HotelModuleResult
             (
                 hotel.Id,
-                hotel.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.GettingAround,
-                hotel.Translations.FirstOrDefault(t => t.Language.Culture == culture)?.Location
+                hotel.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.GettingAround,
+                hotel.Translations?.FirstOrDefault(t => t.Language.Culture == culture)?.Location
             );
 
-            var amenities = hotel.Amenities?.SelectMany(a => a.Translations)?.Where(t => t.Language.Culture == culture)
+            var amenities = hotel.Amenities?.SelectMany(a => a.Translations!).Where(t => t.Language.Culture == culture)
                 .Select(t => t.Text ?? string.Empty);
             Add(amenities, hotelModule.Amenities);
 
-            var rules = hotel.Rules?.SelectMany(r => r.Translations)?.Where(t => t.Language.Culture == culture)
+            var rules = hotel.Rules?.SelectMany(r => r.Translations!).Where(t => t.Language.Culture == culture)
                 .Select(t => t.Text ?? string.Empty);
             Add(rules, hotelModule.Rules);
 
-            var spaces = hotel.Spaces?.SelectMany(s => s.Translations)?.Where(t => t.Language.Culture == culture)
+            var spaces = hotel.Spaces?.SelectMany(s => s.Translations!).Where(t => t.Language.Culture == culture)
                 .Select(t => t.Name ?? string.Empty);
             Add(spaces, hotelModule.Spaces);
 

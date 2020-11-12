@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Hotel
                 reservation.Message,
                 reservation.Name,
                 reservation.NumberOfGuests,
-                Payments = reservation.Payments.Select(p => new
+                Payments = reservation.Payments?.Select(p => new
                 {
                     p.Amount,
                     Created = p.CreatedAt,

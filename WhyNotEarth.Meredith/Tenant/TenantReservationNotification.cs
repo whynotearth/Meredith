@@ -103,7 +103,7 @@ namespace WhyNotEarth.Meredith.Tenant
 
             var name = assembly.GetManifestResourceNames()
                 .FirstOrDefault(item => item.EndsWith(WhatsAppOrderSmsTemplateName));
-            var stream = assembly.GetManifestResourceStream(name);
+            var stream = assembly.GetManifestResourceStream(name!);
 
             if (stream is null)
             {

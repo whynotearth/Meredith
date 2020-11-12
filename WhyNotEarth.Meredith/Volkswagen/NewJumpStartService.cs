@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var events = await _dbContext.Emails
                 .Include(item => item.Events)
                 .Where(item => item.NewJumpStartId == id)
-                .SelectMany(item => item.Events)
+                .SelectMany(item => item.Events!)
                 .OrderBy(item => item.DateTime)
                 .ToListAsync();
 
@@ -146,7 +146,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
                 .Where(item => fromDate <= item.DateTime.Date && item.DateTime.Date <= toDate)
                 .ToListAsync();
 
-            var tags = newJumpStarts.SelectMany(item => item.Tags).Distinct().ToList();
+            var tags = newJumpStarts.SelectMany(item => item.Tags!).Distinct().ToList();
 
             foreach (var tag in tags)
             {

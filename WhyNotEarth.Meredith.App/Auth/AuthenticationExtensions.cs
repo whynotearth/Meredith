@@ -70,7 +70,10 @@ namespace WhyNotEarth.Meredith.App.Auth
                     {
                         var picture = context.User.GetProperty("picture").GetString();
 
-                        context.Identity.AddClaim(new Claim("picture", picture));
+                        if (picture is not null)
+                        {
+                            context.Identity.AddClaim(new Claim("picture", picture));
+                        }
 
                         return Task.CompletedTask;
                     };
@@ -89,7 +92,10 @@ namespace WhyNotEarth.Meredith.App.Auth
                         var picture = context.User.GetProperty("picture").GetProperty("data").GetProperty("url")
                             .GetString();
 
-                        context.Identity.AddClaim(new Claim("picture", picture));
+                        if (picture is not null)
+                        {
+                            context.Identity.AddClaim(new Claim("picture", picture));
+                        }
 
                         return Task.CompletedTask;
                     };
@@ -128,7 +134,11 @@ namespace WhyNotEarth.Meredith.App.Auth
 
         private static Task HandleOnRemoteFailure(RemoteFailureContext context)
         {
-            context.Response.Redirect(context.Properties.RedirectUri);
+            if (context.Properties?.RedirectUri is not null)
+            {
+                context.Response.Redirect(context.Properties.RedirectUri);
+            }
+            
             context.HandleResponse();
 
             return Task.FromResult(0);

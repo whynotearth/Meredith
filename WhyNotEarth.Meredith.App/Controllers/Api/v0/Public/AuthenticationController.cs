@@ -149,7 +149,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
 
             User user;
 
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 user = await _userManager.GetUserAsync(User);
             }

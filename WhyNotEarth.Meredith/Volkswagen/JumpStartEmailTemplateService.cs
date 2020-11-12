@@ -217,7 +217,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             var assembly = typeof(JumpStartEmailTemplateService).GetTypeInfo().Assembly;
 
             var name = assembly.GetManifestResourceNames().FirstOrDefault(item => item.EndsWith(templateName));
-            var stream = assembly.GetManifestResourceStream(name);
+            var stream = assembly.GetManifestResourceStream(name!);
 
             if (stream is null)
             {

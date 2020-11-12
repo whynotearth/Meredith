@@ -94,7 +94,7 @@ namespace WhyNotEarth.Meredith.Emails
             return _dbContext.Emails
                 .Include(item => item.Events)
                 .Where(condition)
-                .SelectMany(item => item.Events)
+                .SelectMany(item => item.Events!)
                 .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date == date);
         }
 
@@ -103,7 +103,7 @@ namespace WhyNotEarth.Meredith.Emails
             return _dbContext.Emails
                 .Include(item => item.Events)
                 .Where(condition)
-                .SelectMany(item => item.Events)
+                .SelectMany(item => item.Events!)
                 .CountAsync(item => item.Type == EmailEventType.Opened && item.DateTime.Date <= date);
         }
 
@@ -112,7 +112,7 @@ namespace WhyNotEarth.Meredith.Emails
             return _dbContext.Emails
                 .Include(item => item.Events)
                 .Where(condition)
-                .SelectMany(item => item.Events)
+                .SelectMany(item => item.Events!)
                 .CountAsync(item => item.Type == EmailEventType.Clicked && item.DateTime.Date == date);
         }
 
@@ -121,7 +121,7 @@ namespace WhyNotEarth.Meredith.Emails
             return _dbContext.Emails
                 .Include(item => item.Events)
                 .Where(condition)
-                .SelectMany(item => item.Events)
+                .SelectMany(item => item.Events!)
                 .CountAsync(item => item.Type == EmailEventType.Clicked && item.DateTime.Date <= date);
         }
     }

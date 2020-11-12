@@ -16,8 +16,8 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Volkswagen
         public EmailRecipientResult(Email email)
         {
             Email = email.EmailAddress;
-            DeliverDateTime = email.Events.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Delivered)?.DateTime;
-            OpenDateTime = email.Events.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Opened)?.DateTime;
+            DeliverDateTime = email.Events?.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Delivered)?.DateTime;
+            OpenDateTime = email.Events?.OrderBy(item => item.DateTime).FirstOrDefault(item => item.Type == EmailEventType.Opened)?.DateTime;
         }
     }
 }

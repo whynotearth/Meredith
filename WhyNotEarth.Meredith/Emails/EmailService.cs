@@ -95,19 +95,19 @@ namespace WhyNotEarth.Meredith.Emails
             stringBuilder.Append($"<div>{html}</div>");
             stringBuilder.Append("<div>");
 
-            var values = hotel.Spaces?.SelectMany(item => item.Translations)
+            var values = hotel.Spaces?.SelectMany(item => item.Translations!)
                 .Where(item => item.Language.Culture == "en-US")
                 .Select(item => item.Name ?? string.Empty).ToList() ?? new List<string>();
 
             AddSection("Spaces", values, stringBuilder);
 
-            values = hotel.Amenities?.SelectMany(item => item.Translations)
+            values = hotel.Amenities?.SelectMany(item => item.Translations!)
                 .Where(item => item.Language.Culture == "en-US")
                 .Select(item => item.Text ?? string.Empty).ToList() ?? new List<string>();
 
             AddSection("Amenities", values, stringBuilder);
 
-            values = hotel.Rules?.SelectMany(item => item.Translations)
+            values = hotel.Rules?.SelectMany(item => item.Translations!)
                 .Where(item => item.Language.Culture == "en-US")
                 .Select(item => item.Text ?? string.Empty).ToList() ?? new List<string>();
 

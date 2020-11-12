@@ -5,7 +5,7 @@ namespace WhyNotEarth.Meredith.Validation
 {
     public class MandatoryAttribute : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value is null)
             {
@@ -30,8 +30,13 @@ namespace WhyNotEarth.Meredith.Validation
             return ValidationResult.Success;
         }
 
-        private string GetErrorMessage(string fieldName)
+        private string GetErrorMessage(string? fieldName)
         {
+            if (fieldName is null)
+            {
+                return "Missing value for a required field.";
+            }
+
             return $"The {fieldName} field is required.";
         }
     }

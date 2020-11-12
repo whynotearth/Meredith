@@ -53,7 +53,7 @@ namespace WhyNotEarth.Meredith.App
             services.AddMeredith();
             services.AddPersistence();
 
-            services.AddTransient(s => s.GetService<IHttpContextAccessor>().HttpContext.User)
+            services.AddTransient(s => s.GetService<IHttpContextAccessor>()!.HttpContext!.User)
                 .Configure<ForwardedHeadersOptions>(options =>
                 {
                     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
