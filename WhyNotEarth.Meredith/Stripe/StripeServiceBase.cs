@@ -1,9 +1,9 @@
+using Microsoft.Extensions.Options;
+using Stripe;
+using WhyNotEarth.Meredith.Stripe.Data;
+
 namespace WhyNotEarth.Meredith.Stripe
 {
-    using Data;
-    using global::Stripe;
-    using Microsoft.Extensions.Options;
-
     public abstract class StripeServiceBase
     {
         protected StripeOptions StripeOptions { get; }

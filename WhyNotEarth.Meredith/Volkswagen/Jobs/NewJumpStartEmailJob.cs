@@ -70,7 +70,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             return result;
         }
 
-        private Dictionary<string, object> GetTemplateData(NewJumpStart newJumpStart)
+        private static Dictionary<string, object> GetTemplateData(NewJumpStart newJumpStart)
         {
             return new Dictionary<string, object>
             {
@@ -81,7 +81,7 @@ namespace WhyNotEarth.Meredith.Volkswagen.Jobs
             };
         }
 
-        private async Task<string> GetPdfContentAsync(string pdfUrl)
+        private static async Task<string> GetPdfContentAsync(string pdfUrl)
         {
             using var client = new HttpClient();
             var bytes = await client.GetByteArrayAsync(pdfUrl);

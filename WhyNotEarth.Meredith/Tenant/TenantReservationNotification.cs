@@ -97,7 +97,7 @@ namespace WhyNotEarth.Meredith.Tenant
                 }).ToList();
         }
 
-        private string GetWhatsAppTemplate()
+        private static string GetWhatsAppTemplate()
         {
             var assembly = typeof(TenantReservationNotification).GetTypeInfo().Assembly;
 

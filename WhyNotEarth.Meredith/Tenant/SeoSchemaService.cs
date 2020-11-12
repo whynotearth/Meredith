@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return shopSchema.ToString();
         }
 
-        private Uri BuildUri(string? companySlug, string? websitePath, string? domainExtension = ".com")
+        private static Uri BuildUri(string? companySlug, string? websitePath, string? domainExtension = ".com")
         {
             var baseUri = new UriBuilder
             {
@@ -59,7 +59,7 @@ namespace WhyNotEarth.Meredith.Tenant
             return baseUri.Uri;
         }
 
-        private Uri? GetValidUri(string? path)
+        private static Uri? GetValidUri(string? path)
         {
             if (!string.IsNullOrEmpty(path))
             {

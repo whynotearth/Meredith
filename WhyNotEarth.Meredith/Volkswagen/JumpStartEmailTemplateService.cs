@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return Compile(templateName, data);
         }
 
-        private string Compile(string templateName, Dictionary<string, object> data)
+        private static string Compile(string templateName, Dictionary<string, object> data)
         {
             RegisterHelpers();
 
@@ -94,7 +94,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return result;
         }
 
-        private (Article?, List<Article>) PickArticle(List<Article> articles, Func<Article, bool> selector)
+        private static (Article?, List<Article>) PickArticle(List<Article> articles, Func<Article, bool> selector)
         {
             var remainingArticles = new List<Article>();
             Article? result = null;
@@ -114,7 +114,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return (result, remainingArticles);
         }
 
-        private (List<Article>, List<Article>) PickArticles(List<Article> articles, Func<Article, bool> selector)
+        private static (List<Article>, List<Article>) PickArticles(List<Article> articles, Func<Article, bool> selector)
         {
             var remainingArticles = new List<Article>();
             var selectedArticles = new List<Article>();
@@ -183,7 +183,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
-        private void AddGeneralData(Dictionary<string, object> data, DateTime date, string? pdfUrl)
+        private static void AddGeneralData(Dictionary<string, object> data, DateTime date, string? pdfUrl)
         {
             data.Add("general", new Dictionary<string, object>
             {
@@ -193,7 +193,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             });
         }
 
-        private void RegisterHelpers()
+        private static void RegisterHelpers()
         {
             Handlebars.RegisterHelper("to_slug", (writer, context, parameters) =>
             {
@@ -212,7 +212,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             });
         }
 
-        private string GetRawTemplate(string templateName)
+        private static string GetRawTemplate(string templateName)
         {
             var assembly = typeof(JumpStartEmailTemplateService).GetTypeInfo().Assembly;
 
@@ -229,7 +229,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             return reader.ReadToEnd();
         }
 
-        private (string templateName, bool isTwoColumn) GetTemplateName(List<Article> articles, bool isPdf)
+        private static (string templateName, bool isTwoColumn) GetTemplateName(List<Article> articles, bool isPdf)
         {
             var hasAnswer = articles.Any(item => item.Category.Slug == AnswersCategorySlug);
 
@@ -242,7 +242,7 @@ namespace WhyNotEarth.Meredith.Volkswagen
             };
         }
 
-        private (int? width, int? height, int wrapperWidth) GetImageSize(Image? image, bool isTwoColumn, bool isWide)
+        private static (int? width, int? height, int wrapperWidth) GetImageSize(Image? image, bool isTwoColumn, bool isWide)
         {
             if (image?.Width is null || image.Height is null)
             {

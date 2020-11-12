@@ -47,7 +47,7 @@ namespace WhyNotEarth.Meredith.Identity.Notifications
 
             var template = _resourceService.Get(templateName, new Dictionary<string, string>
             {
-                {"{{company}}", _company.Name.First().ToString().ToUpper() + _company.Name.Substring(1)},
+                {"{{company}}", _company.Name.First().ToString().ToUpper() + _company.Name[1..]},
                 {"{{url}}", HtmlEncoder.Default.Encode(url)}
             });
 

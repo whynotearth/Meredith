@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.Public
             return _googleStorageService.CreateSignedUrl(path, 24);
         }
 
-        private string GetPath(string companySlug, IEnumerable<string> path)
+        private static string GetPath(string companySlug, IEnumerable<string> path)
         {
             var directories = path.ToList();
             directories.Insert(0, companySlug);
