@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CloudinaryDotNet" Version="1.13.1" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.13.2" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.17" />
     <PackageReference Include="Hangfire.Core" Version="1.7.17" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
