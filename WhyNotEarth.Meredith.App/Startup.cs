@@ -77,11 +77,7 @@ namespace WhyNotEarth.Meredith.App
             services.AddCustomAuthorization();
 
             services.AddControllers()
-                .AddMvcOptions(options =>
-                {
-                    // https://github.com/dotnet/aspnetcore/issues/11584
-                    options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
-                }).AddNewtonsoftJson(c =>
+                .AddNewtonsoftJson(c =>
                     c.SerializerSettings.Converters.Add(new StringEnumConverter())
                 );
         }
