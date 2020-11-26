@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
 {
     public class ReservationTests
     {
-        private DateTime Start { get; } = new DateTime(2020, 1, 1);
+        public DateTime Start { get; set; } = new DateTime(2020, 1, 1);
 
         public static object[][] ValidReservationTests =
         {
@@ -27,20 +27,22 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             }
         };
 
-        [Theory(Skip = "Need valid dates")]
+        [Theory]
         [MemberData(nameof(ValidReservationTests))]
         public async Task ValidReservations(DateTime start, DateTime end)
         {
             // Arrange
             var (dbContext, reservationService) = GetServices(nameof(ValidReservations));
 
-            var roomType = await CreateRoomType(dbContext, 10);
+            // We need a throwaway room to possibly introduce a collision
+            await CreateRoomType(dbContext, start, 31);
+            var roomType = await CreateRoomType(dbContext, start, 31);
             var reservation = await reservationService.CreateReservation(roomType.Id, start, end, string.Empty,
                 string.Empty, string.Empty, string.Empty, string.Empty, 0);
             Assert.NotNull(reservation);
         }
 
-        private async Task<RoomType> CreateRoomType(MeredithDbContext dbContext, int days = 0)
+        private async Task<RoomType> CreateRoomType(MeredithDbContext dbContext,  DateTime startDate, int days = 0)
         {
             var roomType = new RoomType
             {
@@ -51,7 +53,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
                 roomType.Prices.Add(new HotelPrice
                 {
                     Amount = 10,
-                    Date = Start.AddDays(i)
+                    Date = startDate.AddDays(i)
                 });
             }
 
@@ -86,7 +88,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             // Arrange
             var (dbContext, reservationService) = GetServices(nameof(ThrowsInvalidDate));
 
-            var roomType = await CreateRoomType(dbContext, 10);
+            var roomType = await CreateRoomType(dbContext, Start, 10);
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
                 await reservationService.CreateReservation(roomType.Id, Start.AddDays(1), Start, string.Empty,
                     string.Empty, string.Empty, string.Empty, string.Empty, 0));
@@ -110,7 +112,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             // Arrange
             var (dbContext, reservationService) = GetServices(nameof(ThrowsNotAllPricesAvailable));
 
-            var roomType = await CreateRoomType(dbContext, 10);
+            var roomType = await CreateRoomType(dbContext, Start, 10);
             dbContext.Prices.Remove(await dbContext.Prices.OfType<HotelPrice>().FirstOrDefaultAsync(p =>
                 p.Date == Start.AddDays(1) && p.RoomTypeId == roomType.Id));
             await dbContext.SaveChangesAsync();
@@ -126,7 +128,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             // Arrange
             var (dbContext, reservationService) = GetServices(nameof(ThrowsNotAvailable));
 
-            var roomType = await CreateRoomType(dbContext, 10);
+            var roomType = await CreateRoomType(dbContext, Start, 10);
             await reservationService.CreateReservation(roomType.Id, Start, Start.AddDays(1), string.Empty,
                 string.Empty,
                 string.Empty, string.Empty, string.Empty, 0);

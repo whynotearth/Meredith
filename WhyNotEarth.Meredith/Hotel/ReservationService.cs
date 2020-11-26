@@ -62,13 +62,13 @@ namespace WhyNotEarth.Meredith.Hotel
 
             var dailyPrices = await _dbContext.Prices
                 .OfType<HotelPrice>()
-                .Where(p => p.Date >= startDate && p.Date < endDate).ToListAsync();
+                .Where(p => p.Date >= startDate && p.Date < endDate && p.RoomTypeId == roomType.Id).ToListAsync();
 
             var paidDays = dailyPrices.Count;
 
             if (paidDays != totalDays)
             {
-                throw new InvalidActionException("Not all days have prices set");
+                throw new InvalidActionException($"Only {paidDays} rooms are configured while {totalDays} have been reserved");
             }
 
             var totalAmount = dailyPrices.Sum(item => item.Amount);
