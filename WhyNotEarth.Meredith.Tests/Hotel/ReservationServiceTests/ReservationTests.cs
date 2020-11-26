@@ -16,7 +16,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
 {
     public class ReservationTests
     {
-        public DateTime Start { get; set; } = new DateTime(2020, 1, 1);
+        private DateTime Start { get; } = new DateTime(2020, 1, 1);
 
         public static object[][] ValidReservationTests =
         {
