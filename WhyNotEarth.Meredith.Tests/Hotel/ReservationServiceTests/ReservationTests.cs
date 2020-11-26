@@ -119,7 +119,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             var exception = await Assert.ThrowsAsync<InvalidActionException>(async () =>
                 await reservationService.CreateReservation(roomType.Id, Start, Start.AddDays(10), string.Empty,
                     string.Empty, string.Empty, string.Empty, string.Empty, 0));
-            Assert.Equal("Not all days have prices set", exception.Message);
+            Assert.Equal("Only 9 rooms are configured while 10 have been reserved", exception.Message);
         }
 
         [Fact]
