@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.Tests.Hotel.ReservationServiceTests
             Assert.NotNull(reservation);
         }
 
-        private async Task<RoomType> CreateRoomType(MeredithDbContext dbContext,  DateTime startDate, int days = 0)
+        private async Task<RoomType> CreateRoomType(MeredithDbContext dbContext, DateTime startDate, int days = 0)
         {
             var roomType = new RoomType
             {
