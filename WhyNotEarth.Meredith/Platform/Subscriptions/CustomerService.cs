@@ -4,10 +4,10 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using WhyNotEarth.Meredith.Exceptions;
-    using WhyNotEarth.Meredith.Services;
     using Models;
+    using WhyNotEarth.Meredith.Exceptions;
     using WhyNotEarth.Meredith.Public;
+    using WhyNotEarth.Meredith.Services;
 
     public class CustomerService
     {

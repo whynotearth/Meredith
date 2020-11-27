@@ -1,8 +1,8 @@
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
 
 namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
