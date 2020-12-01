@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,5 +18,7 @@ namespace WhyNotEarth.Meredith.Identity
             logger)
         {
         }
+
+        public new int GetUserId(ClaimsPrincipal principal) => int.Parse(base.GetUserId(principal));
     }
 }

@@ -9,7 +9,7 @@ namespace WhyNotEarth.Meredith.App.Controllers
 {
     [Route("/stripe/oauth")]
     [DisableCors]
-    public class StripeOAuthController : ControllerBase
+    public class StripeOAuthController : Controller
     {
         private readonly StripeOAuthService _stripeOAuthServices;
 
@@ -25,7 +25,7 @@ namespace WhyNotEarth.Meredith.App.Controllers
         }
 
         [Route("authorize")]
-        public async Task<IActionResult> Authorize(AuthorizeModel model)
+        public async Task<IActionResult> Authorize([FromQuery] AuthorizeModel model)
         {
             if (!string.IsNullOrEmpty(model.Error))
             {
