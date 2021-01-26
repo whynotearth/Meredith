@@ -98,6 +98,14 @@ namespace WhyNotEarth.Meredith.App.Auth
 
                         return Task.CompletedTask;
                     };
+                })
+                .AddApple(options =>
+                {
+                    var config = configuration.GetSection("Authentication:Apple");
+                    options.ClientId = config["ClientId"];
+                    options.KeyId = config["KeyId"];
+                    options.TeamId = config["TeamId"];
+                    options.PrivateKeyBytes = (_) => Task.FromResult(Convert.FromBase64String(config["PrivateKey"]));
                 });
 
             services.ConfigureApplicationCookie(options =>
