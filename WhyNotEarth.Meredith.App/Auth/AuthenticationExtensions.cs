@@ -102,7 +102,9 @@ namespace WhyNotEarth.Meredith.App.Auth
                 .AddApple(options =>
                 {
                     var config = configuration.GetSection("Authentication:Apple");
+                    options.GenerateClientSecret = true;
                     options.ClientId = config["ClientId"];
+                    options.ClientSecret = config["ClientSecret"];
                     options.KeyId = config["KeyId"];
                     options.TeamId = config["TeamId"];
                     options.PrivateKeyBytes = (_) => Task.FromResult(Convert.FromBase64String(config["PrivateKey"]));
