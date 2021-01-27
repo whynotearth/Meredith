@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Persistence;
@@ -105,10 +106,9 @@ namespace WhyNotEarth.Meredith.App.Auth
                     var config = configuration.GetSection("Authentication:Apple");
                     options.GenerateClientSecret = true;
                     options.ClientId = config["ClientId"];
-                    options.ClientSecret = config["ClientSecret"];
                     options.KeyId = config["KeyId"];
                     options.TeamId = config["TeamId"];
-                    options.UsePrivateKey((keyId) => environment.ContentRootFileProvider.GetFileInfo($"C:\\AuthKey_{keyId}.p8"));
+                    options.UsePrivateKey((keyId) => new PhysicalFileProvider(@"C:\inetpub\").GetFileInfo($"AuthKey_{keyId}.p8"));
                 });
 
             return services.ConfigureApplicationCookie(options =>
