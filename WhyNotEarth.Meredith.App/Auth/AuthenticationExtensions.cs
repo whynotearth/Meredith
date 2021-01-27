@@ -20,7 +20,7 @@ namespace WhyNotEarth.Meredith.App.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -110,7 +110,7 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.PrivateKeyBytes = (_) => Task.FromResult(Convert.FromBase64String(config["PrivateKey"]));
                 });
 
-            services.ConfigureApplicationCookie(options =>
+            return services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "auth";
                 options.Cookie.HttpOnly = false;
