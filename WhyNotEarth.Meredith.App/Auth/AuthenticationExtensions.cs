@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace WhyNotEarth.Meredith.App.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -107,7 +108,7 @@ namespace WhyNotEarth.Meredith.App.Auth
                     options.ClientSecret = config["ClientSecret"];
                     options.KeyId = config["KeyId"];
                     options.TeamId = config["TeamId"];
-                    options.PrivateKeyBytes = (_) => Task.FromResult(Convert.FromBase64String(config["PrivateKey"]));
+                    options.UsePrivateKey((keyId) => environment.ContentRootFileProvider.GetFileInfo($"C:\\AuthKey_{keyId}.p8"));
                 });
 
             return services.ConfigureApplicationCookie(options =>
