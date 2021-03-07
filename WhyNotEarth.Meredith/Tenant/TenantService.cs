@@ -73,11 +73,6 @@ namespace WhyNotEarth.Meredith.Tenant
                 throw new RecordNotFoundException($"Company {companySlug} not found");
             }
 
-            if (!user.EmailConfirmed && !user.PhoneNumberConfirmed)
-            {
-                throw new InvalidActionException("You need to confirm your email address or phone number");
-            }
-
             return company;
         }
 

@@ -72,7 +72,7 @@ namespace WhyNotEarth.Meredith.App
 
             services.AddHangfireServer();
 
-            services.AddCustomAuthentication(_configuration);
+            services.AddCustomAuthentication(_configuration, _environment);
 
             services.AddCustomAuthorization();
 
@@ -124,7 +124,8 @@ namespace WhyNotEarth.Meredith.App
                     .RequireAuthorization(Policies.Developer);
             });
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard()
+                .UseCookiePolicy();
 
             recurringJobManager.AddOrUpdate<JumpStartJob>(JumpStartJob.Id,
                 job => job.SendAsync(),

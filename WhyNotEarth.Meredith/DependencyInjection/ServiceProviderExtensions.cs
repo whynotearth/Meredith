@@ -11,6 +11,7 @@ using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Makrdown;
 using WhyNotEarth.Meredith.Pages;
 using WhyNotEarth.Meredith.Pdf;
+using WhyNotEarth.Meredith.Platform.Subscriptions;
 using WhyNotEarth.Meredith.Public;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Shop;
@@ -31,6 +32,8 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             // Public
             serviceCollection
                 .AddScoped<IStripeService, StripeService>()
+                .AddScoped<IStripeCustomerService, StripeCustomerService>()
+                .AddScoped<IStripeSubscriptionService, StripeSubscriptionService>()
                 .AddScoped<StripeOAuthService>()
                 .AddScoped<CompanyService>()
                 .AddScoped<PageService>()
@@ -85,6 +88,11 @@ namespace WhyNotEarth.Meredith.DependencyInjection
             serviceCollection
                 .AddScoped<Tenant.ReservationService>()
                 .AddScoped<TenantReservationNotification>();
+
+            // Platform
+            serviceCollection
+                .AddScoped<CustomerService>()
+                .AddScoped<SubscriptionService>();
 
             // BrowTricks
             serviceCollection

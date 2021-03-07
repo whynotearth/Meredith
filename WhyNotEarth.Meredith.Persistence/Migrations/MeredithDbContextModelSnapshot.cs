@@ -15,17 +15,17 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasPostgresExtension("uuid-ossp")
+                .UseIdentityByDefaultColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -126,7 +126,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("text");
@@ -159,7 +159,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Clients","ModuleBrowTricks");
+                    b.ToTable("Clients", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientNote", b =>
@@ -167,7 +167,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -183,7 +183,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("ClientNotes","ModuleBrowTricks");
+                    b.ToTable("ClientNotes", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormAnswer", b =>
@@ -191,7 +191,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Answers")
                         .HasColumnType("text");
@@ -216,7 +216,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("FormSignatureId");
 
-                    b.ToTable("FormAnswers","ModuleBrowTricks");
+                    b.ToTable("FormAnswers", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormItem", b =>
@@ -224,7 +224,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("FormTemplateId")
                         .HasColumnType("integer");
@@ -249,7 +249,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("FormTemplateId");
 
-                    b.ToTable("FormItems","ModuleBrowTricks");
+                    b.ToTable("FormItems", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormSignature", b =>
@@ -257,7 +257,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("ClientId")
                         .HasColumnType("integer");
@@ -291,7 +291,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("FormTemplateId");
 
-                    b.ToTable("FormSignatures","ModuleBrowTricks");
+                    b.ToTable("FormSignatures", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormTemplate", b =>
@@ -299,7 +299,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -318,7 +318,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("FormTemplates","ModuleBrowTricks");
+                    b.ToTable("FormTemplates", "ModuleBrowTricks");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.Email", b =>
@@ -326,7 +326,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
@@ -363,7 +363,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("NewJumpStartId");
 
-                    b.ToTable("Emails","public");
+                    b.ToTable("Emails", "public");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.EmailEvent", b =>
@@ -371,7 +371,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp without time zone");
@@ -386,7 +386,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("EmailId");
 
-                    b.ToTable("EmailEvents","public");
+                    b.ToTable("EmailEvents", "public");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.SendGridAccount", b =>
@@ -394,7 +394,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ApiKey")
                         .IsRequired()
@@ -432,7 +432,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("HotelId")
                         .HasColumnType("integer");
@@ -441,7 +441,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Amenities","ModuleHotel");
+                    b.ToTable("Amenities", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.AmenityTranslation", b =>
@@ -449,7 +449,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("AmenityId")
                         .HasColumnType("integer");
@@ -466,7 +466,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("AmenityTranslations","ModuleHotel");
+                    b.ToTable("AmenityTranslations", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Bed", b =>
@@ -474,7 +474,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("BedType")
                         .HasColumnType("integer");
@@ -489,7 +489,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("Beds","ModuleHotel");
+                    b.ToTable("Beds", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Hotel", b =>
@@ -497,7 +497,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
@@ -512,7 +512,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasIndex("PageId")
                         .IsUnique();
 
-                    b.ToTable("Hotels","ModuleHotel");
+                    b.ToTable("Hotels", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelTranslation", b =>
@@ -520,7 +520,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("GettingAround")
                         .HasColumnType("text");
@@ -540,7 +540,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("LanguageId");
 
-                    b.ToTable("HotelTranslations","ModuleHotel");
+                    b.ToTable("HotelTranslations", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Room", b =>
@@ -548,11 +548,11 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Number")
-                        .HasColumnType("character varying(16)")
-                        .HasMaxLength(16);
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
 
                     b.Property<int>("RoomTypeId")
                         .HasColumnType("integer");
@@ -561,7 +561,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("RoomTypeId");
 
-                    b.ToTable("Rooms","ModuleHotel");
+                    b.ToTable("Rooms", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.RoomType", b =>
@@ -569,7 +569,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("Capacity")
                         .HasColumnType("integer");
@@ -584,7 +584,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("RoomTypes","ModuleHotel");
+                    b.ToTable("RoomTypes", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Rule", b =>
@@ -592,7 +592,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("HotelId")
                         .HasColumnType("integer");
@@ -601,7 +601,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Rules","ModuleHotel");
+                    b.ToTable("Rules", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.RuleTranslation", b =>
@@ -609,7 +609,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("LanguageId")
                         .HasColumnType("integer");
@@ -626,7 +626,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("RuleId");
 
-                    b.ToTable("RuleTranslations","ModuleHotel");
+                    b.ToTable("RuleTranslations", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Space", b =>
@@ -634,7 +634,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("HotelId")
                         .HasColumnType("integer");
@@ -643,7 +643,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("Spaces","ModuleHotel");
+                    b.ToTable("Spaces", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.SpaceTranslation", b =>
@@ -651,7 +651,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("LanguageId")
                         .HasColumnType("integer");
@@ -668,7 +668,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("SpaceId");
 
-                    b.ToTable("SpaceTranslations","ModuleHotel");
+                    b.ToTable("SpaceTranslations", "ModuleHotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Card", b =>
@@ -676,7 +676,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("BackgroundUrl")
                         .IsRequired()
@@ -717,7 +717,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -750,7 +750,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -765,12 +765,50 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Customer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StripeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Customers", "Platform");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discounts", "Platform");
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("AltText")
                         .HasColumnType("text");
@@ -819,7 +857,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("PageId")
                         .HasColumnType("integer");
@@ -840,7 +878,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Culture")
                         .IsRequired()
@@ -852,7 +890,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Languages","public");
+                    b.ToTable("Languages", "public");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Page", b =>
@@ -860,7 +898,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("BackgroundImage")
                         .HasColumnType("text");
@@ -911,7 +949,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("CallToAction")
                         .HasColumnType("text");
@@ -943,12 +981,102 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.ToTable("PageTranslation");
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.PaymentCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<int>("Brand")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<byte>("ExpirationMonth")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("ExpirationYear")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Last4")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Cards", "Platform");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PlatformId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("StripeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlatformId");
+
+                    b.ToTable("Plans", "Platform");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Platform", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("SalesCut")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Platforms", "Platform");
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -984,25 +1112,25 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles");
                 });
@@ -1012,7 +1140,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
@@ -1027,12 +1155,46 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Subscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<int>("CardId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StripeId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("Subscriptions", "Platform");
+                });
+
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Tenant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("integer");
@@ -1114,7 +1276,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -1127,8 +1289,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
@@ -1158,12 +1320,12 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -1184,8 +1346,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("character varying(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("WhatsappNotification")
                         .HasColumnType("boolean");
@@ -1193,11 +1355,11 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
+                        .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.HasIndex("TenantId");
 
@@ -1209,7 +1371,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("CloudinaryPublicId")
                         .IsRequired()
@@ -1251,7 +1413,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Videos","public");
+                    b.ToTable("Videos", "public");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Video");
                 });
@@ -1261,7 +1423,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("ApartmentNumber")
                         .HasColumnType("text");
@@ -1280,7 +1442,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses","ModuleShop");
+                    b.ToTable("Addresses", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.BusinessHour", b =>
@@ -1288,7 +1450,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<TimeSpan?>("ClosingTime")
                         .HasColumnType("interval");
@@ -1309,7 +1471,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("BusinessHours","ModuleShop");
+                    b.ToTable("BusinessHours", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Location", b =>
@@ -1317,7 +1479,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1325,7 +1487,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations","ModuleShop");
+                    b.ToTable("Locations", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Order", b =>
@@ -1333,14 +1495,14 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<byte>("PaymentMethodType")
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders","ModuleShop");
+                    b.ToTable("Orders", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.OrderLine", b =>
@@ -1348,7 +1510,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("Count")
                         .HasColumnType("integer");
@@ -1365,7 +1527,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderLines","ModuleShop");
+                    b.ToTable("OrderLines", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Payment", b =>
@@ -1373,7 +1535,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
@@ -1400,7 +1562,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments","ModuleShop");
+                    b.ToTable("Payments", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Price", b =>
@@ -1408,7 +1570,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric(10, 2)");
@@ -1419,7 +1581,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prices","ModuleShop");
+                    b.ToTable("Prices", "ModuleShop");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Price");
                 });
@@ -1429,7 +1591,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -1455,7 +1617,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("IX_Products_CategoryId1");
 
                     b.HasIndex("ImageId");
 
@@ -1463,7 +1626,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("PriceId");
 
-                    b.ToTable("Products","ModuleShop");
+                    b.ToTable("Products", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.ProductAttribute", b =>
@@ -1471,7 +1634,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1489,7 +1652,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductAttributes","ModuleShop");
+                    b.ToTable("ProductAttributes", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.ProductLocationInventory", b =>
@@ -1497,7 +1660,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("Count")
                         .HasColumnType("integer");
@@ -1514,7 +1677,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductLocationInventories","ModuleShop");
+                    b.ToTable("ProductLocationInventories", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Reservation", b =>
@@ -1522,7 +1685,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("AddressFriendlyName")
                         .HasColumnType("text");
@@ -1577,7 +1740,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reservations","ModuleShop");
+                    b.ToTable("Reservations", "ModuleShop");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Reservation");
                 });
@@ -1587,7 +1750,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1605,7 +1768,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Variations","ModuleShop");
+                    b.ToTable("Variations", "ModuleShop");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Stripe.StripeAccount", b =>
@@ -1613,12 +1776,11 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
-                        .HasColumnType("character varying(64)")
-                        .HasMaxLength(64);
+                        .HasColumnType("text");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
@@ -1628,32 +1790,28 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
-                        .HasColumnType("character varying(64)")
-                        .HasMaxLength(64);
+                        .HasColumnType("text");
 
                     b.Property<string>("Scope")
                         .IsRequired()
-                        .HasColumnType("character varying(32)")
-                        .HasMaxLength(32);
+                        .HasColumnType("text");
 
                     b.Property<string>("StripePublishableKey")
                         .IsRequired()
-                        .HasColumnType("character varying(64)")
-                        .HasMaxLength(64);
+                        .HasColumnType("text");
 
                     b.Property<string>("StripeUserId")
                         .IsRequired()
-                        .HasColumnType("character varying(64)")
-                        .HasMaxLength(64);
+                        .HasColumnType("text");
 
                     b.Property<string>("TokenType")
                         .IsRequired()
-                        .HasColumnType("character varying(64)")
-                        .HasMaxLength(64);
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
+                    b.HasIndex("CompanyId")
+                        .IsUnique();
 
                     b.ToTable("StripeAccounts");
                 });
@@ -1679,7 +1837,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -1710,7 +1868,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("ShortMessages","public");
+                    b.ToTable("ShortMessages", "public");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Twilio.TwilioAccount", b =>
@@ -1718,7 +1876,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("AccountSid")
                         .IsRequired()
@@ -1747,7 +1905,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -1774,7 +1932,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -1808,7 +1966,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasIndex("ImageId");
 
-                    b.ToTable("Articles","ModuleVolkswagen");
+                    b.ToTable("Articles", "ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Volkswagen.JumpStart", b =>
@@ -1816,7 +1974,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("timestamp without time zone");
@@ -1833,7 +1991,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JumpStarts","ModuleVolkswagen");
+                    b.ToTable("JumpStarts", "ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Volkswagen.Memo", b =>
@@ -1841,7 +1999,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -1871,7 +2029,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Memos","ModuleVolkswagen");
+                    b.ToTable("Memos", "ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Volkswagen.NewJumpStart", b =>
@@ -1879,7 +2037,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Body")
                         .HasColumnType("text");
@@ -1906,7 +2064,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NewJumpStarts","ModuleVolkswagen");
+                    b.ToTable("NewJumpStarts", "ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Volkswagen.Recipient", b =>
@@ -1914,7 +2072,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .UseIdentityByDefaultColumn();
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp without time zone");
@@ -1935,7 +2093,7 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipients","ModuleVolkswagen");
+                    b.ToTable("Recipients", "ModuleVolkswagen");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.PageCategory", b =>
@@ -2150,6 +2308,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.ClientNote", b =>
@@ -2159,6 +2321,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormAnswer", b =>
@@ -2168,6 +2332,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("FormSignatureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FormSignature");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormItem", b =>
@@ -2177,6 +2343,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("FormTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FormTemplate");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormSignature", b =>
@@ -2192,6 +2360,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("FormTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("FormTemplate");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormTemplate", b =>
@@ -2201,6 +2373,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.Email", b =>
@@ -2222,6 +2396,14 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Volkswagen.NewJumpStart", "NewJumpStart")
                         .WithMany()
                         .HasForeignKey("NewJumpStartId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("JumpStart");
+
+                    b.Navigation("Memo");
+
+                    b.Navigation("NewJumpStart");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.EmailEvent", b =>
@@ -2231,6 +2413,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("EmailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Email");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Emails.SendGridAccount", b =>
@@ -2240,6 +2424,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Amenity", b =>
@@ -2249,6 +2435,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.AmenityTranslation", b =>
@@ -2264,6 +2452,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Amenity");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Bed", b =>
@@ -2273,6 +2465,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("RoomType");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Hotel", b =>
@@ -2286,6 +2480,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("WhyNotEarth.Meredith.Hotel.Hotel", "PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Page");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelTranslation", b =>
@@ -2301,6 +2499,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Room", b =>
@@ -2310,6 +2512,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("RoomType");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.RoomType", b =>
@@ -2319,6 +2523,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Rule", b =>
@@ -2328,6 +2534,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.RuleTranslation", b =>
@@ -2343,6 +2551,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Rule");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Space", b =>
@@ -2352,6 +2564,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("HotelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.SpaceTranslation", b =>
@@ -2367,6 +2581,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Space");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Card", b =>
@@ -2376,6 +2594,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Page");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Category", b =>
@@ -2383,6 +2603,25 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Public.CategoryImage", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Customer", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Public.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Keyword", b =>
@@ -2392,6 +2631,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Page");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Page", b =>
@@ -2409,6 +2650,12 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
                         .WithMany("Pages")
                         .HasForeignKey("TenantId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.PageTranslation", b =>
@@ -2424,6 +2671,41 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("PageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Page");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.PaymentCard", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Public.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Plan", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Public.Platform", "Platform")
+                        .WithMany()
+                        .HasForeignKey("PlatformId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Platform");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Platform", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Public.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Product", b =>
@@ -2439,6 +2721,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Setting", b =>
@@ -2448,6 +2734,35 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Subscription", b =>
+                {
+                    b.HasOne("WhyNotEarth.Meredith.Public.PaymentCard", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WhyNotEarth.Meredith.Public.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WhyNotEarth.Meredith.Public.Plan", "Plan")
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.Tenant", b =>
@@ -2471,6 +2786,14 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Logo");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.User", b =>
@@ -2478,6 +2801,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.BusinessHour", b =>
@@ -2487,6 +2812,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.OrderLine", b =>
@@ -2502,6 +2829,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Payment", b =>
@@ -2517,6 +2848,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Product", b =>
@@ -2542,6 +2875,14 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("PriceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Page");
+
+                    b.Navigation("Price");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.ProductAttribute", b =>
@@ -2557,6 +2898,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Price");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.ProductLocationInventory", b =>
@@ -2572,6 +2917,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Reservation", b =>
@@ -2581,6 +2930,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Variation", b =>
@@ -2596,15 +2947,21 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Price");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Stripe.StripeAccount", b =>
                 {
                     b.HasOne("WhyNotEarth.Meredith.Public.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
+                        .WithOne("StripeAccount")
+                        .HasForeignKey("WhyNotEarth.Meredith.Stripe.StripeAccount", "CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Stripe.StripeOAuthRequest", b =>
@@ -2614,6 +2971,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Twilio.ShortMessage", b =>
@@ -2627,6 +2986,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Public.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Twilio.TwilioAccount", b =>
@@ -2636,6 +2999,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Volkswagen.Article", b =>
@@ -2649,6 +3014,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                     b.HasOne("WhyNotEarth.Meredith.Volkswagen.ArticleImage", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.ProductCategory", b =>
@@ -2658,6 +3027,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.BrowTricksImage", b =>
@@ -2672,6 +3043,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Public.PageImage", b =>
@@ -2700,6 +3075,10 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelPrice", b =>
@@ -2709,6 +3088,8 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("RoomType");
                 });
 
             modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.HotelReservation", b =>
@@ -2718,6 +3099,127 @@ namespace WhyNotEarth.Meredith.Persistence.Migrations
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.Client", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Notes");
+
+                    b.Navigation("Videos");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormSignature", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.BrowTricks.FormTemplate", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Emails.Email", b =>
+                {
+                    b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Amenity", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Hotel", b =>
+                {
+                    b.Navigation("Amenities");
+
+                    b.Navigation("RoomTypes");
+
+                    b.Navigation("Rules");
+
+                    b.Navigation("Spaces");
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Room", b =>
+                {
+                    b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.RoomType", b =>
+                {
+                    b.Navigation("Beds");
+
+                    b.Navigation("Prices");
+
+                    b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Rule", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Hotel.Space", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Company", b =>
+                {
+                    b.Navigation("Pages");
+
+                    b.Navigation("StripeAccount");
+
+                    b.Navigation("Tenants");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Page", b =>
+                {
+                    b.Navigation("Cards");
+
+                    b.Navigation("Hotel");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Keywords");
+
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Product", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Public.Tenant", b =>
+                {
+                    b.Navigation("BusinessHours");
+
+                    b.Navigation("Pages");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Order", b =>
+                {
+                    b.Navigation("OrderLines");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Product", b =>
+                {
+                    b.Navigation("ProductAttributes");
+
+                    b.Navigation("ProductLocationInventories");
+
+                    b.Navigation("Variations");
+                });
+
+            modelBuilder.Entity("WhyNotEarth.Meredith.Shop.Reservation", b =>
+                {
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

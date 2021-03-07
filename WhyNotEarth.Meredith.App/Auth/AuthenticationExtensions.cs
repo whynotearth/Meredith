@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using WhyNotEarth.Meredith.Identity;
 using WhyNotEarth.Meredith.Persistence;
@@ -20,7 +22,7 @@ namespace WhyNotEarth.Meredith.App.Auth
 {
     public static class AuthenticationExtensions
     {
-        public static void AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
             var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>();
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -98,9 +100,18 @@ namespace WhyNotEarth.Meredith.App.Auth
 
                         return Task.CompletedTask;
                     };
+                })
+                .AddApple(options =>
+                {
+                    var config = configuration.GetSection("Authentication:Apple");
+                    options.GenerateClientSecret = true;
+                    options.ClientId = config["ClientId"];
+                    options.KeyId = config["KeyId"];
+                    options.TeamId = config["TeamId"];
+                    options.UsePrivateKey((keyId) => new PhysicalFileProvider(@"C:\inetpub\").GetFileInfo($"AuthKey_{keyId}.p8"));
                 });
 
-            services.ConfigureApplicationCookie(options =>
+            return services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "auth";
                 options.Cookie.HttpOnly = false;
