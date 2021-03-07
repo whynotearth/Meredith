@@ -47,6 +47,17 @@ namespace WhyNotEarth.Meredith.App.Auth
                 null,
                 new[] {"romantic-swanson-ead31b.netlify.app"} // blobby
             ),
+            // For Cordova
+            (
+                "capacitor://localhost",
+                "capacitor://localhost",
+                Array.Empty<string>()
+            ),
+            (
+                "http://localhost",
+                "http://localhost",
+                Array.Empty<string>()
+            )
         };
 
         public static void AddCustomCorsPolicy(this IServiceCollection services, IWebHostEnvironment environment)
