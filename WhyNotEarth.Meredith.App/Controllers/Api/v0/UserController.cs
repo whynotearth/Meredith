@@ -34,7 +34,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> Get([FromBody] UserSearchModel model)
+        public async Task<IActionResult> Get([FromQuery] UserSearchModel model)
         {
             // Only browtricks has tenants
             var userQuery = DbContext.Users
@@ -49,6 +49,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             }
 
             var users = await userQuery
+                .Skip(100 * (model.Page - 1))
+                .Take(100)
                 .Select(u => new
                 {
                     u.Id,
