@@ -48,9 +48,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     || u.PhoneNumber.Contains(model.Query));
             }
 
-            if (model.Page > 1) model.Page = 1;
             var users = await userQuery
-                .Skip(100 * (model.Page - 1))
+                .Skip(100 * (model.Page))
                 .Take(100)
                 .Select(u => new
                 {
