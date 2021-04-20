@@ -61,7 +61,15 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     u.Email
                 })
                 .ToListAsync();
-            return Ok(users);
+            var total = await userQuery.CountAsync();
+            return Ok(
+                new
+                {
+                    records = users,
+                    total,
+                    currentPage = model.Page,
+                    pages = Math.Ceiling(total / 100m)
+                });
         }
 
         [Authorize(Roles = "SuperAdmin")]
