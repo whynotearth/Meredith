@@ -39,7 +39,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             // Only browtricks has tenants
             var userQuery = DbContext.Tenants
                 .Where(t => t.Company.Name == "Browtricks")
-                .Select(t => t.Owner);
+                .Select(t => t.Owner)
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName);
             if (!string.IsNullOrWhiteSpace(model.Query))
             {
                 userQuery = userQuery.Where(u =>
