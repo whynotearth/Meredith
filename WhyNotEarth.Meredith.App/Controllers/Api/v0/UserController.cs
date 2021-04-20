@@ -37,8 +37,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> Get([FromQuery] UserSearchModel model)
         {
             // Only browtricks has tenants
-            var userQuery = DbContext.Users
-                .Where(u => u.Tenant!.Company.Name == "Browtricks");
+            var userQuery = DbContext.Tenants
+                .Where(t => t.Company.Name == "Browtricks")
+                .Select(t => t.Owner);
             if (!string.IsNullOrWhiteSpace(model.Query))
             {
                 userQuery = userQuery.Where(u =>
@@ -49,7 +50,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             }
 
             var users = await userQuery
-                .Skip(100 * (model.Page))
+                .Skip(100 * model.Page)
                 .Take(100)
                 .Select(u => new
                 {
