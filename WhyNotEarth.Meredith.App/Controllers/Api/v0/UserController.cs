@@ -68,6 +68,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     records = users,
                     total,
                     currentPage = model.Page,
+                    perPage = 100,
                     pages = Math.Ceiling(total / 100m)
                 });
         }
