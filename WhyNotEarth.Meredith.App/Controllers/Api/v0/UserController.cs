@@ -80,8 +80,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public async Task<IActionResult> ResetPassword(int userId)
         {
             // Enforce tenant ID lookup to force Browtricks users
-            var user = await DbContext.Users
-                .Where(u => u.Tenant!.Company.Name == "Browtricks" && u.Id == userId)
+            var user = await DbContext.Tenants
+                .Where(t => t.Company.Name == "Browtricks")
+                .Select(t => t.Owner)
+                .Where(u => u.Id == userId)
                 .FirstOrDefaultAsync();
             if (user == null)
             {
