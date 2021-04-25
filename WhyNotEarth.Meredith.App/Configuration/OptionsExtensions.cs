@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.App.Configuration
                 .Configure<JwtOptions>(o => configuration.GetSection("Jwt").Bind(o))
                 .Configure<GoogleCloudOptions>(o => configuration.GetSection("GoogleCloud").Bind(o))
                 .Configure<TwilioOptions>(o => configuration.GetSection("Twilio").Bind(o))
-                .Configure<BrowTricksPlatformConfiguration>(o => configuration.GetSection("Platfomrms:BrowTricks").Bind(o));
+                .Configure<BrowTricksPlatformConfiguration>(o => configuration.GetSection("Platforms:BrowTricks").Bind(o));
         }
     }
 }

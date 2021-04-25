@@ -25,11 +25,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         public UserController(
             IDbContext dbContext,
             IUserService userService,
-            IOptions<BrowTricksPlatformConfiguration> browTricksPlatfomrConfiguration)
+            IOptions<BrowTricksPlatformConfiguration> browTricksPlatformConfiguration)
         {
             DbContext = dbContext;
             UserService = userService;
-            BrowTricksPlatformConfiguration = browTricksPlatfomrConfiguration.Value;
+            BrowTricksPlatformConfiguration = browTricksPlatformConfiguration.Value;
         }
 
         [Authorize(Roles = "SuperAdmin")]
