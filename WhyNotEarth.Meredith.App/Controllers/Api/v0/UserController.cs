@@ -41,7 +41,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .Where(t => t.Company.Name == "Browtricks")
                 .Select(t => t.Owner)
                 .OrderBy(u => u.FirstName)
-                .ThenBy(u => u.LastName);
+                .ThenBy(u => u.LastName)
+                .AsQueryable();
             if (!string.IsNullOrWhiteSpace(model.Query))
             {
                 userQuery = userQuery.Where(u =>
