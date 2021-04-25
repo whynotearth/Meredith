@@ -30,8 +30,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         public async Task<ProfileResult> Get()
         {
             var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            return new ProfileResult(user);
+            return new ProfileResult(user, roles);
         }
 
         [HttpPut("")]
