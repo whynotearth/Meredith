@@ -46,7 +46,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             if (!string.IsNullOrWhiteSpace(model.Query))
             {
                 userQuery = userQuery.Where(u =>
-                    $"{u.FirstName} {u.LastName}".Contains(model.Query)
+                    (u.FirstName + " " + u.LastName).Contains(model.Query)
                     || u.Email.Contains(model.Query)
                     || u.UserName.Contains(model.Query)
                     || u.PhoneNumber.Contains(model.Query));
