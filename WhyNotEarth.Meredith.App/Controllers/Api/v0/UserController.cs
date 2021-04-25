@@ -77,6 +77,28 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
         }
 
         [Authorize(Roles = "SuperAdmin")]
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> Get(int userId)
+        {
+            // Only browtricks has tenants
+            var user = await DbContext.Tenants
+                .Where(t => t.Company.Name == "Browtricks")
+                .Select(t => t.Owner)
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.FirstName,
+                    u.LastName,
+                    u.PhoneNumber,
+                    u.Email
+                })
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            return Ok(user);
+        }
+
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost("{userId}/resetPassword")]
         public async Task<IActionResult> ResetPassword(int userId)
         {
