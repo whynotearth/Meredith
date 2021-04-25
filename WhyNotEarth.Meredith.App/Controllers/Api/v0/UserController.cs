@@ -95,6 +95,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                     u.Email
                 })
                 .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
             return Ok(user);
         }
 
