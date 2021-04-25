@@ -8,13 +8,13 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
     {
         public List<ClientResult> Records { get; set; } = new List<ClientResult>();
 
-        public int Total {get;set;}
+        public int Total { get; set; }
 
-        public int CurrentPage {get;set;}
+        public int CurrentPage { get; set; }
 
-        public int PerPage {get;set;}
-        
-        public int Pages {get;set;}
+        public int PerPage { get; set; }
+
+        public int Pages { get; set; }
 
         public class ClientResult
         {
