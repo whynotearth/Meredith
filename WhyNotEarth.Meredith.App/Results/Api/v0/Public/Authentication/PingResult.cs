@@ -18,7 +18,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication
 
         public List<string> LoginProviders { get; }
 
-        public PingResult(User user, List<string> loginProviders)
+        public bool IsAdmin { get; }
+
+        public PingResult(User user, List<string> loginProviders, IList<string>? roles)
         {
             Id = user.Id;
             UserName = user.UserName;
@@ -26,6 +28,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Authentication
             IsPhoneNumberConfirmed = user.PhoneNumberConfirmed;
             IsEmailConfirmed = user.EmailConfirmed;
             LoginProviders = loginProviders;
+            IsAdmin = roles?.Contains("SuperAdmin") ?? false;
         }
     }
 }
