@@ -54,13 +54,20 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<(List<Client>, int recordCount)> GetListAsync(string tenantSlug, User user, int page)
+        public async Task<(List<Client>, int recordCount)> GetListAsync(string tenantSlug, User user, int page, string query)
         {
             var tenant = await _tenantService.CheckOwnerAsync(user, tenantSlug);
-            var query = _dbContext.Clients
+            var clientQuery = _dbContext.Clients
                 .Where(item => item.TenantId == tenant.Id && item.IsArchived == false);
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                clientQuery = clientQuery.Where(c =>
+                    (c.FirstName + " " + c.LastName).Contains(query)
+                    || c.Email.Contains(query)
+                    || c.PhoneNumber!.Contains(query));
+            }
 
-            return (await query.Skip(page * 100).Take(100).ToListAsync(), await query.CountAsync());
+            return (await clientQuery.Skip(page * 100).Take(100).ToListAsync(), await clientQuery.CountAsync());
         }
 
         public async Task ArchiveAsync(int clientId, User user)

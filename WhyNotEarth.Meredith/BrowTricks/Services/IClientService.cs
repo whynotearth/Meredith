@@ -11,7 +11,7 @@ namespace WhyNotEarth.Meredith.BrowTricks.Services
 
         Task EditAsync(int clientId, ClientModel model, User user);
 
-        Task<(List<Client>, int recordCount)> GetListAsync(string tenantSlug, User user, int page);
+        Task<(List<Client>, int recordCount)> GetListAsync(string tenantSlug, User user, int page, string query);
 
         Task ArchiveAsync(int clientId, User user);
 

@@ -60,7 +60,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var (clients, total) = await _clientService.GetListAsync(tenantSlug, user, model.Page);
+            var (clients, total) = await _clientService.GetListAsync(tenantSlug, user, model.Page, model.Query);
 
             return new ClientListResult()
             {
