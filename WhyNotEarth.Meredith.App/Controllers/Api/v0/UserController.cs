@@ -118,7 +118,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return NotFound();
             }
 
-            await UserService.SendForgotPasswordAsync(new Identity.Models.ForgotPasswordModel { UserName = user.UserName, ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/reset", CompanySlug = "browtricks" });
+            await UserService.SendForgotPasswordAsync(new Identity.Models.ForgotPasswordModel { UserName = user.UserName, ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/reset/{{userid}}", CompanySlug = "browtricks" });
             return Ok();
         }
     }
