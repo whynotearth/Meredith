@@ -1,4 +1,6 @@
-﻿using WhyNotEarth.Meredith.Public;
+﻿using System.Collections.Generic;
+using System.Linq;
+using WhyNotEarth.Meredith.Public;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile
 {
@@ -24,7 +26,9 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile
 
         public bool IsPhoneNumberConfirmed { get; }
 
-        public ProfileResult(User user)
+        public bool IsAdmin { get; }
+
+        public ProfileResult(User user, IList<string>? roles)
         {
             UserName = user.UserName;
             Email = user.Email;
@@ -36,6 +40,7 @@ namespace WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile
             ImageUrl = user.ImageUrl;
             IsPhoneNumberConfirmed = user.PhoneNumberConfirmed;
             IsEmailConfirmed = user.EmailConfirmed;
+            IsAdmin = roles?.Contains("SuperAdmin") ?? false;
         }
     }
 }

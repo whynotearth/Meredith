@@ -1,29 +1,45 @@
-﻿using WhyNotEarth.Meredith.BrowTricks;
+﻿
+using System.Collections.Generic;
+using WhyNotEarth.Meredith.BrowTricks;
 
 namespace WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks
 {
     public class ClientListResult
     {
-        public int Id { get; }
+        public List<ClientResult> Records { get; set; } = new List<ClientResult>();
 
-        public string Email { get; }
+        public int Total { get; set; }
 
-        public string? FirstName { get; }
+        public int CurrentPage { get; set; }
 
-        public string? LastName { get; }
+        public int PerPage { get; set; }
 
-        public string? PhoneNumber { get; }
+        public int Pages { get; set; }
 
-        public string? AvatarUrl { get; }
-
-        public ClientListResult(Client client)
+        public class ClientResult
         {
-            Id = client.Id;
-            Email = client.Email;
-            FirstName = client.FirstName;
-            LastName = client.LastName;
-            PhoneNumber = client.PhoneNumber;
-            AvatarUrl = client.AvatarUrl;
+            public int Id { get; }
+
+            public string Email { get; }
+
+            public string? FirstName { get; }
+
+            public string? LastName { get; }
+
+            public string? PhoneNumber { get; }
+
+            public string? AvatarUrl { get; }
+
+            public ClientResult(Client client)
+            {
+                Id = client.Id;
+                Email = client.Email;
+                FirstName = client.FirstName;
+                LastName = client.LastName;
+                PhoneNumber = client.PhoneNumber;
+                AvatarUrl = client.AvatarUrl;
+            }
+
         }
     }
 }

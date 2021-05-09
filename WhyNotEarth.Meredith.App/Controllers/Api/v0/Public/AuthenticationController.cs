@@ -216,8 +216,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         {
             var user = await _userManager.GetUserAsync(User);
             var logins = await _userManager.GetLoginsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            return Ok(new PingResult(user, logins.Select(item => item.LoginProvider).ToList()));
+            return Ok(new PingResult(user, logins.Select(item => item.LoginProvider).ToList(), roles));
         }
 
         [HttpPost("forgotpassword")]

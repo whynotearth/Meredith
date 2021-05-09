@@ -12,6 +12,8 @@ namespace WhyNotEarth.Meredith.Identity.Models
 
         public string? UserName { get; set; }
 
+        public int? UserId { get; set; }
+
         [NotNull]
         [Mandatory]
         public string? Token { get; set; }
@@ -25,15 +27,16 @@ namespace WhyNotEarth.Meredith.Identity.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (Email is null && UserName is null)
+            var setFields = (Email == null ? 0 : 1) + (UserName == null ? 0 : 1) + (!UserId.HasValue ? 0 : 1);
+            if (setFields == 0)
             {
-                yield return new ValidationResult("Provide email or username",
-                    new[] { nameof(Email), nameof(UserName) });
+                yield return new ValidationResult("Provide email, username or user ID",
+                    new[] { nameof(Email), nameof(UserName), nameof(UserId) });
             }
-            else if (Email != null && UserName != null)
+            else if (setFields > 1)
             {
-                yield return new ValidationResult("Provide email or username",
-                    new[] { nameof(Email), nameof(UserName) });
+                yield return new ValidationResult("Provide email, username or user ID",
+                    new[] { nameof(Email), nameof(UserName), nameof(UserId) });
             }
         }
     }

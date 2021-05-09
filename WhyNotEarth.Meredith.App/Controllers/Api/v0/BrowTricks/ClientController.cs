@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WhyNotEarth.Meredith.App.Auth;
+using WhyNotEarth.Meredith.App.Models.Api.v0.User;
 using WhyNotEarth.Meredith.App.Mvc;
 using WhyNotEarth.Meredith.App.Results.Api.v0.BrowTricks;
 using WhyNotEarth.Meredith.BrowTricks.Models;
@@ -55,13 +56,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.BrowTricks
 
         [HttpGet("")]
         [Authorize(Policy = Policies.ManageTenant)]
-        public async Task<List<ClientListResult>> List(string tenantSlug)
+        public async Task<ClientListResult> List(string tenantSlug, [FromQuery] UserSearchModel model)
         {
             var user = await GetCurrentUserAsync(_userService);
 
-            var clients = await _clientService.GetListAsync(tenantSlug, user);
+            var (clients, total) = await _clientService.GetListAsync(tenantSlug, user, model.Page, model.Query);
 
-            return clients.Select(item => new ClientListResult(item)).ToList();
+            return new ClientListResult()
+            {
+                Total = total,
+                CurrentPage = model.Page,
+                PerPage = 100,
+                Records = clients.Select(item => new ClientListResult.ClientResult(item)).ToList()
+            };
+
         }
 
         [Authorize]

@@ -259,7 +259,7 @@ namespace WhyNotEarth.Meredith.Identity
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
+            model.ReturnUrl = model.ReturnUrl.Replace("{userid}", user.Id.ToString());
             var callbackUrl = await GetForgotPasswordUrlAsync(model.ReturnUrl, unique, uniqueValue, token);
 
             await _userNotificationService.NotifyAsync(user,
@@ -269,7 +269,11 @@ namespace WhyNotEarth.Meredith.Identity
         public async Task<IdentityResult> ForgotPasswordResetAsync(ForgotPasswordResetModel model)
         {
             User user;
-            if (model.Email != null)
+            if (model.UserId.HasValue)
+            {
+                user = await _userManager.FindByIdAsync(model.UserId.ToString());
+            }
+            else if (model.Email != null)
             {
                 user = await _userManager.FindByEmailAsync(model.Email);
             }

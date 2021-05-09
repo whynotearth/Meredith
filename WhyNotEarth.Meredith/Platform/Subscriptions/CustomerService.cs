@@ -66,7 +66,13 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
                 .FirstOrDefaultAsync(c => c.TenantId == tenantId);
             if (customer == null)
             {
-                throw new RecordNotFoundException($"Customer with tenant ID {tenantId} not found");
+                var tenant = await _meredithDbContext.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
+                if (tenant == null)
+                {
+                    throw new RecordNotFoundException($"Tenant ID {tenantId} not found");
+                }
+
+                customer = await AddCustomerAsync(tenantId, tenant.CompanyId);
             }
 
             var cardDetail = await _stripeCustomerService.AddCardAsync(customer.StripeId, token, customer.Company?.StripeAccount?.StripeUserId);
