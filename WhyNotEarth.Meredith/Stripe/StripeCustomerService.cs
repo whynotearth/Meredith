@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
 using WhyNotEarth.Meredith.Exceptions;
@@ -66,7 +67,7 @@ namespace WhyNotEarth.Meredith.Stripe
         public async Task DeleteCardAsync(string? customerId, string? cardId, string? stripeAccountId = null)
         {
             var cardService = new CardService();
-            var card = await MeredithDbContext.PlatformCards.FindAsync(cardId);
+            var card = await MeredithDbContext.PlatformCards.FirstOrDefaultAsync(c => c.StripeId == cardId);
             if (card is null)
             {
                 throw new RecordNotFoundException();
