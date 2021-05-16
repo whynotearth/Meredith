@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Stripe;
+using WhyNotEarth.Meredith.Exceptions;
 using WhyNotEarth.Meredith.Services;
 using WhyNotEarth.Meredith.Services.Models;
 using WhyNotEarth.Meredith.Stripe.Data;
@@ -65,7 +66,23 @@ namespace WhyNotEarth.Meredith.Stripe
         public async Task DeleteCardAsync(string? customerId, string? cardId, string? stripeAccountId = null)
         {
             var cardService = new CardService();
-            await cardService.DeleteAsync(customerId, cardId, null, GetRequestOptions(stripeAccountId));
+            var card = await MeredithDbContext.PlatformCards.FindAsync(cardId);
+            if (card is null)
+            {
+                throw new RecordNotFoundException();
+            }
+
+            MeredithDbContext.PlatformCards.Remove(card);
+            try
+            {
+                await cardService.DeleteAsync(customerId, cardId, null, GetRequestOptions(stripeAccountId));
+            }
+            catch (StripeException e) when (e.StripeResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Ignore 404s, delete the record
+            }
+
+            await MeredithDbContext.SaveChangesAsync();
         }
 
         public async Task<List<Charge>> GetTransactions(string customerId, string stripeAccountId)
