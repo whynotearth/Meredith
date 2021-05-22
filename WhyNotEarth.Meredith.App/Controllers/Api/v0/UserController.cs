@@ -121,5 +121,47 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
             await UserService.SendForgotPasswordAsync(new Identity.Models.ForgotPasswordModel { UserName = user.UserName, ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/reset/{{userid}}", CompanySlug = "browtricks" });
             return Ok();
         }
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPost("{userId}/sendVerification")]
+        public async Task<IActionResult> SendVerification(int userId)
+        {
+            // Enforce tenant ID lookup to force Browtricks users
+            var user = await DbContext.Tenants
+                .Where(t => t.Company.Name == "Browtricks")
+                .Select(t => t.Owner)
+                .Where(u => u.Id == userId)
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return BadRequest(new { Message = "User already has a confirmed email" });
+            }
+
+            await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/auth/verify-submit-email", CompanySlug = "browtricks", });
+            return Ok();
+        }
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPost("sendVerification")]
+        public async Task<IActionResult> SendVerificationAll()
+        {
+            // Enforce tenant ID lookup to force Browtricks users
+            var users = await DbContext.Tenants
+                .Where(t => t.Company.Name == "Browtricks")
+                .Select(t => t.Owner)
+                .Where(u => !u.EmailConfirmed)
+                .ToListAsync();
+            foreach (var user in users)
+            {
+                await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/auth/verify-submit-email", CompanySlug = "browtricks", });
+            }
+
+            return Ok();
+        }
     }
 }
