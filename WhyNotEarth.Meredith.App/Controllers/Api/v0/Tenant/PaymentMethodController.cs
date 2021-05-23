@@ -35,7 +35,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PaymentModel>>> GetPaymentMethods(string tenantSlug)
+        public async Task<ActionResult<List<Meredith.Public.PaymentCard>>> GetPaymentMethods(string tenantSlug)
         {
             var paymentMethods = await _dbContext.PlatformCards
                 .Where(pc => pc!.Customer!.Tenant.Slug == tenantSlug)

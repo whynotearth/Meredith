@@ -43,6 +43,8 @@ namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
         {
             var card = await CreateCard();
             await CustomerService.DeleteCardAsync(card.Id);
+            var databaseCard = await DbContext.PlatformCards.AsNoTracking().FirstOrDefaultAsync(c => c.Id == card.Id);
+            Assert.Null(databaseCard);
         }
 
         protected async Task<PaymentCard> CreateCard()
