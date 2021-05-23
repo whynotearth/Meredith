@@ -30,8 +30,21 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
         [HttpGet("payments")]
         public async Task<ActionResult<PaymentModel>> GetPayments(string tenantSlug)
         {
-            var payments = new PaymentModel();
-            return Ok(payments);
+            var tenant = await GetUserOwnedBySlug(tenantSlug);
+            if (tenant == null)
+            {
+                return NotFound($"Tenant slug '{tenantSlug}' not found");
+            }
+
+            var customer = await _dbContext.PlatformCustomers.FirstOrDefaultAsync(pc => pc.TenantId == tenant.Id);
+            var transactions = await _customerService.GetTransactions(customer.Id);
+            return Ok(transactions.Select(t => new PaymentModel
+            {
+                PaymentDate = t.Date,
+                Total = t.Amount,
+                PaymentMethod = t.PaymentMethod,
+                TransactionId = t.TransactionId
+            }));
         }
 
         [HttpGet]

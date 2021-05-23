@@ -131,7 +131,9 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
             return charges.Select(c => new Transaction
             {
                 Amount = c.Amount * .01m,
-                Date = c.Created
+                Date = c.Created,
+                PaymentMethod = c.PaymentMethod,
+                TransactionId = c.Id
             }).ToList();
         }
     }
