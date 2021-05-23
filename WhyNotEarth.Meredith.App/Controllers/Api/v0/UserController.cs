@@ -142,7 +142,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 return BadRequest(new { Message = "User already has a confirmed email" });
             }
 
-            await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/auth/verify-submit-email", CompanySlug = "browtricks", });
+            await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/verify-submit-email", CompanySlug = "browtricks", });
             return Ok();
         }
 
@@ -158,7 +158,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0
                 .ToListAsync();
             foreach (var user in users)
             {
-                await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/auth/verify-submit-email", CompanySlug = "browtricks", });
+                await UserService.SendConfirmEmailTokenAsync(user, new Identity.Models.ConfirmEmailTokenModel { ReturnUrl = $"{BrowTricksPlatformConfiguration.BaseUrl}/verify-submit-email", CompanySlug = "browtricks", });
             }
 
             return Ok();
