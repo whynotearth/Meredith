@@ -301,8 +301,14 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             var user = await _userManager.GetUserAsync(User);
 
             var identityResult = await _userService.ConfirmEmailAsync(user, model);
+            if (!identityResult.Succeeded)
+            {
+                return NoContentIdentityResult(identityResult);
+            }
 
-            return NoContentIdentityResult(identityResult);
+            await _signInManager.SignInAsync(user, true);
+            var jwtToken = await _userService.GenerateJwtTokenAsync(user);
+            return Ok(jwtToken);
         }
 
         private async Task<ActionResult<string>> SignIn(User user)
