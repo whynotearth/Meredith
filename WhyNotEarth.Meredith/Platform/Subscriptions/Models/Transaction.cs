@@ -7,5 +7,9 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions.Models
         public decimal Amount { get; set; }
 
         public DateTime Date { get; set; }
+
+        public string TransactionId { get; set; } = null!;
+
+        public string PaymentMethod { get; set; } = null!;
     }
 }

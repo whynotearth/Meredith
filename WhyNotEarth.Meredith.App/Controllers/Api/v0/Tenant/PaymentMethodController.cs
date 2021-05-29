@@ -27,13 +27,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             _customerService = customerService;
         }
 
-        [HttpGet("payments")]
-        public async Task<ActionResult<PaymentModel>> GetPayments(string tenantSlug)
-        {
-            var payments = new PaymentModel();
-            return Ok(payments);
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<Meredith.Public.PaymentCard>>> GetPaymentMethods(string tenantSlug)
         {

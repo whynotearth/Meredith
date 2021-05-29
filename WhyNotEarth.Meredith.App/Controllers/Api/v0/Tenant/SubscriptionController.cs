@@ -128,7 +128,9 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 .Select(t => new PaymentModel
                 {
                     PaymentDate = t.Date,
-                    Total = t.Amount
+                    Total = t.Amount,
+                    PaymentMethod = t.PaymentMethod,
+                    TransactionId = t.TransactionId
                 })
                 .ToList());
         }

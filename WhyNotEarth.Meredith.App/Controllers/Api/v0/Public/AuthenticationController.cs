@@ -18,10 +18,10 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
     public class AuthenticationController : ControllerBase
     {
         private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager _userManager;
         private readonly IUserService _userService;
 
-        public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager,
+        public AuthenticationController(UserManager userManager, SignInManager<User> signInManager,
             IUserService userService)
         {
             _userManager = userManager;
@@ -293,16 +293,20 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return NoContent();
         }
 
-        [Authorize]
         [Returns400]
         [HttpPost("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
-
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserIdFromToken(model.Token).ToString());
             var identityResult = await _userService.ConfirmEmailAsync(user, model);
+            if (!identityResult.Succeeded)
+            {
+                return NoContentIdentityResult(identityResult);
+            }
 
-            return NoContentIdentityResult(identityResult);
+            await _signInManager.SignInAsync(user, true);
+            var jwtToken = await _userService.GenerateJwtTokenAsync(user);
+            return Ok(jwtToken);
         }
 
         private async Task<ActionResult<string>> SignIn(User user)
