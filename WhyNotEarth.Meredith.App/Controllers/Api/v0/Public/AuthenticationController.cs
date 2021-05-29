@@ -293,7 +293,6 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Public
             return NoContent();
         }
 
-        [Authorize]
         [Returns400]
         [HttpPost("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailModel model)
