@@ -19,11 +19,11 @@ namespace WhyNotEarth.Meredith.Identity
             IPasswordHasher<User> passwordHasher, IEnumerable<IUserValidator<User>> userValidators,
             IEnumerable<IPasswordValidator<User>> passwordValidators, ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<User>> logger,
-            IDataProtector dataProtector) : base(store,
+            IDataProtectionProvider dataProtectionProvider) : base(store,
             optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services,
             logger)
         {
-            DataProtector = dataProtector;
+            DataProtector = dataProtectionProvider.CreateProtector("DataProtectorTokenProvider");
         }
 
         public new int GetUserId(ClaimsPrincipal principal) => int.Parse(base.GetUserId(principal));
