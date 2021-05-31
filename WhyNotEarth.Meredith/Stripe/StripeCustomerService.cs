@@ -86,14 +86,14 @@ namespace WhyNotEarth.Meredith.Stripe
             await MeredithDbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Charge>> GetTransactions(string customerId, string stripeAccountId)
+        public async Task<List<Invoice>> GetInvoices(string customerId, string stripeAccountId)
         {
-            var chargeService = new ChargeService();
-            var charges = await chargeService.ListAsync(new ChargeListOptions
+            var invoiceService = new InvoiceService();
+            var invoices = await invoiceService.ListAsync(new InvoiceListOptions
             {
                 Customer = customerId
             }, GetRequestOptions(stripeAccountId));
-            return charges.Data;
+            return invoices.Data;
         }
     }
 }

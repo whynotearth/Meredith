@@ -127,13 +127,14 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
                 return new List<Transaction>();
             }
 
-            var charges = await _stripeCustomerService.GetTransactions(customer.StripeId, customer.StripeUserId);
-            return charges.Select(c => new Transaction
+            var invoices = await _stripeCustomerService.GetInvoices(customer.StripeId, customer.StripeUserId);
+            return invoices.Select(i => new Transaction
             {
-                Amount = c.Amount * .01m,
-                Date = c.Created,
-                PaymentMethod = c.PaymentMethod,
-                TransactionId = c.Id
+                Amount = i.Total * .01m,
+                Date = i.Created,
+                PaymentMethod = i.Charge.PaymentMethod,
+                StatementLink = i.HostedInvoiceUrl,
+                TransactionId = i.Id
             }).ToList();
         }
     }

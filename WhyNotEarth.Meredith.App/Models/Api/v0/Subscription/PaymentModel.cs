@@ -4,13 +4,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Subscription
 
     public class PaymentModel
     {
-        public string Subscription { get; set; } = null!;
-
         public DateTime PaymentDate { get; set; }
-
-        public decimal SubscriptionAmount { get; set; }
-
-        public decimal SubTotal { get; set; }
 
         public decimal Total { get; set; }
 

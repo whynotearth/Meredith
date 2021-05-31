@@ -15,6 +15,6 @@ namespace WhyNotEarth.Meredith.Services
 
         Task<string> AddTokenAsync(string? number, long expirationMonth, long expirationYear, string? stripeAccountId = null);
 
-        Task<List<Charge>> GetTransactions(string customerId, string stripeAccountId);
+        Task<List<Invoice>> GetInvoices(string customerId, string stripeAccountId);
     }
 }
