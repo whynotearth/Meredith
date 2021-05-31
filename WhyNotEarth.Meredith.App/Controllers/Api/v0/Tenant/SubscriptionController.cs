@@ -135,6 +135,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 .FirstOrDefaultAsync();
             var transactions = await _customerService.GetTransactions(customerId);
             return Ok(transactions
+                .OrderByDescending(t => t.Date)
                 .Select(t => new PaymentModel
                 {
                     PaymentDate = t.Date,
