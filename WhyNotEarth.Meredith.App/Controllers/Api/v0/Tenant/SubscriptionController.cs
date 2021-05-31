@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Subscription;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
 using WhyNotEarth.Meredith.Identity;
@@ -64,22 +65,32 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         [HttpPost]
         public async Task<ActionResult<ProfileResult>> Create(string tenantSlug, [FromBody] CreateModel model)
         {
-            var tenant = await GetUserOwnedBySlug(tenantSlug);
-            if (tenant == null)
+            try
             {
-                return NotFound($"Tenant slug '{tenantSlug}' not found");
-            }
+                var tenant = await GetUserOwnedBySlug(tenantSlug);
+                if (tenant == null)
+                {
+                    return NotFound($"Tenant slug '{tenantSlug}' not found");
+                }
 
-            var companyId = await _dbContext.PlatformPlans
-                .Where(p => p.Id == model.PlanId)
-                .Select(p => p.Platform.CompanyId)
-                .FirstOrDefaultAsync();
-            var customer = await _dbContext.PlatformCustomers
-                .Where(c => c.TenantId == tenant.Id)
-                .FirstOrDefaultAsync()
-                ?? await _customerService.AddCustomerAsync(tenant.Id, companyId);
-            var subscription = await _subscriptionService.StartSubscriptionAsync(customer.Id, model.PlanId, model.CouponCode);
-            return Ok();
+                var companyId = await _dbContext.PlatformPlans
+                    .Where(p => p.Id == model.PlanId)
+                    .Select(p => p.Platform.CompanyId)
+                    .FirstOrDefaultAsync();
+                var customer = await _dbContext.PlatformCustomers
+                    .Where(c => c.TenantId == tenant.Id)
+                    .FirstOrDefaultAsync()
+                    ?? await _customerService.AddCustomerAsync(tenant.Id, companyId);
+                var subscription = await _subscriptionService.StartSubscriptionAsync(customer.Id, model.PlanId, model.CouponCode);
+                return Ok();
+            }
+            catch (StripeException exception) when (exception.Message.Contains("No such coupon"))
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid coupon code"
+                });
+            }
         }
 
         [HttpPost("changepaymentmethod")]
