@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 using WhyNotEarth.Meredith.App.Models.Api.v0.Subscription;
 using WhyNotEarth.Meredith.App.Results.Api.v0.Public.Profile;
 using WhyNotEarth.Meredith.Identity;
@@ -84,7 +83,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 var subscription = await _subscriptionService.StartSubscriptionAsync(customer.Id, model.PlanId, model.CouponCode);
                 return Ok();
             }
-            catch (StripeException exception) when (exception.Message.Contains("No such coupon"))
+            catch (global::Stripe.StripeException exception) when (exception.Message.Contains("No such coupon"))
             {
                 return BadRequest(new
                 {
