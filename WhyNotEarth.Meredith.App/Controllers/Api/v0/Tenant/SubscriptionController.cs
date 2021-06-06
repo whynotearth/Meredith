@@ -141,7 +141,8 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                     PaymentDate = t.Date,
                     Total = t.Amount,
                     PaymentMethod = t.PaymentMethod,
-                    TransactionId = t.TransactionId
+                    TransactionId = t.TransactionId,
+                    StatementLink = t.StatementLink
                 })
                 .ToList());
         }

@@ -11,5 +11,7 @@ namespace WhyNotEarth.Meredith.App.Models.Api.v0.Subscription
         public string TransactionId { get; set; } = null!;
 
         public string PaymentMethod { get; set; } = null!;
+
+        public string? StatementLink { get; set; }
     }
 }
