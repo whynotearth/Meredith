@@ -33,7 +33,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [HttpGet]
-        public async Task<ActionResult<ProfileResult>> Get(string tenantSlug)
+        public async Task<IActionResult> Get(string tenantSlug)
         {
             var tenant = await GetUserOwnedBySlug(tenantSlug);
             if (tenant == null)
