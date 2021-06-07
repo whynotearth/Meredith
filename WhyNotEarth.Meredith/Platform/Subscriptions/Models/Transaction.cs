@@ -10,7 +10,7 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions.Models
 
         public string TransactionId { get; set; } = null!;
 
-        public string PaymentMethod { get; set; } = null!;
+        public string? PaymentMethod { get; set; };
 
         public string? StatementLink { get; set; }
     }

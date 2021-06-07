@@ -132,7 +132,7 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
             {
                 Amount = i.Total * .01m,
                 Date = i.Created,
-                PaymentMethod = i.Charge.PaymentMethod,
+                PaymentMethod = i.Charge?.PaymentMethod,
                 StatementLink = i.HostedInvoiceUrl,
                 TransactionId = i.Id
             }).ToList();
