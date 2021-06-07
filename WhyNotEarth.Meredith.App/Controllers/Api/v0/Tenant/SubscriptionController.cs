@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                         s.Card.ExpirationYear
                     }
                 })
-                .FirstOrDefaultAsync();
+                .ToListAsync();
             return Ok(subscription);
         }
 

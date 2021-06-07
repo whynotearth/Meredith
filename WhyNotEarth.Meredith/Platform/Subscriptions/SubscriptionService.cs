@@ -45,6 +45,12 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
                 throw new RecordNotFoundException($"Plan {planId} not found");
             }
 
+            var oldSubscription = await _meredithDbContext.PlatformSubscriptions.FirstOrDefaultAsync(s => s.CustomerId == customerId && s.Status == SubscriptionStatuses.Active);
+            if (oldSubscription is not null)
+            {
+                throw new InvalidActionException("You cannot have two active subscriptions");
+            }
+
             var stripeSubscriptionId = await _stripeSubscriptionService.AddSubscriptionAsync(customer.StripeId, plan.StripeId, couponCode, plan.Platform.SalesCut, plan.Platform.Company?.StripeAccount?.StripeUserId);
             var subscription = new Subscription
             {
@@ -93,7 +99,6 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
 
             await _stripeSubscriptionService.ChangeSubscriptionPlanAsync(subscription.StripeId, plan.StripeId, subscription.Plan?.Platform?.SalesCut, subscription.Plan?.Platform?.Company?.StripeAccount?.StripeUserId);
             subscription.PlanId = plan.Id;
-            subscription.Status = SubscriptionStatuses.Active;
             await _meredithDbContext.SaveChangesAsync();
         }
 
