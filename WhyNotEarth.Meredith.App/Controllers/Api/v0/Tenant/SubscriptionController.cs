@@ -57,7 +57,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                         s.Card.ExpirationYear
                     }
                 })
-                .FirstOrDefaultAsync();
+                .ToListAsync();
             return Ok(subscription);
         }
 
@@ -116,6 +116,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             }
 
             var subscriptionId = await GetSubscriptionIdFromTenantId(tenant.Id);
+            if (subscriptionId == 0)
+            {
+                return NotFound("No active subscription found");
+            }
+
             await _subscriptionService.CancelSubscriptionAsync(subscriptionId);
             return Ok();
         }
