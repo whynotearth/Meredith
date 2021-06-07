@@ -148,7 +148,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         private async Task<int> GetSubscriptionIdFromTenantId(int tenantId) => await _dbContext.PlatformSubscriptions
-                .Where(s => s.Customer.TenantId == tenantId)
+                .Where(s => s.Customer.TenantId == tenantId && s.Status == Meredith.Public.Subscription.SubscriptionStatuses.Active)
                 .Select(s => s.Id)
                 .FirstOrDefaultAsync();
     }
