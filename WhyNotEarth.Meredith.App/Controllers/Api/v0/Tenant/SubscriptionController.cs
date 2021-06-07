@@ -42,7 +42,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             }
 
             var subscription = await _dbContext.PlatformSubscriptions
-                .Where(s => s.Customer.TenantId == tenant.Id)
+                .Where(s => s.Customer.TenantId == tenant.Id && s.Status == Meredith.Public.Subscription.SubscriptionStatuses.Active)
                 .Select(s => new
                 {
                     s.Id,
@@ -57,12 +57,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                         s.Card.ExpirationYear
                     }
                 })
-                .ToListAsync();
+                .FirstOrDefaultAsync();
             return Ok(subscription);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProfileResult>> Create(string tenantSlug, [FromBody] CreateModel model)
+        public async Task<IActionResult> Create(string tenantSlug, [FromBody] CreateModel model)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [HttpPost("changepaymentmethod")]
-        public async Task<ActionResult<ProfileResult>> ChangePaymentMethod(string tenantSlug, [FromBody] ChangePaymentMethodModel model)
+        public async Task<IActionResult> ChangePaymentMethod(string tenantSlug, [FromBody] ChangePaymentMethodModel model)
         {
             var tenant = await GetUserOwnedBySlug(tenantSlug);
             if (tenant == null)
@@ -107,7 +107,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
         }
 
         [HttpPost("cancel")]
-        public async Task<ActionResult<ProfileResult>> Cancel(string tenantSlug)
+        public async Task<IActionResult> Cancel(string tenantSlug)
         {
             var tenant = await GetUserOwnedBySlug(tenantSlug);
             if (tenant == null)
