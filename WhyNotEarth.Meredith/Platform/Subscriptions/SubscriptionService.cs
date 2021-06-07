@@ -93,6 +93,7 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
 
             await _stripeSubscriptionService.ChangeSubscriptionPlanAsync(subscription.StripeId, plan.StripeId, subscription.Plan?.Platform?.SalesCut, subscription.Plan?.Platform?.Company?.StripeAccount?.StripeUserId);
             subscription.PlanId = plan.Id;
+            subscription.Status = SubscriptionStatuses.Active;
             await _meredithDbContext.SaveChangesAsync();
         }
 
