@@ -102,6 +102,11 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
             }
 
             var subscriptionId = await GetSubscriptionIdFromTenantId(tenant.Id);
+            if (subscriptionId == 0)
+            {
+                return NotFound("No active subscription found");
+            }
+
             await _subscriptionService.ChangeSubscriptionCardAsync(subscriptionId, model.CardId);
             return Ok();
         }
