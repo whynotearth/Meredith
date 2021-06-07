@@ -58,7 +58,7 @@ namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
         public async Task ChangeSubscriptionPlan()
         {
             var (_, subscriptionId, _, _) = await CreateSubscription();
-            var plan = await GetPlan("BrowTricks Pro: Test Alternate");
+            var plan = await GetPlan("Browtricks 2: Electric Boogaloo");
             await SubscriptionService.ChangeSubscriptionPlanAsync(subscriptionId, plan.Id);
             var subscription = await GetSubscriptionAsync(subscriptionId);
             Assert.Equal(plan.Id, subscription.PlanId);
@@ -67,7 +67,12 @@ namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
         protected async Task<(int customerId, int subscriptionId, int tenantId, Plan plan)> CreateSubscription()
         {
             var tenant = await CreateTenant();
-            var plan = await GetPlan("BrowTricks Pro");
+            var plan = await GetPlan("Browtricks");
+            if (plan == null)
+            {
+                throw new System.Exception("Plan not found");
+            }
+
             var customer = await CustomerService.AddCustomerAsync(tenant.Id, plan.Platform.CompanyId);
             var token = await StripeCustomerService.AddTokenAsync("4111111111111111", 1, 2050, plan.Platform.Company?.StripeAccount?.StripeUserId);
             await CustomerService.AddCardAsync(tenant.Id, token);
