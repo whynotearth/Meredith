@@ -48,7 +48,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                     s.Id,
                     s.Status,
                     s.Plan.Name,
-                    Card = new
+                    Card = s.Card == null ? null : new
                     {
                         s.Card.Id,
                         s.Card.Brand,
