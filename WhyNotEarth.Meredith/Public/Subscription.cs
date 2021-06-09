@@ -15,9 +15,9 @@ namespace WhyNotEarth.Meredith.Public
 
         public int CustomerId { get; set; }
 
-        public PaymentCard Card { get; set; } = null!;
+        public PaymentCard? Card { get; set; }
 
-        public int CardId { get; set; }
+        public int? CardId { get; set; }
 
         public string StripeId { get; set; } = null!;
 

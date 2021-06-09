@@ -8,6 +8,7 @@ namespace WhyNotEarth.Meredith.Persistence.Models.Modules.Platform
     {
         public void Configure(EntityTypeBuilder<Subscription> builder)
         {
+            builder.HasOne(e => e.Card).WithMany().OnDelete(DeleteBehavior.SetNull);
             builder.ToTable("Subscriptions", "Platform");
         }
     }
