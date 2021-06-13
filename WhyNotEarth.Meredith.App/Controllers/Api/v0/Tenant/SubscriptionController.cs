@@ -47,7 +47,12 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                 {
                     s.Id,
                     s.Status,
-                    s.Plan.Name,
+                    Plan = s.Plan == null ? null : new
+                    {
+                        s.Plan.Id,
+                        s.Plan.Name,
+                        s.Plan.Price
+                    },
                     Card = s.Card == null ? null : new
                     {
                         s.Card.Id,
