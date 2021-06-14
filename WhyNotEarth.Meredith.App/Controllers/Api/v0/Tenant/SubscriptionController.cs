@@ -85,7 +85,7 @@ namespace WhyNotEarth.Meredith.App.Controllers.Api.v0.Tenant
                     .Where(c => c.TenantId == tenant.Id)
                     .FirstOrDefaultAsync()
                     ?? await _customerService.AddCustomerAsync(tenant.Id, companyId);
-                var subscription = await _subscriptionService.StartSubscriptionAsync(customer.Id, model.PlanId, model.CouponCode);
+                var subscription = await _subscriptionService.StartSubscriptionAsync(customer.Id, model.PlanId, model.CardId, model.CouponCode);
                 return Ok();
             }
             catch (global::Stripe.StripeException exception) when (exception.Message.Contains("No such coupon"))

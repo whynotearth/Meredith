@@ -21,7 +21,7 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
 
         private readonly IStripeSubscriptionService _stripeSubscriptionService;
 
-        public async Task<Subscription> StartSubscriptionAsync(int customerId, int planId, string? couponCode = null)
+        public async Task<Subscription> StartSubscriptionAsync(int customerId, int planId, int? cardId, string? couponCode = null)
         {
             var customer = await _meredithDbContext.PlatformCustomers.FindAsync(customerId);
             if (customer == null)
@@ -29,7 +29,7 @@ namespace WhyNotEarth.Meredith.Platform.Subscriptions
                 throw new RecordNotFoundException($"Customer {customerId} not found");
             }
 
-            var card = await _meredithDbContext.PlatformCards.FirstOrDefaultAsync(c => c.CustomerId == customerId);
+            var card = await _meredithDbContext.PlatformCards.FirstOrDefaultAsync(c => c.CustomerId == customerId && ((cardId.HasValue && cardId == c.Id) || !cardId.HasValue));
             if (card == null)
             {
                 throw new RecordNotFoundException($"No card found on Customer {customerId}");

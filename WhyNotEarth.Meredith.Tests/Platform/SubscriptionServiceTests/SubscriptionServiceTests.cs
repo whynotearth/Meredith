@@ -76,7 +76,7 @@ namespace WhyNotEarth.Meredith.Tests.Platform.SubscriptionServiceTests
             var customer = await CustomerService.AddCustomerAsync(tenant.Id, plan.Platform.CompanyId);
             var token = await StripeCustomerService.AddTokenAsync("4111111111111111", 1, 2050, plan.Platform.Company?.StripeAccount?.StripeUserId);
             await CustomerService.AddCardAsync(tenant.Id, token);
-            var subscription = await SubscriptionService.StartSubscriptionAsync(customer.Id, plan.Id, "fiveoff");
+            var subscription = await SubscriptionService.StartSubscriptionAsync(customer.Id, plan.Id, null, "fiveoff");
             return (customer.Id, subscription.Id, tenant.Id, plan);
         }
 
